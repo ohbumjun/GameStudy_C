@@ -1,3 +1,8 @@
+#include "..\TextRPG\Player.h"
+#include "..\TextRPG\Player.h"
+#include "..\TextRPG\Player.h"
+#include "..\TextRPG\Player.h"
+#include "..\TextRPG\Player.h"
 #include<iostream>
 
 using namespace std;
@@ -154,11 +159,6 @@ public:
 	다른 객체들로 매번 this가 바뀔 것이다
 
 `	*/
-public:
-	bool CPlayer::Init()
-	{
-		return false;
-	}
 	void Output()
 	{
 		// cout << "Number1 : " << this->m_Number1 << endl;

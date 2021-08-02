@@ -14,6 +14,15 @@ enum class Main_Menu
 	End
 };
 
+enum class Job
+{
+	None,
+	Knight,
+	Archer,
+	Magicion,
+	End
+};
+
 enum class Store_Menu
 {
 	None,
@@ -58,4 +67,18 @@ enum class Battle_Result
 	Player_Death,
 	Monster_Death,
 	None
+};
+
+enum Equip_Type
+{
+	Equip_Weapon,
+	Equip_Armor,
+	Equip_End
+};
+
+enum Item_Type
+{
+	IT_Weapon,
+	IT_Armor,
+	IT_End
 };

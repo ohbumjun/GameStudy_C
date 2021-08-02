@@ -45,6 +45,7 @@ bool CMapManager::Init()
 
 void CMapManager::Run()
 {
+    cout << "map run" << endl;
     while (true)
     {
         switch (Menu())

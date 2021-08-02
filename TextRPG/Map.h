@@ -8,6 +8,7 @@ public :
 private :
 	Map_Type m_Type;
 public : 
+	class CMonster* SpawnMonster();
 	Battle_Result Battle(class CPlayer* pPlayer, class CMonster* pMonster);
 public :
 	bool Init(Map_Type Type);

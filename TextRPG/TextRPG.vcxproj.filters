@@ -57,6 +57,12 @@
     <ClInclude Include="Map.h">
       <Filter>4.MapManager</Filter>
     </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>2.StoreManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Store.h">
+      <Filter>2.StoreManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -85,6 +91,12 @@
     </ClCompile>
     <ClCompile Include="Map.cpp">
       <Filter>4.MapManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>2.StoreManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Store.cpp">
+      <Filter>2.StoreManager</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

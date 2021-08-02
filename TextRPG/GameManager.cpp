@@ -21,11 +21,12 @@ Main_Menu CGameManager::Menu()
 	std::cout << "1. 맵" << std::endl;
 	std::cout << "2. 상점" << std::endl;
 	std::cout << "3. 인벤토리" << std::endl;
+	std::cout << "메뉴를 선택하세요 : ";
 	int _Menu;
 	std::cin >> _Menu;
 	if (_Menu < (int)Main_Menu::None || _Menu >= (int)Main_Menu::End)
 		return Main_Menu::None;
-	return Main_Menu();
+	return (Main_Menu)_Menu;
 }
 
 bool CGameManager::Init()
