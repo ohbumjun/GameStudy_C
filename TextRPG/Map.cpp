@@ -25,5 +25,6 @@ void CMap::Run()
 
 Battle_Menu CMap::Menu()
 {
+	system("cls");
 	return Battle_Menu();
 }
