@@ -62,6 +62,14 @@ int main()
 		std::cout << *iter << std::endl;
 	}
 
+	std::cout << "======= Reverse =======" << std::endl;
+	CList<int>::reverse_iterator	riter;
+
+	for (riter = listInt.rbegin(); riter != listInt.rend(); ++riter)
+	{
+		std::cout << *riter << std::endl;
+	}
+
 	//listInt.pop_back();
 
 	// const 객체는 일반 멤버함수 호출이 불가능하다.

@@ -15,8 +15,10 @@ private :
 	class CItem* m_DropItem[6];
 public :
 	int GetLevelUpExp(int Level) { return m_LevelUpExp[Level-1]; }
-	class CItem* GetDropItem(int Index) { return m_DropItem[Index]; }
 	class CPlayer* GetPlayer() { return m_Player; }
+public :
+	class CMonster* CloneMonster(const char *Name);
+	class CItem* CloneItem(int Index);
 private:
 	static CObjectManager* m_pInst;
 public:

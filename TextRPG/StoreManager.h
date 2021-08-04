@@ -1,8 +1,14 @@
 #pragma once
+#include"Game.h"
+
 class CStoreManager
 {
 	CStoreManager();
 	~CStoreManager();
+private :
+	class CStore* m_Store[ST_End];
+private :
+	Store_Menu Menu();
 public:
 	bool Init();
 	void Run();

@@ -8,14 +8,17 @@ class CListNode
 	friend class CList;
 	template<typename T>
 	friend class CListIterator;
-public :
+	template <typename T>
+	friend class CListReverseIterator;
+
+public:
 	CListNode() :
-		m_Next(nullptr) ,
+		m_Next(nullptr),
 		m_Prev(nullptr)
 	{
 	}
-	~CListNode(){}
-private :
+	~CListNode() {}
+private:
 	CListNode<T>* m_Next;
 	CListNode<T>* m_Prev;
 	T m_Data;
@@ -26,22 +29,25 @@ class CListIterator
 {
 	template<typename T>
 	friend class CList;
+public:
+	CListIterator() {}
+	~CListIterator() {}
 private:
 	CListNode<T>* m_Node;
-public :
-	bool operator == (const CListIterator<T>& iter) const 
+public:
+	bool operator == (const CListIterator<T>& iter) const
 	{
 		return m_Node == iter.m_Node;
 	}
-	bool operator != (const CListIterator<T>& iter) const 
+	bool operator != (const CListIterator<T>& iter) const
 	{
 		return m_Node != iter.m_Node;
 	}
-	bool operator == (const CListNode<T>* Node) const 
+	bool operator == (const CListNode<T>* Node) const
 	{
 		return m_Node == Node;
 	}
-	bool operator != (const CListNode<T>* Node) const 
+	bool operator != (const CListNode<T>* Node) const
 	{
 		return m_Node != Node;
 	}
@@ -67,16 +73,87 @@ public :
 	}
 };
 
+
+template <typename T>
+class CListReverseIterator
+{
+	template <typename T>
+	friend class CList;
+
+public:
+	CListReverseIterator() :
+		m_Node(nullptr)
+	{
+	}
+
+	~CListReverseIterator()
+	{
+	}
+
+private:
+	CListNode<T>* m_Node;
+
+public:
+	// iterator끼리 서로 가지고 있는 노드가 같을 경우 같다고 판단한다.
+	bool operator == (const CListReverseIterator<T>& iter)	const
+	{
+		return m_Node == iter.m_Node;
+	}
+
+	bool operator != (const CListReverseIterator<T>& iter)	const
+	{
+		return m_Node != iter.m_Node;
+	}
+
+	bool operator == (const CListNode<T>* Node)	const
+	{
+		return m_Node == Node;
+	}
+
+	bool operator != (const CListNode<T>* Node)	const
+	{
+		return m_Node != Node;
+	}
+
+	void operator ++ ()
+	{
+		m_Node = m_Node->m_Prev;
+	}
+
+	void operator ++ (int)
+	{
+		m_Node = m_Node->m_Prev;
+	}
+
+	void operator -- ()
+	{
+		m_Node = m_Node->m_Next;
+	}
+
+	void operator -- (int)
+	{
+		m_Node = m_Node->m_Next;
+	}
+
+	T& operator * ()	const
+	{
+		return m_Node->m_Data;
+	}
+};
+
+
 template<typename T>
 class CList
 {
-private :
+private:
 	typedef CListNode<T> NODE;
 	typedef CListNode<T>* PNODE;
-public :
+public:
 	typedef CListIterator<T> iterator;
-public :
-	CList() 
+	typedef CListReverseIterator<T>	reverse_iterator;
+
+public:
+	CList()
 	{
 		m_Size = 0;
 		m_Begin = new NODE;
@@ -94,11 +171,11 @@ public :
 			DeleteNode = Next;
 		}
 	}
-private :
+private:
 	PNODE m_Begin;
 	PNODE m_End;
 	int m_Size;
-public :
+public:
 	void push_back(const T& data)
 	{
 		PNODE Node = new NODE;
@@ -131,16 +208,16 @@ public :
 		if (empty()) assert(false);
 		return m_Begin->m_Next->m_Data;
 	}
-	T& back() const 
+	T& back() const
 	{
 		if (empty()) assert(false);
 		return m_End->m_Prev->m_Data;
 	}
-	bool empty() const 
+	bool empty() const
 	{
 		return m_Size == 0;
 	}
-	int size() const 
+	int size() const
 	{
 		return m_Size;
 	}
@@ -203,9 +280,22 @@ public :
 		iter.m_Node = m_End->m_Prev;
 		return iter;
 	}
+	reverse_iterator rbegin()	const
+	{
+		reverse_iterator	iter;
+		iter.m_Node = m_End->m_Prev;
+		return iter;
+	}
+
+	reverse_iterator rend()	const
+	{
+		reverse_iterator	iter;
+		iter.m_Node = m_Begin;
+		return iter;
+	}
 	iterator Find(const T& data)
 	{
-		iterator iter = begin() ;
+		iterator iter = begin();
 		iterator iterEnd = end();
 		for (; iter != iterEnd; ++iter)
 		{

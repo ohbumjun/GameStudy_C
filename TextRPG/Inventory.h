@@ -4,18 +4,19 @@ class CInventory
 {
 	CInventory();
 	~CInventory();
-private:
+private :
 	class CItem* m_Item[INVENTORY_MAX];
 	int m_Count;
-public :
-	bool IsFull() { return m_Count == INVENTORY_MAX; }
+public : 
 	void AddItem(class CItem* Item)
 	{
 		m_Item[m_Count] = Item;
 		++m_Count;
 	}
-public:
+	bool IsFull() { return m_Count == INVENTORY_MAX; }
+public :
 	bool Init();
+	int Menu(class CPlayer *pPlayer);
 	void Run();
 private:
 	static CInventory* m_pInst;

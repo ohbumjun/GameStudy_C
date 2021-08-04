@@ -15,7 +15,8 @@ CPlayer::CPlayer() :
 	m_MPMax(0),
 	m_Gold(0),
 	m_Exp(0),
-	m_Level(0)
+	m_Level(0),
+	m_Equipment{}
 {
 
 }
@@ -82,7 +83,19 @@ bool CPlayer::Init()
 }
 CItem* CPlayer::Equip(CItem* Item)
 {
-	return nullptr;
+	Equip_Type Type;
+	switch (Item->GetItemType())
+	{
+	case IT_Weapon:
+		Type = Equip_Weapon;
+		break;
+	case IT_Armor:
+		Type = Equip_Armor;
+		break;
+	}
+	CPlayer* pPlayer = CObjectManager::GetInst()->GetPlayer();
+	CItem* Equip_Item = pPlayer->GetEquipItem(Type);
+	return Equip_Item;
 }
 void CPlayer::Output()
 {
