@@ -13,90 +13,90 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="1.GameManager">
-      <UniqueIdentifier>{c73c0f6f-96bc-4e81-adc0-a893bcd517dd}</UniqueIdentifier>
+    <Filter Include="GameManager">
+      <UniqueIdentifier>{9155bc6f-43ee-4fe1-acd8-61b46e9f4b36}</UniqueIdentifier>
     </Filter>
-    <Filter Include="2.StoreManager">
-      <UniqueIdentifier>{2dcce891-e1be-436e-a441-ae5392f9da3c}</UniqueIdentifier>
+    <Filter Include="MapManager">
+      <UniqueIdentifier>{35c157a0-e6ba-4d09-865e-4093f521c200}</UniqueIdentifier>
     </Filter>
-    <Filter Include="3.Inven">
-      <UniqueIdentifier>{1de1aafd-d15e-47a5-84b2-a6864ad41c46}</UniqueIdentifier>
+    <Filter Include="ObjectManager">
+      <UniqueIdentifier>{494f177d-aa8c-4054-85f3-e426c226955f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="4.MapManager">
-      <UniqueIdentifier>{45f30691-478f-4bd0-9cd2-618c28c4ca5c}</UniqueIdentifier>
+    <Filter Include="StoreManager">
+      <UniqueIdentifier>{b9112df9-341a-4af2-a8ea-e2f67f90cb91}</UniqueIdentifier>
     </Filter>
-    <Filter Include="5.ObjectManager">
-      <UniqueIdentifier>{818a2fbf-8b78-473e-9b64-bccd47cc5064}</UniqueIdentifier>
+    <Filter Include="Inventory">
+      <UniqueIdentifier>{968e82e7-3854-432e-b9ee-ab45796f2500}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameManager.h">
+      <Filter>GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="MapManager.h">
+      <Filter>MapManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>MapManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Store.h">
+      <Filter>StoreManager</Filter>
+    </ClInclude>
+    <ClInclude Include="StoreManager.h">
+      <Filter>StoreManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>ObjectManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectManager.h">
+      <Filter>ObjectManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>ObjectManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>StoreManager</Filter>
+    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameManager.h">
-      <Filter>1.GameManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Inventory.h">
-      <Filter>3.Inven</Filter>
-    </ClInclude>
-    <ClInclude Include="StoreManager.h">
-      <Filter>2.StoreManager</Filter>
-    </ClInclude>
-    <ClInclude Include="MapManager.h">
-      <Filter>4.MapManager</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectManager.h">
-      <Filter>5.ObjectManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Monster.h">
-      <Filter>5.ObjectManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>5.ObjectManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.h">
-      <Filter>4.MapManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Item.h">
-      <Filter>2.StoreManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Store.h">
-      <Filter>2.StoreManager</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameManager.cpp">
-      <Filter>1.GameManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Inventory.cpp">
-      <Filter>3.Inven</Filter>
-    </ClCompile>
-    <ClCompile Include="StoreManager.cpp">
-      <Filter>2.StoreManager</Filter>
+      <Filter>GameManager</Filter>
     </ClCompile>
     <ClCompile Include="MapManager.cpp">
-      <Filter>4.MapManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectManager.cpp">
-      <Filter>5.ObjectManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Monster.cpp">
-      <Filter>5.ObjectManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>5.ObjectManager</Filter>
+      <Filter>MapManager</Filter>
     </ClCompile>
     <ClCompile Include="Map.cpp">
-      <Filter>4.MapManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Item.cpp">
-      <Filter>2.StoreManager</Filter>
+      <Filter>MapManager</Filter>
     </ClCompile>
     <ClCompile Include="Store.cpp">
-      <Filter>2.StoreManager</Filter>
+      <Filter>StoreManager</Filter>
+    </ClCompile>
+    <ClCompile Include="StoreManager.cpp">
+      <Filter>StoreManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectManager.cpp">
+      <Filter>ObjectManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>ObjectManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>ObjectManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>StoreManager</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

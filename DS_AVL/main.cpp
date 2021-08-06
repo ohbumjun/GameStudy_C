@@ -1,15 +1,15 @@
 #pragma once
 
 template <typename KEY, typename VALUE>
-class CBinaryTreeNode
+class CAVLTreeNode
 {
 	template <typename KEY, typename VALUE>
-	friend class CBinaryTree;
+	friend class CAVLTree;
 	template <typename KEY, typename VALUE>
-	friend class CBinaryTreeIterator;
+	friend class CAVLTreeIterator;
 
 private:
-	CBinaryTreeNode() :
+	CAVLTreeNode() :
 		m_Left(nullptr),
 		m_Right(nullptr),
 		m_Parent(nullptr),
@@ -18,59 +18,105 @@ private:
 	{
 	}
 
-	~CBinaryTreeNode()
+	~CAVLTreeNode()
 	{
 	}
 
 private:
-	CBinaryTreeNode<KEY, VALUE>* m_Left;
-	CBinaryTreeNode<KEY, VALUE>* m_Right;
-	CBinaryTreeNode<KEY, VALUE>* m_Parent;
-	CBinaryTreeNode<KEY, VALUE>* m_Next;
-	CBinaryTreeNode<KEY, VALUE>* m_Prev;
+	CAVLTreeNode<KEY, VALUE>* m_Left;
+	CAVLTreeNode<KEY, VALUE>* m_Right;
+	CAVLTreeNode<KEY, VALUE>* m_Parent;
+	CAVLTreeNode<KEY, VALUE>* m_Next;
+	CAVLTreeNode<KEY, VALUE>* m_Prev;
 
 public:
 	KEY		first;
 	VALUE	second;
+
+public:
+	bool IsParent()	const
+	{
+		return m_Parent != nullptr;
+	}
+
+	KEY GetParentKey()	const
+	{
+		return m_Parent->first;
+	}
+
+	VALUE GetParentValue()	const
+	{
+		return m_Parent->second;
+	}
+
+	bool IsLeft()	const
+	{
+		return m_Left != nullptr;
+	}
+
+	KEY GetLeftKey()	const
+	{
+		return m_Left->first;
+	}
+
+	VALUE GetLeftValue()	const
+	{
+		return m_Left->second;
+	}
+
+	bool IsRight()	const
+	{
+		return m_Right != nullptr;
+	}
+
+	KEY GetRightKey()	const
+	{
+		return m_Right->first;
+	}
+
+	VALUE GetRightValue()	const
+	{
+		return m_Right->second;
+	}
 };
 
 template <typename KEY, typename VALUE>
-class CBinaryTreeIterator
+class CAVLTreeIterator
 {
 	template <typename KEY, typename VALUE>
-	friend class CBinaryTree;
+	friend class CAVLTree;
 
 public:
-	CBinaryTreeIterator() :
+	CAVLTreeIterator() :
 		m_Node(nullptr)
 	{
 	}
 
-	~CBinaryTreeIterator()
+	~CAVLTreeIterator()
 	{
 	}
 
 private:
-	CBinaryTreeNode<KEY, VALUE>* m_Node;
+	CAVLTreeNode<KEY, VALUE>* m_Node;
 
 public:
 	// iterator끼리 서로 가지고 있는 노드가 같을 경우 같다고 판단한다.
-	bool operator == (const CBinaryTreeIterator<KEY, VALUE>& iter)	const
+	bool operator == (const CAVLTreeIterator<KEY, VALUE>& iter)	const
 	{
 		return m_Node == iter.m_Node;
 	}
 
-	bool operator != (const CBinaryTreeIterator<KEY, VALUE>& iter)	const
+	bool operator != (const CAVLTreeIterator<KEY, VALUE>& iter)	const
 	{
 		return m_Node != iter.m_Node;
 	}
 
-	bool operator == (const CBinaryTreeNode<KEY, VALUE>* Node)	const
+	bool operator == (const CAVLTreeNode<KEY, VALUE>* Node)	const
 	{
 		return m_Node == Node;
 	}
 
-	bool operator != (const CBinaryTreeNode<KEY, VALUE>* Node)	const
+	bool operator != (const CAVLTreeNode<KEY, VALUE>* Node)	const
 	{
 		return m_Node != Node;
 	}
@@ -95,7 +141,7 @@ public:
 		m_Node = m_Node->m_Prev;
 	}
 
-	CBinaryTreeNode<KEY, VALUE>* operator -> ()
+	CAVLTreeNode<KEY, VALUE>* operator -> ()
 	{
 		return m_Node;
 	}
@@ -106,10 +152,10 @@ public:
 // 그래서 탐색을 할때는 Key타입으로 한다.
 // 만약 Key타입이 문자열이라면 문자열로 탐색을 할 수 있는 것이다.
 template <typename KEY, typename VALUE>
-class CBinaryTree
+class CAVLTree
 {
 public:
-	CBinaryTree()
+	CAVLTree()
 	{
 		m_Root = nullptr;
 		m_Size = 0;
@@ -121,7 +167,7 @@ public:
 		m_End->m_Prev = m_Begin;
 	}
 
-	~CBinaryTree()
+	~CAVLTree()
 	{
 		PNODE	DeleteNode = m_Begin;
 
@@ -136,11 +182,11 @@ public:
 	}
 
 private:
-	typedef CBinaryTreeNode<KEY, VALUE>		NODE;
-	typedef CBinaryTreeNode<KEY, VALUE>* PNODE;
+	typedef CAVLTreeNode<KEY, VALUE>		NODE;
+	typedef CAVLTreeNode<KEY, VALUE>* PNODE;
 
 public:
-	typedef CBinaryTreeIterator<KEY, VALUE>	iterator;
+	typedef CAVLTreeIterator<KEY, VALUE>	iterator;
 
 private:
 	PNODE	m_Root;
@@ -267,17 +313,14 @@ public:
 		else if (iter.m_Node == nullptr)
 			return end();
 
-		// 리프노드일 경우 부모로부터 연결을 제거하고
-		// 노드를 제거해준다.
+		// 리프노드일 경우 부모로부터 연결을 제거하고 노드를 제거해준다.
 		if (!iter.m_Node->m_Left && !iter.m_Node->m_Right)
 		{
 			// 부모노드를 얻어온다.
 			PNODE	Parent = iter.m_Node->m_Parent;
 
-			// 만약 부모노드가 없다면 
-			// 현재 지우려는 노드는 루트노드라는 것이다.
-			// 그런데 루트노드가 리프노드라는 말은 
-			// 이 노드 1개만 남았다는
+			// 만약 부모노드가 없다면 현재 지우려는 노드는 루트노드라는 것이다.
+			// 그런데 루트노드가 리프노드라는 말은 이 노드 1개만 남았다는
 			// 것이다.
 			if (!Parent)
 			{
@@ -293,8 +336,7 @@ public:
 				return end();
 			}
 
-			// 지우려는 노드가 부모느드의 
-			// 왼쪽 노드인지 오른쪽 노드인지를
+			// 지우려는 노드가 부모느드의 왼쪽 노드인지 오른쪽 노드인지를
 			// 판단하여 부모와의 연결을 끊어준다.
 			if (Parent->m_Left == iter.m_Node)
 				Parent->m_Left = nullptr;
@@ -312,19 +354,18 @@ public:
 
 			--m_Size;
 
+			ReBalance(Parent);
 
-			// 지운 노드의 다음노드를 넣어서 
-			// iterator를 반환해준다.
+
+			// 지운 노드의 다음노드를 넣어서 iterator를 반환해준다.
 			iterator	result;
 			result.m_Node = Next;
 
 			return result;
 		}
 
-		// 만약 왼쪽 노드가 있을 경우 
-		// 왼쪽 노드에서 가장 큰 노드를 찾아서
-		// 지울 노드의 값을 변경해주고 
-		// 찾아준 노드를 제거한다.
+		// 만약 왼쪽 노드가 있을 경우 왼쪽 노드에서 가장 큰 노드를 찾아서
+		// 지울 노드의 값을 변경해주고 찾아준 노드를 제거한다.
 		if (iter.m_Node->m_Left)
 		{
 			// 왼쪽에 존재하는 노드들중 가장 큰 노드를 찾아온다.
@@ -334,11 +375,9 @@ public:
 			iter.m_Node->first = MaxNode->first;
 			iter.m_Node->second = MaxNode->second;
 
-			// 찾아준 노드를 제거해야하기 때문에 
-			// 부모로부터 연결을 끊고
+			// 찾아준 노드를 제거해야하기 때문에 부모로부터 연결을 끊고
 			// 제거해주도록 한다.
-			// 단, 찾아준 노드가 왼쪽 자식노드가 
-			// 있을수도 있으므로
+			// 단, 찾아준 노드가 왼쪽 자식노드가 있을수도 있으므로
 			PNODE	LeftChild = MaxNode->m_Left;
 			PNODE	Parent = MaxNode->m_Parent;
 
@@ -363,14 +402,15 @@ public:
 
 			--m_Size;
 
+			ReBalance(Parent);
+
 			iterator	result;
 			result.m_Node = Next;
 
 			return result;
 		}
 
-		// 지울 노드의 오른쪽 노드만 존재할 경우 
-		// 오른쪽 노드에서 가장 작은 노드를
+		// 지울 노드의 오른쪽 노드만 존재할 경우 오른쪽 노드에서 가장 작은 노드를
 		// 찾아온다.
 		PNODE	MinNode = FindMin(iter.m_Node->m_Right);
 
@@ -378,11 +418,9 @@ public:
 		iter.m_Node->first = MinNode->first;
 		iter.m_Node->second = MinNode->second;
 
-		// 찾아준 노드를 제거해야하기 때문에 
-		// 부모로부터 연결을 끊고
+		// 찾아준 노드를 제거해야하기 때문에 부모로부터 연결을 끊고
 		// 제거해주도록 한다.
-		// 단, 찾아준 노드가 오른쪽 자식노드가 
-		// 있을수도 있으므로
+		// 단, 찾아준 노드가 오른쪽 자식노드가 있을수도 있으므로
 		PNODE	RightChild = MinNode->m_Right;
 		PNODE	Parent = MinNode->m_Parent;
 
@@ -392,8 +430,7 @@ public:
 		else
 			Parent->m_Right = RightChild;
 
-		// 오른쪽 자식노드가 있을 경우라면 
-		// 부모로 MinNode의 부모를
+		// 오른쪽 자식노드가 있을 경우라면 부모로 MinNode의 부모를
 		// 지정해주도록 한다.
 		if (RightChild)
 			RightChild->m_Parent = Parent;
@@ -407,6 +444,8 @@ public:
 		delete	MinNode;
 
 		--m_Size;
+
+		ReBalance(Parent);
 
 		iterator	result;
 		result.m_Node = Next;
@@ -447,6 +486,8 @@ private:
 			NewNode->m_Next = Node;
 			Node->m_Prev = NewNode;
 
+			ReBalance(NewNode);
+
 			return NewNode;
 		}
 
@@ -474,6 +515,8 @@ private:
 
 		NewNode->m_Next = Next;
 		Next->m_Prev = NewNode;
+
+		ReBalance(NewNode);
 
 		return NewNode;
 	}
@@ -537,12 +580,183 @@ private:
 		return Node;
 	}
 
+	PNODE RotationLeft(PNODE Node)
+	{
+		// 기준노드의 부모노드를 얻어온다.
+		PNODE	Parent = Node->m_Parent;
+
+		// 기준노드의 오른쪽 자식노드를 얻어온다.
+		PNODE	RightChild = Node->m_Right;
+
+		// 기준노드의 오른쪽 자식노드의 왼쪽 자식노드를 얻어온다.
+		PNODE	RightLeftChild = RightChild->m_Left;
+
+		// 기준노드의 오른쪽 자식노드로 오른쪽자식노드의 왼쪽자식노드를 붙여준다.
+		Node->m_Right = RightLeftChild;
+
+		// 오른쪽 자식노드의 왼쪽 자식노드가 있을 경우 그 부모를 기준노드로 지정한다.
+		if (RightLeftChild)
+			RightLeftChild->m_Parent = Node;
+
+		// 기준노드를 오른쪽 자식노드의 왼쪽 자식으로 붙여준다.
+		RightChild->m_Left = Node;
+
+		// 기준노드의 부모로 오른쪽 자식노드를 지정한다.
+		Node->m_Parent = RightChild;
+
+		// 오른쪽 자식노드의 부모노드를 기준노드의 부모노드로 지정한다.
+		RightChild->m_Parent = Parent;
+
+		// 기준노드의 부모노드가 있을경우 기준노드가 부모노드의 왼쪽자식인지 오른쪽 자식인지를
+		// 판단하여 그 방향으로 기준노드의 오른쪽 자식노드를 붙여준다.
+		if (Parent)
+		{
+			if (Parent->m_Left == Node)
+				Parent->m_Left = RightChild;
+
+			else
+				Parent->m_Right = RightChild;
+		}
+
+		// 기준노드의 부모노드가 없다면 기준노드는 루트노드라는 의미이다.
+		// 그러므로 기준노드의 자리에 RightChild가 오게되므로 루트노드를
+		// RightChild로 교체해주어야 한다.
+		else
+			m_Root = RightChild;
+
+		// 바뀐 기준노드를 반환한다.
+		return RightChild;
+	}
+
+	PNODE RotationRight(PNODE Node)
+	{
+		// 기준노드의 부모노드를 얻어온다.
+		PNODE	Parent = Node->m_Parent;
+
+		// 기준노드의 왼쪽 자식노드를 얻어온다.
+		PNODE	LeftChild = Node->m_Left;
+
+		// 기준노드의 왼쪽 자식노드의 오른쪽 자식노드를 얻어온다.
+		PNODE	LeftRightChild = LeftChild->m_Right;
+
+		// 기준노드의 왼쪽 자식노드로 왼쪽자식노드의 오른쪽자식노드를 붙여준다.
+		Node->m_Right = LeftRightChild;
+
+		// 왼쪽 자식노드의 오른쪽 자식노드가 있을 경우 그 부모를 기준노드로 지정한다.
+		if (LeftRightChild)
+			LeftRightChild->m_Parent = Node;
+
+		// 왼쪽 자식노드의 오른쪽 자식으로 기준노드를 붙여준다.
+		LeftChild->m_Right = Node;
+
+		// 기준노드의 부모노드로 왼쪽 자식노드를 지정한다.
+		Node->m_Parent = LeftChild;
+
+		// 왼쪽자식노드의 부모로 기준노드의 부모노드를 지정한다.
+		LeftChild->m_Parent = Parent;
+
+		// 기준노드의 부모노드가 있을경우 기준노드가 부모노드의 왼쪽자식인지 오른쪽 자식인지를
+		// 판단하여 그 방향으로 기준노드의 왼쪽 자식노드를 붙여준다.
+		if (Parent)
+		{
+			if (Parent->m_Left == Node)
+				Parent->m_Left = LeftChild;
+
+			else
+				Parent->m_Right = LeftChild;
+		}
+
+		// 기준노드의 부모노드가 없다면 기준노드는 루트노드라는 의미이다.
+		// 그러므로 기준노드의 자리에 LeftChild가 오게되므로 루트노드를
+		// LeftChild로 교체해주어야 한다.
+		else
+			m_Root = LeftChild;
+
+		// 바뀐 기준노드를 반환한다.
+		return LeftChild;
+	}
+
 	PNODE FindMin(PNODE Node)
 	{
 		if (Node->m_Left)
 			return FindMin(Node->m_Left);
 
 		return Node;
+	}
+
+	int GetHeight(PNODE Node)
+	{
+		if (!Node)
+			return 0;
+
+		int	Left = GetHeight(Node->m_Left);
+		int	Right = GetHeight(Node->m_Right);
+
+		int	Height = Left > Right ? Left : Right;
+
+		return Height + 1;
+	}
+
+	int BalanceFactor(PNODE Node)
+	{
+		return GetHeight(Node->m_Left) - GetHeight(Node->m_Right);
+	}
+
+	void ReBalance(PNODE Node)
+	{
+		if (!Node)
+			return;
+
+		// 왼쪽과 오른쪽의 높이차이를 구해준다.
+		int	Factor = BalanceFactor(Node);
+
+		// 오른쪽으로 균형이 무너졌을 경우
+		if (Factor <= -2)
+		{
+			int	RightFactor = BalanceFactor(Node->m_Right);
+
+			// 음수라면 오른쪽 오른쪽으로 균형이 무너졌을 경우이다.
+			if (RightFactor <= 0)
+			{
+				// 기준노드를 중심으로 왼쪽으로 회전을 시켜준다.
+				Node = RotationLeft(Node);
+			}
+
+			// 오른쪽 왼쪽으로 균형이 무너졌을 경우이다.
+			else
+			{
+				// 오른쪽 자식노드를 중심으로 오른쪽 회전을 한다.
+				RotationRight(Node->m_Right);
+
+				// 기준노들를 중심으로 왼쪽 회전을 시켜준다.
+				Node = RotationLeft(Node);
+			}
+		}
+
+		// 왼쪽으로 균형이 무너졌을 경우
+		else if (Factor >= 2)
+		{
+			int	LeftFactor = BalanceFactor(Node->m_Left);
+
+			// 왼쪽 왼쪽으로 균형이 무너졌을 경우
+			if (LeftFactor >= 0)
+			{
+				// 기준노드를 중심으로 오른쪽으로 회전한다.
+				Node = RotationRight(Node);
+			}
+
+			// 왼쪽 오른쪽으로 균형이 무너졌을 경우
+			else
+			{
+				// 기준노드의 왼쪽 자식노드를 중심으로 왼쪽으로 회전한다.
+				RotationLeft(Node->m_Left);
+
+				// 기준노드를 중심으로 오른쪽으로 회전한다.
+				Node = RotationRight(Node);
+			}
+		}
+
+		ReBalance(Node->m_Parent);
 	}
 };
 

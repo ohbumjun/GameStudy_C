@@ -1,14 +1,11 @@
-#include<iostream>
 #include"GameManager.h"
-
-using namespace std;
 
 int main()
 {
 	if (!CGameManager::GetInst()->Init())
 	{
 		CGameManager::GetInst()->DestroyInst();
-		return true;
+		return 0;
 	}
 
 	CGameManager::GetInst()->Run();
@@ -16,3 +13,4 @@ int main()
 
 	return 0;
 }
+
