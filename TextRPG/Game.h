@@ -70,6 +70,14 @@ enum class Battle_Menu
 
 enum class Battle_Result
 {
+	None,
 	Player_Death,
 	Monster_Death
+};
+
+enum Equip_Type
+{
+	Equip_Weapon,
+	Equip_Armor,
+	Equip_End
 };

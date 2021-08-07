@@ -24,10 +24,15 @@ private :
 	int m_Exp;
 	int m_Gold;
 	int m_Level;
+	class CItem* m_Equipment[Equip_End];
 public :
 	int GetAttack() { return m_Attack; }
 	int GetArmor() { return m_Armor; }
 	int GetGold() { return m_Gold; }
+	CItem* GetEquipment(Equip_Type Type)
+	{
+		return m_Equipment[Type];
+	}
 public :
 	bool Init();
 	bool Damage(int Damage);
