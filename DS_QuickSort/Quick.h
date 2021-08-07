@@ -2,24 +2,24 @@
 #include<assert.h>
 
 template<typename T>
-class CQuick
+class CQuickSort
 {
 public :
-	CQuick()
+	CQuickSort()
 	{
 		m_Size = 0;
 		m_Capacity = 8;
 		m_Data = new T[m_Capacity];
 		m_Func = SortFunction;
 	}
-	~CQuick()
+	~CQuickSort()
 	{
 		delete[] m_Data;
 	}
 private :
-	T* m_Data;
 	int m_Size;
 	int m_Capacity;
+	T* m_Data;
 	bool (*m_Func)(const T&, const T&);
 private :
 	static bool SortFunction(const T& Left, const T& Right)
@@ -27,7 +27,7 @@ private :
 		return Left > Right;
 	}
 public :
-	void SetSortFunction(bool(*pFunc)(const T&, const T&))
+	void SetSortFunction(bool(*pFunc)(const T& , const T&))
 	{
 		m_Func = pFunc;
 	}
@@ -36,7 +36,7 @@ public :
 	bool empty() const { return m_Size == 0; }
 	void push(const T& data)
 	{
-		if (m_Capacity == m_Size)
+		if (m_Size == m_Capacity)
 		{
 			m_Capacity *= 2;
 			T* Array = new T[m_Capacity];
@@ -49,21 +49,20 @@ public :
 	}
 	void push(T* Array, int Count)
 	{
-		if (m_Capacity < Count)
+		if (m_Size <= Count)
 		{
-			m_Capacity = Count;
+			m_Size = Count;
 			delete[] m_Data;
-			m_Data = new T[m_Capacity];
+			m_Data = new T[Count];
 		}
-		for (int i = 0; i < m_Size; i++)
+		for (int i = 0; i < Count; i++)
 		{
 			m_Data[i] = Array[i];
 		}
-		m_Size = Count;
 	}
 	void Sort()
 	{
-		QuickSort(0, m_Size - 1; m_Data);
+		QuickSort(0, m_Size - 1, m_Data);
 	}
 	void Sort(T* Array, int Count)
 	{
@@ -74,35 +73,35 @@ public :
 		if (Left < Right)
 		{
 			int Pivot = Partition(Left, Right, Array);
-			
-			// 피봇기준으로 
-			// 왼쪽,오른쪽 분할해서 들어간다
-			QuickSort(Left,Pivot-1,Array);
 			QuickSort(Pivot + 1, Right, Array);
+			QuickSort(Left, Pivot - 1, Array);
 		}
 	}
 	int Partition(int Left, int Right, T* Array)
 	{
 		int Low = Left;
 		int High = Right + 1;
-		T Value = Array[Low];
-
+		T Value = Array[Left];
 		do
 		{
 			do
 			{
 				++Low;
-			} while (Low <= Right && m_Func(m_Data[Value],m_Data[Low]));
-			do
+			} while (Low <= Right && m_Func(Value,Array[Low]));
+			do 
 			{
 				--High;
-			} while (High >= Low && m_Func(m_Data[High],m_Data[Value]));
+			} while (High >= Left && m_Func(Array[High], Value));
 			if (Low < High)
 			{
 				T temp = Array[Low];
 				Array[Low] = Array[High];
 				Array[High] = temp;
 			}
-		} while (Left < High);
+		} while (Low < High);
+		T temp = Array[High];
+		Array[High] = Array[Left];
+		Array[Left] = temp;
+		return High;
 	}
 };
