@@ -39,10 +39,11 @@ CMonster* CObjectManager::CloneMonster(const char *name)
 		if (strcmp(m_Monster[i]->GetName(), name) == 0)
 		{
 			pMonster = m_Monster[i];
+			break;
 		}
 	}
 	if (pMonster == nullptr) return nullptr;
-	return pMonster;
+	return pMonster->Clone();
 }
 
 bool CObjectManager::Init()

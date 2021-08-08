@@ -42,8 +42,9 @@ CMonster* CMap::SpawnMonster()
     case MT_Hard:
         return CObjectManager::GetInst()->CloneMonster("드래곤");
     }
-}
 
+    return nullptr;
+}
 Battle_Result CMap::Battle(CPlayer* pPlayer, CMonster* pMonster)
 {
     int Attack = pPlayer->GetAttack();
@@ -84,12 +85,8 @@ void CMap::Run()
         switch (Menu())
         {
         case Battle_Menu::Attack:
-        {
             switch (Battle(pPlayer,pMonster))
             {
-            case Battle_Result::Player_Death:
-                pPlayer->Death();
-                break;
             case Battle_Result::Monster_Death:
                 // 경험치, 골드
                 pPlayer->AddGold(pMonster->GetGold());
@@ -116,9 +113,12 @@ void CMap::Run()
                 // 새로운 몬스터 spawn
                 delete pMonster;
                 pMonster = SpawnMonster();
+                system("pause");
+                break;
+            case Battle_Result::Player_Death:
+                pPlayer->Death();
                 break;
             }
-        }
             break;
         case Battle_Menu::Back:
             delete pMonster;
