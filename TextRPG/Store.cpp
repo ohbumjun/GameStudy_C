@@ -21,6 +21,15 @@ CStore::~CStore()
 bool CStore::Init(Store_Type Type)
 {
 	m_Type = Type;
+	switch (m_Type)
+	{
+	case ST_Weapon:
+		SetWeaponList();
+		break;
+	case ST_Armor:
+		SetArmorList();
+		break;
+	}
 	return true;
 }
 
@@ -29,7 +38,7 @@ void CStore::Run()
 	CPlayer* pPlayer = CObjectManager::GetInst()->GetPlayer();
 	while (true)
 	{
-		int Select = Menu(m_Type);
+		int Select = Menu(pPlayer);
 		if (Select == 4) continue;
 		if (Select == -1) return;
 		int Index = Select - 1;
@@ -55,9 +64,18 @@ void CStore::Run()
 	}
 }
 
-int CStore::Menu(Store_Type Type)
+CItem* CStore::CreateItem(const char* Name, Item_Type Type,
+	int Option, int Price, int Sell, const char* Desc)
 {
-	switch (Type)
+	CItem* Item = new CItem;
+	Item->Init(Name, Type, Option, Price, Sell, Desc);
+	return Item;
+}
+
+int CStore::Menu(CPlayer* pPlayer)
+{
+	system("cls");
+	switch (m_Type)
 	{
 	case ST_Weapon:
 		cout << "==== 무기구 상점 ====" << endl;
@@ -66,16 +84,33 @@ int CStore::Menu(Store_Type Type)
 		cout << "==== 방어구 상점 ====" << endl;
 		break;
 	}
-	for (int i = 0; i < IT_End; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		cout << i+1 << ". " ;
 		m_Item[i]->Output();
 		cout << endl;
 	}
 	cout << "4. 뒤로 가기" << endl;
+	cout << "보유금액 : " << pPlayer->GetGold() << endl;
 	cout << "아이템을 선택하세요 : ";
 	int _Menu;
 	cin >> _Menu;
 	if (_Menu < 0 || _Menu > 4) return -1;
 	return _Menu;
+}
+
+void CStore::SetWeaponList()
+{
+	m_Item[0] = CreateItem("목검", IT_Weapon, 50, 1000, 500, "나무로 만든 검");
+	m_Item[1] = CreateItem("BF.대검", IT_Weapon, 200, 8000, 4000, "조금 센 검");
+	m_Item[2] = CreateItem("무한대검", IT_Weapon, 600, 40000, 20000, "치명타 죽어라.");
+
+}
+
+void CStore::SetArmorList()
+{
+	m_Item[0] = CreateItem("천갑옷", IT_Armor, 25, 1000, 500, "약한 방어구");
+	m_Item[1] = CreateItem("거인의 벨트", IT_Armor, 100, 8000, 4000, "조금 단단한 벨트");
+	m_Item[2] = CreateItem("가갑옷", IT_Armor, 300, 40000, 20000, "구른다!!");
+
 }

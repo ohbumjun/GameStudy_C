@@ -7,12 +7,12 @@ public :
 	CItem(CItem& Item);
 	~CItem();
 private :
-	char m_Name[52];
-	Item_Type m_Type;
-	int m_Option;
-	int m_Price;
-	int m_Sell;
-	char m_Desc[512];
+	char    m_Name[32];
+	Item_Type   m_Type;
+	int     m_Option;
+	int     m_Price;
+	int     m_Sell;
+	char    m_Desc[512];
 public :
 	Item_Type GetItemType()
 	{

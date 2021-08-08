@@ -41,6 +41,7 @@ void CStoreManager::Run()
 
 Store_Menu CStoreManager::Menu()
 {
+	system("cls");
 	cout << "1. 무기구 상점" << endl;
 	cout << "2. 방어구 상점" << endl;
 	cout << "상점을 선택하세요 :" ;
