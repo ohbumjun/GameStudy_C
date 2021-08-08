@@ -83,7 +83,6 @@ void CMap::Run()
         {
         case Battle_Menu::Attack:
         {
-            cout << "attack" << endl;
             switch (Battle(pPlayer,pMonster))
             {
             case Battle_Result::Player_Death:

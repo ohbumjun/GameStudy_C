@@ -31,10 +31,11 @@ bool CPlayer::Init()
 	cout << "이름을 입력하세요 :";
 	cin >> m_Name;
 	cout << endl;
+
 	while (true)
 	{
 		system("cls");
-		cout << "직업을 선택하세요 :" ;
+		cout << "직업을 선택하세요 :" << endl ;
 		cout << "1.기사" << endl;
 		cout << "2.궁수" << endl;
 		cout << "3.마법사" << endl;
@@ -113,12 +114,16 @@ void CPlayer::Output()
 		cout << "마법사";
 		break;
 	}
+	cout << endl;
 	cout << "공격력 : " << m_Attack;
 	if (m_Equipment[IT_Weapon])
 		cout << " + " << m_Equipment[IT_Weapon]->GetOption() ;
+	cout << endl;
+
 	cout << "방어력 : " << m_Armor;
 	if (m_Equipment[IT_Armor])
 		cout << " + " << m_Equipment[IT_Armor]->GetOption();
+	cout << endl;
 
 	cout << "체력 : " << m_HP << " / " << m_HPMax << endl;
 	cout << "마력 : " << m_MP << " / " << m_MPMax << endl;
