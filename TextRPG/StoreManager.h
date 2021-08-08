@@ -21,5 +21,6 @@ public:
 public:
 	bool Init();
 	void Run();
+	Store_Menu Menu();
 };
 

@@ -5,12 +5,22 @@
 
 CObjectManager* CObjectManager::m_pInst = nullptr;
 
-CObjectManager::CObjectManager()
+CObjectManager::CObjectManager() :
+	pPlayer(nullptr),m_Monster{},LevelUpExp{},m_DropItem{}
 {
 }
 
 CObjectManager::~CObjectManager()
 {
+	if (pPlayer) delete pPlayer;
+	for (int i = 0; i < 3; i++)
+	{
+		if (m_Monster[i]) delete m_Monster[i];
+	}
+	for (int i = 0; i < 6; i++)
+	{
+		if (m_DropItem[i]) delete m_DropItem[i];
+	}
 }
 
 CItem* CObjectManager::CreateItem(const char* Name, Item_Type Type, 
@@ -19,6 +29,20 @@ CItem* CObjectManager::CreateItem(const char* Name, Item_Type Type,
 	CItem* Item = new CItem;
 	Item->Init(Name,Type,Option,Price,Sell, Desc);
 	return nullptr;
+}
+
+CMonster* CObjectManager::CloneMonster(const char *name)
+{
+	CMonster* pMonster = nullptr;
+	for (int i = 0; i < 3; i++)
+	{
+		if (strcmp(m_Monster[i]->GetName(), name) == 0)
+		{
+			pMonster = m_Monster[i];
+		}
+	}
+	if (pMonster == nullptr) return nullptr;
+	return pMonster;
 }
 
 bool CObjectManager::Init()
@@ -52,8 +76,4 @@ bool CObjectManager::Init()
 	m_DropItem[5] = CreateItem("°¡½Ã°©¿Ê(·¹¾î)", IT_Armor, 500, 40000, 20000, "±¸¸¥´Ù!!");
 
 	return true;
-}
-
-void CObjectManager::Run()
-{
 }

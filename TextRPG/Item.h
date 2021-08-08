@@ -4,6 +4,7 @@ class CItem
 {
 public :
 	CItem();
+	CItem(CItem& Item);
 	~CItem();
 private :
 	char m_Name[52];
@@ -27,6 +28,8 @@ public :
 	}
 
 public :
+	CItem* CloneItem();
+	void Output();
 	bool Init(const char* Name, Item_Type Type, int Option, 
 		int Price, int Sell, const char* Desc);
 };

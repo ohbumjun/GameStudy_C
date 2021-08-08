@@ -1,8 +1,10 @@
 #pragma once
+#include"Game.h"
 class CMonster
 {
 public :
 	CMonster();
+	CMonster(CMonster &monster);
 	~CMonster();
 private:
 	char m_Name[52];
@@ -26,5 +28,6 @@ public :
 		int HP, int MP, int Exp, int Gold, int Level);
 	CMonster* Clone();
 	bool Damage(int Damage);
+	void Output();
 };
 

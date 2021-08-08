@@ -5,6 +5,9 @@ class CInventory
 {
 	CInventory();
 	~CInventory();
+private :
+	class CItem* m_Item[INVENTORY_MAX];
+	int m_Size;
 private:
 	static CInventory* m_pInst;
 public:
@@ -20,5 +23,10 @@ public:
 public:
 	bool Init();
 	void Run();
+	bool IsFull()
+	{
+		return m_Size == INVENTORY_MAX;
+	}
+	class CItem* Equip(class CItem* Item);
 };
 

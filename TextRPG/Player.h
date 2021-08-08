@@ -4,14 +4,8 @@
 class CPlayer
 {
 public :
-	CPlayer()
-	{
-
-	}
-	~CPlayer()
-	{
-
-	}
+	CPlayer();
+	~CPlayer();
 private :
 	char m_Name[52];
 	Job m_Job;
@@ -33,9 +27,12 @@ public :
 	{
 		return m_Equipment[Type];
 	}
+	void AddGold(int Gold) { m_Gold += Gold; }
+	void AddExp(int Exp) { m_Exp += Exp; }
 public :
 	bool Init();
 	bool Damage(int Damage);
-	
+	void Death();
+	void Output();
 };
 

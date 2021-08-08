@@ -48,6 +48,7 @@ enum Store_Type
 
 enum class Store_Menu
 {
+	None,
 	Weapon,
 	Armor
 };
@@ -64,8 +65,7 @@ enum class Battle_Menu
 {
 	None,
 	Attack,
-	Armor,
-	End
+	Back
 };
 
 enum class Battle_Result

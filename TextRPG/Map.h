@@ -7,6 +7,7 @@ public :
 	~CMap();
 private:
 	Battle_Menu Menu();
+	Map_Type m_Type;
 public:
 	class CMonster* SpawnMonster();
 	Battle_Result Battle(class CPlayer* pPlayer, class CMonster* pMonster);

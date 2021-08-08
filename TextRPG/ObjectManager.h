@@ -17,6 +17,7 @@ public :
 	}
 	CItem* CreateItem(const char* Name, Item_Type Type, int Option, int Price,
 		int Sell , const char* Desc);
+	class CMonster* CloneMonster(const char*name);
 private:
 	static CObjectManager* m_pInst;
 public:
@@ -31,6 +32,5 @@ public:
 	}
 public:
 	bool Init();
-	void Run();
 };
 
