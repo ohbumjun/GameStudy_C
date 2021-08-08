@@ -37,8 +37,8 @@ int main()
 		std::cout << Queue.front() << std::endl;
 		Queue.pop();
 	}
-
-	/*CQueue<int>	Queue;
+	// ---
+	CQueue<int>	Queue;
 
 	for (int i = 0; i < 100; ++i)
 	{
@@ -49,9 +49,9 @@ int main()
 	{
 		std::cout << Queue.front() << std::endl;
 		Queue.pop();
-	}*/
-
-	/*int	Array[100] = {};
+	}
+	// ---
+	int	Array[100] = {};
 
 	CStack<int>	stackInt;
 
@@ -74,7 +74,7 @@ int main()
 	for (int i = 0; i < 100; ++i)
 	{
 		std::cout << Array[i] << std::endl;
-	}*/
+	}
 
 	/*while (!stackInt.empty())
 	{

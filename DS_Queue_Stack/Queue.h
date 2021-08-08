@@ -1,35 +1,42 @@
 #pragma once
+#include<assert.h>
 
 template<typename T>
 class CQueueNode
 {
-	template<typename T>
-	friend class CQueue;
 public :
-	CQueueNode() : m_Next(nullptr)
+	CQueueNode()
 	{
+		m_Next = nullptr;
 	}
 	~CQueueNode()
 	{
+
 	}
 private :
-	CQueueNode<T>* m_Next;
 	T m_Data;
+	CQueueNode<T>* m_Next;
 };
+
 
 template<typename T>
 class CQueue
 {
-private :
-	typedef CQueueNode<T> NODE;
-	typedef CQueueNode<T>* PNODE;
 public :
-	CQueue() : m_Size(0), m_FirstNode(nullptr),m_LastNode(nullptr){}
-	~CQueue() { clear(); }
+	CQueue()
+	{
+		m_FirstNode = nullptr;
+		m_LastNode = nullptr;
+		m_Size = 0;
+	}
+	~CQueue()
+	{
+		clear();
+	}
 private :
+	CQueueNode<T>* m_FirstNode;
+	CQueueNode<T>* m_LastNode;
 	int m_Size;
-	PNODE m_FirstNode;
-	PNODE m_LastNode;
 public :
 	int size() const { return m_Size; }
 	bool empty() const { return m_Size == 0; }
@@ -37,7 +44,7 @@ public :
 	{
 		while (m_FirstNode)
 		{
-			PNODE Next = m_FirstNode->m_Next;
+			CQueueNode<T>* Next = m_FirstNode->m_Next;
 			delete m_FirstNode;
 			m_FirstNode = Next;
 		}
@@ -46,18 +53,19 @@ public :
 	}
 	void push(const T& data)
 	{
-		PNODE Node = new NODE;
+		CQueueNode<T>* Node = new CQueueNode;
 		Node->m_Data = data;
-
-		if (m_LastNode) m_LastNode->m_Next = Node;
-		if (!m_FirstNode) m_FirstNode = Node;
+		if (!m_FirstNode)
+			m_FirstNode = Node;
+		if (m_LastNode)
+			m_LastNode->m_Next = Node;
 		m_LastNode = Node;
-		++m_size;
+		++m_Size;
 	}
 	void pop()
 	{
-		i(empty()) assert(false);
-		PNODE Next = m_FirstNode->m_Next;
+		if (empty()) assert(false);
+		CQueueNode<T>* Next = m_FirstNode->m_Next;
 		delete m_FirstNode;
 		m_FirstNode = Next;
 		if (!m_FirstNode) m_LastNode = nullptr;
