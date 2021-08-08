@@ -20,13 +20,20 @@ public:
 	{
 		if (m_pInst) delete m_pInst;
 	}
-public:
-	bool Init();
-	void Run();
+public :
 	bool IsFull()
 	{
 		return m_Size == INVENTORY_MAX;
 	}
+	void AddItem(CItem* Item)
+	{
+		m_Item[m_Size] = Item;
+		++m_Size;
+	}
+
+public:
+	bool Init();
+	void Run();
 	class CItem* Equip(class CItem* Item);
 };
 

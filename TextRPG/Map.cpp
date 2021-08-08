@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Item.h"
 #include "Monster.h"
+#include "Inventory.h"
 
 using namespace std;
 
@@ -94,13 +95,29 @@ void CMap::Run()
                 pPlayer->AddGold(pMonster->GetGold());
                 pPlayer->AddExp(pMonster->GetExp());
                 // 드롭아이템
-
+                if (!CInventory::GetInst()->IsFull())
+                {
+                    float Percent = (rand() % 10001) / 100;
+                    if (Percent < 10.1f)
+                    {
+                        int Index = -1;
+                        if (rand() % 2 == 0)
+                        {
+                            Index = (int)m_Type * 2;
+                        }
+                        else
+                        {
+                            Index = (int)m_Type * 2 + 1;
+                        }
+                        // 인벤토리 창에 추가하기 
+                        CInventory::GetInst()->AddItem(CObjectManager::GetInst()->GetDropItem(Index));
+                    }
+                }
                 // 새로운 몬스터 spawn
                 delete pMonster;
                 pMonster = SpawnMonster();
                 break;
             }
-            continue;
         }
             break;
         case Battle_Menu::Back:

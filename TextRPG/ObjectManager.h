@@ -11,6 +11,10 @@ private :
 	int LevelUpExp[LEVEL_MAX];
 	class CItem* m_DropItem[6];
 public :
+	CItem* GetDropItem(int Index)
+	{
+		return m_DropItem[Index];
+	}
 	CPlayer* GetPlayer()
 	{
 		return pPlayer;
