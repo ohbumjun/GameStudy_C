@@ -33,7 +33,9 @@ bool CMonster::Init(const char* Name, int Attack, int Armor,
     m_Attack = Attack;
     m_Armor  = Armor;
     m_HP     = HP;
+    m_HPMax = HP;
     m_MP     = MP;
+    m_MPMax = MP;
     m_Exp    = Exp;
     m_Gold   = Gold;
     m_Level  = Level;

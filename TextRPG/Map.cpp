@@ -16,6 +16,7 @@ CMap::~CMap()
 
 Battle_Menu CMap::Menu()
 {
+    
     cout << "1. 공격" << endl;
     cout << "2. ㅌㅌ" << endl;
     cout << "메뉴를 선택하세요 : ";
@@ -69,16 +70,16 @@ Battle_Result CMap::Battle(CPlayer* pPlayer, CMonster* pMonster)
 
 void CMap::Run()
 {
-    system("cls");
     CPlayer* pPlayer = CObjectManager::GetInst()->GetPlayer();
     CMonster* pMonster = SpawnMonster();
-    cout << "==== 플레이어 ====" << endl;
-    pPlayer->Output();
-    cout << "==== 몬스터 ====" << endl;
-    pMonster->Output();
-    cout << endl;
     while (true)
     {
+        system("cls");
+        cout << "==== 플레이어 ====" << endl;
+        pPlayer->Output();
+        cout << "==== 몬스터 ====" << endl;
+        pMonster->Output();
+        cout << endl;
         switch (Menu())
         {
         case Battle_Menu::Attack:
@@ -93,8 +94,13 @@ void CMap::Run()
                 pPlayer->AddGold(pMonster->GetGold());
                 pPlayer->AddExp(pMonster->GetExp());
                 // 드롭아이템
+
+                // 새로운 몬스터 spawn
+                delete pMonster;
+                pMonster = SpawnMonster();
                 break;
             }
+            continue;
         }
             break;
         case Battle_Menu::Back:
