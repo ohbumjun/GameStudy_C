@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Item.h"
+#include "ObjectManager.h"
 
 using namespace std;
 
@@ -22,6 +23,24 @@ CPlayer::CPlayer() :
 CPlayer::~CPlayer()
 {
 
+}
+
+void CPlayer::AddExp(int Exp)
+{
+	m_Exp += Exp;
+	int LevelUpExp = CObjectManager::GetInst()->GetLevelUpExp(m_Level);
+	if (m_Exp >= LevelUpExp)
+	{
+		if (m_Level == LEVEL_MAX)
+		{
+			m_Exp = LevelUpExp - 1;
+		}
+		else
+		{
+			m_Level += 1;
+			m_Exp -= LevelUpExp;
+		}
+	}
 }
 
 bool CPlayer::Init()

@@ -28,8 +28,8 @@ public :
 		return m_Equipment[Type];
 	}
 	void AddGold(int Gold) { m_Gold += Gold; }
-	void AddExp(int Exp) { m_Exp += Exp; }
 public :
+	void AddExp(int Exp);
 	bool Init();
 	bool Damage(int Damage);
 	void Death();

@@ -12,6 +12,6 @@ public:
 	class CMonster* SpawnMonster();
 	Battle_Result Battle(class CPlayer* pPlayer, class CMonster* pMonster);
 	void Run();
-	bool Init();
+	bool Init(Map_Type Type);
 };
 

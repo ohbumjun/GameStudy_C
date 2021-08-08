@@ -32,11 +32,11 @@ Map_Menu CMapManager::Menu()
 bool CMapManager::Init()
 {
 	m_Maps[0] = new CMap;
-	if (!m_Maps[0]->Init()) return false;
+	if (!m_Maps[0]->Init(MT_Easy)) return false;
 	m_Maps[1] = new CMap;
-	if (!m_Maps[1]->Init()) return false;
+	if (!m_Maps[1]->Init(MT_Normal)) return false;
 	m_Maps[2] = new CMap;
-	if (!m_Maps[2]->Init()) return false;
+	if (!m_Maps[2]->Init(MT_Hard)) return false;
 	return true;
 }
 

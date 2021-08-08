@@ -128,7 +128,8 @@ void CMap::Run()
 
 }
 
-bool CMap::Init()
+bool CMap::Init(Map_Type Type)
 {
+    m_Type = Type;
     return true;
 }

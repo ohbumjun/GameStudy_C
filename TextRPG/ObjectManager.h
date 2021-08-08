@@ -15,6 +15,10 @@ public :
 	{
 		return m_DropItem[Index];
 	}
+	int GetLevelUpExp(int Level)
+	{
+		return LevelUpExp[Level - 1];
+	}
 	CPlayer* GetPlayer()
 	{
 		return pPlayer;
