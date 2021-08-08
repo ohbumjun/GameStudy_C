@@ -39,8 +39,8 @@ void CStore::Run()
 	while (true)
 	{
 		int Select = Menu(pPlayer);
-		if (Select == 4) continue;
-		if (Select == -1) return;
+		if (Select == 4) return;
+		if (Select == -1) continue;
 		int Index = Select - 1;
 		// 구매할 수 없는 경우의 수를 고려해야 한다
 		// 1) 아이템 창이 모두 찼을 때
