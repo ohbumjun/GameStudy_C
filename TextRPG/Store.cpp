@@ -30,7 +30,7 @@ bool CStore::Init(Store_Type Type)
 		SetArmorList();
 		break;
 	}
-	return false;
+	return true;
 }
 
 void CStore::SetWeaponList()
@@ -93,6 +93,7 @@ void CStore::Run()
 
 int CStore::Menu(CPlayer* pPlayer)
 {
+	system("cls");
 	switch (m_Type)
 	{
 	case ST_Weapon:

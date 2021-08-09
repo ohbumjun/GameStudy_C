@@ -25,6 +25,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DS_QuickSort", "DS_QuickSor
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TextRPG", "TextRPG\TextRPG.vcxproj", "{115198D5-8C35-454F-9A51-ECDA0BA80002}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DS_Merge", "DS_Merge\DS_Merge.vcxproj", "{EE535FF9-F640-4A2E-9E2E-840076401822}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -121,6 +123,14 @@ Global
 		{115198D5-8C35-454F-9A51-ECDA0BA80002}.Release|x64.Build.0 = Release|x64
 		{115198D5-8C35-454F-9A51-ECDA0BA80002}.Release|x86.ActiveCfg = Release|Win32
 		{115198D5-8C35-454F-9A51-ECDA0BA80002}.Release|x86.Build.0 = Release|Win32
+		{EE535FF9-F640-4A2E-9E2E-840076401822}.Debug|x64.ActiveCfg = Debug|x64
+		{EE535FF9-F640-4A2E-9E2E-840076401822}.Debug|x64.Build.0 = Debug|x64
+		{EE535FF9-F640-4A2E-9E2E-840076401822}.Debug|x86.ActiveCfg = Debug|Win32
+		{EE535FF9-F640-4A2E-9E2E-840076401822}.Debug|x86.Build.0 = Debug|Win32
+		{EE535FF9-F640-4A2E-9E2E-840076401822}.Release|x64.ActiveCfg = Release|x64
+		{EE535FF9-F640-4A2E-9E2E-840076401822}.Release|x64.Build.0 = Release|x64
+		{EE535FF9-F640-4A2E-9E2E-840076401822}.Release|x86.ActiveCfg = Release|Win32
+		{EE535FF9-F640-4A2E-9E2E-840076401822}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

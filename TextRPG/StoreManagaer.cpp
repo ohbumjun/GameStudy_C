@@ -23,15 +23,13 @@ void CStoreManagaer::Run()
     {
         switch (Menu())
         {
-        case Store_Menu::None:
-            break;
         case Store_Menu::Weapon:
+            m_Store[0]->Run();
             break;
         case Store_Menu::Armor:
+            m_Store[1]->Run();
             break;
         case Store_Menu::Back:
-            break;
-        default:
             break;
         }
     }

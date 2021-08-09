@@ -64,6 +64,7 @@ bool CObjectManager::Init()
 		m_LevelUpExp[i] = 1000 + 2000 * i;
 	}
 
+
 	// drop Item
 	m_DropItem[0] = new CItem;
 	if (!m_DropItem[0]->Init("나무검", IT_Weapon, 300, 1000, 500, "나무로만든검")) return false;

@@ -62,6 +62,5 @@ bool CGameManager::Init()
 	if (!CInventory::GetInst()->Init()) return false;
 	// map 
 	if (!CMapManager::GetInst()->Init()) return false;
-	cout << "object";
 	return true;
 }
