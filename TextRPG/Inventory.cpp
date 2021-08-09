@@ -26,9 +26,10 @@ bool CInventory::Init()
 }
 void CInventory::Run()
 {
+	CPlayer* pPlayer = CObjectManager::GetInst()->GetPlayer();
 	while (true)
 	{
-		int Select = Menu();
+		int Select = Menu(pPlayer);
 		if (Select == -1) continue;
 		if (Select == 0) return;
 		int Index = Select - 1;
