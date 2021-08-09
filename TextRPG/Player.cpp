@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Item.h"
 
 using namespace std;
 
@@ -80,19 +81,35 @@ bool CPlayer::Init()
 	
 	return true;
 }
-void Output()
+void CPlayer::Output()
 {
-	Job m_Job;
-	int m_Attack;
-	int m_Armor;
-	int m_HP;
-	int m_HPMax;
-	int m_MP;
-	int m_MPMax;
-	int m_Exp;
-	int m_Gold;
-	int m_Level;
-	class CItem* m_Equipment[Equip_End];
+	cout << "이름 : " << m_Name << endl;
+	cout << "직업" ;
+	switch (m_Job)
+	{
+	case Job::Knight:
+		cout << "기사" << endl;
+		break;
+	case Job::Archer:
+		cout << "궁수" << endl;
+		break;
+	case Job::Magician:
+		cout << "마법사" << endl;
+		break;
+	}
+	cout << "공격력 : " << m_Attack;
+	if (m_Equipment[Equip_Weapon])
+		cout << " + " << m_Equipment[Equip_Weapon]->GetOption();
+	cout << "방어력 : " << m_Attack;
+	cout << endl;
+	if (m_Equipment[Equip_Armor])
+		cout << " + " << m_Equipment[Equip_Armor]->GetOption();
+	cout << endl;
+	cout << "체력 : " << m_HP << " / " << m_HPMax << endl;
+	cout << "마력 : " << m_MP << " / " << m_MPMax << endl;
+	cout << "경험치 : " << m_Exp << endl;
+	cout << "골드 : " << m_Gold << endl;
+	cout << "레벨 : " << m_Level << endl;
 }
 
 CItem* CPlayer::Equip(Equip_Type Type)
