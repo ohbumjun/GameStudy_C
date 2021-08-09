@@ -28,14 +28,19 @@ bool CStoreManager::Init()
 
 void CStoreManager::Run()
 {
-	switch (Menu())
+	while (true)
 	{
-	case Store_Menu::Weapon:
-		m_Store[ST_Weapon]->Run();
-		break;
-	case Store_Menu::Armor:
-		m_Store[ST_Weapon]->Run();
-		break;
+		switch (Menu())
+		{
+		case Store_Menu::Weapon:
+			m_Store[ST_Weapon]->Run();
+			break;
+		case Store_Menu::Armor:
+			m_Store[ST_Weapon]->Run();
+			break;
+		case Store_Menu::Back:
+			return;
+		}
 	}
 }
 
@@ -44,9 +49,10 @@ Store_Menu CStoreManager::Menu()
 	system("cls");
 	cout << "1. 무기구 상점" << endl;
 	cout << "2. 방어구 상점" << endl;
+	std::cout << "3. 뒤로가기" << std::endl;
 	cout << "상점을 선택하세요 :" ;
 	int  _Menu;
 	cin >> _Menu;
-	if (_Menu < (int)Store_Menu::Weapon || _Menu >(int)Store_Menu::Armor) return Store_Menu::None;
+	if (_Menu < (int)Store_Menu::Weapon || _Menu >(int)Store_Menu::Back) return Store_Menu::None;
 	return (Store_Menu)_Menu;
 }

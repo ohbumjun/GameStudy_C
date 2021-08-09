@@ -50,7 +50,8 @@ enum class Store_Menu
 {
 	None,
 	Weapon,
-	Armor
+	Armor,
+	Back
 };
 
 enum Item_Type
