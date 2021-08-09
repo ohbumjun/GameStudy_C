@@ -4,7 +4,7 @@ using namespace std;
 
 CItem::CItem() :
 	 m_Name{},
-	 m_Type(Item_Type::IT_Weapon),
+	 m_Type(IT_Weapon),
 	 m_Option(0),
 	 m_Price(0),
 	 m_Sell(0),

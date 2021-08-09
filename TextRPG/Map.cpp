@@ -54,17 +54,15 @@ bool CMap::Init(Map_Type Type)
 void CMap::Run()
 {
     CPlayer* pPlayer = CObjectManager::GetInst()->GetPlayer();
-    cout << "run player" << endl;
     CMonster* pMonster = SpawnMonster();
-    cout << "run monster" << endl;
     while (true)
     {
         system("cls");
         cout << "==== 몬스터 ====" << endl;
-        pPlayer->Output();
+        pMonster->Output();
         cout << endl;
         cout << "==== 플레이어 ====" << endl;
-        pMonster->Output();
+        pPlayer->Output();
         cout << endl;
         switch (Menu())
         {
@@ -95,19 +93,19 @@ void CMap::Run()
                         }
                         CItem* DropItem = CObjectManager::GetInst()->GetDropItem(Index);
                         CInventory::GetInst()->AddItem(DropItem->Clone());
+                        cout << DropItem->GetName() << " 아이템 획득" << endl;
+                        system("pause");
                     }
                 }
                 // 다시 몬스터 spawn
                 delete pMonster;
                 pMonster = SpawnMonster();
                 break;
-            default:
-                break;
             }
             break;
         case Battle_Menu::Back:
             delete pMonster;
-            break;
+            return;
         }
     }
 }

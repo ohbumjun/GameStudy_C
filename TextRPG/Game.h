@@ -35,6 +35,7 @@ enum class Store_Menu
 
 enum Store_Type
 {
+	None,
 	ST_Weapon,
 	ST_Armor,
 	ST_End
