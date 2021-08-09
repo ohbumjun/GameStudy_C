@@ -25,15 +25,19 @@ public :
 	{
 		return m_Size == INVENTORY_MAX;
 	}
+	int GetInventoryCount()
+	{
+		return m_Size;
+	}
 	void AddItem(CItem* Item)
 	{
 		m_Item[m_Size] = Item;
 		++m_Size;
 	}
-
 public:
 	bool Init();
 	void Run();
+	int Menu(class CPlayer* pPlayer);
 	class CItem* Equip(class CItem* Item);
 };
 

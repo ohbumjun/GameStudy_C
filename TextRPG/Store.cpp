@@ -57,9 +57,11 @@ void CStore::Run()
 			system("pause");
 			continue;
 		}
+		// 아이템 복사
+		CItem* CloneItem = m_Item[Index]->CloneItem();
 		// 여기까지 오면 구매 가능한 것
-		CInventory::GetInst()->Equip(m_Item[Index]->CloneItem());
 		// 돈 감소
+		CInventory::GetInst()->AddItem(CloneItem);
 		pPlayer->AddGold(-m_Item[Index]->GetPrice());
 	}
 }

@@ -27,6 +27,8 @@ public :
 	{
 		return m_Equipment[Type];
 	}
+	CItem* Equip(class CItem* NewItem);
+
 	void AddGold(int Gold) { m_Gold += Gold; }
 public :
 	void AddExp(int Exp);

@@ -25,6 +25,24 @@ CPlayer::~CPlayer()
 
 }
 
+CItem* CPlayer::Equip(CItem* NewItem)
+{
+	Equip_Type e_Type;
+	Item_Type m_Type = NewItem->GetItemType();
+	switch (m_Type)
+	{
+	case IT_Weapon:
+		e_Type = Equip_Weapon;
+		break;
+	case IT_Armor:
+		e_Type = Equip_Armor;
+		break;
+	}
+	CItem* Item = m_Equipment[e_Type];
+	m_Equipment[e_Type] = NewItem;
+	return Item;
+}
+
 void CPlayer::AddExp(int Exp)
 {
 	m_Exp += Exp;

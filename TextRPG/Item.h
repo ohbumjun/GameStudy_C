@@ -26,6 +26,10 @@ public :
 	{
 		return m_Price;
 	}
+	const char* GetName() const
+	{
+		return m_Name;
+	}
 
 public :
 	CItem* CloneItem();
