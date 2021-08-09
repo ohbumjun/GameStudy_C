@@ -30,5 +30,6 @@ public :
 	bool Init();
 	void Output();
 	class CItem* Equip(Equip_Type Type);
+	bool Damage(int Damage);
 };
 
