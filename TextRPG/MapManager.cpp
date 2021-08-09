@@ -3,6 +3,7 @@
 
 using namespace std;
 
+CMapManager* CMapManager::m_pInst = nullptr;
 CMapManager::CMapManager() : m_Map{}
 {
 }
@@ -57,7 +58,7 @@ bool CMapManager::Init()
 	if (!m_Map[0]->Init(MT_Easy)) return false;
 	m_Map[1] = new CMap;
 	if (!m_Map[1]->Init(MT_Normal)) return false;
-	m_Map[0] = new CMap;
+	m_Map[2] = new CMap;
 	if (!m_Map[2]->Init(MT_Hard)) return false;
 	return true;
 }

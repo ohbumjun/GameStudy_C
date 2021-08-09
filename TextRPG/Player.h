@@ -25,11 +25,16 @@ public :
 	int GetArmor() { return m_Armor; }
 	int GetGold() { return m_Gold; }
 	void AddGold(int Gold) { m_Gold += Gold; }
+	class CItem* GetEqiupItem(Equip_Type Type)
+	{
+		return m_Equipment[Type];
+	}
 public :
 	void AddExp(int Exp);
 	bool Init();
 	void Output();
-	class CItem* Equip(Equip_Type Type);
+	class CItem* Equip(class CItem* Item);
 	bool Damage(int Damage);
+	void Death();
 };
 

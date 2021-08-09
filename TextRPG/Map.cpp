@@ -9,11 +9,14 @@ using namespace std;
 
 CMap::CMap()
 {
+};
+
+CMap::~CMap()
+{
 }
 
 Battle_Menu CMap::Menu()
 {
-    system("cls");
     cout << "1. 공격" << endl;
     cout << "2. ㅌㅌ" << endl;
     int _Menu;
@@ -24,7 +27,22 @@ Battle_Menu CMap::Menu()
 
 Battle_Result CMap::Battle(CPlayer* pPlayer, CMonster* pMonster)
 {
-    return Battle_Result();
+    int Attack = pPlayer->GetAttack();
+    if (pPlayer->GetEqiupItem(Equip_Weapon))
+        Attack += pPlayer->GetEqiupItem(Equip_Weapon)->GetOption();
+    int Damage = Attack - pMonster->GetArmor();
+    Damage = Damage < 1 ? 1 : Damage;
+    if (pMonster->Damage(Damage)) return Battle_Result::Monster_Death;
+
+    int Armor = pPlayer->GetArmor();
+    if (pPlayer->GetEqiupItem(Equip_Armor))
+        Armor += pPlayer->GetEqiupItem(Equip_Armor)->GetOption();
+
+    Damage = pMonster->GetAttack() - Armor;
+    Damage = Damage < 1 ? 1 : Damage;
+    if (pPlayer->Damage(Damage)) return Battle_Result::Player_Death;
+
+    return Battle_Result::None;
 }
 
 bool CMap::Init(Map_Type Type)
@@ -36,13 +54,21 @@ bool CMap::Init(Map_Type Type)
 void CMap::Run()
 {
     CPlayer* pPlayer = CObjectManager::GetInst()->GetPlayer();
+    cout << "run player" << endl;
     CMonster* pMonster = SpawnMonster();
+    cout << "run monster" << endl;
     while (true)
     {
+        system("cls");
+        cout << "==== 몬스터 ====" << endl;
+        pPlayer->Output();
+        cout << endl;
+        cout << "==== 플레이어 ====" << endl;
+        pMonster->Output();
+        cout << endl;
         switch (Menu())
         {
         case Battle_Menu::Attack:
-        {
             switch (Battle(pPlayer,pMonster))
             {
             case Battle_Result::Player_Death:
@@ -51,9 +77,26 @@ void CMap::Run()
             case Battle_Result::Monster_Death:
                 // 경험치, 골드
                 pPlayer->AddGold(pMonster->GetGold());
-
+                pPlayer->AddExp(pMonster->GetExp());
                 // drop item
-
+                if (!CInventory::GetInst()->IsFull())
+                {
+                    int Percent = (rand() % 10001) / 100;
+                    if (Percent < 10.1)
+                    {
+                        int Index = -1;
+                        if (rand() % 2 == 0)
+                        {
+                            Index = (int)m_Type * 2;
+                        }
+                        else
+                        {
+                            Index = (int)m_Type * 2 + 1;
+                        }
+                        CItem* DropItem = CObjectManager::GetInst()->GetDropItem(Index);
+                        CInventory::GetInst()->AddItem(DropItem->Clone());
+                    }
+                }
                 // 다시 몬스터 spawn
                 delete pMonster;
                 pMonster = SpawnMonster();
@@ -61,7 +104,6 @@ void CMap::Run()
             default:
                 break;
             }
-        }
             break;
         case Battle_Menu::Back:
             delete pMonster;
@@ -72,6 +114,13 @@ void CMap::Run()
 
 CMonster* CMap::SpawnMonster()
 {
-    return nullptr;
+    switch (m_Type)
+    {
+    case MT_Easy:
+        return CObjectManager::GetInst()->CloneMonster("고블린");
+    case MT_Normal:
+        return CObjectManager::GetInst()->CloneMonster("오크");
+    case MT_Hard:
+        return CObjectManager::GetInst()->CloneMonster("드래곤");
+    }
 }
-`

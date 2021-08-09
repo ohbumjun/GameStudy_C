@@ -61,5 +61,5 @@ bool CMonster::Init(const char* Name, int Attack, int Armor, int HP, int MP, int
 	m_Exp = Exp;
 	m_Gold = Gold;
 	m_Level = Level;
-    return false;
+    return true;
 }

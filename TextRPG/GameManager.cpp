@@ -18,6 +18,7 @@ CGameManager::~CGameManager()
 
 Main_Menu CGameManager::Menu()
 {
+	system("cls");
 	cout << "1. 맵" << endl;
 	cout << "2. 상점" << endl;
 	cout << "3. 인벤토리" << endl;
@@ -61,5 +62,6 @@ bool CGameManager::Init()
 	if (!CInventory::GetInst()->Init()) return false;
 	// map 
 	if (!CMapManager::GetInst()->Init()) return false;
+	cout << "object";
 	return true;
 }

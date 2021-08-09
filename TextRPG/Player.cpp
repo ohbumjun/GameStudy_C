@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Item.h"
+#include "ObjectManager.h"
 
 using namespace std;
 
@@ -29,6 +30,20 @@ CPlayer::~CPlayer()
 
 void CPlayer::AddExp(int Exp)
 {
+	m_Exp += Exp;
+	int LevelUpExp = CObjectManager::GetInst()->GetLevelUpExp(m_Level);
+	if (m_Exp >= LevelUpExp)
+	{
+		if (m_Level == LEVEL_MAX)
+		{
+			m_Exp = LevelUpExp - 1;
+		}
+		else
+		{
+			m_Exp -= LevelUpExp;
+			m_Level += 1;
+		}
+	}
 }
 bool CPlayer::Init()
 {
@@ -112,12 +127,39 @@ void CPlayer::Output()
 	cout << "·¹º§ : " << m_Level << endl;
 }
 
-CItem* CPlayer::Equip(Equip_Type Type)
+CItem* CPlayer::Equip(CItem* Item)
 {
-	return nullptr;
+	Item_Type Type = Item->GetItemType();
+	Equip_Type eType;
+	switch (Type)
+	{
+	case IT_Weapon:
+		eType = Equip_Weapon;
+		break;
+	case IT_Armor:
+		eType = Equip_Armor;
+		break;
+	}
+	CItem* EquipItem = m_Equipment[eType];
+	m_Equipment[eType] = Item;
+	return EquipItem;
 }
+
+
 
 bool CPlayer::Damage(int Damage)
 {
+	m_HP -= Damage;
+	if (m_HP < Damage)
+	{
+		m_HP = m_HPMax;
+		return true;
+	}
 	return false;
+}
+
+void CPlayer::Death()
+{
+	m_Exp -= 0.1 * m_Exp;
+	m_Gold -= 0.1 * m_Gold;
 }

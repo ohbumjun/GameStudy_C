@@ -1,8 +1,21 @@
 #pragma once
+#include"Game.h"
+
 class CInventory
 {
 	CInventory();
 	~CInventory();
+private :
+	int m_Count;
+	class CItem* m_Item[INVENTORY_MAX];
+public :
+	bool IsFull() { return m_Count == INVENTORY_MAX; }
+	int GetItemCount() { return m_Count; }
+	void AddItem(class CItem* Item)
+	{
+		m_Item[m_Count] = Item;
+		++m_Count;
+	}
 public:
 	void Run();
 	bool Init();

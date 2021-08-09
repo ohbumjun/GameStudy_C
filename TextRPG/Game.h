@@ -3,6 +3,9 @@
 #include<iostream>
 #include<time.h>
 
+#define INVENTORY_MAX 10
+#define LEVEL_MAX 10
+
 enum class Main_Menu
 {
 	None,
@@ -65,6 +68,7 @@ enum class Battle_Menu
 
 enum class Battle_Result
 {
+	None,
 	Player_Death,
 	Monster_Death
 };
