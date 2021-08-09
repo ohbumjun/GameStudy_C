@@ -12,7 +12,7 @@ enum class Main_Menu
 	Map,
 	Store,
 	Inventory,
-	End
+	Exit
 };
 
 enum class Map_Menu

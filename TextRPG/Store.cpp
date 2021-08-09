@@ -39,7 +39,7 @@ void CStore::Run()
 	while (true)
 	{
 		int Select = Menu(pPlayer);
-		if (Select == 4) return;
+		if (Select == 4) break;
 		if (Select == -1) continue;
 		int Index = Select - 1;
 		// 구매할 수 없는 경우의 수를 고려해야 한다
@@ -63,6 +63,8 @@ void CStore::Run()
 		// 돈 감소
 		CInventory::GetInst()->AddItem(CloneItem);
 		pPlayer->AddGold(-m_Item[Index]->GetPrice());
+		cout << "구매완료" << endl;
+		system("pause");
 	}
 }
 

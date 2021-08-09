@@ -1,40 +1,57 @@
 #pragma once
-#include"Game.h"
+
+#include "Game.h"
+
 class CItem
 {
-public :
+public:
 	CItem();
-	CItem(CItem& Item);
+	CItem(const CItem& item);
 	~CItem();
-private :
+
+private:
 	char    m_Name[32];
 	Item_Type   m_Type;
 	int     m_Option;
 	int     m_Price;
 	int     m_Sell;
 	char    m_Desc[512];
-public :
-	Item_Type GetItemType()
-	{
-		return m_Type;
-	}
-	int GetOption() const
-	{
-		return m_Option;
-	}
-	int GetPrice() const
-	{
-		return m_Price;
-	}
-	const char* GetName() const
+
+public:
+	const char* GetName()
 	{
 		return m_Name;
 	}
 
-public :
-	CItem* CloneItem();
-	void Output();
-	bool Init(const char* Name, Item_Type Type, int Option, 
+	Item_Type GetItemType()
+	{
+		return m_Type;
+	}
+
+	int GetOption()
+	{
+		return m_Option;
+	}
+
+	int GetPrice()
+	{
+		return m_Price;
+	}
+
+	int GetSell()
+	{
+		return m_Sell;
+	}
+
+	const char* GetItemDesc()
+	{
+		return m_Desc;
+	}
+
+public:
+	bool Init(const char* Name, Item_Type Type, int Option,
 		int Price, int Sell, const char* Desc);
+	void Output();
+	CItem* CloneItem();
 };
 
