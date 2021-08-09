@@ -3,41 +3,16 @@
 
 using namespace std;
 
-CMapManager* CMapManager::m_pInst = nullptr;
-CMapManager::CMapManager() : m_Maps{}
+CMapManager::CMapManager() : m_Map{}
 {
 }
+
 CMapManager::~CMapManager()
 {
-	for (int i = 0; i < MT_End; i++)
+	for (int i = 0; i < 3; i++)
 	{
-		if (m_Maps[i]) delete m_Maps[i];
+		if (m_Map[i]) delete m_Map[i];
 	}
-}
-
-Map_Menu CMapManager::Menu()
-{
-	system("cls");
-	int _Menu ;
-	cout << "1. 쉬움" << endl;
-	cout << "2. 보통" << endl;
-	cout << "3. 어려움" << endl;
-	cout << "4. 뒤로 가기 ";
-	cin >> _Menu;
-	if (_Menu <= (int)Map_Menu::None || _Menu > (int)Map_Menu::End)
-		return Map_Menu::None;
-	return (Map_Menu)_Menu;
-}
-
-bool CMapManager::Init()
-{
-	m_Maps[0] = new CMap;
-	if (!m_Maps[0]->Init(MT_Easy)) return false;
-	m_Maps[1] = new CMap;
-	if (!m_Maps[1]->Init(MT_Normal)) return false;
-	m_Maps[2] = new CMap;
-	if (!m_Maps[2]->Init(MT_Hard)) return false;
-	return true;
 }
 
 void CMapManager::Run()
@@ -47,16 +22,42 @@ void CMapManager::Run()
 		switch (Menu())
 		{
 		case Map_Menu::Easy:
-			m_Maps[0]->Run();
+			m_Map[0]->Run();
 			break;
 		case Map_Menu::Normal:
-			m_Maps[1]->Run();
+			m_Map[1]->Run();
 			break;
 		case Map_Menu::Hard:
-			m_Maps[2]->Run();
+			m_Map[2]->Run();
 			break;
 		case Map_Menu::End:
 			return;
 		}
 	}
+}
+
+Map_Menu CMapManager::Menu()
+{
+	system("cls");
+	cout << "1.쉬움" << endl;
+	cout << "2.보통" << endl;
+	cout << "3.어려움" << endl;
+	cout << "4.뒤로가기" << endl;
+	cout << "맵을 선택하세요 : ";
+	int _Menu;
+	cin >> _Menu;
+	if (_Menu < 0 || _Menu > 4) return Map_Menu::None;
+
+	return (Map_Menu)_Menu;
+}
+
+bool CMapManager::Init()
+{
+	m_Map[0] = new CMap;
+	if (!m_Map[0]->Init(MT_Easy)) return false;
+	m_Map[1] = new CMap;
+	if (!m_Map[1]->Init(MT_Normal)) return false;
+	m_Map[0] = new CMap;
+	if (!m_Map[2]->Init(MT_Hard)) return false;
+	return true;
 }

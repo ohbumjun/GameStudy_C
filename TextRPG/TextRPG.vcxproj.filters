@@ -9,94 +9,90 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="1.GameManager">
+      <UniqueIdentifier>{fe100916-2317-4cac-a178-b8c9f74e79b6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameManager">
-      <UniqueIdentifier>{9155bc6f-43ee-4fe1-acd8-61b46e9f4b36}</UniqueIdentifier>
+    <Filter Include="2.ObjectManager">
+      <UniqueIdentifier>{492b710d-d272-4b52-8426-282da1b0ff6a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MapManager">
-      <UniqueIdentifier>{35c157a0-e6ba-4d09-865e-4093f521c200}</UniqueIdentifier>
+    <Filter Include="3.StoreManager">
+      <UniqueIdentifier>{46362f92-726b-4b86-9078-1ce71b94bc70}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ObjectManager">
-      <UniqueIdentifier>{494f177d-aa8c-4054-85f3-e426c226955f}</UniqueIdentifier>
+    <Filter Include="4.Inv두새교">
+      <UniqueIdentifier>{9c91cc06-3c2e-4b5c-81b1-6cb70e2b1331}</UniqueIdentifier>
     </Filter>
-    <Filter Include="StoreManager">
-      <UniqueIdentifier>{b9112df9-341a-4af2-a8ea-e2f67f90cb91}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Inventory">
-      <UniqueIdentifier>{968e82e7-3854-432e-b9ee-ab45796f2500}</UniqueIdentifier>
+    <Filter Include="5.MapManager">
+      <UniqueIdentifier>{29ea9549-3565-4488-800f-8381bd7d7cee}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>1.GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectManager.cpp">
+      <Filter>2.ObjectManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Store.cpp">
+      <Filter>3.StoreManager</Filter>
+    </ClCompile>
+    <ClCompile Include="StoreManagaer.cpp">
+      <Filter>3.StoreManager</Filter>
+    </ClCompile>
+    <ClCompile Include="MapManager.cpp">
+      <Filter>5.MapManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>5.MapManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>3.StoreManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>4.Inv두새교</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>2.ObjectManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>2.ObjectManager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="GameManager.h">
-      <Filter>GameManager</Filter>
-    </ClInclude>
-    <ClInclude Include="MapManager.h">
-      <Filter>MapManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.h">
-      <Filter>MapManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Store.h">
-      <Filter>StoreManager</Filter>
-    </ClInclude>
-    <ClInclude Include="StoreManager.h">
-      <Filter>StoreManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>ObjectManager</Filter>
+      <Filter>1.GameManager</Filter>
     </ClInclude>
     <ClInclude Include="ObjectManager.h">
-      <Filter>ObjectManager</Filter>
+      <Filter>2.ObjectManager</Filter>
     </ClInclude>
-    <ClInclude Include="Monster.h">
-      <Filter>ObjectManager</Filter>
+    <ClInclude Include="StoreManagaer.h">
+      <Filter>3.StoreManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Store.h">
+      <Filter>3.StoreManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>5.MapManager</Filter>
+    </ClInclude>
+    <ClInclude Include="MapManager.h">
+      <Filter>5.MapManager</Filter>
     </ClInclude>
     <ClInclude Include="Inventory.h">
-      <Filter>Inventory</Filter>
+      <Filter>4.Inv두새교</Filter>
     </ClInclude>
     <ClInclude Include="Item.h">
-      <Filter>StoreManager</Filter>
+      <Filter>3.StoreManager</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="GameManager.cpp">
-      <Filter>GameManager</Filter>
-    </ClCompile>
-    <ClCompile Include="MapManager.cpp">
-      <Filter>MapManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Map.cpp">
-      <Filter>MapManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Store.cpp">
-      <Filter>StoreManager</Filter>
-    </ClCompile>
-    <ClCompile Include="StoreManager.cpp">
-      <Filter>StoreManager</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectManager.cpp">
-      <Filter>ObjectManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>ObjectManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Monster.cpp">
-      <Filter>ObjectManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Inventory.cpp">
-      <Filter>Inventory</Filter>
-    </ClCompile>
-    <ClCompile Include="Item.cpp">
-      <Filter>StoreManager</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
+    <ClInclude Include="Monster.h">
+      <Filter>2.ObjectManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>2.ObjectManager</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

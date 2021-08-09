@@ -5,9 +5,11 @@ class CMapManager
 	CMapManager();
 	~CMapManager();
 private :
-	class CMap* m_Maps[MT_End];
-public :
+	class CMap* m_Map[3];
+public:
+	void Run();
 	Map_Menu Menu();
+	bool Init();
 private:
 	static CMapManager* m_pInst;
 public:
@@ -16,12 +18,9 @@ public:
 		if (m_pInst == nullptr) m_pInst = new CMapManager;
 		return m_pInst;
 	}
-	static void DestroyInst()
+	static void DestoryInst()
 	{
 		if (m_pInst) delete m_pInst;
 	}
-public:
-	bool Init();
-	void Run();
 };
 

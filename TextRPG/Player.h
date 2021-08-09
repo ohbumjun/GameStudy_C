@@ -6,7 +6,7 @@ class CPlayer
 public :
 	CPlayer();
 	~CPlayer();
-private :
+private: 
 	char m_Name[52];
 	Job m_Job;
 	int m_Attack;
@@ -19,22 +19,5 @@ private :
 	int m_Gold;
 	int m_Level;
 	class CItem* m_Equipment[Equip_End];
-public :
-	int GetAttack() { return m_Attack; }
-	int GetArmor() { return m_Armor; }
-	int GetGold() { return m_Gold; }
-	CItem* GetEquipment(Equip_Type Type)
-	{
-		return m_Equipment[Type];
-	}
-	CItem* Equip(class CItem* NewItem);
-
-	void AddGold(int Gold) { m_Gold += Gold; }
-public :
-	void AddExp(int Exp);
-	bool Init();
-	bool Damage(int Damage);
-	void Death();
-	void Output();
 };
 

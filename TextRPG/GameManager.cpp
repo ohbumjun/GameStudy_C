@@ -1,19 +1,33 @@
 #include "GameManager.h"
-#include"ObjectManager.h"
-#include"Inventory.h"
-#include"StoreManager.h"
-#include"MapManager.h"
+#include "ObjectManager.h"
+#include "Inventory.h"
+#include "MapManager.h"
+#include "StoreManagaer.h"
 
 using namespace std;
 
 CGameManager* CGameManager::m_pInst = nullptr;
-bool CGameManager::Init()
+
+CGameManager::CGameManager()
 {
-	if (!CMapManager::GetInst()->Init()) return false;
-	if (!CObjectManager::GetInst()->Init()) return false;
-	if (!CInventory::GetInst()->Init()) return false;
-	if (!CStoreManager::GetInst()->Init()) return false;
-	return true;
+}
+
+CGameManager::~CGameManager()
+{
+}
+
+Main_Menu CGameManager::Menu()
+{
+	cout << "1. 맵" << endl;
+	cout << "2. 상점" << endl;
+	cout << "3. 인벤토리" << endl;
+	cout << "4. 종료" << endl;
+
+	int _Menu;
+	cin >> _Menu;
+	if (_Menu <= 0 || _Menu > 4) return Main_Menu::None;
+
+	return (Main_Menu)_Menu;
 }
 
 void CGameManager::Run()
@@ -26,7 +40,7 @@ void CGameManager::Run()
 			CMapManager::GetInst()->Run();
 			break;
 		case Main_Menu::Store:
-			CStoreManager::GetInst()->Run();
+			CStoreManagaer::GetInst()->Run();
 			break;
 		case Main_Menu::Inventory:
 			CInventory::GetInst()->Run();
@@ -37,17 +51,15 @@ void CGameManager::Run()
 	}
 }
 
-Main_Menu CGameManager::Menu()
+bool CGameManager::Init()
 {
-	system("cls");
-	cout << "1. 맵" << endl;
-	cout << "2. 상점" << endl;
-	cout << "3. 인벤토리" << endl;
-	cout << "4. 종료" << endl;
-	cout << "메뉴를 선택하세요 : ";
-	int _Menu;
-	cin >> _Menu;
-	if (_Menu <= (int)Main_Menu::None || _Menu > (int)Main_Menu::Exit)
-		return Main_Menu::None;
-	return (Main_Menu)_Menu;
+	// object
+	if (!CObjectManager::GetInst()->Init()) return false;
+	// store
+	if (!CStoreManagaer::GetInst()->Init()) return false;
+	// inventory
+	if (!CInventory::GetInst()->Init()) return false;
+	// map 
+	if (!CMapManager::GetInst()->Init()) return false;
+	return true;
 }

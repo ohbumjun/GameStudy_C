@@ -5,13 +5,13 @@ class CMap
 public :
 	CMap();
 	~CMap();
-private:
-	Battle_Menu Menu();
+private :
 	Map_Type m_Type;
-public:
-	class CMonster* SpawnMonster();
+public :
+	Battle_Menu Menu();
 	Battle_Result Battle(class CPlayer* pPlayer, class CMonster* pMonster);
-	void Run();
 	bool Init(Map_Type Type);
+	void Run();
+	class CMonster* SpawnMonster();
 };
 
