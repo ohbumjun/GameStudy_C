@@ -24,8 +24,6 @@ int CInventory::Menu(CPlayer* Player)
 	system("cls");
 
 	std::cout << "======================= 인벤토리 =======================" << std::endl;
-	std::cout << "Size : " << m_Count << std::endl;
-	std::cout << "Name : " << m_Item[0]->GetName()  << std::endl;
 	for (int i = 0; i < m_Count; ++i)
 	{
 		std::cout << i + 1 << ". ";

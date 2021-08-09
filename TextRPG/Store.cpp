@@ -58,12 +58,12 @@ void CStore::Run()
 			continue;
 		}
 		// 아이템 복사
+		cout << "Name : " << m_Item[Index]->GetName() << endl;
 		CItem* CloneItem = m_Item[Index]->CloneItem();
 		// 여기까지 오면 구매 가능한 것
 		// 돈 감소
 		CInventory::GetInst()->AddItem(CloneItem);
 		pPlayer->AddGold(-m_Item[Index]->GetPrice());
-		cout << "구매완료" << endl;
 		system("pause");
 	}
 }
