@@ -3,6 +3,9 @@
 #include "..\TextRPG\Player.h"
 #include "..\TextRPG\Player.h"
 #include "..\TextRPG\Player.h"
+#include "..\TextRPG\Player.h"
+#include "..\TextRPG\Player.h"
+#include "..\TextRPG\Player.h"
 #include<iostream>
 
 using namespace std;
@@ -159,12 +162,23 @@ public:
 	다른 객체들로 매번 this가 바뀔 것이다
 
 `	*/
+	void CPlayer::AddExp(int Exp)
+	{
+	}
+	void CPlayer::Init()
+	{
+	}
 	void Output()
 	{
 		// cout << "Number1 : " << this->m_Number1 << endl;
 		cout << "Number1 : " << m_Number1 << endl;
 		// 아래 this는, OutPut의 주소가 아니라, OutPut이라는 함수를 호출하는 객체의 주소가 들어온다
 		cout << "Output address : " << this << endl;
+	}
+
+	CItem* CPlayer::Equip(Equip_Type Type)
+	{
+		return nullptr;
 	}
 	
 private:
