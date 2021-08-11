@@ -4,6 +4,8 @@
 template<typename T>
 class CStackNode
 {
+	template<typename T>
+	friend class CStack;
 public :
 	CStackNode()
 	{
@@ -14,8 +16,8 @@ public :
 
 	}
 private :
-	T m_Data;
 	CStackNode<T>* m_Next;
+	T m_Data;
 };
 
 template<typename T>
@@ -29,21 +31,17 @@ public :
 	}
 	~CStack()
 	{
-		clear();
 	}
 private :
-	CStackNode<T>* m_LastNode;
 	int m_Size;
+	CStackNode<T>* m_LastNode;
 public :
 	int size() const { return m_Size; }
 	bool empty() const { return m_Size == 0; }
-	void push(const T& data)
+	T& top() const
 	{
-		CStackNode<T>* Node = new CStackNode;
-		Node->m_Data = data;
-		Node->m_Next = m_LastNode;
-		m_LastNode = Node;
-		++m_Size;
+		if (empty()) assert(false);
+		return m_LastNode->m_Data;
 	}
 	void pop()
 	{
@@ -51,7 +49,6 @@ public :
 		CStackNode<T>* Next = m_LastNode->m_Next;
 		delete m_LastNode;
 		m_LastNode = Next;
-		--m_Size;
 	}
 	void clear()
 	{
@@ -62,5 +59,13 @@ public :
 			m_LastNode = Next;
 		}
 		m_Size = 0;
+	}
+	void push(const T& data)
+	{
+		CStackNode<T>* NewNode = new CStackNode<T>;
+		NewNode->m_Data = data;
+		NewNode->m_Next = m_LastNode;
+		m_LastNode = NewNode;
+		++m_Size;
 	}
 };

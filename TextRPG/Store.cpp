@@ -110,7 +110,7 @@ int CStore::Menu(CPlayer* pPlayer)
 		cout << endl;
 	}
 	cout << "0. 뒤로가기" << endl;
-
+	cout << "구입할 아이템을 선택하세요 : ";
 	int _Menu;
 	cin >> _Menu;
 

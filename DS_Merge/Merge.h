@@ -110,7 +110,7 @@ public :
 		m_Size = Count;
 	}
 
-	void SetSotFunction(bool (*pFunc)(const T& Left, const T& Right))
+	void SetSortFunction(bool (*pFunc)(const T& Left, const T& Right))
 	{
 		m_Func = pFunc;
 	}

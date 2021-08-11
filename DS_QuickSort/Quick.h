@@ -4,7 +4,7 @@
 template<typename T>
 class CQuickSort
 {
-public :
+public:
 	CQuickSort()
 	{
 		m_Size = 0;
@@ -16,17 +16,17 @@ public :
 	{
 		delete[] m_Array;
 	}
-private :
+private:
 	int m_Size;
 	int m_Capacity;
 	T* m_Array;
 	bool (*m_Func)(const T&, const T&);
-private :
+private:
 	static bool SortFunction(const T& Left, const T& Right)
 	{
 		return Left > Right;
 	}
-public :
+public:
 	int size() const { return m_Size; }
 	bool empty() const { return m_Size == 0; }
 	void push(const T& data)
@@ -75,8 +75,8 @@ public :
 		if (Left < Right)
 		{
 			int Pivot = Partition(Left, Right, m_Array);
-			QuickSort(Left,Pivot-1, m_Array);
-			QuickSort(Pivot + 1,Right, m_Array );
+			QuickSort(Left, Pivot - 1, m_Array);
+			QuickSort(Pivot + 1, Right, m_Array);
 		}
 	}
 	int Partition(int Left, int Right, T* Array)
@@ -89,19 +89,19 @@ public :
 			do
 			{
 				++Low;
-			} while (Low <= Right && m_Func(Value,m_Array[Low]);
+			} while (Low <= Right && m_Func(Value, m_Array[Low]);
 			do
 			{
 				--High;
-			} while (High >= Left && m_Func(m_Array[High],Value));
+			} while (High >= Left && m_Func(m_Array[High], Value));
 			if (Low < High)
 			{
 				T temp = m_Array[Low];
 				m_Array[Low] = m_Array[High];
 				m_Array[High] = temp;
 			}
-		}while(Low < High);
-		T temp    = m_Array[High];
+		} while (Low < High);
+		T temp = m_Array[High];
 		m_Array[High] = m_Array[Left];
 		m_Array[Left] = temp;
 		return High;

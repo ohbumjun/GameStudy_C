@@ -26,6 +26,7 @@ int main()
 	}
 
 	Quick.Sort(Array, 20);
+	std::cout << "sort Array" << std::endl;
 
 	std::cout << "============= Sort =============" << std::endl;
 	for (int i = 0; i < 20; ++i)
