@@ -38,4 +38,5 @@ private :
 	CQueueNode<T>* m_LastNode;
 public :
 	int size() const { return m_Size; }
+	bool empty()
 };
