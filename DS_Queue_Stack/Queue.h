@@ -11,7 +11,6 @@ public :
 	}
 	~CQueueNode()
 	{
-
 	}
 private :
 	T m_Data;
@@ -30,7 +29,7 @@ public :
 	}
 	~CQueue()
 	{
-
+		clear();
 	}
 private :
 	int m_Size;
@@ -38,5 +37,35 @@ private :
 	CQueueNode<T>* m_LastNode;
 public :
 	int size() const { return m_Size; }
-	bool empty()
+	bool empty() const { return m_Size == 0; }
+	void clear()
+	{
+		while (m_FirstNode)
+		{
+			CQueueNode<T> Next = m_FirstNode->m_Next;
+			delete m_FirstNode;
+			m_FirstNode = Next;
+		}
+		m_Size = 0;
+		m_LastNode = nullptr;
+	}
+	void push(const T& data)
+	{
+		CQueueNode<T> Node = new CQueueNode<T>;
+		Node->m_Data = data;
+		if (!m_FirstNode) m_FirstNode = Node;
+		if (m_LastNode) Node->m_Next = m_LastNode;
+		m_LastNode = Node;
+		++m_Size;
+	}
+	T& top() const
+	{
+		if (empty()) return;
+		return m_FirstNode->m_Data;
+	}
+	void pop()
+	{
+		if (empty()) return;
+		delete 
+	}
 };
