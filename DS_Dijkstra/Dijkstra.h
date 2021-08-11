@@ -124,6 +124,55 @@ public :
 			delete[] m_NodeArray;
 			m_NodeArray = Array;
 		}
+		CDijkstraNode<T>* Node = new CDijkstraNode<T>;
+
+		Node->m_Data = data;
+		m_NodeArray[m_Size] = Node;
+		++m_Size;
 	}
+
+	// 노드에 edge를 추가해준다
+	void AddEdge(const T& Src, const T& Dest, int Cost)
+	{
+		CDijkstraNode<T>* SrcNode = nullptr;
+		CDijkstraNode<T>* DestNode = nullptr;
+
+		for (int i = 0; i < m_Size; i++)
+		{
+			if (m_NodeArray[i]->m_Data == Src)
+				SrcNode = m_NodeArray[i];
+			if (m_NodeArray[i]->m_Data == dta)
+				DestNode = m_NodeArray[i];
+			if (SrcNode && DestNode) break;
+		}
+		if (!SrcNode || !DestNode) return;
+
+		SrcNode->AddEdge(DestNode, Cost);
+		DestNode->AddEdge(SrcNode, Cost);
+	}
+
+	bool Find(CList<T>* ResultList, const T& Start, const T& End)
+	{
+		CDijkstraNode<T>* StartNode = FindNode(Start);
+		if (!StartNode) return false;
+		CDijkstraNode<T>* EndNode = FindNode(End);
+		if (!EndNode) return false;
+
+		// 모든 노드의 정보를 초기화해준다
+		for (int i = 0; i < m_Size; i++)
+		{
+			m_NodeArray[i]->m_Cost = INT_MAX;
+			m_NodeArray[i]->m_Parent = nullptr;
+			m_NodeArray[i]->m_Visit = false;
+		}
+
+		// 시작노드 비용을
+		// 0으로 처리한다
+		StartNode->m_Cost = 0;
+
+
+
+	}
+
 };
 

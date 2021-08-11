@@ -138,6 +138,7 @@ private:
 		return High;
 	}
 
+
 private:
 	static bool SortFunction(const T& Left, const T& Right)
 	{

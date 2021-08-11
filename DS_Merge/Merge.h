@@ -52,14 +52,11 @@ public :
 		delete[] m_Array;
 		delete[] m_CopyArray;
 	}
-// copy본을 하나 만들고
-// 그곳에다가 정렬된 요소를 넣어가는 과정
-	// 따라서 copy본 반드시 필요
 private :
-	T* m_Array;
-	T* m_CopyArray;
 	int m_Size;
 	int m_Capacity;
+	T* m_Array;
+	T* m_CopyArray;
 	bool (*m_Func)(const T&, const T&);
 private :
 	static bool SortFunction(const T& Left, const T& Right)
@@ -72,22 +69,20 @@ public :
 		m_Func = pFunc;
 	}
 public :
+	int size() const { return m_Size; }
+	bool empty() const { return m_Size == 0; }
 	void push(const T& data)
 	{
 		if (m_Size == m_Capacity)
 		{
 			m_Capacity *= 2;
 			T* Array = new T[m_Capacity];
-
 			memcpy(Array, m_Array, sizeof(T) * m_Size);
-			
 			delete[] m_Array;
 			delete[] m_CopyArray;
-			
-			m_CopyArray = new T[m_Capacity];
 			m_Array = Array;
+			m_CopyArray = new T[m_Capacity];
 		}
-
 		m_Array[m_Size] = data;
 		++m_Size;
 	}
@@ -96,26 +91,17 @@ public :
 		if (m_Capacity < Count)
 		{
 			m_Capacity = Count;
-			delete[]	m_Array;
-			delete[]	m_CopyArray;
+			delete[] m_Array;
+			delete[] m_CopyArray;
 			m_Array = new T[m_Capacity];
 			m_CopyArray = new T[m_Capacity];
 		}
-
-		for (int i = 0; i < Count; ++i)
+		for (int i = 0; i < Count; i++)
 		{
 			m_Array[i] = Array[i];
 		}
-
 		m_Size = Count;
 	}
-
-	void SetSortFunction(bool (*pFunc)(const T& Left, const T& Right))
-	{
-		m_Func = pFunc;
-	}
-	int size() const { return m_Size; }
-	bool empty() const { return m_Size == 0; }
 	void Sort()
 	{
 		MergeSort(0, m_Size - 1, m_Array);
@@ -125,97 +111,63 @@ public :
 		if (m_Capacity < Count)
 		{
 			m_Capacity = Count;
-			delete[]	m_Array;
-			delete[]	m_CopyArray;
+			delete[] m_Array;
+			delete[] m_CopyArray;
 			m_Array = new T[m_Capacity];
 			m_CopyArray = new T[m_Capacity];
 		}
-
-		MergeSort(0, Count - 1, Array);
+		MergeSort(0, Count - 1, m_Array);
 	}
-private :
 	void MergeSort(int Left, int Right, T* Array)
 	{
 		if (Left < Right)
 		{
-			// 자기 자신 계속 호출해서
-			// 분할 먼저
-			// 가운데 인덱스 구해주기
 			int Mid = (Left + Right) / 2;
-
-			// 왼쪽을 분할 한다
 			MergeSort(Left, Mid, Array);
-			// 오른쪽 분할 한다
 			MergeSort(Mid + 1, Right, Array);
-
-			// 분할된 순서로 
-			// 되돌아가면서 정렬
 			Merge(Left, Mid, Right, Array);
-
 		}
 	}
-	
 	void Merge(int Left, int Mid, int Right, T* Array)
 	{
-		// 되돌아가면서
-		// 값을 비교하면서 정렬
 		int Low = Left;
-		int High = Mid + 1;
+		int High = Mid+1;
 		int Pivot = Left;
-
-		// ex) 1 3 5 7
-		// low : 1, mid : 3, high : 5
-
-		// Low 기준, High와 비교/
-		// 왼쪽과 오른쪽 집단 비교
-
-		// Low가 mide보다 커지면
-		// 오른쪽 집단 요소를 가리키게 되므로
-		// ㄴㄴ 이다 ! 
-		while(Low <= Mid && High <= Right)
+		while (Left <= Mid && High <= Right)
 		{
-			if (m_Func(Array[High], Array[Low]))
+			if (m_Func(m_Array[High],m_Array[Low]))
 			{
-				m_CopyArray[Pivot] = Array[Low];
+				m_CopyArray[Pivot] = m_Array[Low];
+				++Pivot;
 				++Low;
-				++Pivot; // pivot : 데이터를 담을 idx
 			}
 			else
 			{
-				m_CopyArray[Pivot] = Array[High];
+				m_CopyArray[Pivot] = m_Array[High];
+				++Pivot;
 				++High;
-				++Pivot;
 			}
 		}
-
-		// Low가 Mid보다 크다면
-		// 왼쪽 배열 값이 모두
-		// 처리가 되었다는 의미이다.
-		if (Low > Mid)
+		if (Left <= Mid)
 		{
-			for (int i = High; i <= Right; ++i)
+			for (int i = Left; i <= Mid; i++)
 			{
-				m_CopyArray[Pivot] = Array[i];
+				m_CopyArray[Pivot] = m_Array[i];
 				++Pivot;
 			}
 		}
-		// 오른쪽 배열의 값이
-		// 모두 처리가 되었다는 의미이다
 		else
 		{
-			for (int i = Low; i <= Mid; i++)
+			for (int i = High; i <= Right; i++)
 			{
-				m_CopyArray[Pivot] = Array[i];
+				m_CopyArray[Pivot] = m_Array[i];
 				++Pivot;
 			}
 		}
-
-		// 복사본 배열에 정렬된 내용을
-		// 원본 배열로 옮겨준다
 		for (int i = Left; i <= Right; i++)
 		{
-			Array[i] = m_CopyArray[i];
+			m_Array[i] = m_CopyArray[i];
 		}
 	}
-	
+
 };
