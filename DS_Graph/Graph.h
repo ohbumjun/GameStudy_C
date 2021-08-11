@@ -33,6 +33,7 @@ public :
 	}
 	~CGraphNode()
 	{
+		//
 		for (int i = 0; i < m_Size; i++)
 			delete m_EdgeArray[i];
 		delete m_EdgeArray;
