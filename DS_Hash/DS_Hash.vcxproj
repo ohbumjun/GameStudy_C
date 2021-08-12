@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Hash.h" />
+    <ClInclude Include="HashTable.h" />
     <ClInclude Include="Hash_모범.h" />
     <ClInclude Include="HashTable_모범.h" />
     <ClInclude Include="List.h" />
