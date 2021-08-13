@@ -1,19 +1,16 @@
 #pragma once
-
-#include<assert.h>
-#include"Queue.h"
 #include"Stack.h"
+#include"Queue.h"
 
 template<typename T>
 class CEdge
 {
 	template<typename T>
-	friend class CGraphNode;
-	template<typename T>
 	friend class CGraph;
+	template<typename T>
+	friend class CGraphNode;
 public :
-	CEdge() { m_Node = nullptr; }
-	~CEdge(){}
+	CEdge():m_Node(nullptr){}
 private :
 	class CGraphNode<T>* m_Node;
 };
@@ -27,25 +24,26 @@ public :
 	CGraphNode()
 	{
 		m_Size = 0;
-		m_Visit = false;
 		m_Capacity = 8;
 		m_EdgeArray = new CEdge<T>*[m_Capacity];
+		m_Visit = false;
 	}
 	~CGraphNode()
 	{
-		//
 		for (int i = 0; i < m_Size; i++)
+		{
 			delete m_EdgeArray[i];
-		delete m_EdgeArray;
+		}
+		delete[] m_EdgeArray;
 	}
 private :
 	int m_Size;
 	int m_Capacity;
-	bool m_Visit;
-	T m_Data;
 	CEdge<T>** m_EdgeArray;
+	T m_Data;
+	bool m_Visit;
 public :
-	void AddEdge(CGraphNode<T>* Node)
+	void AddNode(CGraphNode<T>* Node)
 	{
 		if (m_Size == m_Capacity)
 		{
@@ -92,11 +90,11 @@ public :
 	}
 	~CGraph()
 	{
-		for (int i = 0; i < m_Capacity; i++)
+		for (int i = 0; i < m_Size; i++)
 		{
 			delete m_NodeArray[i];
 		}
-		delete m_NodeArray;
+		delete[] m_NodeArray;
 	}
 private :
 	int m_Size;
@@ -122,28 +120,29 @@ public :
 	{
 		CGraphNode<T>* SrcNode = nullptr;
 		CGraphNode<T>* DestNode = nullptr;
-
 		for (int i = 0; i < m_Size; i++)
 		{
 			if (m_NodeArray[i]->m_Data == Src)
 				SrcNode = m_NodeArray[i];
 			if (m_NodeArray[i]->m_Data == Dest)
 				DestNode = m_NodeArray[i];
-			if (SrcNode && DestNode)break;
+			if (SrcNode && DestNode) break;
 		}
 		if (!SrcNode || !DestNode) return;
-		SrcNode->AddEdge(DestNode);
-		DestNode->AddEdge(SrcNode);
-
+		SrcNode->AddNode(DestNode);
+		DestNode->AddNode(SrcNode);
 	}
 	void BFS(void(*pFunc)(const T&))
 	{
 		if (m_Size == 0) return;
+
 		for (int i = 0; i < m_Size; i++)
 			m_NodeArray[i]->m_Visit = false;
-		CQueue<CGraphNode<T>*> queue;
+
+		CQueue<CGraphNode<T>*>queue;
 		queue.push(m_NodeArray[0]);
 		m_NodeArray[0]->m_Visit = true;
+
 		while (!queue.empty())
 		{
 			CGraphNode<T>* Node = queue.front();
@@ -155,11 +154,14 @@ public :
 	void DFS(void(*pFunc)(const T&))
 	{
 		if (m_Size == 0) return;
+
 		for (int i = 0; i < m_Size; i++)
 			m_NodeArray[i]->m_Visit = false;
+
 		CStack<CGraphNode<T>*> stack;
 		stack.push(m_NodeArray[0]);
 		m_NodeArray[0]->m_Visit = true;
+
 		while (!stack.empty())
 		{
 			CGraphNode<T>* Node = stack.top();

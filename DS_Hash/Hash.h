@@ -1,37 +1,29 @@
 #pragma once
+#include<string>
 
-#include<string >
-
+template<typename KEY, typename VALUE>
 class CHash
 {
-public :
-	CHash()
-	{
-
-	}
-	~CHash()
-	{
-
-	}
 private :
 	unsigned __int64 m_HashKey;
 public :
-	template<typename Key>
-	unsigned __int64 GetHash(Key key)
+	template<typename KEY, typename VALUE>
+	unsigned __int64 GetHashKey(KEY key)
 	{
 		m_HashKey = 0;
 		size_t Length = sizeof(key);
-		unsigned __int64 NewKey = (unsigned __int64)key;
+		unsigned __int64 HashKey = unsigned __int64(key);
 		for (size_t i = 0; i < Length; i++)
 		{
-			unsigned char data = NewKey & 0xff;
-			m_HashKey += data;
-			NewKey >>= 8;
+			unsigned char Number = HashKey && 0xff;
+			m_HashKey += Number;
+			HashKey >>= 8;
 		}
 		return m_HashKey;
-	}
 
-	unsigned __int64 GetHash(std::string key)
+	};
+	template<>
+	unsigned __int64 GetHashKey(std::string key)
 	{
 		m_HashKey = 0;
 		size_t Length = key.length();
@@ -44,8 +36,8 @@ public :
 		}
 		return m_HashKey;
 	}
-
-	unsigned __int64 GetHash(const char* key)
+	template<>
+	unsigned __int64 GetHashKey(const char* key)
 	{
 		m_HashKey = 0;
 		size_t Length = strlen(key);
@@ -58,5 +50,4 @@ public :
 		}
 		return m_HashKey;
 	}
-
 };

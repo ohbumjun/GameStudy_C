@@ -1,40 +1,5 @@
 #pragma once
 
-
-/*
-병합정렬의 경우 ,
-배열 하나를 추가적으로
-만들어야 한다.
-
-병합정렬은 반씩 쪼개는 원리라고
-생각하면 된다.
-
-3 7 1 5 6 8 2 4
-
-3 7 1 5			6 8 2 4
-
-3 7		1 5		6 8		2 4
-
-3	7	1	5	6	8	2	4
-
-자. 오름차순 기준.
-다시 오름차순 기준으로 합친다
-
-37	15	68	24
-
-37 ~ 15를 비교한다
-1 3 5 7	    2 4 6 8 
-
-1 2 3 4 5 6 7 8
-
-즉, 우선 1개 단위로 까지 나누고,
-되돌아오면서, 정렬을 적용하는
-방식이다. 
-
-*/
-
-#include<assert.h>
-
 template<typename T>
 class CMergeSort
 {
@@ -71,17 +36,18 @@ public :
 public :
 	int size() const { return m_Size; }
 	bool empty() const { return m_Size == 0; }
+	void clear() { m_Size = 0; }
 	void push(const T& data)
 	{
-		if (m_Size == m_Capacity)
+		if (m_Capacity == m_Size)
 		{
 			m_Capacity *= 2;
-			T* Array = new T[m_Capacity];
+			T** Array = new T[m_Capacity];
 			memcpy(Array, m_Array, sizeof(T) * m_Size);
 			delete[] m_Array;
-			delete[] m_CopyArray;
-			m_Array = Array;
+			delete[]m_CopyArray;
 			m_CopyArray = new T[m_Capacity];
+			m_Array = Array;
 		}
 		m_Array[m_Size] = data;
 		++m_Size;
@@ -98,7 +64,7 @@ public :
 		}
 		for (int i = 0; i < Count; i++)
 		{
-			m_Array[i] = Array[i];
+			m_Array[i] = Count[i];
 		}
 		m_Size = Count;
 	}
@@ -108,66 +74,55 @@ public :
 	}
 	void Sort(T* Array, int Count)
 	{
-		if (m_Capacity < Count)
-		{
-			m_Capacity = Count;
-			delete[] m_Array;
-			delete[] m_CopyArray;
-			m_Array = new T[m_Capacity];
-			m_CopyArray = new T[m_Capacity];
-		}
-		MergeSort(0, Count - 1, m_Array);
+		MergeSort(0, Count - 1, Array);
 	}
 	void MergeSort(int Left, int Right, T* Array)
 	{
 		if (Left < Right)
 		{
 			int Mid = (Left + Right) / 2;
-			MergeSort(Left, Mid, Array);
-			MergeSort(Mid + 1, Right, Array);
-			Merge(Left, Mid, Right, Array);
+			MergeSort(Left,Mid,Array);
+			MergeSort(Mid+1,Right,Array);
+			Merge(Left,Mid,Right,Array);
 		}
 	}
 	void Merge(int Left, int Mid, int Right, T* Array)
 	{
-		int Low = Left;
-		int High = Mid+1;
+		int Low  = Left;
+		int High = Mid + 1;
 		int Pivot = Left;
-		while (Left <= Mid && High <= Right)
+		while (Low <= Mid && High <= Right)
 		{
-			if (m_Func(m_Array[High],m_Array[Low]))
+			if (m_Func(Array[High], Array[Low]))
 			{
-				m_CopyArray[Pivot] = m_Array[Low];
+				m_CopyArray[Pivot] = Array[Low];
 				++Pivot;
-				++Low;
 			}
 			else
 			{
-				m_CopyArray[Pivot] = m_Array[High];
-				++Pivot;
+				m_CopyArray[Pivot] = Array[High];
 				++High;
 			}
 		}
-		if (Left <= Mid)
+		if (Low <= Mid)
 		{
-			for (int i = Left; i <= Mid; i++)
+			for (int i = Low; i <= Mid; i++)
 			{
-				m_CopyArray[Pivot] = m_Array[i];
+				m_CopyArray[Pivot] = Array[i];
 				++Pivot;
 			}
 		}
-		else
+		if (High <= Right)
 		{
 			for (int i = High; i <= Right; i++)
 			{
-				m_CopyArray[Pivot] = m_Array[i];
+				m_CopyArray[Pivot] = Array[i];
 				++Pivot;
 			}
 		}
 		for (int i = Left; i <= Right; i++)
 		{
-			m_Array[i] = m_CopyArray[i];
+			m_Array[i] - m_CopyArray[i];
 		}
 	}
-
 };
