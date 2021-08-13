@@ -1,37 +1,57 @@
+#include<iostream>
+#include<memory>
 
-#include <iostream>
-#include <time.h>
-#include "sample.h"
+using namespace std;
 
-bool Sort(const int& Left, const int& Right)
+class IndianSocket
 {
-	return Left > Right;
-}
+public :
+	virtual void indianCharge(int type) = 0;
+};
+
+class GSocket
+{
+public :
+	void gCharge()
+	{
+		cout << "g Charge" << endl;
+	}
+};
+
+class USASocket
+{
+public :
+	void usaCharge()
+	{
+		cout << "usa Charge" << endl;
+	}
+};
+
+class SocketAdapter :
+	public IndianSocket,
+	public USASocket,
+	public GSocket
+{
+public :
+	void indianCharge(const int type)
+	{
+		switch (type)
+		{
+		case 1 :
+			usaCharge();
+			break;
+		case 2 :
+			gCharge();
+			break;
+		default:
+			break;
+		}
+	}
+};
 
 int main()
 {
-	srand((unsigned int)time(0));
-	rand();
-
-	CQuickSort<int>	Quick;
-	Quick.SetSortFunction(Sort);
-
-	int	Array[20] = {};
-
-	for (int i = 0; i < 20; ++i)
-	{
-		Array[i] = rand();
-		std::cout << Array[i] << std::endl;
-		//Quick.push(rand());
-	}
-
-	Quick.Sort(Array, 20);
-
-	std::cout << "============= Sort =============" << std::endl;
-	for (int i = 0; i < 20; ++i)
-	{
-		std::cout << Array[i] << std::endl;
-	}
-	return 0;
+	unique_ptr<IndianSocket>socket = make_unique<SocketAdapter>();
+	socket->indianCharge(1);
+	socket->indianCharge(2);
 }
-
