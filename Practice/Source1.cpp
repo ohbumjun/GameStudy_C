@@ -1,57 +1,14 @@
-#include<iostream>
-#include<memory>
+// 브릿지 패턴
+// 상황 :
+// mp3 클래스가 있고, 재생멈춤기능이 있다
+// 1분 미리듣기를 제공하고 싶다
 
-using namespace std;
+// 구현부와, 인터페이스를 분리해서
+// 상호 독립적인 update 를 편리하게 한다.
 
-class IndianSocket
-{
-public :
-	virtual void indianCharge(int type) = 0;
-};
-
-class GSocket
-{
-public :
-	void gCharge()
-	{
-		cout << "g Charge" << endl;
-	}
-};
-
-class USASocket
-{
-public :
-	void usaCharge()
-	{
-		cout << "usa Charge" << endl;
-	}
-};
-
-class SocketAdapter :
-	public IndianSocket,
-	public USASocket,
-	public GSocket
-{
-public :
-	void indianCharge(const int type)
-	{
-		switch (type)
-		{
-		case 1 :
-			usaCharge();
-			break;
-		case 2 :
-			gCharge();
-			break;
-		default:
-			break;
-		}
-	}
-};
-
-int main()
-{
-	unique_ptr<IndianSocket>socket = make_unique<SocketAdapter>();
-	socket->indianCharge(1);
-	socket->indianCharge(2);
-}
+// 구현분의 변화없이,
+// 인터페이스를 변경하고
+// 인터페이스의 변환없이 구현부 변경
+// 즉, decouple !
+// 결국 계층의 추가를 이용한 
+// 유연성의 증대
