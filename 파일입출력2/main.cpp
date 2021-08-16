@@ -93,8 +93,6 @@ int main()
 		case EJob::Magicion :
 			cout << "¸¶¹ý»ç" << endl;
 			break;
-		default:
-			break;
 		}
 
 		fclose(FileStream);
