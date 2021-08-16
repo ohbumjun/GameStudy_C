@@ -53,10 +53,3 @@ public:
 		cout << "CChild" << endl;
 	}
 };
-
-int main()
-{
-	CParent* parent = new CChild;
-	parent->Outputpure1();
-	return 0;
-}
