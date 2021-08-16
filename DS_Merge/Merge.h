@@ -1,4 +1,8 @@
 #pragma once
+#include<assert.h>
+
+#include"Heap.h"
+#include"Quick.h"
 
 template<typename T>
 class CMergeSort
@@ -14,7 +18,7 @@ public :
 	}
 	~CMergeSort()
 	{
-		delete[] m_Array;
+		delete [] m_Array;
 		delete[] m_CopyArray;
 	}
 private :
@@ -24,7 +28,7 @@ private :
 	T* m_CopyArray;
 	bool (*m_Func)(const T&, const T&);
 private :
-	static bool SortFunction(const T& Left, const T& Right)
+	void SortFunction(const T& Left, const T& Right)
 	{
 		return Left > Right;
 	}
@@ -36,77 +40,82 @@ public :
 public :
 	int size() const { return m_Size; }
 	bool empty() const { return m_Size == 0; }
-	void clear() { m_Size = 0; }
 	void push(const T& data)
 	{
-		if (m_Capacity == m_Size)
+		if (m_Size == m_Capacity)
 		{
 			m_Capacity *= 2;
-			T** Array = new T[m_Capacity];
+			T* Array = new T[m_Capacity];
 			memcpy(Array, m_Array, sizeof(T) * m_Size);
 			delete[] m_Array;
-			delete[]m_CopyArray;
+			delete[] m_CopyArray;
 			m_CopyArray = new T[m_Capacity];
-			m_Array = Array;
+			m_Array = new T[m_Capacity];
 		}
-		m_Array[m_Size] = data;
-		++m_Size;
 	}
 	void push(T* Array, int Count)
 	{
 		if (m_Capacity < Count)
 		{
-			m_Capacity = Count;
+			delete[]m_CopyArray;
 			delete[] m_Array;
-			delete[] m_CopyArray;
+			m_Capacity = Count;
 			m_Array = new T[m_Capacity];
 			m_CopyArray = new T[m_Capacity];
 		}
 		for (int i = 0; i < Count; i++)
-		{
-			m_Array[i] = Count[i];
-		}
+			m_CopyArray[i] = m_Array[i];
 		m_Size = Count;
 	}
+	
 	void Sort()
 	{
 		MergeSort(0, m_Size - 1, m_Array);
 	}
 	void Sort(T* Array, int Count)
 	{
+		if (m_Capacity < Count)
+		{
+			delete[]m_CopyArray;
+			m_Capacity = Count;
+			m_CopyArray = new T[m_Capacity];
+		}
 		MergeSort(0, Count - 1, Array);
 	}
+private :
 	void MergeSort(int Left, int Right, T* Array)
 	{
 		if (Left < Right)
 		{
 			int Mid = (Left + Right) / 2;
-			MergeSort(Left,Mid,Array);
-			MergeSort(Mid+1,Right,Array);
-			Merge(Left,Mid,Right,Array);
+			MergeSort(Left, Mid, Array);
+			MergeSort(Mid + 1, Right, Array);
+			Merge(Left, Mid, Right, Array);
 		}
 	}
-	void Merge(int Left, int Mid, int Right, T* Array)
+	void Merge(int Left, int Mid, int Right, T*Array)
 	{
-		int Low  = Left;
+		int Low = Left;
 		int High = Mid + 1;
 		int Pivot = Left;
 		while (Low <= Mid && High <= Right)
 		{
-			if (m_Func(Array[High], Array[Low]))
+			if (m_Func(Array[Low], Array[High]))
 			{
-				m_CopyArray[Pivot] = Array[Low];
+				m_CopyArray[Pivot] = Array[High];
+				++High;
 				++Pivot;
 			}
 			else
 			{
-				m_CopyArray[Pivot] = Array[High];
-				++High;
+				m_CopyArray[Pivot] = Array[Low];
+				++Low;
+				++Pivot;
 			}
 		}
-		if (Low <= Mid)
+		if (Left <= Mid)
 		{
-			for (int i = Low; i <= Mid; i++)
+			for (int i = Left; i <= Mid; i++)
 			{
 				m_CopyArray[Pivot] = Array[i];
 				++Pivot;
@@ -122,7 +131,7 @@ public :
 		}
 		for (int i = Left; i <= Right; i++)
 		{
-			m_Array[i] - m_CopyArray[i];
+			m_Array[i] = m_CopyArray[i];
 		}
 	}
 };

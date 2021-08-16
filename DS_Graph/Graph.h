@@ -1,16 +1,23 @@
 #pragma once
-#include"Stack.h"
 #include"Queue.h"
+#include"Stack.h"
 
 template<typename T>
 class CEdge
 {
 	template<typename T>
-	friend class CGraph;
-	template<typename T>
 	friend class CGraphNode;
+	template<typename T>
+	friend class CGraph;
 public :
-	CEdge():m_Node(nullptr){}
+	CEdge()
+	{
+
+	}
+	~CEdge()
+	{
+
+	}
 private :
 	class CGraphNode<T>* m_Node;
 };
@@ -31,25 +38,23 @@ public :
 	~CGraphNode()
 	{
 		for (int i = 0; i < m_Size; i++)
-		{
 			delete m_EdgeArray[i];
-		}
 		delete[] m_EdgeArray;
 	}
 private :
 	int m_Size;
 	int m_Capacity;
 	CEdge<T>** m_EdgeArray;
-	T m_Data;
 	bool m_Visit;
+	T m_Data;
 public :
-	void AddNode(CGraphNode<T>* Node)
+	void AddEdge(CGraphNode<T>*Node)
 	{
 		if (m_Size == m_Capacity)
 		{
 			m_Capacity *= 2;
 			CEdge<T>** Array = new CEdge<T>*[m_Capacity];
-			memcpy(Array, m_EdgeArray, sizeof(CEdge<T>*) * m_Size);
+			memcpy(Array, m_EdgeArray, sizeof(T) * m_Size);
 			delete[] m_EdgeArray;
 			m_EdgeArray = Array;
 		}
@@ -58,21 +63,21 @@ public :
 		m_EdgeArray[m_Size] = Edge;
 		++m_Size;
 	}
-	void Add(CStack<CGraphNode<T>*>& stack)
-	{
-		for (int i = 0; i < m_Size; i++)
-		{
-			if (m_EdgeArray[i]->m_Node->m_Visit) continue;
-			stack.push(m_EdgeArray[i]->m_Node);
-			m_EdgeArray[i]->m_Node->m_Visit = true;
-		}
-	}
 	void Add(CQueue<CGraphNode<T>*>& queue)
 	{
 		for (int i = 0; i < m_Size; i++)
 		{
 			if (m_EdgeArray[i]->m_Node->m_Visit) continue;
 			queue.push(m_EdgeArray[i]->m_Node);
+			m_EdgeArray[i]->m_Node->m_Visit = true;
+		}
+	}
+	void Add(CStack<CGraphNode<T>*>& stack)
+	{
+		for (int i = 0; i < m_Size; i++)
+		{
+			if (m_EdgeArray[i]->m_Node->m_Visit) continue;
+			stack.push(m_EdgeArray[i]->m_Node);
 			m_EdgeArray[i]->m_Node->m_Visit = true;
 		}
 	}
@@ -107,7 +112,7 @@ public :
 		{
 			m_Capacity *= 2;
 			CGraphNode<T>** Array = new CGraphNode<T>*[m_Capacity];
-			memcpy(Array, m_NodeArray, sizeof(CGraphNode<T>*) * m_Size);
+			memcpy(Array, m_NodeArray, sizeof(T) * m_Size);
 			delete[] m_NodeArray;
 			m_NodeArray = Array;
 		}
@@ -120,7 +125,7 @@ public :
 	{
 		CGraphNode<T>* SrcNode = nullptr;
 		CGraphNode<T>* DestNode = nullptr;
-		for (int i = 0; i < m_Size; i++)
+		for(int i = 0 ; i < m_Size; i++)
 		{
 			if (m_NodeArray[i]->m_Data == Src)
 				SrcNode = m_NodeArray[i];
@@ -129,20 +134,17 @@ public :
 			if (SrcNode && DestNode) break;
 		}
 		if (!SrcNode || !DestNode) return;
-		SrcNode->AddNode(DestNode);
-		DestNode->AddNode(SrcNode);
+		SrcNode->AddEdge(DestNode);
+		DestNode->AddEdge(SrcNode);
 	}
 	void BFS(void(*pFunc)(const T&))
 	{
 		if (m_Size == 0) return;
-
 		for (int i = 0; i < m_Size; i++)
 			m_NodeArray[i]->m_Visit = false;
-
-		CQueue<CGraphNode<T>*>queue;
+		CQueue<CGraphNode<T>*> queue;
 		queue.push(m_NodeArray[0]);
 		m_NodeArray[0]->m_Visit = true;
-
 		while (!queue.empty())
 		{
 			CGraphNode<T>* Node = queue.front();
@@ -154,14 +156,11 @@ public :
 	void DFS(void(*pFunc)(const T&))
 	{
 		if (m_Size == 0) return;
-
 		for (int i = 0; i < m_Size; i++)
 			m_NodeArray[i]->m_Visit = false;
-
 		CStack<CGraphNode<T>*> stack;
 		stack.push(m_NodeArray[0]);
 		m_NodeArray[0]->m_Visit = true;
-
 		while (!stack.empty())
 		{
 			CGraphNode<T>* Node = stack.top();
