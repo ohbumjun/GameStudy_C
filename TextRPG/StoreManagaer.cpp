@@ -30,7 +30,7 @@ void CStoreManagaer::Run()
             m_Store[1]->Run();
             break;
         case Store_Menu::Back:
-            break;
+            return;
         }
     }
 };

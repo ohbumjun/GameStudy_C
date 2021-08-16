@@ -10,7 +10,7 @@ int main()
 	if (write.is_open())
 	{
 		char Text[128] = {};
-		strcpy_s(Text, "原原原");
+		strcpy_s(Text,"照括");
 		write.write(Text, strlen(Text));
 	}
 	write.close();
