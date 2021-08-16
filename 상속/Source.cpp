@@ -255,11 +255,15 @@ int main()
 	cout << child->m_Number4 << endl;
 
 	// 3) 다중 상속의 위험성
+	// cout << child1->m_Number3 << endl;
 
 	// 4) 다형성 
-
+	CParent* child2 = new CChild;
+	CParent* child3 = new CChild1;
 
 	// 5) 다운 캐스팅의 위험성 
+	((CChild1*)child2)->Output();
+
 }
 
 /*
@@ -286,4 +290,27 @@ CChild, CChil1 각각, 객체를 생성시
 m_Number4 라는 각각의 변수를
 각각의 서로 다른 메모리 공간에 할당하여
 사용하는 원리이다. 
+
+3) CChild1의 경우 ,
+CParent, CParent1을 다중 상속받는 중인데 ,
+CParent, CParent1의 경우, 
+공통적으로 m_Number3 라는 변수를 갖고 있다.
+따라서, 이를 cout << endl 하려할 때
+두 부모 class 중 어떤 것의 m_Number3를 출력해야 하는지 모르게 된다.
+즉, 변수의중복을 조심해야 한다. 
+
+4) CChild 클래스를 동적할당하고,
+해당 메모리 주소를 CParent 포인터 타입에 저장.
+서로 상속관계에 있는 클래스이기 때문에
+이러한 형변환이 가능한 것이다.
+
+5) child3는 근본적으로 CParent 포인터 타입의 변수.
+다운 캐스팅을 할시 주의해서 사용.
+
+CChild 생성 --> CParent* 형변환 --> CChild1 형변환
+
+이 객체는 근본적으로 CChild 객체를 생성한 것이므로
+CChil1 으로 형변환 하여 사용시 
+많은 문제를 발생시킬 수 있다. 
+
 */
