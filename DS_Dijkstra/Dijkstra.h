@@ -31,7 +31,8 @@ class CDijkstraNode
 	friend class CDijkstra;
 public :
 	CDijkstraNode()
-	{
+	{ 
+		//
 		m_Size = 0;
 		m_Capacity = 8;
 		m_EdgeArray = new CEdge<T>*[m_Capacity];
