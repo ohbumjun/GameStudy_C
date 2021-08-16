@@ -18,6 +18,7 @@ public :
 	}
 public:
 	void Run();
+	int Menu();
 	bool Init();
 private:
 	static CInventory* m_pInst;
