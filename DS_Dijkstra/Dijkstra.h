@@ -32,7 +32,9 @@ class CDijkstraNode
 public :
 	CDijkstraNode()
 	{ 
-		//
+		/// <summary>
+		/// /
+		/// </summary>
 		m_Size = 0;
 		m_Capacity = 8;
 		m_EdgeArray = new CEdge<T>*[m_Capacity];
