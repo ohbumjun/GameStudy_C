@@ -31,51 +31,32 @@ using namespace std;
 class CParent
 {
 public :
-	CParent()
-	{
-
-	}
-	virtual ~CParent()
-	{
-
-	}
+	CParent(){}
+	~CParent(){}
 public :
-	virtual void Output()
+	virtual void Outputpure() = 0; 
+	virtual void Outputpure1() = 0
 	{
-		cout << "CParent Output" << endl;
-	}
-	virtual void OutputPure() = 0;
-	virtual void OutputPure1() = 0
-	{
-		cout << "CParent OutputPure1" << endl;
+		cout << "hello" << endl;
 	}
 };
 
 class CChild : public CParent
 {
-public :
-	CChild()
+public:
+	CChild() {}
+	~CChild() {}
+public:
+	virtual void Outputpure(){}
+	virtual void Outputpure1()
 	{
-
-	}
-	virtual ~CChild()
-	{
-
-	}
-public :
-	virtual void OutputPure() override
-	{
-		cout << "CChild Outputpure" << endl;
-	}
-	virtual void OutputPure1() override
-	{
-		cout << "CChild Outputpure1" << endl;
+		cout << "CChild" << endl;
 	}
 };
 
 int main()
 {
-	CParent* Child = new CChild;
-	Child->OutputPure();
-	delete Child;
+	CParent* parent = new CChild;
+	parent->Outputpure1();
+	return 0;
 }
