@@ -28,6 +28,7 @@ int main()
 			// read.eof(): 파일끝에 가면 true
 			char Text[128] = {};
 			// 한줄 읽어오기
+			// getline : 줄바꿈 \n까지 같이 읽어들인다.
 			read.getline(Text, 128);
 			std::cout << Text << std::endl;
 		}
