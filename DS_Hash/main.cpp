@@ -37,10 +37,13 @@ Hash에서 중요한 것은
 #include"Hash.h"
 #include"HashTable.h"
 
+using namespace std;
 
 int main()
 {
 	CHashTable<const char*, const char*>	Table;
+
+	cout << "hello" << endl;
 
 	Table.insert("야스오", "과학");
 	Table.insert("요네", "수학");
@@ -49,6 +52,8 @@ int main()
 	Table.insert("베인", "지만아는놈");
 	Table.insert("ABC", "ABC");
 	Table.insert("ACB", "ACB");
+
+	cout << "hello" << endl;
 
 	std::cout << Table["야스오"] << std::endl;
 	std::cout << Table["트린다미어"] << std::endl;
