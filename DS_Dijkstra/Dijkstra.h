@@ -1,7 +1,8 @@
 #pragma once
+#include<assert.h>
 #include"Heap.h"
 #include"List.h"
-#include"Queue.h"
+
 
 template<typename T>
 class CEdge
@@ -11,14 +12,8 @@ class CEdge
 	template<typename T>
 	friend class CDijkstra;
 public :
-	CEdge()
-	{
-		m_Node = nullptr;
-	}
-	~CEdge()
-	{
-
-	}
+	CEdge() { m_Node = nullptr; }
+	~CEdge(){}
 private :
 	int m_Cost;
 	class CDijkstraNode<T>* m_Node;
@@ -31,16 +26,12 @@ class CDijkstraNode
 	friend class CDijkstra;
 public :
 	CDijkstraNode()
-	{ 
-		/// <summary>
-		/// /
-		/// </summary>
+	{
+		m_Cost = INT_MAX;
 		m_Size = 0;
 		m_Capacity = 8;
-		m_EdgeArray = new CEdge<T>*[m_Capacity];
 		m_Visit = false;
-		m_Cost = INT_MAX;
-		m_Parent = nullptr;
+		m_EdgeArray = new CEdge<T>*[m_Capacity];
 	}
 	~CDijkstraNode()
 	{
@@ -49,12 +40,12 @@ public :
 		delete[] m_EdgeArray;
 	}
 private :
+	int m_Cost;
 	int m_Size;
 	int m_Capacity;
-	CEdge<T>** m_EdgeArray;
 	bool m_Visit;
 	T m_Data;
-	int m_Cost;
+	CEdge<T>** m_EdgeArray;
 	CDijkstraNode<T>* m_Parent;
 public :
 	void AddEdge(CDijkstraNode<T>* Node, int Cost)
@@ -75,6 +66,8 @@ public :
 	}
 	void Add(CHeap<CDijkstraNode<T>*>& heap)
 	{
+		// 다익스트라 : 아직 방문안한 노드 중에서 가장 거리가 짧은 노드를 방문한다.
+		// 그리고 각 점까지의 최소 거리들을 update 해간다
 		for (int i = 0; i < m_Size; i++)
 		{
 			if (m_Cost + m_EdgeArray[i]->m_Cost < m_EdgeArray[i]->m_Node->m_Cost)
@@ -84,18 +77,17 @@ public :
 			}
 			if (!m_EdgeArray[i]->m_Node->m_Visit)
 			{
-				heap.push(m_EdgeArray[i]->m_Node);
 				m_EdgeArray[i]->m_Node->m_Visit = true;
+				heap.push(m_EdgeArray[i]->m_Node);
 			}
 		}
 	}
 };
 
-
 template<typename T>
 class CDijkstra
 {
-public:
+public :
 	CDijkstra()
 	{
 		m_Size = 0;
@@ -108,10 +100,6 @@ public:
 			delete m_NodeArray[i];
 		delete[] m_NodeArray;
 	}
-private:
-	int m_Size;
-	int m_Capacity;
-	CDijkstraNode<T>** m_NodeArray;
 public :
 	void insert(const T& data)
 	{
@@ -127,6 +115,47 @@ public :
 		Node->m_Data = data;
 		m_NodeArray[m_Size] = Node;
 		++m_Size;
+	}
+	bool Find(CList<T>* ResultList, const T& Start, const T& End)
+	{
+		CDijkstraNode<T>* StartNode = FindNode(Start);
+		if (!StartNode) return false;
+		CDijkstraNode<T>* EndNode   = FindNode(End);
+		if (!EndNode) return false;
+
+		// 초기화
+		for (int i = 0; i < m_Size; i++)
+		{
+			m_NodeArray[i]->m_Visit = false;
+			m_NodeArray[i]->m_Cost = INT_MAX;
+			m_NodeArray[i]->m_Parent = nullptr;
+		}
+
+		CHeap<CDijkstraNode<T>*> heap;
+		StartNode->m_Visit = true;
+		StartNode->m_Cost = 0;
+		heap.push(StartNode);
+		while (!heap.empty())
+		{
+			CDijkstraNode<T>* Node = heap.top();
+			heap.pop();
+			Node->Add(heap);
+		}
+		CDijkstraNode<T>* Node = EndNode;
+		while (Node)
+		{
+			ResultList->push_front(Node->m_Data);
+			Node = Node->m_Parent;
+		}
+		return true;
+	}
+	CDijkstraNode<T>* FindNode(const T& data)
+	{
+		for (int i = 0; i < m_Size; i++)
+		{
+			if (m_NodeArray[i]->m_Data == data) return m_NodeArray[i];
+		}
+		return nullptr;
 	}
 	void AddEdge(const T& Src, const T& Dest, int Cost)
 	{
@@ -144,49 +173,9 @@ public :
 		SrcNode->AddEdge(DestNode, Cost);
 		DestNode->AddEdge(SrcNode, Cost);
 	}
-	CDijkstraNode<T>* FindNode(const T& data)
-	{
-		for (int i = 0; i < m_Size; i++)
-		{
-			if (m_NodeArray[i]->m_Data == data) return m_NodeArray[i];
-		}
-		return nullptr;
-	}
-	bool Find(CList<T>* ResultList, const T& Src, const T& Dest)
-	{
-		// 시작, 끝점 설정
-		CDijkstraNode<T>* StartNode = FindNode(Src);
-		if (!StartNode) return false;
-		CDijkstraNode<T>* EndNode = FindNode(Dest);
-		if (!EndNode) return false;
 
-		// 초기화
-		for (int i = 0; i < m_Size; i++)
-		{
-			m_NodeArray[i]->m_Visit = false;
-			m_NodeArray[i]->m_Parent = nullptr;
-			m_NodeArray[i]->m_Cost = INT_MAX;
-		}
-
-		CHeap<CDijkstraNode<T>*> heap;
-		StartNode->m_Visit = true;
-		StartNode->m_Cost = 0;
-		heap.push(StartNode);
-
-		while (!heap.empty())
-		{
-			CDijkstraNode<T>* Node = heap.top();
-			heap.pop();
-			Node->Add(heap);
-		}
-
-		CDijkstraNode<T>* Node = EndNode;
-		while (Node)
-		{
-			ResultList->push_front(Node->m_Data);
-			Node = Node->m_Parent;
-		}
-		return true;
-	}
-
+private :
+	int m_Size;
+	int m_Capacity;
+	CDijkstraNode<T>** m_NodeArray;
 };
