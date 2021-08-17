@@ -1,31 +1,37 @@
 #include<iostream>
-#include<fstream>
 
 using namespace std;
 
+class CParent
+{
+public :
+	CParent(){}
+	~CParent(){}
+public :
+	virtual void Outputpure() = 0;
+	virtual void Outputpure1() = 0
+	{
+		cout << "parent pure1" << endl;
+	}
+};
+
+class CChild : public CParent
+{
+public :
+	CChild(){}
+	~CChild(){}
+private :
+	void Outputpure(){}
+	void Outputpure1()
+	{
+		cout << "child pure1" << endl;
+	}
+};
+
+
 int main()
 {
-	std::ofstream write;
-	write.open("hello.txt");
-	if (write.is_open())
-	{
-		char Text[128] = {};
-		strcpy_s(Text,"¾È³ç");
-		write.write(Text, strlen(Text));
-	}
-	write.close();
-
-	std::ifstream read;
-	read.open("hello.txt");
-	if (read.is_open())
-	{
-		while (!read.eof())
-		{
-			char Text[128] = {};
-			read.getline(Text, 128);
-			cout << Text << endl;
-		}
-	}
-
+	CParent* child = new CChild;
+	child->Outputpure1();
 	return 0;
 }
