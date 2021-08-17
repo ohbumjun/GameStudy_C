@@ -11,7 +11,7 @@ public :
 	virtual void Outputpure() = 0;
 	virtual void Outputpure1() = 0
 	{
-		cout << "parent pure1" << endl;
+
 	}
 };
 
@@ -20,14 +20,16 @@ class CChild : public CParent
 public :
 	CChild(){}
 	~CChild(){}
-private :
-	void Outputpure(){}
-	void Outputpure1()
+public :
+	virtual void Outputpure() override
 	{
-		cout << "child pure1" << endl;
+
+	}
+	virtual void Outputpure1() override
+	{
+		cout << "child hello" << endl;
 	}
 };
-
 
 int main()
 {
