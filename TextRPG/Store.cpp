@@ -80,9 +80,9 @@ void CStore::Run()
 			continue;
 		}
 		// 여기까지 오면 아이템 구매 가능
-		CItem* ItemBought = m_Item[Index];
+		CItem* ItemBought = m_Item[Index]->Clone();
 		// 장바칸에 추가
-		CInventory::GetInst()->AddItem(ItemBought->Clone());
+		CInventory::GetInst()->AddItem(ItemBought);
 		// 돈 감소 
 		pPlayer->AddGold(-m_Item[Index]->GetPrice());
 		// 표시 
@@ -110,6 +110,8 @@ int CStore::Menu(CPlayer* pPlayer)
 		cout << endl;
 	}
 	cout << "0. 뒤로가기" << endl;
+	cout << "보유금액 : ";
+	cout << pPlayer->GetGold() << endl;
 	cout << "구입할 아이템을 선택하세요 : ";
 	int _Menu;
 	cin >> _Menu;

@@ -6,7 +6,8 @@
 using namespace std;
 
 CInventory* CInventory::m_pInst = nullptr;
-CInventory::CInventory() : m_Count(0),m_Item{}
+CInventory::CInventory() : 
+	m_Count(0),m_Item{}
 {
 }
 
@@ -20,13 +21,13 @@ CInventory::~CInventory()
 
 void CInventory::Run()
 {
+	CPlayer* player = CObjectManager::GetInst()->GetPlayer();
 	while (true)
 	{
-		int Select = Menu();
+		int Select = Menu(player);
 		if (Select == -1) continue;
 		if (Select == 0) break;
 		int Index = Select - 1;
-		CPlayer* player = CObjectManager::GetInst()->GetPlayer();
 		CItem* EquipItem = player->Equip(m_Item[Index]);
 		if (EquipItem)
 		{
@@ -38,14 +39,15 @@ void CInventory::Run()
 			{
 				m_Item[i] = m_Item[i + 1];
 			}
-			m_Item[m_Count] = nullptr;
+			m_Item[m_Count-1] = nullptr;
 			--m_Count;
 		}
 	}
 }
 
-int CInventory::Menu()
+int CInventory::Menu(CPlayer* player)
 {
+	system("cls");
 	cout << "==== 인벤토리 ====" << endl;
 	for (int i = 0; i < m_Count; i++)
 	{
@@ -53,6 +55,23 @@ int CInventory::Menu()
 		m_Item[i]->Output();
 	}
 	cout << "0. 뒤로가기" << endl;
+	
+	cout << "장착 무기 : " << endl;
+	CItem* EquipItem = player->GetEqiupItem(Equip_Weapon);
+	if (EquipItem)
+		cout << player->GetEqiupItem(Equip_Weapon)->GetName();
+	else
+		cout << "없음\n";
+	cout << endl;
+
+	cout << "장착 방어구 : " << endl;
+	EquipItem = player->GetEqiupItem(Equip_Armor);
+	if (EquipItem)
+		cout << player->GetEqiupItem(Equip_Armor)->GetName();
+	else
+		cout << "없음\n";
+	cout << endl;
+	
 	cout << "장착할 아이템을 선택하세요" ;
 	int _Menu;
 	cin >> _Menu;

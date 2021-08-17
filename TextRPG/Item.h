@@ -5,7 +5,7 @@ class CItem
 {
 public :
 	CItem();
-	CItem(CItem& Item);
+	CItem(const CItem& Item);
 	~CItem();
 private:
 	char m_Name[52];

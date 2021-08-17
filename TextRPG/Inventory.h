@@ -18,7 +18,7 @@ public :
 	}
 public:
 	void Run();
-	int Menu();
+	int Menu(class CPlayer* player);
 	bool Init();
 private:
 	static CInventory* m_pInst;

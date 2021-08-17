@@ -41,7 +41,6 @@ int main()
 	}
 
 	QueryPerformanceCounter(&PrevTick);
-
 	Merge.Sort(Array, 100000);
 
 	QueryPerformanceCounter(&Tick);

@@ -31,6 +31,7 @@ Battle_Result CMap::Battle(CPlayer* pPlayer, CMonster* pMonster)
     if (pPlayer->GetEqiupItem(Equip_Weapon))
         Attack += pPlayer->GetEqiupItem(Equip_Weapon)->GetOption();
     int Damage = Attack - pMonster->GetArmor();
+    cout << "attack Damage" << endl;
     Damage = Damage < 1 ? 1 : Damage;
     if (pMonster->Damage(Damage)) return Battle_Result::Monster_Death;
 
@@ -40,6 +41,7 @@ Battle_Result CMap::Battle(CPlayer* pPlayer, CMonster* pMonster)
 
     Damage = pMonster->GetAttack() - Armor;
     Damage = Damage < 1 ? 1 : Damage;
+    cout << "Armor Damage" << endl;
     if (pPlayer->Damage(Damage)) return Battle_Result::Player_Death;
 
     return Battle_Result::None;
