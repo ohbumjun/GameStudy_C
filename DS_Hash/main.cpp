@@ -43,7 +43,6 @@ int main()
 {
 	CHashTable<const char*, const char*>	Table;
 
-	cout << "hello" << endl;
 
 	Table.insert("야스오", "과학");
 	Table.insert("요네", "수학");

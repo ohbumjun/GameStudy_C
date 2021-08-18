@@ -1,39 +1,62 @@
 #pragma once
+#include<iostream>
 #include"Hash.h"
 #include"List.h"
 
-template<typename Key, typename Value>
+
+
+template <typename Key, typename Value>
 class CHashNode
 {
-	template<typename Key, typename Value>
-	friend class CHashIterator;
-	template<typename Key, typename Value, int HASHSIZE>
+	template <typename Key, typename Value, int HASHSIZE>
 	friend class CHashTable;
-public :
-	CHashNode(){
-		m_Chain = new CList<CHashNode<Key, Value>*>;
+
+	template <typename Key, typename Value>
+	friend class CHashTableIterator;
+
+private:
+	CHashNode()
+	{
 	}
-	~CHashNode(){}
-private :
-	CList<CHashNode<Key, Value>*>* m_Chain;
-public :
-	Key first;
-	Value second;
-public :
+
+	~CHashNode()
+	{
+		typename CList<CHashNode<Key, Value>*>::iterator	iter = m_Chain->begin();
+		typename CList<CHashNode<Key, Value>*>::iterator	iterEnd = m_Chain->end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			delete* iter;
+		}
+	}
+
+public:
+	Key		first;
+	Value	second;
+
+private:
+	CList<CHashNode<Key, Value>*>*	m_Chain;
+
+private:
 	void Add(const Key& key, const Value& value)
 	{
-		CHashNode<Key, Value>* Node = new CHashNode<Key,Value>;
+		CHashNode<Key, Value>* Node = new CHashNode<Key, Value>;
+
 		Node->first = key;
 		Node->second = value;
 		m_Chain->push_back(Node);
 	}
+
 	CHashNode<Key, Value>* Get(const Key& key)
 	{
-		typename CList<CHashNode<Key, Value>*>::iterator iter     = m_Chain->begin();
-		typename CList<CHashNode<Key, Value>*>::iterator iterEnd  = m_Chain->end();
+		std::cout << "hello" << std::endl;
+		typename CList<CHashNode<Key, Value>*>::iterator	iter = m_Chain->begin();
+		typename CList<CHashNode<Key, Value>*>::iterator	iterEnd = m_Chain->end();
+
 		for (; iter != iterEnd; ++iter)
 		{
-			if ((*iter)->first == key) return *iter;
+			if ((*iter)->first == key)
+				return *iter;
 		}
 		return nullptr;
 	}
@@ -45,12 +68,17 @@ class CHashIterator
 	template<typename Key, typename Value, int HASHSIZE>
 	friend class CHashTable;
 public :
-	CHashIterator(){}
-	~CHashIterator(){}
+	CHashIterator()
+	{
+		m_Node = nullptr;
+	}
+	~CHashIterator()
+	{
+	}
 private :
 	CHashNode<Key, Value>* m_Node;
 public :
-	bool operator == (const CHashIterator<Key,Value>& iter) const
+	bool operator == (const CHashIterator<Key,Value>&iter) const
 	{
 		return m_Node == iter.m_Node;
 	}
@@ -58,11 +86,12 @@ public :
 	{
 		return m_Node != iter.m_Node;
 	}
-	CHashNode<Key, Value>* operator * ()
+	CHashNode<Key, Value>* operator *()
 	{
 		return m_Node;
 	}
 };
+
 
 template<typename Key, typename Value, int HASHSIZE = 1223>
 class CHashTable
@@ -84,17 +113,16 @@ public :
 	void insert(const Key& key, const Value& value)
 	{
 		CHash hash;
-		unsigned __int64 HashKey = hash.GetHash<Key>(key);
-		int Index = (int)(HashKey % HASHSIZE);
+		unsigned __int64 NewKey = hash.GetHash<Key>(key);
+		int Index = (int)(NewKey % HASHSIZE);
 		m_Hash[Index].Add(key, value);
-		std::cout << "insert" << std::endl;
 		++m_Size;
 	}
 	Value& operator [] (const Key& key)
 	{
 		CHash hash;
-		unsigned __int64 HashKey = hash.GetHash<Key>(key);
-		int Index = (int)(HashKey % HASHSIZE);
+		unsigned __int64 NewKey = hash.GetHash<Key>(key);
+		int Index = (int)(NewKey % HASHSIZE);
 		PNODE Node = m_Hash[Index].Get(key);
 		if (!Node)
 		{
@@ -107,14 +135,14 @@ public :
 	iterator Find(const Key& key)
 	{
 		CHash hash;
-		unsigned __int64 HashKey = hash.GetHash<Key>(key);
-		int Index = (int)(HashKey % HASHSIZE);
+		unsigned __int64 NewKey = hash.GetHash<Key>(key);
+		int Index = (int)(NewKey % HASHSIZE);
 		PNODE Node = m_Hash[Index].Get(key);
 		iterator iter;
 		iter.m_Node = Node;
 		return iter;
 	}
-	bool IsValid(const iterator& iter)
+	bool IsValid(iterator& iter)
 	{
 		return iter.m_Node != nullptr;
 	}

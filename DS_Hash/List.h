@@ -227,14 +227,17 @@ private:
 public:
 	void push_back(const T& data)
 	{
+
 		// 데이터를 저장해둘 노드를 생성한다.
 		PNODE	Node = new NODE;
 
 		Node->m_Data = data;
 
+		
 		// End노드와 End노드의 이전노드 사이에 새로 생성된 노드를 추가해주도록 한다.
 		PNODE	Prev = m_End->m_Prev;
 
+		std::cout << "hello!" << std::endl;
 		// End노드의 이전노드의 다음노드를  End에서 새로 생성된 노드로 교체한다.
 		Prev->m_Next = Node;
 

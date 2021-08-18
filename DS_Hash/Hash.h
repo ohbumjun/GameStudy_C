@@ -1,10 +1,9 @@
 #pragma once
 #include<string>
-#include<iostream>
 
 class CHash
 {
-public :
+public:
 	CHash()
 	{
 
@@ -20,22 +19,19 @@ public :
 	unsigned __int64 GetHash(const Key& key)
 	{
 		m_HashKey = 0;
-
-		size_t	Length = sizeof(key);
-
+		size_t Length = sizeof(key);
 		unsigned __int64 NewKey = (unsigned __int64)key;
-		for (size_t i = 0; i < Length; ++i)
+		for (size_t i = 0; i < Length; i++)
 		{
 			unsigned char data = NewKey & 0xff;
-
 			m_HashKey += data;
-
 			NewKey >>= 8;
 		}
 		return m_HashKey;
 	}
+
 	template<>
-	unsigned __int64 GetHash(const std::string& key)
+	unsigned __int64 GetHash(const std::string &key)
 	{
 		m_HashKey = 0;
 		size_t Length = key.length();
@@ -46,8 +42,9 @@ public :
 		}
 		return m_HashKey;
 	}
+
 	template<>
-	unsigned __int64 GetHash(const char* const &key)
+	unsigned __int64 GetHash(char* const &key)
 	{
 		m_HashKey = 0;
 		size_t Length = strlen(key);
@@ -58,4 +55,5 @@ public :
 		}
 		return m_HashKey;
 	}
+
 };

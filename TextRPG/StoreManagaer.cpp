@@ -54,6 +54,6 @@ bool CStoreManagaer::Init()
     m_Store[0] = new CStore;
     if(!m_Store[0]->Init(ST_Weapon)) return false;
     m_Store[1] = new CStore;
-    if(!m_Store[1]->Init(ST_Armor)) return false;
+    if (!m_Store[1]->Init(ST_Weapon)) return false;
     return true;
 }

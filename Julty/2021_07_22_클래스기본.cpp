@@ -1,3 +1,6 @@
+#include "..\TextRPG_6\Player.h"
+#include "..\TextRPG_6\Player.h"
+#include "..\TextRPG_6\Player.h"
 #include "..\TextRPG\Player.h"
 #include "..\TextRPG\Player.h"
 #include "..\TextRPG\Player.h"
@@ -162,12 +165,7 @@ public:
 	다른 객체들로 매번 this가 바뀔 것이다
 
 `	*/
-	void CPlayer::AddExp(int Exp)
-	{
-	}
-	void CPlayer::Init()
-	{
-	}
+	
 	void Output()
 	{
 		// cout << "Number1 : " << this->m_Number1 << endl;
