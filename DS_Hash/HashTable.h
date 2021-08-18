@@ -3,8 +3,6 @@
 #include"Hash.h"
 #include"List.h"
 
-
-
 template <typename Key, typename Value>
 class CHashNode
 {
