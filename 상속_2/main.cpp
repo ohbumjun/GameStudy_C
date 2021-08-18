@@ -25,16 +25,17 @@
 추상클래스는 객체생성이 불가능하다. 
 */
 
+
 #include<iostream>
 using namespace std;
 
 class CParent
 {
-public :
-	CParent(){}
-	~CParent(){}
-public :
-	virtual void Outputpure() = 0; 
+public:
+	CParent() {}
+	~CParent() {}
+public:
+	virtual void Outputpure() = 0;
 	virtual void Outputpure1() = 0
 	{
 		cout << "hello" << endl;
@@ -47,7 +48,7 @@ public:
 	CChild() {}
 	~CChild() {}
 public:
-	virtual void Outputpure(){}
+	virtual void Outputpure() {}
 	virtual void Outputpure1()
 	{
 		cout << "CChild" << endl;
