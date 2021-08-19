@@ -1,69 +1,52 @@
 #include<iostream>
-#include<vector>
-#include<string>
 
 using namespace std;
 
-class BaseMenu
+struct IComponent
 {
-private :
-	string m_Name;
-public :
-	BaseMenu(string n) : m_Name(n){}
-	string getTitle() { return m_Name; }
-	virtual void command() = 0;
+	virtual void Fire() = 0;
+	virtual ~IComponent() {};
 };
 
-class MenuItem : public BaseMenu
+class SpaceShip : public IComponent
 {
-	int m_Id;
 public :
-	MenuItem(string n, int id) : BaseMenu(n),m_Id(id) {}
-	void command()
+	int color;
+	void Fire() { cout << "Fire Missile" << endl; }
+};
+
+class LeftMissile : public IComponent
+{
+	IComponent* ss;
+public :
+	LeftMissile(IComponent*p):ss(p){}
+	void Fire()
 	{
-		cout << getTitle() << " 실행" << endl;
+		ss->Fire();
+		cout << "Left Missile" << endl;
 	}
 };
 
-class PopUpMenu : public BaseMenu
+class RightMissile : public IComponent
 {
-	vector<BaseMenu*> m_VMenu;
+	IComponent* ss;
 public :
-	PopUpMenu(string n) : BaseMenu(n){}
-	void addMenu(BaseMenu* menu) { m_VMenu.push_back(menu); }
-	void command()
+	RightMissile(IComponent*p):ss(p){}
+	void Fire()
 	{
-		int _Menu;
-		int sz = m_VMenu.size();
-		while (true)
-		{
-			system("cls");
-			for (int i = 0; i < sz; i++)
-				cout << i + 1 << ". " << m_VMenu[i]->getTitle() << endl;
-			cout << sz + 1 << ". 상위메뉴로 " << endl;
-			cout << "메뉴를 선택하세요 :";
-			cin >> _Menu;
-			if (_Menu < 1 || _Menu > sz+1) continue;
-			if (_Menu == sz+1) break;
-			m_VMenu[_Menu-1]->command();
-		}
+		ss->Fire();
+		cout << "Right Missile" << endl;
 	}
 };
 
 int main()
 {
-	PopUpMenu* menubar = new PopUpMenu("메뉴바");
-	PopUpMenu* p1 = new PopUpMenu("화면 설정");
-	PopUpMenu* p2 = new PopUpMenu("소리 설정");
+	SpaceShip ss;
+	ss.Fire();
 
-	menubar->addMenu(p1);
-	p1->addMenu(p2);
-	p1->addMenu(new MenuItem("화질 설정", 11));
+	LeftMissile lm(&ss);
+	lm.Fire();
 
-	p2->addMenu(new MenuItem("음량 설정",21));
-	p2->addMenu(new MenuItem("음질 설정", 22));
-
-	menubar->command();
-
-	return 0;
+	RightMissile rm(&lm);
+	rm.Fire();
 }
