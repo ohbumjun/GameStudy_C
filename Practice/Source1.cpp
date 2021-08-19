@@ -1,52 +1,89 @@
 #include<iostream>
+#include<string>
 
 using namespace std;
 
-struct IComponent
-{
-	virtual void Fire() = 0;
-	virtual ~IComponent() {};
-};
-
-class SpaceShip : public IComponent
+// Interface ( Component )
+class MilkShake
 {
 public :
-	int color;
-	void Fire() { cout << "Fire Missile" << endl; }
+	virtual string Serve() = 0;
+	virtual int Price() = 0;
 };
 
-class LeftMissile : public IComponent
+// Concrete Component
+class BaseMilkShake : public MilkShake
 {
-	IComponent* ss;
 public :
-	LeftMissile(IComponent*p):ss(p){}
-	void Fire()
+	virtual string Serve() override
 	{
-		ss->Fire();
-		cout << "Left Missile" << endl;
+		return "MilkShake" ;
+	}
+	virtual int Price() override
+	{
+		return 30;
 	}
 };
 
-class RightMissile : public IComponent
+// Decorator
+class MilkShakeDecorator : public MilkShake
 {
-	IComponent* ss;
+protected:
+	BaseMilkShake* baseMilkShake;
 public :
-	RightMissile(IComponent*p):ss(p){}
-	void Fire()
+	MilkShakeDecorator(BaseMilkShake* &b) :baseMilkShake(b){}
+	virtual string Serve() override
 	{
-		ss->Fire();
-		cout << "Right Missile" << endl;
+		return baseMilkShake->Serve();
+	}
+	virtual int Price() override
+	{
+		return baseMilkShake->Price();
 	}
 };
+
+// Mango
+class MangoMilkShakeDecorator : public MilkShakeDecorator
+{
+public :
+	MangoMilkShakeDecorator(BaseMilkShake* &b) : MilkShakeDecorator(b){}
+	virtual string Serve() override
+	{
+		return baseMilkShake->Serve() + " decorated with Mango";
+	}
+	virtual int Price() override
+	{
+		return baseMilkShake->Price() + 40;
+	}
+};
+
+// Vanilla
+class VanillaMilkShakeDecorator : public MilkShakeDecorator
+{
+public:
+	VanillaMilkShakeDecorator(BaseMilkShake* &b) : MilkShakeDecorator(b) {}
+	virtual string Serve() override
+	{
+		return baseMilkShake->Serve() + " decorated with Vanilla";
+	}
+	virtual int Price() override
+	{
+		return baseMilkShake->Price() + 80;
+	}
+};
+
 
 int main()
 {
-	SpaceShip ss;
-	ss.Fire();
+	BaseMilkShake* baseMilkShake = new BaseMilkShake();
+	MilkShake* basic = new MilkShakeDecorator(baseMilkShake);
+	cout << basic->Serve() << endl;
+	cout << basic->Price() << endl;
+	delete basic;
 
-	LeftMissile lm(&ss);
-	lm.Fire();
+	MilkShake* mango = new MangoMilkShakeDecorator(baseMilkShake);
+	cout << mango->Serve() << endl;
+	cout << mango->Price() << endl;
 
-	RightMissile rm(&lm);
-	rm.Fire();
+	return 0;
 }
