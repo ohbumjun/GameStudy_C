@@ -1,6 +1,9 @@
 #pragma once
 #include<iostream>
 
+#define INVENTORY_MAX 10
+#define LEVEL_MAX 10
+
 enum class Main_Menu
 {
 	None,

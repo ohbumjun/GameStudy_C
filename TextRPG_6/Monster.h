@@ -24,7 +24,7 @@ public :
 	int GetGold() { return m_Gold; }
 	int GetExp() { return m_Exp; }
 public :
-	bool Init(const char* Name, int Attack, int Armor, int HP, int HPMax,
+	bool Init(const char* Name, int Attack, int Armor, int HP, int MP,
 		int Exp, int Gold, int Level);
 	CMonster* CloneMonster();
 	void Output();

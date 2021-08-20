@@ -1,89 +1,73 @@
-#include<iostream>
-#include<string>
 
-using namespace std;
+#include <iostream>
+#include "sample.h"
+#include <time.h>
 
-// Interface ( Component )
-class MilkShake
+/*
+자료구조 : 데이터를 관리하는 방법.
+*/
+
+// typedef : 타입을 다른 이름으로 재정의 해주는 기능을 제공한다.
+typedef int MyInt;
+
+bool SortInt(const int& Left, const int& Right)
 {
-public :
-	virtual string Serve() = 0;
-	virtual int Price() = 0;
-};
-
-// Concrete Component
-class BaseMilkShake : public MilkShake
-{
-public :
-	virtual string Serve() override
-	{
-		return "MilkShake" ;
-	}
-	virtual int Price() override
-	{
-		return 30;
-	}
-};
-
-// Decorator
-class MilkShakeDecorator : public MilkShake
-{
-protected:
-	BaseMilkShake* baseMilkShake;
-public :
-	MilkShakeDecorator(BaseMilkShake* &b) :baseMilkShake(b){}
-	virtual string Serve() override
-	{
-		return baseMilkShake->Serve();
-	}
-	virtual int Price() override
-	{
-		return baseMilkShake->Price();
-	}
-};
-
-// Mango
-class MangoMilkShakeDecorator : public MilkShakeDecorator
-{
-public :
-	MangoMilkShakeDecorator(BaseMilkShake* &b) : MilkShakeDecorator(b){}
-	virtual string Serve() override
-	{
-		return baseMilkShake->Serve() + " decorated with Mango";
-	}
-	virtual int Price() override
-	{
-		return baseMilkShake->Price() + 40;
-	}
-};
-
-// Vanilla
-class VanillaMilkShakeDecorator : public MilkShakeDecorator
-{
-public:
-	VanillaMilkShakeDecorator(BaseMilkShake* &b) : MilkShakeDecorator(b) {}
-	virtual string Serve() override
-	{
-		return baseMilkShake->Serve() + " decorated with Vanilla";
-	}
-	virtual int Price() override
-	{
-		return baseMilkShake->Price() + 80;
-	}
-};
+	return Left < Right;
+}
 
 
+// F5 로 실행을 하면 Debuging 모드로 실행이 된다.
 int main()
 {
-	BaseMilkShake* baseMilkShake = new BaseMilkShake();
-	MilkShake* basic = new MilkShakeDecorator(baseMilkShake);
-	cout << basic->Serve() << endl;
-	cout << basic->Price() << endl;
-	delete basic;
+	srand((unsigned int)time(0));
+	rand();
 
-	MilkShake* mango = new MangoMilkShakeDecorator(baseMilkShake);
-	cout << mango->Serve() << endl;
-	cout << mango->Price() << endl;
+	//MyInt	Test = 100;
+	CList<int>		listInt;
+	CList<float>	listFloat;
+
+	for (int i = 0; i < 100; ++i)
+	{
+		listInt.push_back(i);
+	}
+
+	std::cout << listInt.back() << std::endl;
+	std::cout << listInt.front() << std::endl;
+
+	CList<int>::iterator	iter;
+
+	iter = listInt.erase(80);
+
+	std::cout << "Delete Next Node Data : " << *iter << std::endl;
+
+	listInt.clear();
+
+	for (int i = 0; i < 100; ++i)
+	{
+		listInt.push_back(rand() % 1000);
+	}
+
+
+	std::cout << "======= Before =======" << std::endl;
+	for (iter = listInt.begin(); iter != listInt.end(); ++iter)
+	{
+		std::cout << *iter << std::endl;
+	}
+
+	listInt.sort(SortInt);
+
+	std::cout << "======= After =======" << std::endl;
+	for (iter = listInt.begin(); iter != listInt.end(); ++iter)
+	{
+		std::cout << *iter << std::endl;
+	}
+
+	//listInt.pop_back();
+
+	// const 객체는 일반 멤버함수 호출이 불가능하다.
+	// 함수 뒤에 const가 붙어있는 함수만 호출이 가능하다.
+	//const CList<float>	listFloat1;
+	//listFloat1.push_back(10.1f);
 
 	return 0;
 }

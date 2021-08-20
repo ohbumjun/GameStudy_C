@@ -6,6 +6,7 @@ public:
 	void Run();
 	bool Init();
 	int Menu(class CPlayer *Player);
+	class CItem* m_Item[INVENTORY_MAX];
 private:
 	static CInventory* m_pInst;
 public:

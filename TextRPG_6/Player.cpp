@@ -3,6 +3,7 @@
 using namespace std;
 
 CPlayer::CPlayer() :
+	m_Name{},
 	m_Attack(0),
 	m_Job(Job::Archer),
 	m_Armor(0),
@@ -27,26 +28,28 @@ void CPlayer::AddExp(int Exp)
 
 void CPlayer::Output()
 {
-	cout << "직업 :" << endl;
-	cout << "공격력 : " << endl;
-	cout << "방어력 : " << endl;
-	cout << "체력 : " << endl;
-	cout << "마력 : " << endl;
-	cout << "경험치 : " << endl;
-	cout << "골드 : " << endl;
-	cout << "레벨 : " << endl;
+	cout << "이름 : " << m_Name << endl;
+	cout << "직업 :";
+	switch (m_Job)
+	{
+	case Job::Knight:
+		cout << "기사" << endl;
+		break;
+	case Job::Archer:
+		cout << "궁수" << endl;
+		break;
+	case Job::Magician:
+		cout << "마법사" << endl;
+		break;
+	}
+	cout << "공격력 : " << m_Attack << endl;
+	cout << "방어력 : " << m_Armor  << endl;
+	cout << "체력 : "   << m_HP  << " / " << m_HPMax << endl;
+	cout << "마력 : "   << m_MP  << " / " << m_MPMax << endl;
+	cout << "경험치 : " << m_Exp << endl;
+	cout << "골드 : "   << m_Gold << endl;
+	cout << "레벨 : "   << m_Level << endl;
 
-	m_Attack(0),
-		m_Job(Job::Archer),
-
-		m_Armor(0),
-		m_HP(0),
-		m_HPMax(0),
-		m_MP(0),
-		m_MPMax(0),
-		m_Exp(0),
-		m_Gold(0),
-		m_Level(0)
 }
 
 void CPlayer::Death()
@@ -56,6 +59,10 @@ void CPlayer::Death()
 }
 bool CPlayer::Init()
 {
+	cout << "이름을 입력하세요 : " ;
+	cin >> m_Name;
+	cout << endl;
+
 	int _Menu;
 	while (true)
 	{

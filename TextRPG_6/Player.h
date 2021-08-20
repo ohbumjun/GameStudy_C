@@ -7,6 +7,7 @@ public :
 	CPlayer();
 	~CPlayer();
 private :
+	char m_Name[52];
 	Job m_Job;
 	int m_Attack;
 	int m_Armor;
