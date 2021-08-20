@@ -1,50 +1,85 @@
 
 #include <iostream>
 #include "sample.h"
-#include <time.h>
 
-bool SortInt(const int& Left, const int& Right)
-{
-	return Left > Right;
-}
+/*
+Queue, Stack
+Stack : 선입 후출의 자료구조이다. 먼저 들어간 데이터가 나중에 나오는 구조이다.
+Queue : 선입 선출의 자료구조이다. 먼저 들어간 데이터가 먼저 나오는 구조이다.
+*/
 
 int main()
 {
+	CCircleQueue<int, 10>	Queue;
 
-	srand((unsigned int)time(0));
-	rand();
+	for (int i = 0; i < 5; ++i)
+	{
+		Queue.push(i);
+	}
 
-	CArray<int>	Arr1;
+	for (int i = 0; i < 3; ++i)
+	{
+		std::cout << Queue.front() << std::endl;
+		Queue.pop();
+	}
 
 	for (int i = 0; i < 10; ++i)
 	{
-		Arr1.push_back(rand());
+		Queue.push(i);
 	}
 
-	// 복사생성자
-	CArray<int>	Arr2 = Arr1;
-	CArray<int>	Arr3;
+	std::cout << "====" << std::endl;
 
-	// 대입연산자
-	Arr3 = Arr1;
-
-	//Arr1.erase(8);
-
-	int	Size = Arr1.size();
-	for (int i = 0; i < Size; ++i)
+	while (!Queue.empty())
 	{
-		std::cout << Arr1[i] << std::endl;
+		std::cout << Queue.front() << std::endl;
+		Queue.pop();
 	}
+	// ---
+	/*
+	CQueue<int>	Queue;
 
-	std::cout << "Sort" << std::endl;
-
-	Arr1.sort(SortInt);
-
-	Size = Arr1.size();
-	for (int i = 0; i < Size; ++i)
+	for (int i = 0; i < 100; ++i)
 	{
-		std::cout << Arr1[i] << std::endl;
+		Queue.push(i);
 	}
 
+	while (!Queue.empty())
+	{
+		std::cout << Queue.front() << std::endl;
+		Queue.pop();
+	}
+	*/
+	// ---
+	int	Array[100] = {};
+	/*
+	CStack<int>	stackInt;
+
+	for (int i = 0; i < 100; ++i)
+	{
+		Array[i] = i + 1;
+	}
+
+	for (int i = 0; i < 100; ++i)
+	{
+		stackInt.push(Array[i]);
+	}
+
+	for (int i = 0; i < 100; ++i)
+	{
+		Array[i] = stackInt.top();
+		stackInt.pop();
+	}
+
+	for (int i = 0; i < 100; ++i)
+	{
+		std::cout << Array[i] << std::endl;
+	}
+
+	/*while (!stackInt.empty())
+	{
+		std::cout << stackInt.top() << std::endl;
+		stackInt.pop();
+	}*/
 	return 0;
 }

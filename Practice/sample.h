@@ -1,68 +1,86 @@
 #pragma once
+
 #include<assert.h>
 
 template<typename T>
-class CArray
+class CQueueNode
 {
+	template<typename T>
+	friend class CQueue;
 public :
-	CArray()
+	CQueueNode() 
 	{
-		m_Size = 0;
-		m_Capacity = 8;
-		m_Array = new T[m_Capacity];
+		m_Next = nullptr;
+		m_Prev = nullptr;
 	}
-	CArray(const CArray& Array)
+	~CQueueNode()
 	{
-		m_Size     = Array.m_Size;
-		m_Capacity = Array.m_Capacity;
-		m_Array = new T[m_Capacity];
-		memcpy(m_Array, Array.m_Array, sizeof(T) * m_Size);
-	}
-	~CArray()
-	{
-		delete[] m_Array;
+
 	}
 private :
-	int m_Size;
-	int m_Capacity;
-	T* m_Array;
-public :	
-	int size() const { return m_Size; }
-	bool empty() const { return  m_Size == 0; }
-	void clear()
+	CQueueNode<T>* m_Next;
+	CQueueNode<T>* m_Prev;
+	T m_Data;
+};
+
+template<typename T>
+class CQueue
+{
+public :
+	CQueue()
 	{
+		m_FirstNode = nullptr;
+		m_LastNode = nullptr;
 		m_Size = 0;
 	}
-	bool erase(const T& data)
+	~CQueue()
 	{
-		int Index = -1;
-		for (int i = 0; i < m_Size; i++)
+		while (m_FirstNode)
 		{
-			if (m_Array[i] == data)
-			{
-				Index = i;
-				break;
-			}
+			CQueueNode<T>* Next = m_FirstNode->m_Next;
+			delete m_FirstNode;
+			m_FirstNode = Next;
 		}
-		if (Index == m_Size) return -1;
-		return eraseIndex(Index);
 	}
-	bool eraseIndex(int Index)
+private :
+	CQueueNode<T>* m_FirstNode;
+	CQueueNode<T>* m_LastNode;
+	int m_Size;
+public :
+	int size() const { return m_Size; }
+	bool empty() const { return m_Size == 0; }
+	void clear()
 	{
-		if (Index < 0 || Index >= m_Size) return false;
-		for (int i = Index; i < m_Size; i++)
+		while (m_FirstNode)
 		{
-			m_Array[i] = m_Array[i + 1];
+			CQueueNode<T>* Next = m_FirstNode->m_Next;
+			delete m_FirstNode;
+			m_FirstNode = Next;
 		}
+		m_LastNode = nullptr;
+		m_Size = 0;
+	}
+	T& front() const
+	{
+		if (empty()) assert(false);
+		return m_FirstNode->m_Data;
+	}
+	void push(const T& data)
+	{
+		CQueueNode<T>* Node = new CQueueNode<T>;
+		Node->m_Data = data;
+
+		if (!m_FirstNode) m_FirstNode = Node;
+		if (m_LastNode) m_LastNode->m_Next = Node;
+		m_LastNode = Node;
+		++m_Size;
+	}
+	void pop()
+	{
+		CQueueNode<T>* Next = m_FirstNode->m_Next;
+		delete m_FirstNode;
+		m_FirstNode = Next;
+		if (!m_FirstNode) m_LastNode = nullptr;
 		--m_Size;
-		return true;
-	}
-	void operator = (const CArray<T>& Array)
-	{
-		delete[] m_Array;
-		m_Size = Array.m_Size;
-		m_Capacity = Array.m_Capacity;
-		m_Array = new T[m_Capacity];
-		memcpy(m_Array, Array, sizeof(T) * m_Size);
 	}
 };
