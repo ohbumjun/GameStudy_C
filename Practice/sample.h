@@ -1,86 +1,50 @@
 #pragma once
-
 #include<assert.h>
 
-template<typename T>
-class CQueueNode
-{
-	template<typename T>
-	friend class CQueue;
-public :
-	CQueueNode() 
-	{
-		m_Next = nullptr;
-		m_Prev = nullptr;
-	}
-	~CQueueNode()
-	{
-
-	}
-private :
-	CQueueNode<T>* m_Next;
-	CQueueNode<T>* m_Prev;
-	T m_Data;
-};
-
-template<typename T>
-class CQueue
+template<typename T, int SIZE = 10>
+class CCircleQueue
 {
 public :
-	CQueue()
+	CCircleQueue()
 	{
-		m_FirstNode = nullptr;
-		m_LastNode = nullptr;
 		m_Size = 0;
+		m_Capacity = SIZE+1;
+		m_Array = new T[m_Capacity];
+		m_Tail = 0;
+		m_Head = 0;
 	}
-	~CQueue()
+	~CCircleQueue()
 	{
-		while (m_FirstNode)
-		{
-			CQueueNode<T>* Next = m_FirstNode->m_Next;
-			delete m_FirstNode;
-			m_FirstNode = Next;
-		}
+		delete[] m_Array;
 	}
 private :
-	CQueueNode<T>* m_FirstNode;
-	CQueueNode<T>* m_LastNode;
 	int m_Size;
+	int m_Capacity;
+	T* m_Array;
+	int m_Tail;
+	int m_Head;
 public :
 	int size() const { return m_Size; }
 	bool empty() const { return m_Size == 0; }
-	void clear()
-	{
-		while (m_FirstNode)
-		{
-			CQueueNode<T>* Next = m_FirstNode->m_Next;
-			delete m_FirstNode;
-			m_FirstNode = Next;
-		}
-		m_LastNode = nullptr;
-		m_Size = 0;
-	}
+	void clear() { m_Size = 0; }
 	T& front() const
 	{
 		if (empty()) assert(false);
-		return m_FirstNode->m_Data;
+		int Head = (m_Head + 1) % m_Capacity;
+		return m_Array[Head];
 	}
 	void push(const T& data)
 	{
-		CQueueNode<T>* Node = new CQueueNode<T>;
-		Node->m_Data = data;
-
-		if (!m_FirstNode) m_FirstNode = Node;
-		if (m_LastNode) m_LastNode->m_Next = Node;
-		m_LastNode = Node;
+		int Tail = (m_Tail + 1) % m_Capacity;
+		if (Tail == m_Head) return;
+		m_Array[Tail] = data;
+		m_Tail = Tail;
 		++m_Size;
 	}
 	void pop()
 	{
-		CQueueNode<T>* Next = m_FirstNode->m_Next;
-		delete m_FirstNode;
-		m_FirstNode = Next;
-		if (!m_FirstNode) m_LastNode = nullptr;
+		if (empty()) assert(false);
+		m_Head = (m_Head + 1) % m_Capacity;
 		--m_Size;
 	}
 };
