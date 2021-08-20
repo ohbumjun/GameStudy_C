@@ -1,204 +1,68 @@
-#pragma
+#pragma once
 #include<assert.h>
 
 template<typename T>
-class CListNode
+class CArray
 {
-private :
-	template<typename T>
-	friend class CListIterator;
-	template<typename T>
-	friend class CList;
 public :
-	CListNode()
-	{
-		m_Next = nullptr;
-		m_Prev = nullptr;
-	}
-private :
-	CListNode<T>* m_Next;
-	CListNode<T>* m_Prev;
-	T m_Data;
-};
-
-template<typename T>
-class CListIterator
-{
-	template<typename T>
-	friend class CList;
-public :
-	CListIterator()
-	{
-
-	}
-private :
-	CListNode<T>* m_Node;
-public :
-	bool operator == (const CListIterator<T>& iter)
-	{
-		return m_Node == iter.m_Node;
-	}
-	bool operator != (const CListIterator<T>&iter)
-	{
-		return m_Node != iter.m_Node;
-	}
-	bool operator == (const CListNode<T>* Node)
-	{
-		return m_Node == Node;
-	}
-	bool operator !=(const CListNode<T>* Node)
-	{
-		return m_Node != Node;
-	}
-	T& operator * ()
-	{
-		return m_Node->m_Data;
-	}
-};
-
-template<typename T>
-class CList
-{
-private :
-	typedef CListNode<T>* PNODE;
-	typedef CListNode<T> NODE;
-public :
-	typedef CListIterator<T> iterator;
-public :
-	CList()
+	CArray()
 	{
 		m_Size = 0;
-		m_Begin = new NODE;
-		m_End = new NODE;
-		m_Begin->m_Next = m_End;
-		m_End->m_Prev = m_Begin;
+		m_Capacity = 8;
+		m_Array = new T[m_Capacity];
 	}
-	~CList()
+	CArray(const CArray& Array)
 	{
-		PNODE DeleteNode = m_Begin;
-		while (DeleteNode)
-		{
-			PNODE Next = DeleteNode->m_Next;
-			delete DeleteNode;
-			DeleteNode = Next;
-		}
+		m_Size     = Array.m_Size;
+		m_Capacity = Array.m_Capacity;
+		m_Array = new T[m_Capacity];
+		memcpy(m_Array, Array.m_Array, sizeof(T) * m_Size);
+	}
+	~CArray()
+	{
+		delete[] m_Array;
 	}
 private :
 	int m_Size;
-	CListNode<T>* m_Begin;
-	CListNode<T>* m_End;
-public :
+	int m_Capacity;
+	T* m_Array;
+public :	
 	int size() const { return m_Size; }
-	bool empty() const { return m_Size == 0; }
+	bool empty() const { return  m_Size == 0; }
 	void clear()
 	{
-		if (empty()) assert(false);
-		PNODE DeleteNode = m_Begin->m_Next;
-		while (DeleteNode != m_End)
-		{
-			PNODE Next = DeleteNode->m_Next;
-			delete DeleteNode;
-			DeleteNode = Next;
-		}
 		m_Size = 0;
-		m_Begin->m_Next = m_End;
-		m_End->m_Prev = m_Begin;
 	}
-	T& front() const
+	bool erase(const T& data)
 	{
-		if (empty()) assert(false);
-		return m_Begin->m_Next->m_Data
-	}
-	T& back() const
-	{
-		if (empty()) assert(false);
-		return m_End->m_Prev->m_Data;
-	}
-	void push_back(const T& data)
-	{
-		PNODE Node = new NODE;
-		Node->m_Data = data;
-
-		PNODE Prev = m_End->m_Prev;
-		Prev->m_Next = Node;
-		Node->m_Prev = Prev;
-
-		Node->m_Next = m_End;
-		m_End->m_Prev = Node;
-
-		++m_Size;
-	}
-	void push_front(const T& data)
-	{
-		PNODE Node = new NODE;
-		Node->m_Data = data;
-
-		PNODE Next = m_Begin->m_Next;
-		Next->m_Prev = Node;
-		Node->m_Next = Next;
-
-		Node->m_Prev    = m_Begin;
-		m_Begin->m_Next = Node;
-
-		++m_Size;
-	}
-	void pop_back()
-	{
-		if (empty()) assert(false);
-		PNODE DeleteNode = m_End->m_Prev;
-		PNODE Prev = DeleteNode->m_Prev;
-		delete DeleteNode;
-		Prev->m_Next = m_End;
-		m_End->m_Prev = Prev;
-		--m_Size;
-	}
-	void pop_front()
-	{
-		if (empty()) assert(false);
-		PNODE DeleteNode = m_Begin->m_Next;
-		PNODE Next = DeleteNode->m_Next;
-		delete DeleteNode;
-		Next->m_Prev = m_Begin;
-		m_Begin->m_Next = Next;
-		--m_Size;
-	}
-	void operator = (const CList<T>& list)
-	{
-		clear();
-		PNODE Node = list.m_Begin->m_Next;
-		while (Node != list.m_End)
+		int Index = -1;
+		for (int i = 0; i < m_Size; i++)
 		{
-			push_back(Node->m_Data);
-			Node = Node->m_Next;
+			if (m_Array[i] == data)
+			{
+				Index = i;
+				break;
+			}
 		}
-		m_Size = list.m_Size;
+		if (Index == m_Size) return -1;
+		return eraseIndex(Index);
 	}
-	iterator Find(const T& data)
+	bool eraseIndex(int Index)
 	{
-		iterator iter = begin();
-		for (; iter != end(); ++iter)
+		if (Index < 0 || Index >= m_Size) return false;
+		for (int i = Index; i < m_Size; i++)
 		{
-			if (*iter == data) return iter;
+			m_Array[i] = m_Array[i + 1];
 		}
-		return nullptr;
-	}
-	iterator erase(const T& data)
-	{
-		iterator iter = Find(data);
-		if (iter == end()) return end();
-		return erase(iter);
-	}
-	iterator erase(iterator & iter)
-	{
-		if (iter == m_Begin() || iter == end()) return end();
-		PNODE Next = iter.m_Node->m_Next;
-		PNODE Prev = iter.m_Node->m_Prev;
-		Next->m_Prev = Prev;
-		Prev->m_Next = Next;
-		delete iter.m_Node;
 		--m_Size;
-		iterator result;
-		result.m_Node = Next;
-		return result;
+		return true;
+	}
+	void operator = (const CArray<T>& Array)
+	{
+		delete[] m_Array;
+		m_Size = Array.m_Size;
+		m_Capacity = Array.m_Capacity;
+		m_Array = new T[m_Capacity];
+		memcpy(m_Array, Array, sizeof(T) * m_Size);
 	}
 };

@@ -3,71 +3,48 @@
 #include "sample.h"
 #include <time.h>
 
-/*
-자료구조 : 데이터를 관리하는 방법.
-*/
-
-// typedef : 타입을 다른 이름으로 재정의 해주는 기능을 제공한다.
-typedef int MyInt;
-
 bool SortInt(const int& Left, const int& Right)
 {
-	return Left < Right;
+	return Left > Right;
 }
 
-
-// F5 로 실행을 하면 Debuging 모드로 실행이 된다.
 int main()
 {
+
 	srand((unsigned int)time(0));
 	rand();
 
-	//MyInt	Test = 100;
-	CList<int>		listInt;
-	CList<float>	listFloat;
+	CArray<int>	Arr1;
 
-	for (int i = 0; i < 100; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
-		listInt.push_back(i);
+		Arr1.push_back(rand());
 	}
 
-	std::cout << listInt.back() << std::endl;
-	std::cout << listInt.front() << std::endl;
+	// 복사생성자
+	CArray<int>	Arr2 = Arr1;
+	CArray<int>	Arr3;
 
-	CList<int>::iterator	iter;
+	// 대입연산자
+	Arr3 = Arr1;
 
-	iter = listInt.erase(80);
+	//Arr1.erase(8);
 
-	std::cout << "Delete Next Node Data : " << *iter << std::endl;
-
-	listInt.clear();
-
-	for (int i = 0; i < 100; ++i)
+	int	Size = Arr1.size();
+	for (int i = 0; i < Size; ++i)
 	{
-		listInt.push_back(rand() % 1000);
+		std::cout << Arr1[i] << std::endl;
 	}
 
+	std::cout << "Sort" << std::endl;
 
-	std::cout << "======= Before =======" << std::endl;
-	for (iter = listInt.begin(); iter != listInt.end(); ++iter)
+	Arr1.sort(SortInt);
+
+	Size = Arr1.size();
+	for (int i = 0; i < Size; ++i)
 	{
-		std::cout << *iter << std::endl;
+		std::cout << Arr1[i] << std::endl;
 	}
-
-	listInt.sort(SortInt);
-
-	std::cout << "======= After =======" << std::endl;
-	for (iter = listInt.begin(); iter != listInt.end(); ++iter)
-	{
-		std::cout << *iter << std::endl;
-	}
-
-	//listInt.pop_back();
-
-	// const 객체는 일반 멤버함수 호출이 불가능하다.
-	// 함수 뒤에 const가 붙어있는 함수만 호출이 가능하다.
-	//const CList<float>	listFloat1;
-	//listFloat1.push_back(10.1f);
 
 	return 0;
 }
