@@ -1,56 +1,46 @@
-// 메멘토
-// 객체의 상태를 내부적으로 저장했다가
-// 언제라도 이전 상태로 복구가능하게 하는 패턴
+// int32_t:  32비트(4바이트) 크기의 부호 있는 정수형 변수 선언
+// uint32_t:  32비트(4바이트) 크기의 부호 없는 정수형 변수 선언
 
-// Undo가 가능한 패턴
-// Command : 행위의 취소를 통해
-// Memento : 스냅샷을 통해
-
-#include<iostream>
+#include <iostream>
+#include <stdint.h>
 #include<vector>
-#include<string>
 
 using namespace std;
 
-class Machine
+class BankAccount
 {
-	int stateA;
-	int stateB;
-	class Memento
-	{
-		friend class Machine;
-		int stateA;
-		int stateB;
-	public :
-		Memento(int a, int b) :stateA(a), stateB(b){}
-	};
-	vector<Memento*> back_up;
+    int32_t m_balance{ 0 };
+    uint32_t m_current{ 0 };
+    struct Memento
+    {
+        int32_t m_balance;
+        Memento(int32_t b) : m_balance(b){}
+    };
+
+    vector<shared_ptr<const Memento>> m_changes;
 
 public :
-	int CreateMemento()
-	{
-		Memento* m = new Memento(stateA, stateB);
-		back_up.push_back(m);
-		return back_up.size() - 1;
-	}
-	void SetState(int a, int b)
-	{
-		stateA = a;
-		stateB = b;
-	}
-	void RestoreMemento(int token)
-	{
-		stateA = back_up[token]->stateA;
-		stateB = back_up[token]->stateB;
-	}
+    BankAccount(const int32_t b) : m_balance(b)
+    {
+        // make_shared<const Memento>(m_balance) ?
+        // Memento* res = new Memento(m_balance);
+        // std::shared_ptr<Resource> ptr(res) 2개를 합친 것
+        // 즉, m_balance를 인자로 넣어줘서 만든 Memento 객체
+        // 에 대한 포인터 변수에 대한 shared pointer를 만들어준다
+
+        // 그렇다면, 왜 emplace_back을 사용하는 것일까 ?
+        // 
+        m_changes.emplace_back(make_shared<const Memento>(m_balance));
+    }
+    const shared_ptr<const Memento> deposit(int32_t amount)
+    {
+
+    }
 };
+
+
 
 int main()
 {
-	Machine mc;
-	mc.SetState(10, 20);
-	int token = mc.CreateMemento();
-	mc.SetState(40, 50);
-	mc.RestoreMemento(token);
-	return 0;
+    return 0;
 }
