@@ -1,65 +1,56 @@
-// 팩토리 메서드 패턴
-// 객체 생성을 위한 인터페이스 정의
-// 객체 생성 부분을 가상함수화 하여
-// 자식 클래스에게 실제 객체 생성 위임
+// 메멘토
+// 객체의 상태를 내부적으로 저장했다가
+// 언제라도 이전 상태로 복구가능하게 하는 패턴
+
+// Undo가 가능한 패턴
+// Command : 행위의 취소를 통해
+// Memento : 스냅샷을 통해
+
 #include<iostream>
+#include<vector>
+#include<string>
 
 using namespace std;
 
-struct IButton
+class Machine
 {
-	virtual void Draw() = 0;
-};
-struct IEdit
-{
-	virtual void Draw() = 0;
-};
-
-struct MACButton : public IButton
-{
-	void Draw() { cout << "draw macBtn" << endl; }
-};
-struct MACEdit : public IEdit
-{
-	void Draw() { cout << "draw macEdit" << endl; }
-};
-struct XPButton : public IButton
-{
-	void Draw() { cout << "draw xpBtn" << endl; }
-};
-struct XPEdit : public IEdit
-{
-	void Draw() { cout << "draw xpEdit" << endl; }
-};
-
-class BaseDialog
-{
-public :
-	void Init()
+	int stateA;
+	int stateB;
+	class Memento
 	{
-		IButton* pBtn = CreateButton();
-		IEdit* pEdit = CreateEdit();
-		pBtn->Draw();
-		pEdit->Draw();
+		friend class Machine;
+		int stateA;
+		int stateB;
+	public :
+		Memento(int a, int b) :stateA(a), stateB(b){}
+	};
+	vector<Memento*> back_up;
+
+public :
+	int CreateMemento()
+	{
+		Memento* m = new Memento(stateA, stateB);
+		back_up.push_back(m);
+		return back_up.size() - 1;
 	}
-	virtual IButton* CreateButton() = 0;
-	virtual IEdit* CreateEdit() = 0;
-};
-
-class XPDialog : public BaseDialog
-{
-	IButton* CreateButton() { return new XPButton; }
-	IEdit* CreateEdit() { return new XPEdit; }
-};
-
-class MACDialog : public BaseDialog
-{
-	IButton* CreateButton() { return new MACButton; }
-	IEdit* CreateEdit() { return new MACEdit; }
+	void SetState(int a, int b)
+	{
+		stateA = a;
+		stateB = b;
+	}
+	void RestoreMemento(int token)
+	{
+		stateA = back_up[token]->stateA;
+		stateB = back_up[token]->stateB;
+	}
 };
 
 int main()
 {
-	XPDialog dl;
-	dl.Init();
+	Machine mc;
+	mc.SetState(10, 20);
+	int token = mc.CreateMemento();
+	mc.SetState(40, 50);
+	mc.RestoreMemento(token);
+	return 0;
 }
