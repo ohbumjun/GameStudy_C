@@ -1,87 +1,65 @@
+// 팩토리 메서드 패턴
+// 객체 생성을 위한 인터페이스 정의
+// 객체 생성 부분을 가상함수화 하여
+// 자식 클래스에게 실제 객체 생성 위임
 #include<iostream>
-#include<vector>
-#include<map>
 
 using namespace std;
 
-class Shape;
-class RegisterShape;
-
-#define MAKE_SINGLETON(classname) \
-private : \
-	classname(){}\
-	classname(const classname&); \
-	void operator = (const classname&); \
-public :	 \
-	static classname& getInstance()\
-	{\
-		static classname instance; \
-		return instance; \
-	}
-
-class Shape
+struct IButton
 {
-public :
 	virtual void Draw() = 0;
-	virtual ~Shape(){}
+};
+struct IEdit
+{
+	virtual void Draw() = 0;
 };
 
-class ShapeFactory
+struct MACButton : public IButton
 {
-	MAKE_SINGLETON(ShapeFactory);
-	typedef Shape* (*CREATOR)();
-	map<int, CREATOR>creator_map;
+	void Draw() { cout << "draw macBtn" << endl; }
+};
+struct MACEdit : public IEdit
+{
+	void Draw() { cout << "draw macEdit" << endl; }
+};
+struct XPButton : public IButton
+{
+	void Draw() { cout << "draw xpBtn" << endl; }
+};
+struct XPEdit : public IEdit
+{
+	void Draw() { cout << "draw xpEdit" << endl; }
+};
+
+class BaseDialog
+{
 public :
-	void RegisterShape(int type, CREATOR creator)
+	void Init()
 	{
-		creator_map[type] = creator;
+		IButton* pBtn = CreateButton();
+		IEdit* pEdit = CreateEdit();
+		pBtn->Draw();
+		pEdit->Draw();
 	}
-	Shape* CreateShape(int type)
-	{
-		Shape* p = 0;
-		if (creator_map[type] != 0)
-			p = creator_map[type]();
-		return p;
-	}
+	virtual IButton* CreateButton() = 0;
+	virtual IEdit* CreateEdit() = 0;
 };
 
-class Circle : public Shape
+class XPDialog : public BaseDialog
 {
-public :
-	void Draw() { cout << "draw circle" << endl; }
-	static Shape* CreateObject() { return new Circle; }
+	IButton* CreateButton() { return new XPButton; }
+	IEdit* CreateEdit() { return new XPEdit; }
 };
 
-class Rect : public Shape
+class MACDialog : public BaseDialog
 {
-public :
-	void Draw() { cout << "draw Rect" << endl; }
-	static Shape* CreateObject() { return new Rect; }
+	IButton* CreateButton() { return new MACButton; }
+	IEdit* CreateEdit() { return new MACEdit; }
 };
-
 
 int main()
 {
-	vector<Shape*> v;
-	ShapeFactory& factory = ShapeFactory::getInstance();
-	factory.RegisterShape(1, &Rect::CreateObject);
-	factory.RegisterShape(2, &Circle::CreateObject);
-
-	while (true)
-	{
-		int cmd;
-		cin >> cmd;
-		if (cmd >= 1 && cmd <= 5)
-		{
-			Shape* p = factory.CreateShape(cmd);
-			if (p != 0) v.push_back(p);
-		}
-		if (cmd == 9)
-		{
-			for (int i = 0; i < v.size(); i++)
-				v[i]->Draw();
-		}
-	}
-
-	return 0;
+	XPDialog dl;
+	dl.Init();
 }
