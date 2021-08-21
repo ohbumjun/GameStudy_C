@@ -1,46 +1,73 @@
-// int32_t:  32비트(4바이트) 크기의 부호 있는 정수형 변수 선언
-// uint32_t:  32비트(4바이트) 크기의 부호 없는 정수형 변수 선언
-
-#include <iostream>
-#include <stdint.h>
+#include<iostream>
 #include<vector>
+#include<stdint.h>
 
 using namespace std;
 
 class BankAccount
 {
-    int32_t m_balance{ 0 };
-    uint32_t m_current{ 0 };
-    struct Memento
-    {
-        int32_t m_balance;
-        Memento(int32_t b) : m_balance(b){}
-    };
+	int32_t m_balance{ 0 };
+	uint32_t m_current{ 0 };
+	
+	struct Memento
+	{
+		int32_t m_balance;
+	public :
+		Memento(int32_t b):m_balance(b){}
+	};
 
-    vector<shared_ptr<const Memento>> m_changes;
+	vector<shared_ptr<const Memento>> m_change;
 
 public :
-    BankAccount(const int32_t b) : m_balance(b)
-    {
-        // make_shared<const Memento>(m_balance) ?
-        // Memento* res = new Memento(m_balance);
-        // std::shared_ptr<Resource> ptr(res) 2개를 합친 것
-        // 즉, m_balance를 인자로 넣어줘서 만든 Memento 객체
-        // 에 대한 포인터 변수에 대한 shared pointer를 만들어준다
-
-        // 그렇다면, 왜 emplace_back을 사용하는 것일까 ?
-        // 
-        m_changes.emplace_back(make_shared<const Memento>(m_balance));
-    }
-    const shared_ptr<const Memento> deposit(int32_t amount)
-    {
-
-    }
+	BankAccount(int32_t m)
+	{
+		m_change.emplace_back(make_shared<const Memento>(m));
+	}
+	const shared_ptr<const Memento> deposit(int32_t m)
+	{
+		m_balance += m;
+		m_change.emplace_back(make_shared<const Memento>(m));
+		return m_change[++m_current];
+	}
+	void restore(const Memento& m)
+	{
+		m_balance = m.m_balance;
+		m_change.emplace_back(m);
+		m_current = m_change.size() - 1;
+	}
+	const shared_ptr<const Memento> undo()
+	{
+		if (m_current > 0)
+		{
+			m_balance = m_change[--m_current]->m_balance;
+			return m_change[m_current];
+		}
+		cout << "*** Attempt to run off the end!! ***" << endl;
+		return {};
+	}
+	const shared_ptr<const Memento> redo()
+	{
+		if (m_current + 1 < m_change.size())
+		{
+			m_balance = m_change[++m_current]->m_balance;
+			return m_change[m_current];
+		}
+		cout << "*** Attempt to run off the end!! ***" << endl;
+		return {};
+	}
+	friend ostream& operator << (ostream& os,
+		const BankAccount& bc)
+	{
+		return os << "balance : " << bc.m_balance;
+	}
 };
 
 
 
 int main()
 {
-    return 0;
+	BankAccount ac{ 10 };
+	ac.deposit(10);
+	cout << ac << endl;
+	return 0;
 }
