@@ -1,99 +1,82 @@
-#include<iostream>
-#include<memory.h>
 #include<vector>
+#include<iostream>
 
 using namespace std;
 
-#define DATA_LENGTH 5
-
-struct IObserver
-{
-	virtual void Update(const int* data) = 0;
-	virtual ~IObserver(){}
-};
-
-class PieGraph : public IObserver
-{
-public :
-	void Update(const int* data)
-	{
-		cout << "Pie Graph" << endl;
-		for (int i = 0; i < DATA_LENGTH; i++)
-		{
-			cout << data[i] << endl;
-		}
-	}
-};
-
-class BarGraph : public IObserver
-{
-public:
-	void Update(const int * data)
-	{
-		cout << "Bar Graph" << endl;
-		for (int i = 0; i < DATA_LENGTH; i++)
-		{
-			cout << data[i] << endl;
-		}
-	}
-};
-
-
-//
-struct IObservable
-{
-	virtual IObserver* Add(IObserver* obs) = 0;
-	virtual void Remove(IObserver* obs) = 0;
-	virtual void Notify() = 0;
-	virtual ~IObservable(){}
-};
-
-class Table : public IObservable
+class IObserver;
+class Subject
 {
 private :
-	int* datas;
-	vector<IObserver*> graphs;
+	int value;
+	vector<IObserver*> views;
 public :
-	Table()
+	Subject(){}
+	void addObs(IObserver* obs) { views.emplace_back(obs); }
+	int getVal()const { return value; }
+	void setVal(int val)
 	{
-		memset(datas, 0, sizeof(int) * DATA_LENGTH);
+		value = val;
+		notify();
 	}
-	virtual IObserver* Add(IObserver* obs) override
+	virtual void notify();
+};
+
+
+class IObserver
+{
+private :
+	Subject* sub;
+	int denom;
+public :
+	IObserver(Subject* s, int val) :
+		sub(s),denom(val)
 	{
-		graphs.emplace_back(obs);
+		sub->addObs(this);
 	}
-	virtual void Remove(IObserver* obs) override
+	virtual void update() = 0;
+protected :
+	Subject* getSubject() { return sub; }
+	int getDivisor() { return denom; }
+};
+
+void Subject::notify()
+{
+	int sz = views.size();
+	for (int i = 0; i < sz; i++)
+		views[i]->update();
+}
+
+class DivObserver : public IObserver
+{
+public :
+	DivObserver(Subject* mod, int div) :
+		IObserver(mod, div){}
+	void update()
 	{
-		int sz = graphs.size();
-		std::vector<IObserver*>::iterator iter = graphs.begin();
-		for (; iter != graphs.end(); ++iter)
-		{
-			if (*iter == obs) graphs.erase(iter);
-		}
-	}
-	virtual void Edit()
-	{
-		int cmd;
-		while (true)
-		{
-			cout << "Index : ";
-			cin >> cmd;
-			if (cmd < 0 || cmd > 5) continue;
-			if (cmd == 5) break;
-			cout << "val : ";
-			cin >> datas[cmd];
-			Notify();
-		}
-	}
-	virtual void Notify()
-	{
-		int sz = graphs.size();
-		for (int i = 0; i < sz; i++) graphs[i]->Update(datas);
+		int v = getSubject()->getVal();
+		int d = getDivisor();
+		cout << v << " div " << d << "is " << v/d  << endl;
 	}
 };
 
+class MobObserver : public IObserver
+{
+public :
+	MobObserver(Subject* sub, int val):
+		IObserver(sub,val){}
+	void update()
+	{
+		int v = getSubject()->getVal();
+		int d = getDivisor();
+		cout << v << " mod " << d << "is " << v % d << endl;
+	}
+};
 
 int main()
 {
+	Subject sub;
+	DivObserver divObs1(&sub, 4);
+	MobObserver divObs2(&sub, 4);
+	sub.setVal(14);
 	return 0;
 }
