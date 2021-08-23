@@ -1,44 +1,39 @@
 #include<iostream>
+#include<string>
 
 using namespace std;
 
-class Shape
+class String
 {
+	char* buff;
+	int* ref;
 public :
-	virtual void Draw() = 0;
-	virtual Shape* clone() = 0;
-};
-
-class Rect : public Shape 
-{
-public :
-	void Draw()
+	String(const char* s)
 	{
-		cout << "draw rectangle" << endl;
+		buff = new char[strlen(s) + 1];
+		strcpy_s(buff, strlen(s) + 1, s);
+		ref = new int(1);
 	}
-	Shape* clone() { return new Rect; } ///// 
-};
-
-class Triangle : public Shape 
-{
-public :
-	void Draw()
+	String(const String& s) :
+		buff(s.buff),ref(s.ref){}
+	char& operator [] (int index)
 	{
-		cout << "draw triangle" << endl;
+		cout << "operator []" << endl;
+		return buff[index];
 	}
-	Shape* clone() { return new Triangle; }
+	friend ostream& operator << (ostream& out, const String& s)
+	{
+		return out << s.buff << endl;
+	}
 };
 
 int main()
 {
-	Shape* rect = new Rect;
-	Shape* triangle = new Triangle;
-	Shape* p = 0;
-	p = rect->clone();
-	p->Draw();
-	p = triangle->clone();
-	p->Draw();
-
-
-	return 0;
+	String s1 = "hello";
+	String s2 = s1;
+	cout << s1 << endl;
+	char c = s1[0];
+	s1[0] = 'x';
+	cout << s1 << endl;
+	cout << s2 << endl;
 }
