@@ -37,10 +37,10 @@ bool CMonster::Init(const char* Name, int Attack, int Armor, int HP, int MP, int
 	m_Exp = Exp;
 	m_Gold = Gold;
 	m_Level = Level;
-	return false;
+	return true;
 }
 
-CMonster* CMonster::CloneMonster()
+CMonster* CMonster::Clone()
 {
     return new CMonster(*this);
 }
@@ -55,4 +55,14 @@ void CMonster::Output()
 	cout << "경험치 : " << m_Exp << endl;
 	cout << "골드 : "   << m_Gold << endl;
 	cout << "레벨 : "   << m_Level << endl;
+}
+
+bool CMonster::Damage(int Damage)
+{
+	m_HP -= Damage;
+	if (m_HP < 0)
+	{
+		return true;
+	}
+	return false;
 }

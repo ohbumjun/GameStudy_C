@@ -2,10 +2,15 @@
 #include"Game.h"
 class CMapManager
 {
+private :
+	CMapManager();
+	~CMapManager();
+public :
+	class CMap* m_Map[MT_End];
 public:
 	void Run();
 	bool Init();
-	Map_Menu Menu();
+	int Menu();
 private:
 	static CMapManager* m_pInst;
 public:

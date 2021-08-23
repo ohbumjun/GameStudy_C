@@ -23,10 +23,12 @@ public :
 	int GetArmor() { return m_Armor; }
 	int GetGold() { return m_Gold; }
 	int GetExp() { return m_Exp; }
+	const char* GetName() { return m_Name; }
 public :
 	bool Init(const char* Name, int Attack, int Armor, int HP, int MP,
 		int Exp, int Gold, int Level);
-	CMonster* CloneMonster();
+	CMonster* Clone();
 	void Output();
+	bool Damage(int Damage);
 };
 

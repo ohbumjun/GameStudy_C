@@ -2,7 +2,12 @@
 #include"Game.h"
 class CStoreManager
 {
-public:
+private :
+	CStoreManager();
+	~CStoreManager();
+private :
+	class CStore* m_Store[ST_End];
+ public:
 	void Run();
 	bool Init();
 	Store_Menu Menu();

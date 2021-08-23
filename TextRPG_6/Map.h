@@ -4,14 +4,8 @@
 class CMap
 {
 public :
-	CMap()
-	{
-
-	}
-	~CMap()
-	{
-
-	}
+	CMap();
+	~CMap();
 private :
 	Map_Type m_Type;
 public :

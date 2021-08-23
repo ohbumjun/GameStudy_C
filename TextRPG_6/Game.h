@@ -17,11 +17,13 @@ enum Map_Type
 {
 	MT_Easy,
 	MT_Normal,
-	MT_Hard
+	MT_Hard,
+	MT_End
 };
 
 enum class Map_Menu
 {
+	None,
 	Easy,
 	Normal,
 	Hard
@@ -32,7 +34,8 @@ enum class Job
 	None,
 	Knight,
 	Archer,
-	Magician
+	Magician,
+	End
 };
 
 enum class Battle_Menu
@@ -44,12 +47,14 @@ enum class Battle_Menu
 
 enum class Battle_Result
 {
+	None,
 	Player_Death,
 	Monster_Death
 };
 
 enum class Store_Menu
 {
+	None,
 	Weapon,
 	Armor
 };
@@ -66,4 +71,11 @@ enum Item_Type
 	IT_Weapon,
 	IT_Armor,
 	IT_End
+};
+
+enum Equip_Type
+{
+	Equip_Weapon,
+	Equip_Armor,
+	Equip_End
 };
