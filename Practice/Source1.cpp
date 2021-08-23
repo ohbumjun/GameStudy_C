@@ -16,7 +16,7 @@ public :
 	{
 		cout << "draw rectangle" << endl;
 	}
-	Shape* clone() { return new Rect; }
+	Shape* clone() { return new Rect; } ///// 
 };
 
 class Triangle : public Shape 
