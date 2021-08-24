@@ -1,106 +1,76 @@
 
 #include <iostream>
-#include <time.h>
 #include "sample.h"
 
-int Factorial(int Number)
-{
-	if (Number == 1)
-		return 1;
-
-	return Number * Factorial(Number - 1);
-}
-
-int FactorialTail(int Number, int Result)
-{
-	if (Number == 1)
-		return Result;
-
-	return FactorialTail(Number - 1, Result * Number);
-}
-
-int FactorialTail(int Number)
-{
-	return FactorialTail(Number, 1);
-}
-
-void Output(const int& Key, const int& Value)
-{
-	std::cout << "Key : " << Key << " Value : " << Value << " => ";
-}
+using namespace std;
 
 int main()
 {
-	srand((unsigned int)time(0));
-	rand();
-	//std::cout << FactorialTail(5) << std::endl;
-	CBinaryTree<int, int>	tree;
+	CAVLTree<int, int>	tree;
 
-	//tree.insert(333, 333);
-
-	/*for (int i = 0; i < 20; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
-		int	Number = rand();
-		tree.insert(Number, Number);
-	}*/
-
-	tree.insert(5, 5);
-	tree.insert(3, 3);
-	tree.insert(1, 1);
-	tree.insert(4, 4);
-	tree.insert(10, 10);
-	tree.insert(8, 8);
-	tree.insert(15, 15);
-	tree.insert(9, 9);
-
-	tree.erase(10);
-
-	CBinaryTree<int, int>::iterator	iter;
-
-	for (iter = tree.begin(); iter != tree.end(); ++iter)
-	{
-		std::cout << "key : " << iter->first << " value : " <<
-			iter->second << std::endl;
+		tree.insert(i, i);
 	}
 
-	iter = tree.Find(500);
-
-	if (iter == tree.end())
-		std::cout << "찾는 데이터가 없습니다." << std::endl;
-
-	else
-	{
-		std::cout << "Find Key : " << iter->first << " Find Value : " <<
-			iter->second << std::endl;
-	}
-
-	//tree.clear();
 	tree.erase(5);
-	tree.erase(1);
 	tree.erase(4);
-	//tree.erase(3);
-	//tree.erase(8);
-	//tree.erase(15);
-	//tree.erase(9);
+	tree.erase(6);
 
-	system("cls");
-	std::cout << "=========== PreOrder ===========" << std::endl;
-	tree.PreOrder(Output);
-	std::cout << std::endl;
-
-	std::cout << "=========== InOrder ===========" << std::endl;
-	tree.InOrder(Output);
-	std::cout << std::endl;
-
-	std::cout << "=========== PostOrder ===========" << std::endl;
-	tree.PostOrder(Output);
-	std::cout << std::endl;
-	std::cout << std::endl;
+	CAVLTree<int, int>::iterator	iter;
 
 	for (iter = tree.begin(); iter != tree.end(); ++iter)
 	{
-		std::cout << "key : " << iter->first << " value : " <<
-			iter->second << std::endl;
+		std::cout << "Key : " << iter->first << " Value : " << iter->second << std::endl;
+		std::cout << "ParentKey : ";
+
+		if (iter->IsParent())
+			std::cout << iter->GetParentKey();
+
+		else
+			std::cout << "없음";
+
+		std::cout << " Parent Value : ";
+
+		if (iter->IsParent())
+			std::cout << iter->GetParentValue() << std::endl;
+
+		else
+			std::cout << "없음" << std::endl;
+
+		std::cout << "LeftKey : ";
+
+		if (iter->IsLeft())
+			std::cout << iter->GetLeftKey();
+
+		else
+			std::cout << "없음";
+
+		std::cout << " Left Value : ";
+
+		if (iter->IsLeft())
+			std::cout << iter->GetLeftValue() << std::endl;
+
+		else
+			std::cout << "없음" << std::endl;
+
+		std::cout << "RightKey : ";
+
+		if (iter->IsRight())
+			std::cout << iter->GetRightKey();
+
+		else
+			std::cout << "없음";
+
+		std::cout << " Right Value : ";
+
+		if (iter->IsRight())
+			std::cout << iter->GetRightValue() << std::endl;
+
+		else
+			std::cout << "없음" << std::endl;
+
+		std::cout << std::endl;
 	}
 
 	return 0;
