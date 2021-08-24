@@ -1,77 +1,40 @@
 
 #include <iostream>
+#include <time.h>
 #include "sample.h"
 
-using namespace std;
+bool Sort(const int& Left, const int& Right)
+{
+	return Left > Right;
+}
 
 int main()
 {
-	CAVLTree<int, int>	tree;
+	srand((unsigned int)time(0));
+	rand();
 
-	for (int i = 0; i < 10; ++i)
+	CQuickSort<int>	Quick;
+	Quick.SetSortFunction(Sort);
+
+	int	Array[20] = {};
+
+	for (int i = 0; i < 20; ++i)
 	{
-		tree.insert(i, i);
+		Array[i] = rand();
+		std::cout << Array[i] << std::endl;
+		//Quick.push(rand());
 	}
 
-	tree.erase(5);
-	tree.erase(4);
-	tree.erase(6);
+	Quick.Sort(Array, 20);
+	std::cout << "sort Array" << std::endl;
 
-	CAVLTree<int, int>::iterator	iter;
-
-	for (iter = tree.begin(); iter != tree.end(); ++iter)
+	std::cout << "============= Sort =============" << std::endl;
+	for (int i = 0; i < 20; ++i)
 	{
-		std::cout << "Key : " << iter->first << " Value : " << iter->second << std::endl;
-		std::cout << "ParentKey : ";
-
-		if (iter->IsParent())
-			std::cout << iter->GetParentKey();
-
-		else
-			std::cout << "없음";
-
-		std::cout << " Parent Value : ";
-
-		if (iter->IsParent())
-			std::cout << iter->GetParentValue() << std::endl;
-
-		else
-			std::cout << "없음" << std::endl;
-
-		std::cout << "LeftKey : ";
-
-		if (iter->IsLeft())
-			std::cout << iter->GetLeftKey();
-
-		else
-			std::cout << "없음";
-
-		std::cout << " Left Value : ";
-
-		if (iter->IsLeft())
-			std::cout << iter->GetLeftValue() << std::endl;
-
-		else
-			std::cout << "없음" << std::endl;
-
-		std::cout << "RightKey : ";
-
-		if (iter->IsRight())
-			std::cout << iter->GetRightKey();
-
-		else
-			std::cout << "없음";
-
-		std::cout << " Right Value : ";
-
-		if (iter->IsRight())
-			std::cout << iter->GetRightValue() << std::endl;
-
-		else
-			std::cout << "없음" << std::endl;
-
-		std::cout << std::endl;
+		std::cout << Array[i] << std::endl;
 	}
+
+
 
 	return 0;
 }
