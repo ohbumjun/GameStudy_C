@@ -17,11 +17,11 @@ public :
 		m_Parent = nullptr;
 	}
 private :
-	CAVLTreeNode<T>* m_Next;
-	CAVLTreeNode<T>* m_Prev;
-	CAVLTreeNode<T>* m_Left;
-	CAVLTreeNode<T>* m_Right;
-	CAVLTreeNode<T>* m_Parent;
+	CAVLTreeNode<KEY,VALUE>* m_Next;
+	CAVLTreeNode<KEY,VALUE>* m_Prev;
+	CAVLTreeNode<KEY,VALUE>* m_Left;
+	CAVLTreeNode<KEY,VALUE>* m_Right;
+	CAVLTreeNode<KEY,VALUE>* m_Parent;
 public :
 	KEY first;
 	VALUE second;
@@ -40,10 +40,12 @@ public :
 template<typename KEY, typename VALUE>
 class CAVLTreeIterator
 {
+	template<typename KEY, typename VALUE>
+	friend class CAVLTree;
 public :
 	CAVLTreeIterator() : m_Node(nullptr){}
 private :
-	CAVLTree<KEY, VALUE>* m_Node;
+	CAVLTreeNode<KEY, VALUE>* m_Node;
 public :
 	bool operator == (const CAVLTreeIterator<KEY, VALUE>& iter) const 
 	{
@@ -131,7 +133,7 @@ public :
 		m_Begin->m_Next = m_End;
 		m_End->m_Prev = m_Begin;
 		m_Root = nullptr;
-		m_Size = 0l
+		m_Size = 0;
 	}
 	iterator begin() const
 	{
@@ -156,7 +158,7 @@ public :
 	}
 	void PostOrder(void (*pFunc)(const KEY&, const VALUE&))
 	{
-		PostOrder(pFun, m_Root);
+		PostOrder(pFunc, m_Root);
 	}
 	// »ðÀÔ
 	void insert(const KEY& key, const VALUE& value)
@@ -181,10 +183,10 @@ public :
 	iterator Find(const KEY& key)
 	{
 		iterator iter = begin();
-		itreator iterEnd = end();
+		iterator iterEnd = end();
 		for (; iter != iterEnd; ++iter)
 		{
-			if ((*iter)->first == key) return iter;
+			if (iter->first == key) return iter;
 		}
 		return end();
 	}
@@ -224,10 +226,11 @@ public :
 			--m_Size;
 			delete iter.m_Node;
 
+			ReBalance(Parent);
+
 			iterator result;
 			result.m_Node = Next;
 			return result;
-
 		}
 
 		// ¿ÞÂÊ
@@ -240,14 +243,149 @@ public :
 			iter.m_Node->first = MaxNode->first;
 			iter.m_Node->second = MaxNode->second;
 
+			if (Parent->m_Left == MaxNode)
+				Parent->m_Left = LeftChild;
+			else
+				Parent->m_Left = LeftChild;
 
-			
+			if (LeftChild)
+				LeftChild->m_Parent = Parent;
+
+			PNODE Prev = MaxNode->m_Prev;
+			PNODE Next = MaxNode->m_Next;
+			Prev->m_Next = Next;
+			Next->m_Prev = Prev;
+
+			ReBalance(Parent);
+
+			delete MaxNode;
+			--m_Size;
+			iterator result;
+			result.m_Node = Next;
+			return result;
 		}
 
 		// ¿À¸¥ÂÊ
+		PNODE MinNode = FindMin(iter.m_Node->m_Right);
+		PNODE Parent = MinNode->m_Parent;
+		PNODE RightChild = MinNode->m_Right;
+
+		iter.m_Node->first = MinNode->first;
+		iter.m_Node->second = MinNode->second;
+
+		if (Parent->m_Left == MinNode)
+			Parent->m_Left = RightChild;
+		else
+			Parent->m_Right = RightChild;
+
+		if (RightChild)
+			RightChild->m_Parent = Parent;
+
+		PNODE Prev = MinNode->m_Prev;
+		PNODE Next = MinNode->m_Next;
+		Prev->m_Next = Next;
+		Next->m_Prev = Prev;
+
+		ReBalance(Parent);
+
+		delete MinNode;
+		--m_Size;
+		iterator result;
+		result.m_Node = Next;
+		return result;
 	}
 private :
-	void ReBalance(){}
+	void ReBalance(PNODE Node)
+	{
+		int Factor = BalanceFactor(Node);
+		if (Factor <= -2) // ¿À¸¥ÂÊ 
+		{
+			int RFactor = BalanceFactor(Node->m_Right);
+			if (RFactor <= 0)
+			{
+				Node = RotationLeft(Node);
+			}
+			else
+			{
+				RotationRight(Node->m_Right);
+				Node = RotationLeft(Node);
+			}
+		}
+		else if (Factor <= 2)
+		{
+			int LFactor = BalanceFactor(Node->m_Left);
+			if (LFactor >= 0)
+			{
+				Node = RotationRight(Node);
+			}
+			else
+			{
+				RotationLeft(Node->m_Left);
+				Node = RotationRight(Node);
+			}
+		}
+		ReBalance(Node->m_Parent);
+	}
+	PNODE RotationLeft(PNODE Node)
+	{
+		PNODE Parent = Node->m_Parent;
+		PNODE RightChild = Node->m_Right;
+		PNODE RightLeftChild = RightChild->m_Left;
+
+		RightChild->m_Left = Node;
+		Node->m_Parent = RightChild;
+
+		Node->m_Right = RightLeftChild;
+		if (RightLeftChild) RightLeftChild->m_Parent = Node;
+
+		RightChild->m_Parent = Parent;
+		if (Parent)
+		{
+			if (Parent->m_Left == Node)
+				Parent->m_Left = RightChild;
+			else
+				Parent->m_Right = RightChild;
+		}
+		else
+			m_Root = RightChild;
+		return RightChild;
+	}
+	PNODE RotationRight(PNODE Node)
+	{
+		PNODE Parent = Node->m_Parent;
+		PNODE LeftChild = Node->m_Left;
+		PNODE LeftRightChild = LeftChild->m_Right;
+
+		LeftChild->m_Right = Node;
+		Node->m_Parent = LeftChild;
+
+		Node->m_Left = LeftRightChild;
+		if (LeftRightChild) LeftRightChild->m_Parent = Node;
+
+		LeftChild->m_Parent = Parent;
+		if (Parent)
+		{
+			if (Parent->m_Left == Node)
+				Parent->m_Left = LeftChild;
+			else
+				Parent->m_Right = LeftChild;
+		}
+		else
+			m_Root = LeftChild;
+		return LeftChild;
+	}
+	int GetHeight(PNODE Node)
+	{
+		if (!Node) return 0;
+		int Left = GetHeight(Node->m_Left);
+		int Right = GetHeight(Node->m_Right);
+		int Height = Left > Right ? Left : Right;
+		return Height + 1;
+	}
+	int BalanceFactor(PNODE Node)
+	{
+		return GetHeight(Node->m_Left) - GetHeight(Node->m_Right);
+	}
 	PNODE FindMax(PNODE Node)
 	{
 		if (Node->m_Right) return FindMax(Node->m_Right);
@@ -276,6 +414,7 @@ private :
 
 			NewNode->m_Next = Node;
 			Node->m_Prev = NewNode;
+			ReBalance(NewNode);
 		}
 		if (Node->m_Right) insert(key, value, Node->m_Right);
 		PNODE NewNode = new NODE;
@@ -291,12 +430,13 @@ private :
 
 		NewNode->m_Prev = Node;
 		Node->m_Next = NewNode;
+		ReBalance(NewNode);
 
 	}
 	void PreOrder(void (*pFunc)(const KEY&, const VALUE&), PNODE Node)
 	{
 		if (!Node) return;
-		pFunc(Node->first, Node->second;);
+		pFunc(Node->first, Node->second);
 		PreOrder(pFunc, Node->m_Left);
 		PreOrder(pFunc, Node->m_Right);
 	}
@@ -304,7 +444,7 @@ private :
 	{
 		if(!Node) return;
 		InOrder(pFunc, Node->m_Left);
-		pFunc(Node->first, Node->second;);
+		pFunc(Node->first, Node->second);
 		InOrder(pFunc, Node->m_Right);
 	}
 	void PostOrder(void (*pFunc)(const KEY&, const VALUE&), PNODE Node)
@@ -312,7 +452,7 @@ private :
 		if(!Node) return;
 		PostOrder(pFunc, Node->m_Left);
 		PostOrder(pFunc, Node->m_Right);
-		pFunc(Node->first, Node->second;);
+		pFunc(Node->first, Node->second);
 	}
 };
 
