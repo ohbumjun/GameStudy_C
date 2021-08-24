@@ -1,5 +1,7 @@
 #include<iostream>
+#include<cstdlib>
 #include<string>
+#include<cstring>
 
 using namespace std;
 
@@ -7,21 +9,38 @@ class String
 {
 	char* buff;
 	int* ref;
+	
 public :
-	String(const char* s)
-	{
-		buff = new char[strlen(s) + 1];
-		strcpy_s(buff, strlen(s) + 1, s);
+	// 대입 연산자
+	String(const char* c){
+		buff = new char[strlen(c) + 1];
+		strcpy_s(buff, strlen(c) + 1, c);
 		ref = new int(1);
 	}
-	String(const String& s) :
-		buff(s.buff),ref(s.ref){}
-	char& operator [] (int index)
+	// 복사 생성자
+	String(String& s):buff(s.buff),ref(s.ref){}
+	
+	class CharProxy
 	{
-		cout << "operator []" << endl;
-		return buff[index];
+		String* str;
+		int index;
+	public :
+		CharProxy(String *string,int i) : str(string), index(i){}
+		operator char()
+		{
+			return str->buff[index];
+		}
+		CharProxy operator = (char s)
+		{
+			str->buff[index] = s;
+			return *this;
+		}
+	};
+	CharProxy operator [] (int index)
+	{
+		return CharProxy(this, index);
 	}
-	friend ostream& operator << (ostream& out, const String& s)
+	friend ostream& operator << (ostream& out, String& s)
 	{
 		return out << s.buff << endl;
 	}
@@ -35,5 +54,5 @@ int main()
 	char c = s1[0];
 	s1[0] = 'x';
 	cout << s1 << endl;
-	cout << s2 << endl;
+	return 0;
 }
