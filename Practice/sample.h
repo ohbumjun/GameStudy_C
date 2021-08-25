@@ -9,26 +9,40 @@ public :
 	{
 		m_Size = 0;
 		m_Capacity = 8;
-		m_Array = new T[m_Capacity];
+		m_Data = new T[m_Capacity];
 		m_Func = SortFunction;
 	}
 	~CHeapSort()
 	{
-		delete[] m_Array;
+		delete[] m_Data;
 	}
-private: 
+private :
 	int m_Size;
 	int m_Capacity;
-	T* m_Array;
+	T* m_Data;
 	bool (*m_Func)(const T&, const T&);
 public :
 	int size() const { return m_Size; }
 	bool empty() const { return m_Size == 0; }
 	void clear() { m_Size = 0; }
-	T& top() const 
+	void push(const T& data)
+	{
+		if (m_Size == m_Capacity)
+		{
+			m_Capacity *= 2;
+			T* Array = new T[m_Capacity];
+			memcpy(Array, m_Data, sizeof(T) * m_Size);
+			delete m_Data;
+			m_Data = Array;
+		}
+		m_Data[m_Size] = data;
+		InsertHeap(m_Size);
+		++m_Size;
+	}
+	T& top()
 	{
 		if (empty()) assert(false);
-		return m_Array[0];
+		return m_Data[0];
 	}
 	void pop()
 	{
@@ -39,55 +53,41 @@ public :
 			return;
 		}
 		--m_Size;
-		m_Array[0] = m_Array[m_Size];
+		m_Data[0] = m_Data[m_Size];
 		DeleteHeap(0);
 	}
-	void push(const T& data)
-	{
-		if (m_Size == m_Capacity)
-		{
-			m_Capacity *= 2;
-			T* Array = new T[m_Capacity];
-			memcpy(Array, m_Array, sizeof(T) * m_Capacity);
-			delete [] m_Array;
-			m_Array = Array;
-		}
-		m_Array[m_Size] = data;
-		InsertHeap(m_Size);
-		++m_Size;
-	}
-
 private :
 	void InsertHeap(int Index)
 	{
 		if (Index == 0) return;
 		int ParentIndex = (Index - 1) / 2;
-		if (m_Func(m_Array[ParentIndex], m_Array[Index]))
+		if (m_Func(m_Data[ParentIndex], m_Data[Index]))
 		{
-			T Temp = m_Array[Index];
-			m_Array[Index] = m_Array[ParentIndex];
-			m_Array[ParentIndex] = Temp;
+			T Temp = m_Data[ParentIndex];
+			m_Data[ParentIndex] = m_Data[Index];
+			m_Data[Index] = Temp;
 			InsertHeap(ParentIndex);
 		}
 	}
 	void DeleteHeap(int Index)
 	{
-		int LeftChildIdx = Index * 2 + 1;
+		int LeftChildIdx = 2 * Index + 1;
 		if (LeftChildIdx >= m_Size) return;
-		int RightChildIdx = LeftChildIdx + 1;
 		int ChildIdx = LeftChildIdx;
+		int RightChildIdx = LeftChildIdx + 1;
 		if (RightChildIdx < m_Size)
 		{
-			if (m_Func(m_Array[LeftChildIdx], m_Array[RightChildIdx]))
+			if (m_Func(m_Data[LeftChildIdx], m_Data[RightChildIdx]))
 				ChildIdx = RightChildIdx;
 		}
-		if (m_Func(m_Array[Index], m_Array[ChildIdx]))
+		if (m_Func(m_Data[Index], m_Data[ChildIdx]))
 		{
-			T Temp = m_Array[Index];
-			m_Array[Index] = m_Array[ChildIdx];
-			m_Array[ChildIdx] = Temp;
-			InsertHeap(ChildIdx);
+			T temp = m_Data[Index];
+			m_Data[Index] = m_Data[ChildIdx];
+			m_Data[ChildIdx] = temp;
+			DeleteHeap(ChildIdx);
 		}
+
 	}
 public :
 	void SetSortFunction(bool (*pFunc)(const T&, const T&))
