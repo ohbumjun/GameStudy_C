@@ -3,6 +3,8 @@
 #include <time.h>
 #include "sample.h"
 
+using namespace std;
+
 bool Sort(const int& Left, const int& Right)
 {
 	return Left > Right;
@@ -10,31 +12,18 @@ bool Sort(const int& Left, const int& Right)
 
 int main()
 {
-	srand((unsigned int)time(0));
-	rand();
-
-	CQuickSort<int>	Quick;
-	Quick.SetSortFunction(Sort);
-
-	int	Array[20] = {};
+	CHeapSort<int>	heap;
+	heap.SetSortFunction(Sort);
 
 	for (int i = 0; i < 20; ++i)
 	{
-		Array[i] = rand();
-		std::cout << Array[i] << std::endl;
-		//Quick.push(rand());
+		heap.push(rand());
 	}
-
-	Quick.Sort(Array, 20);
-	std::cout << "sort Array" << std::endl;
-
-	std::cout << "============= Sort =============" << std::endl;
-	for (int i = 0; i < 20; ++i)
+	while (!heap.empty())
 	{
-		std::cout << Array[i] << std::endl;
+		std::cout << heap.top() << std::endl;
+		heap.pop();
 	}
-
-
 
 	return 0;
 }

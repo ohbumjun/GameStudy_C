@@ -1,17 +1,22 @@
 #pragma once
+#include<assert.h>
 
 template<typename T>
-class CQuickSort
+class CHeapSort
 {
 public :
-	CQuickSort()
+	CHeapSort()
 	{
 		m_Size = 0;
 		m_Capacity = 8;
 		m_Array = new T[m_Capacity];
 		m_Func = SortFunction;
 	}
-private :
+	~CHeapSort()
+	{
+		delete[] m_Array;
+	}
+private: 
 	int m_Size;
 	int m_Capacity;
 	T* m_Array;
@@ -19,87 +24,78 @@ private :
 public :
 	int size() const { return m_Size; }
 	bool empty() const { return m_Size == 0; }
-	
-	void push_back(const T& data)
+	void clear() { m_Size = 0; }
+	T& top() const 
+	{
+		if (empty()) assert(false);
+		return m_Array[0];
+	}
+	void pop()
+	{
+		if (empty()) assert(false);
+		if (m_Size == 1)
+		{
+			m_Size = 0;
+			return;
+		}
+		--m_Size;
+		m_Array[0] = m_Array[m_Size];
+		DeleteHeap(0);
+	}
+	void push(const T& data)
 	{
 		if (m_Size == m_Capacity)
 		{
 			m_Capacity *= 2;
 			T* Array = new T[m_Capacity];
 			memcpy(Array, m_Array, sizeof(T) * m_Capacity);
-			delete m_Array;
+			delete [] m_Array;
 			m_Array = Array;
 		}
 		m_Array[m_Size] = data;
+		InsertHeap(m_Size);
 		++m_Size;
 	}
-	void push_back(const T& Array, int Count)
-	{
-		if (m_Capacity < Count)
-		{
-			m_Capacity = Count;
-			delete m_Array;
-			m_Array = new T[m_Capacity];
-		}
-		for (int i = 0; i < Count; i++)
-		{
-			m_Array[i] = Array[i];
-		}
-		m_Size = Count;
-	}
-	void Sort()
-	{
-		QuickSort(0, m_Size - 1, m_Array);
-	}
-	void Sort(T* Array, int Count)
-	{
-		QuickSort(0, Count - 1, Array);
-	}
+
 private :
-	void QuickSort(int Left, int Right, T* Array)
+	void InsertHeap(int Index)
 	{
-		if (Left < Right)
+		if (Index == 0) return;
+		int ParentIndex = (Index - 1) / 2;
+		if (m_Func(m_Array[ParentIndex], m_Array[Index]))
 		{
-			int Pivot = Partition(Left, Right, Array);
-			QuickSort(Left, Pivot - 1, Array);
-			QuickSort(Pivot + 1, Right, Array);
+			T Temp = m_Array[Index];
+			m_Array[Index] = m_Array[ParentIndex];
+			m_Array[ParentIndex] = Temp;
+			InsertHeap(ParentIndex);
 		}
 	}
-	int Partition(int Left, int Right, T* Array)
+	void DeleteHeap(int Index)
 	{
-		int Low = Left;
-		int High = Right + 1;
-		T Value = Array[Left];
-		do
+		int LeftChildIdx = Index * 2 + 1;
+		if (LeftChildIdx >= m_Size) return;
+		int RightChildIdx = LeftChildIdx + 1;
+		int ChildIdx = LeftChildIdx;
+		if (RightChildIdx < m_Size)
 		{
-			do
-			{
-				++Low;
-			} while (Low <= Right && m_Func(Value, Array[Low]));
-			do
-			{
-				--High;
-			} while (High >= Left && m_Func(m_Array[High],Value));
-			if (Low < High)
-			{
-				T Temp = m_Array[Low];
-				m_Array[Low] = m_Array[High];
-				m_Array[High] = Temp;
-			}
-		} while (Low < High);
-		T Temp = m_Array[Left];
-		m_Array[Left] = m_Array[High];
-		m_Array[High] = Temp;
-		return High;
+			if (m_Func(m_Array[LeftChildIdx], m_Array[RightChildIdx]))
+				ChildIdx = RightChildIdx;
+		}
+		if (m_Func(m_Array[Index], m_Array[ChildIdx]))
+		{
+			T Temp = m_Array[Index];
+			m_Array[Index] = m_Array[ChildIdx];
+			m_Array[ChildIdx] = Temp;
+			InsertHeap(ChildIdx);
+		}
 	}
-	
 public :
 	void SetSortFunction(bool (*pFunc)(const T&, const T&))
 	{
 		m_Func = pFunc;
 	}
 private :
-	bool SortFunction(const T& Left, const T& Right)
+	static bool SortFunction(const T& Left, const T& Right)
 	{
 		return Left > Right;
 	}
