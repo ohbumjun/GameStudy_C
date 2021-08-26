@@ -1,73 +1,81 @@
+/*
+[ 시나리오 ]
+오리와 칠면조 클래스가 있다. 
+칠면조를 오리로 둔갑 시켜야 한다. 
+그러나 이 두 클래스는 서로의 인터패이스가 틀리다는 문제가 있다.
+
+[ 요약 ]
+오리 클래스를 상속받고 칠면조 클래스는 레어링 시킨다. 
+그리고 오리 클래스 인터페이스에 맞쳐서 연결 시키면 된다.
+
+*/
+
 #include<iostream>
+#include<string>
 
 using namespace std;
 
-class LightSwitch;
-
-struct IState
+// Target Interface
+class Duck
 {
-	virtual void on(LightSwitch* ls)
-	{
-		cout << "Light already turned on" << endl;
-	}
-	virtual void off(LightSwitch* ls)
-	{
-		cout << "Light already turned off" << endl;
-	}
-};
-
-struct OnState : public IState
-{
-	OnState()
-	{
-		cout << "Light Turned On" << endl;
-	}
-	void off(LightSwitch* ls);
-};
-
-struct OffState : public IState
-{
-	OffState()
-	{
-		cout << "Light Turned Off" << endl;
-	}
-	void on(LightSwitch* ls);
-};
-
-class LightSwitch
-{
-	IState* state;
 public :
-	LightSwitch() { state = new OffState(); }
-public :
-	void setState(IState* st) { state = st; }
-	void on() { state->on(this); }
-	void off() { state->off(this); }
+	virtual void Fly(void) = 0;
+	virtual void Quack(void) = 0;
 };
 
-void OnState::off(LightSwitch* ls)
+class MallardDuck : public Duck
 {
-	cout << "Turning Light off" << endl;
-	ls->setState(new OffState());
-	delete this;
-}
+public :
+	virtual void Fly(void) { cout << "청동오리인 저는 날고 있어요" << endl; }
+	virtual void Quack() { cout << "꽥" << endl; }
+};
 
-void OffState::on(LightSwitch* ls)
+// Adaptee interface
+class Turkey
 {
-	cout << "Turning Light On" << endl;
-	ls->setState(new OnState());
-	delete this;
-}
+public :
+	virtual void Fly() = 0;
+	virtual void Gobble() = 0;
+};
+
+class WildTurkey : public Turkey
+{
+public :
+	virtual void Fly() { cout << "칠면조인 저는 조금 날아요" << endl; }
+	virtual void Gobble() { cout << "골골" << endl; }
+};
+
+class TurkeyAdapter : public Duck
+{
+private :
+	Turkey* m_pTurkey;
+public :
+	TurkeyAdapter(Turkey* pTurkey) 
+	{
+		m_pTurkey = pTurkey;
+	}
+public :
+	virtual void Fly() {
+		cout << "원래 오리인데, 칠면조로 위장중" << endl;
+		m_pTurkey->Fly(); 
+	}
+	virtual void Quack() { m_pTurkey->Gobble(); }
+
+};
 
 int main()
 {
-	LightSwitch ls;
-	ls.on();
-	ls.off();
-	ls.on();
-	ls.on();
+	Duck* pMallardDuck = new MallardDuck;
+	pMallardDuck->Fly();
+	pMallardDuck->Quack();
+
+	Turkey* pWildTurkey = new WildTurkey;
+	pWildTurkey->Fly();
+	pWildTurkey->Gobble();
+
+	TurkeyAdapter* pTurkeyAdapter = new TurkeyAdapter(pWildTurkey);
+	pTurkeyAdapter->Fly();
+	pTurkeyAdapter->Quack();
+
+	return 0;
 }
-
-
-
-
