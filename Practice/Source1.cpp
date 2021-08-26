@@ -73,7 +73,7 @@ int main()
 	circle->draw();
 	circle->drawLine(1, 2);
 	circle->fill();
-	
+	//
 	Shape* rectangle = new Rectangle(new RectDrawing());
 	rectangle->draw();
 	rectangle->drawLine(3,4);
