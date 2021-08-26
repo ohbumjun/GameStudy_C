@@ -1,84 +1,61 @@
-#include<iostream>
 
-using namespace std;
+#include <iostream>
+#include <time.h>
+#include <Windows.h>
+#include <algorithm>
+#include "sample.h"
 
-// Implementor
-class Drawing
+bool Sort(const int& Left, const int& Right)
 {
-public :
-	virtual void drawLine(int x, int y) = 0;
-	virtual void fill() = 0;
-};
-
-class RectDrawing : public Drawing
-{
-public :
-	virtual void drawLine(int x, int y) override
-	{
-		cout << "draw Rect Line from " << x << " to " << y << endl;
-	}
-	virtual void fill()
-	{
-		cout << "fill Rect" << endl;
-	}
-};
-
-class CircleDrawing : public Drawing
-{
-public :
-	virtual void drawLine(int x, int y) override
-	{
-		cout << "draw Circle Line from " << x << " to " << y << endl;
-	}
-	virtual void fill()
-	{
-		cout << "fill Circle" << endl;
-	}
-};
-
-// Abstraction
-class Shape
-{
-	Drawing* m_Dr;
-public :
-	Shape(Drawing*dr):m_Dr(dr){}
-	virtual void draw() = 0;
-	void drawLine(int x, int y)
-	{
-		m_Dr->drawLine(x,y);
-	}
-	void fill()
-	{
-		m_Dr->fill();
-	}
-};
-
-class Circle : public Shape
-{
-public :
-	Circle(Drawing*dr):Shape(dr){}
-	void draw() { cout << "draw Circle" << endl; }
-};
-
-class Rectangle : public Shape
-{
-public:
-	Rectangle(Drawing* dr) :Shape(dr) {}
-	void draw() { cout << "draw Rectangle" << endl; }
-};
+	return Left > Right;
+}
 
 int main()
 {
-	Shape* circle = new Circle(new CircleDrawing());
-	circle->draw();
-	circle->drawLine(1, 2);
-	circle->fill();
-	//
-	Shape* rectangle = new Rectangle(new RectDrawing());
-	rectangle->draw();
-	rectangle->drawLine(3,4);
-	rectangle->fill();
-	
-	
+	srand((unsigned int)time(0));
+	rand();
+
+	//qsort()
+
+	LARGE_INTEGER	PrevTick;
+	LARGE_INTEGER	Tick;
+	LARGE_INTEGER	SecondTick;
+
+	QueryPerformanceFrequency(&SecondTick);
+
+	CMergeSort<int>	Merge;
+	Merge.SetSortFunction(Sort);
+
+	int* Array = new int[100000];
+	int* Array1 = new int[100000];
+	int* Array2 = new int[100000];
+
+	for (int i = 0; i < 100000; ++i)
+	{
+		Array[i] = rand();
+		Array1[i] = Array[i];
+		Array2[i] = Array[i];
+		//std::cout << Array[i] << std::endl;
+	}
+
+
+	QueryPerformanceCounter(&PrevTick);
+	Merge.Sort(Array, 100000);
+	std::cout << "sort end" << std::endl;
+
+	QueryPerformanceCounter(&Tick);
+
+	float	Time = (Tick.QuadPart - PrevTick.QuadPart) / (float)SecondTick.QuadPart;
+
+	std::cout << "Merge : " << Time << std::endl;
+
+	std::cout << "============= Sort =============" << std::endl;
+	/*for (int i = 0; i < 20000; ++i)
+	{
+		std::cout << Array[i] << std::endl;
+	}*/
+
+
+
 	return 0;
 }

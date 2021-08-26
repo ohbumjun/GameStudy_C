@@ -1,96 +1,125 @@
 #pragma once
-#include<assert.h>
 
 template<typename T>
-class CHeapSort
+class CMergeSort
 {
 public :
-	CHeapSort()
+	CMergeSort()
 	{
 		m_Size = 0;
 		m_Capacity = 8;
-		m_Data = new T[m_Capacity];
+		m_Array = new T[m_Capacity];
+		m_CopyArray = new T[m_Capacity];
 		m_Func = SortFunction;
 	}
-	~CHeapSort()
+	~CMergeSort()
 	{
-		delete[] m_Data;
+		delete[] m_Array;
+		delete[] m_CopyArray;
 	}
 private :
 	int m_Size;
 	int m_Capacity;
-	T* m_Data;
+	T* m_Array;
+	T* m_CopyArray;
 	bool (*m_Func)(const T&, const T&);
 public :
 	int size() const { return m_Size; }
 	bool empty() const { return m_Size == 0; }
 	void clear() { m_Size = 0; }
-	void push(const T& data)
+	void push(const T& Data)
 	{
 		if (m_Size == m_Capacity)
 		{
 			m_Capacity *= 2;
 			T* Array = new T[m_Capacity];
-			memcpy(Array, m_Data, sizeof(T) * m_Size);
-			delete m_Data;
-			m_Data = Array;
+			memcpy(Array, m_Array, sizeof(T) * m_Size);
+			delete[] m_Array;
+			delete[] m_CopyArray;
+			m_Array = Array;
+			m_CopyArray = new T[m_Capacity];
 		}
-		m_Data[m_Size] = data;
-		InsertHeap(m_Size);
+		m_Array[m_Size] = Data;
 		++m_Size;
 	}
-	T& top()
+	void push(T* Array, int Count)
 	{
-		if (empty()) assert(false);
-		return m_Data[0];
-	}
-	void pop()
-	{
-		if (empty()) assert(false);
-		if (m_Size == 1)
+		if (m_Capacity < Count)
 		{
-			m_Size = 0;
-			return;
+			delete[] m_Array;
+			delete[] m_CopyArray;
+			m_Capacity = Count;
+			m_Array = new T[m_Capacity];
+			m_CopyArray = new T[m_Capacity];
 		}
-		--m_Size;
-		m_Data[0] = m_Data[m_Size];
-		DeleteHeap(0);
+		for (int i = 0; i < Count; i++)
+		{
+			m_Array[i] = Array[i];
+		}
+		m_Size = Count;
+	}
+	void Sort()
+	{
+		MergeSort(0, m_Size - 1, m_Array);
+	}
+	void Sort(T* Array, int Count)
+	{
+		MergeSort(0, Count - 1, Array);
 	}
 private :
-	void InsertHeap(int Index)
+	void MergeSort(int Left, int Right, T* Array)
 	{
-		if (Index == 0) return;
-		int ParentIndex = (Index - 1) / 2;
-		if (m_Func(m_Data[ParentIndex], m_Data[Index]))
+		if (Left < Right)
 		{
-			T Temp = m_Data[ParentIndex];
-			m_Data[ParentIndex] = m_Data[Index];
-			m_Data[Index] = Temp;
-			InsertHeap(ParentIndex);
+			int Mid = (Left + Right) / 2;
+			MergeSort(Left, Mid, Array);
+			MergeSort(Mid + 1, Right, Array);
+			Merge(Left, Mid, Right, Array);
 		}
 	}
-	void DeleteHeap(int Index)
+	void Merge(int Left, int Mid, int Right, T* Array)
 	{
-		int LeftChildIdx = 2 * Index + 1;
-		if (LeftChildIdx >= m_Size) return;
-		int ChildIdx = LeftChildIdx;
-		int RightChildIdx = LeftChildIdx + 1;
-		if (RightChildIdx < m_Size)
+		int Low = Left;
+		int High = Mid + 1;
+		int Pivot = Left;
+		while (Low <= Mid && High <= Right)
 		{
-			if (m_Func(m_Data[LeftChildIdx], m_Data[RightChildIdx]))
-				ChildIdx = RightChildIdx;
+			if (m_Func(Array[Low],Array[High]))
+			{
+				m_CopyArray[Pivot] = Array[High];
+				++High;
+				++Pivot;
+			}
+			else
+			{
+				m_CopyArray[Pivot] = Array[Low];
+				++Low;
+				++Pivot;
+			}
 		}
-		if (m_Func(m_Data[Index], m_Data[ChildIdx]))
+		if (Low <= Mid)
 		{
-			T temp = m_Data[Index];
-			m_Data[Index] = m_Data[ChildIdx];
-			m_Data[ChildIdx] = temp;
-			DeleteHeap(ChildIdx);
+			for (int i = Low; i <= Mid; i++)
+			{
+				m_CopyArray[Pivot] = Array[i];
+				++Pivot;
+			}
 		}
-
+		if (High <= Right)
+		{
+			for (int i = High; i <= Right; i++)
+			{
+				m_CopyArray[Pivot] = Array[i];
+				++Pivot;
+			}
+		}
+		for (int i = Left; i <= Right; i++)
+		{
+			Array[i] = m_CopyArray[i];
+		}
 	}
 public :
-	void SetSortFunction(bool (*pFunc)(const T&, const T&))
+	void SetSortFunction(bool(*pFunc)(const T&, const T&))
 	{
 		m_Func = pFunc;
 	}
@@ -99,4 +128,5 @@ private :
 	{
 		return Left > Right;
 	}
+
 };
