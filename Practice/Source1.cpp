@@ -1,61 +1,41 @@
 
 #include <iostream>
-#include <time.h>
-#include <Windows.h>
-#include <algorithm>
 #include "sample.h"
 
-bool Sort(const int& Left, const int& Right)
+void OutputNode(const int& data)
 {
-	return Left > Right;
+	std::cout << data << " -> ";
 }
 
 int main()
 {
-	srand((unsigned int)time(0));
-	rand();
+	CGraph<int>	graph;
 
-	//qsort()
-
-	LARGE_INTEGER	PrevTick;
-	LARGE_INTEGER	Tick;
-	LARGE_INTEGER	SecondTick;
-
-	QueryPerformanceFrequency(&SecondTick);
-
-	CMergeSort<int>	Merge;
-	Merge.SetSortFunction(Sort);
-
-	int* Array = new int[100000];
-	int* Array1 = new int[100000];
-	int* Array2 = new int[100000];
-
-	for (int i = 0; i < 100000; ++i)
+	for (int i = 1; i <= 9; ++i)
 	{
-		Array[i] = rand();
-		Array1[i] = Array[i];
-		Array2[i] = Array[i];
-		//std::cout << Array[i] << std::endl;
+		graph.insert(i);
 	}
 
+	graph.AddEdge(1, 2);
+	graph.AddEdge(1, 5);
+	graph.AddEdge(1, 7);
 
-	QueryPerformanceCounter(&PrevTick);
-	Merge.Sort(Array, 100000);
-	std::cout << "sort end" << std::endl;
+	graph.AddEdge(2, 3);
+	graph.AddEdge(5, 6);
+	graph.AddEdge(7, 8);
 
-	QueryPerformanceCounter(&Tick);
+	graph.AddEdge(3, 4);
+	graph.AddEdge(8, 9);
 
-	float	Time = (Tick.QuadPart - PrevTick.QuadPart) / (float)SecondTick.QuadPart;
+	std::cout << "============ BFS ============" << std::endl;
+	graph.BFS(OutputNode);
 
-	std::cout << "Merge : " << Time << std::endl;
+	std::cout << std::endl;
 
-	std::cout << "============= Sort =============" << std::endl;
-	/*for (int i = 0; i < 20000; ++i)
-	{
-		std::cout << Array[i] << std::endl;
-	}*/
+	std::cout << "============ DFS ============" << std::endl;
+	graph.DFS(OutputNode);
 
-
+	std::cout << std::endl;
 
 	return 0;
 }
