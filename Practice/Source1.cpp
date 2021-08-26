@@ -1,81 +1,84 @@
-/*
-[ 시나리오 ]
-오리와 칠면조 클래스가 있다. 
-칠면조를 오리로 둔갑 시켜야 한다. 
-그러나 이 두 클래스는 서로의 인터패이스가 틀리다는 문제가 있다.
-
-[ 요약 ]
-오리 클래스를 상속받고 칠면조 클래스는 레어링 시킨다. 
-그리고 오리 클래스 인터페이스에 맞쳐서 연결 시키면 된다.
-
-*/
-
 #include<iostream>
-#include<string>
 
 using namespace std;
 
-// Target Interface
-class Duck
+// Implementor
+class Drawing
 {
 public :
-	virtual void Fly(void) = 0;
-	virtual void Quack(void) = 0;
+	virtual void drawLine(int x, int y) = 0;
+	virtual void fill() = 0;
 };
 
-class MallardDuck : public Duck
+class RectDrawing : public Drawing
 {
 public :
-	virtual void Fly(void) { cout << "청동오리인 저는 날고 있어요" << endl; }
-	virtual void Quack() { cout << "꽥" << endl; }
-};
-
-// Adaptee interface
-class Turkey
-{
-public :
-	virtual void Fly() = 0;
-	virtual void Gobble() = 0;
-};
-
-class WildTurkey : public Turkey
-{
-public :
-	virtual void Fly() { cout << "칠면조인 저는 조금 날아요" << endl; }
-	virtual void Gobble() { cout << "골골" << endl; }
-};
-
-class TurkeyAdapter : public Duck
-{
-private :
-	Turkey* m_pTurkey;
-public :
-	TurkeyAdapter(Turkey* pTurkey) 
+	virtual void drawLine(int x, int y) override
 	{
-		m_pTurkey = pTurkey;
+		cout << "draw Rect Line from " << x << " to " << y << endl;
 	}
-public :
-	virtual void Fly() {
-		cout << "원래 오리인데, 칠면조로 위장중" << endl;
-		m_pTurkey->Fly(); 
+	virtual void fill()
+	{
+		cout << "fill Rect" << endl;
 	}
-	virtual void Quack() { m_pTurkey->Gobble(); }
+};
 
+class CircleDrawing : public Drawing
+{
+public :
+	virtual void drawLine(int x, int y) override
+	{
+		cout << "draw Circle Line from " << x << " to " << y << endl;
+	}
+	virtual void fill()
+	{
+		cout << "fill Circle" << endl;
+	}
+};
+
+// Abstraction
+class Shape
+{
+	Drawing* m_Dr;
+public :
+	Shape(Drawing*dr):m_Dr(dr){}
+	virtual void draw() = 0;
+	void drawLine(int x, int y)
+	{
+		m_Dr->drawLine(x,y);
+	}
+	void fill()
+	{
+		m_Dr->fill();
+	}
+};
+
+class Circle : public Shape
+{
+public :
+	Circle(Drawing*dr):Shape(dr){}
+	void draw() { cout << "draw Circle" << endl; }
+};
+
+class Rectangle : public Shape
+{
+public:
+	Rectangle(Drawing* dr) :Shape(dr) {}
+	void draw() { cout << "draw Rectangle" << endl; }
 };
 
 int main()
 {
-	Duck* pMallardDuck = new MallardDuck;
-	pMallardDuck->Fly();
-	pMallardDuck->Quack();
-
-	Turkey* pWildTurkey = new WildTurkey;
-	pWildTurkey->Fly();
-	pWildTurkey->Gobble();
-
-	TurkeyAdapter* pTurkeyAdapter = new TurkeyAdapter(pWildTurkey);
-	pTurkeyAdapter->Fly();
-	pTurkeyAdapter->Quack();
-
+	Shape* circle = new Circle(new CircleDrawing());
+	circle->draw();
+	circle->drawLine(1, 2);
+	circle->fill();
+	
+	Shape* rectangle = new Rectangle(new RectDrawing());
+	rectangle->draw();
+	rectangle->drawLine(3,4);
+	rectangle->fill();
+	
+	
 	return 0;
 }
