@@ -1,105 +1,22 @@
-#include<iostream>
-#include<string>
-#include<list>
+// runtime때 전략을 교체
+// 오버헤드 발생
 
-using namespace std;
+// 오버헤드란 ,
+// 프로그램의 실행 흐름에서 나타나는 현상 중 하나
+// 예를 들어, 프로그램의 실행 흐름 도중
+// 동떨어진 위치의 코드를 실행시켜야 할 때
+// 추가적으로, 시간, 메모리 자원이 사용되는 현상
 
-class IVisitor;
-struct IElement
-{
-	virtual void accept(IVisitor* visitor) = 0;
-};
+// ex) 프로그래밍시 외부함수 사용시 나타난다.
 
-class Wheel : public IElement
-{
-private :
-	const char* m_Name;
-public :
-	Wheel(const char* name):m_Name(name){}
-	const char* getName() { return m_Name; }
-	void accept(IVisitor* visitor)override;
-};
+// 1) 실행 흐름 도중에 끊기고,
+// 2) 외부함수 사용하러 이동
+// 3) 함수를 사용하기 위해 스택 메모리 할당
+// 3) 매개변수 있으면, 대입연산 까지 발생
 
-class Body : public IElement
-{
-	void accept(IVisitor* visitor) override;
-};
+// 즉, 예상하지못한 자원들이
+// 소모되는 현상이 바로 오버헤드현상이다.
 
-class Engine : public IElement
-{
-	void accept(IVisitor* visitor) override;
-};
+// 이를 줄이고자 매크로함수 혹은 인라인 함수를 사요한다.
 
-class Car : public IElement
-{
-private :
-	list<IElement*> m_List;
-public :
-	void push_back(IElement* e) { m_List.push_back(e); }
-	void accept(IVisitor* visitor) override;
-};
-
-struct IVisitor
-{
-	virtual void visit(Wheel* acceptor) = 0;
-	virtual void visit(Body* acceptor) = 0;
-	virtual void visit(Engine* acceptor) = 0;
-	virtual void visit(Car* acceptor) = 0;
-};
-
-// 차를 시동거는 visitor
-class CarStartVisitor : public IVisitor
-{
-	virtual void visit(Wheel* acceptor) { cout << "kicking " << acceptor->getName() << endl; }
-	virtual void visit(Body* acceptor) { cout << "Moving Body" << endl; }
-	virtual void visit(Engine* acceptor) { cout << "Starting Engine" << endl; }
-	virtual void visit(Car* acceptor) { cout << "Starting Car" << endl; }
-};
-
-// 차의 내용을 출력하는 visitor
-class CarPrintVisitor : public IVisitor
-{
-	virtual void visit(Wheel* acceptor) { cout << "printing " << acceptor->getName() << endl; }
-	virtual void visit(Body* acceptor) { cout << "priting Body" << endl; }
-	virtual void visit(Engine* acceptor) { cout << "printing Engine" << endl; }
-	virtual void visit(Car* acceptor) { cout << "printing Car" << endl; }
-};
-
-void Wheel::accept(IVisitor* visitor) { visitor->visit(this); }
-void Body::accept(IVisitor* visitor) { visitor->visit(this); }
-void Engine::accept(IVisitor* visitor) { visitor->visit(this); }
-void Car::accept(IVisitor* visitor)
-{
-	auto iter = m_List.begin();
-	auto iterEnd = m_List.end();
-	for (; iter != iterEnd; ++iter)
-	{
-		(*iter)->accept(visitor);
-	}
-	visitor->visit(this);
-}
-
-
-int main()
-{
-	// 부품 준비
-	Wheel m_Wheel[4] = { "front left","front right","back left","back right"};
-	Body m_Body;
-	Engine m_Engine;
-	Car m_Car;
-
-	m_Car.push_back(&m_Wheel[0]);
-	m_Car.push_back(&m_Wheel[1]);
-	m_Car.push_back(&m_Wheel[2]);
-	m_Car.push_back(&m_Wheel[3]);
-	m_Car.push_back(&m_Body);
-	m_Car.push_back(&m_Engine);
-
-	CarPrintVisitor pv;
-	CarStartVisitor sv;
-
-	m_Car.accept(&pv);
-	m_Car.accept(&sv);
-
-	return 0;
-}
+// template을 통해. 컴파일 시간에 결정하게 한다. 
