@@ -1,52 +1,50 @@
 #include<iostream>
-#include<string>
 
 using namespace std;
 
 class Game
 {
 protected :
-	int m_cur_player{ 0 };
 	int m_num_of_players;
+	int m_cur_player{ 0 };
 protected :
 	virtual void start() = 0;
-	virtual bool have_winner() = 0;
 	virtual void take_turn() = 0;
+	virtual bool have_winner() = 0;
 	virtual int get_winner() = 0;
 public :
-	explicit Game(int num_of_players) :
-		m_num_of_players(num_of_players){}
-	void run()
+	Game(const int& num_of_players):m_num_of_players(num_of_players){}
+	void play()
 	{
 		start();
 		while (!have_winner())
 			take_turn();
-		cout << "Player " << get_winner() << " wins\n"  << endl;
+		cout << "Player " << get_winner() << " win" << endl;
 	}
 };
 
 class Chess : public Game
 {
-private:
-	int turns{ 0 }, max_turns{ 10 };
+private :
+	int m_cur_turn{ 0 };
+	int m_max_turn = 10;
 public :
-	explicit Chess() :Game(2){}
-protected :
-	void start() override
+	Chess(const int& num_of_players) : Game(num_of_players){}
+	virtual void start()
 	{
-		cout << "start chess with " << m_num_of_players << endl;
+		cout << "Chess play with" << m_num_of_players << endl;
 	}
-	bool have_winner() override
+	virtual void take_turn()
 	{
-		return turns == max_turns;
-	}
-	void take_turn() override
-	{
-		cout << "Turn " << turns << " taken by player " << m_cur_player << endl;
-		turns++;
+		cout << "Turn " << m_cur_turn << " taken by " << m_cur_player << endl;
+		++m_cur_turn;
 		m_cur_player = (m_cur_player + 1) % m_num_of_players;
 	}
-	int get_winner() override
+	virtual bool have_winner()
+	{
+		return m_cur_turn == m_max_turn;
+	}
+	virtual int get_winner()
 	{
 		return m_cur_player;
 	}
@@ -54,19 +52,7 @@ protected :
 
 int main()
 {
-	Chess chess;
-	chess.run();
-	getchar();
+	Chess chess(2);
+	chess.play();
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
