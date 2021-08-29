@@ -1,81 +1,96 @@
 #include<iostream>
-
-/*
-해쉬는, ----------------
-탐색 속도가 가장 빠른
-알고리즘
-
-HashTable
-- 실제 저장되는 데이터보다,
-훨씬 큰 메모리 공간을 만들어 놓고
-데이터를 Hash 함수에 의해
-인덱스를 구한다음
-저장하는 방식이다.
-
-실제 데이터가 저장될 때,
-연속으로 저장되는 것이 아니라,
-
-배열에 빈공간들을 두고
-저장이 되는 방식이다.
-
-즉, 메모리가 낭비되는 것은
-막을 수 없지만, 메모리를
-희생해서,
-탐색속도를 극대화시키는 알고리즘이다.
-
-Hash 충돌 --------------
-- 중복된 idx에 데이터를
-저장하려고 하는 경우
-
-Hash에서 중요한 것은
-1) 공간이 넉넉한지
-2) 좋은 Hash함수를
-사용하고 있는것인지
-
-*/
-
-#include"Hash.h"
-#include"HashTable.h"
+#include<vector>
+#include<string>
 
 using namespace std;
 
+class Client;
+// Mediator
+class Chat
+{
+	vector<Client*> m_Clients;
+public :
+	void addClient(Client* client);
+	void chat(Client* client, const string &message);
+	~Chat()
+	{
+		vector<Client*>::iterator iter    = m_Clients.begin();
+		vector<Client*>::iterator iterEnd = m_Clients.end();
+		for (; iter != iterEnd; ++iter)
+			delete* iter;
+		cout << "chat deleted" << endl;
+	}
+};
+
+// Clinet
+class Client
+{
+private :
+	string m_Name;
+	Chat* m_Chat;
+public :
+	Client(Chat* chat, const string& message);
+	void sendMessage(const string &message);
+	void receiveMessage(Client* client, const string &message);
+	~Client() { cout << m_Name << " deleted" << endl; }
+};
+
+void Chat::addClient(Client* client)
+{
+	m_Clients.push_back(client);
+}
+
+void Chat::chat(Client* client, const string &message)
+{
+	vector<Client*>::iterator iter    = m_Clients.begin();
+	vector<Client*>::iterator iterEnd = m_Clients.end();
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter) != client)
+		{
+			(*iter)->receiveMessage(client, message);
+		}
+	}
+}
+
+Client::Client(Chat* chat, const string& message)
+{
+	m_Chat = chat;
+	m_Name = message;
+	chat->addClient(this);
+}
+
+void Client::sendMessage(const string& message)
+{
+	cout << m_Name << "mis sending message : " << message << endl;
+	m_Chat->chat(this, message);
+}
+void Client::receiveMessage(Client* client, const string& message)
+{
+	cout << "From " << client->m_Name << " To " << m_Name << " : " << message << endl;
+}
+
 int main()
 {
-	CHashTable<const char*, const char*>	Table;
+	Chat* chat = new Chat();
 
+	Client* cl1 = new Client(chat, "cl1");
+	Client* cl2 = new Client(chat, "cl2");
+	Client* cl3 = new Client(chat, "cl3");
+	Client* cl4 = new Client(chat, "cl4");
 
-	Table.insert("야스오", "과학");
-	Table.insert("요네", "수학");
-	Table.insert("티모", "나쁜놈");
-	Table.insert("트린다미어", "이기주의자");
-	Table.insert("베인", "지만아는놈");
-	Table.insert("ABC", "ABC");
-	Table.insert("ACB", "ACB");
+	cl1->sendMessage("hello I am cl1");
+	cl2->sendMessage("hello I am cl2");
+	cl3->sendMessage("hello I am cl3");
+	cl4->sendMessage("hello I am cl4");ㅁ
 
-	cout << "hello" << endl;
+	delete chat;
+	// delete cl1;
+	// delete cl2;
+	// delete cl3;
+	// delete cl4;
 
-	std::cout << Table["야스오"] << std::endl;
-	std::cout << Table["트린다미어"] << std::endl;
-
-	Table["Test"] = "Test다.";
-	Table["트린다미어"] = "빽도어 전문가";
-	std::cout << Table["Test"] << std::endl;
-	std::cout << Table["트린다미어"] << std::endl;
-	std::cout << Table["티모"] << std::endl;
-
-
-	CHashTable<const char*, const char*>::iterator	iter = Table.Find("티모");
-
-	if (Table.IsValid(iter))
-		std::cout << "티모는 정상적인 키값입니다." << std::endl;
-
-	iter = Table.Find("아크샨");
-
-	if (Table.IsValid(iter))
-		std::cout << "아크샨은 정상적인 키값입니다." << std::endl;
-
-	else
-		std::cout << "아크샨은 잘못된 키값입니다." << std::endl;
+	// vector는 메모리 해제가 어떻게 이루어지는 거지 ?
 
 	return 0;
 }

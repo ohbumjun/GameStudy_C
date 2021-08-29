@@ -14,11 +14,10 @@ public:
 		unsigned __int64 NewKey = (unsigned __int64)key;
 		for (size_t i = 0; i < size; i++)
 		{
-			unsigned char data = key & 0xff;
-			NewKey += data;
+			unsigned char data = NewKey & 0xff;
+			m_HashKey += data;
 			NewKey >>= 8;
 		}
-		m_HashKey = NewKey;
 		return m_HashKey;
 	}
 	template<>
