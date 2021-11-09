@@ -75,7 +75,8 @@ int main()
     pWildTurkey->Fly();
     pWildTurkey->Gobble();
 
-    TurkeyAdapter *pTurkeyAdapter = new TurkeyAdapter(pWildTurkey);
+    // TurkeyAdapter *pTurkeyAdapter = new TurkeyAdapter(pWildTurkey);
+    Duck *pTurkeyAdapter = new TurkeyAdapter(pWildTurkey); // Client는 Target Interface만을 바라본다고 했으므로
     pTurkeyAdapter->Fly();
     pTurkeyAdapter->Quack();
 

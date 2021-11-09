@@ -36,7 +36,7 @@ public:
     virtual void Deactivate() = 0;
 };
 
-// Adapater
+// Adapter
 class BluetoothController
     : public NetWorkController
 {
@@ -53,6 +53,7 @@ public:
     }
 };
 
+// Adapter
 class WifiController
     : public NetWorkController
 {
