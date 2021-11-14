@@ -52,3 +52,39 @@ int main()
 
 // ex
 wchar_str str[] = L"ABC";
+
+int main()
+{
+    wchar_t str[] = L"ABC";
+    // 문자열을 다루는 방법과는 관계없이
+    // 할당된 메모리 크기는 그대로
+    int size = sizeof(str);
+
+    // 문자열 길이 반환하는 함수 
+    // 기존에는 문자열 전달할 때는 char * type
+    // strlen(char*) 로 전달되도록 세팅되었는데
+    // 실제로는 wchar_t* type으로 인자를 전달하기 때문이다
+
+    // 이에 대해 
+    // size_t wcslen(const wchar_t* string)  
+    // 아래 코드는 컴파일 에러
+    int len  = strlen(str);
+
+    // 길이 : 3
+    int len = wcslen(str);
+
+    // 아래는 아스키 코드 기반 처리 중
+    printf("배열 크기 : %d", size);
+
+    // 통일을 위해서 유닛 코드 기반 함수로 출력
+    wprintf(L"Array Size : ",size);
+
+    return 0;
+}
+
+
+// 매개변수 유니코드화 전달
+int wmain(int argc, wchar_t * argv[])
+{
+    // ~ 
+}
