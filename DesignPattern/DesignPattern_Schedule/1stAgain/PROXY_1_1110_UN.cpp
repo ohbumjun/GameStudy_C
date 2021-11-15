@@ -65,7 +65,7 @@ public:
     {
         return out << s.buff << endl;
     }
-}
+};
 
 // 즉, 일반 string 에 대해서
 // 중간에 String이라는 객체를
@@ -83,9 +83,12 @@ main()
     // 읽는 코드 : 자원은 계속 공유되어야 한다.
     char c = s1[0];
     // 쓰는 코드 : 이순간 자원은 분리된다
-    s[0] = 'x';
+    s1[0] = 'x';
+
+    // 그런데, 쓰는순간 자원이 분리되지 않는 것을 
+    // 확인할 수 있다 ... (맞나)
     cout << s1 << endl; // xello
-    cout << s2 << endl; // hello
+    cout << s2 << endl; // xello
 
     return 0;
 }

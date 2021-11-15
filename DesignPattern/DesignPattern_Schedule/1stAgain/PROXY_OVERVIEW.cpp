@@ -123,13 +123,19 @@ class Proxy : public ISubject {
 }
 
 // 정리 ----------------------------------------------
-Both the Proxy and the RealSubject implement the Subject interface. 
-This allows any client to treat the Proxy just like the RealSubject.
+Both the Proxy and the RealSubject 
+implement the Subject interface. 
+This allows any client to treat the Proxy 
+just like the RealSubject.
 
-The RealSubject is usually the object that does most of the real work; the Proxy controls access to it.
+The RealSubject is usually the object 
+that does most of the real work; 
+the Proxy controls access to it.
 
-The control may be needed if the Subject is running on a remote machine, 
-if the Subject is expensive to create in some way or if access to the subject needs to be protected in some way.
+The control may be needed 
+if the Subject is running on a remote machine, 
+if the Subject is expensive to create in some way 
+or if access to the subject needs to be protected in some way.
 
 The Proxy often instantiates or handle the creation of the RealSubject.
 The Proxy keeps a reference (pointer) to the Subject, 
