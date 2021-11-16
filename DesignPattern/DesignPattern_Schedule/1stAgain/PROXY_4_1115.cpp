@@ -10,7 +10,7 @@ even though object might not have even been created
 struct Image
 {
 	virtual void draw() = 0;
-    virtual void load() = 0;
+    // virtual void load() = 0;
 }
 
 struct Bitmap : Image {
@@ -22,7 +22,7 @@ struct Bitmap : Image {
 	void draw() override{
 		cout << "Drawing bitmap" << endl;
 	}
-    void load() override 
+    void load()
     {
         // ~
     }
