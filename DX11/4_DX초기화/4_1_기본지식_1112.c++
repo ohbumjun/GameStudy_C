@@ -51,8 +51,20 @@ DX에서 텍스처를 사용하려면, 텍스처의 초기화 시점에서
 2개의 뷰를 생성할 필요가 있다
 1) 렌더 대상 뷰 Render Target View
 2) 셰이더 자원 뷰 Shader Resource View
-
-
  
 
 */
+
+// 4.1.8 : Direct3D 의 다중 표본화
+
+typedef struct DXGI_SAMPLE_DESC
+{
+    // 픽셀당 추출할 표본의 개수 
+    UINT Count;
+    // 원하는 품질 수준(Quality Level)
+    UINT Quality;
+} DXGI_SAMPLE_DESC;
+
+// 품질 수준이 높을 수록, 렌더링 비용도 증가한다.
+// 멀티 샘플링, 다중 표본화.를 사용하고 싶지 않다면
+// 0,1 로 각각 세팅한다.
