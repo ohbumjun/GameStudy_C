@@ -10,19 +10,25 @@ even though object might not have even been created
 struct Image
 {
 	virtual void draw() = 0;
+    virtual void load() = 0;
 }
 
 struct Bitmap : Image {
 	Bitmap(const string& filename)
 	{
 		cout << "Loading bitmap from" << filename << endl;
-	}
+        load();
+	};
 	void draw() override{
 		cout << "Drawing bitmap" << endl;
 	}
+    void load() override 
+    {
+        // ~
+    }
 };
 
-// 아래 코드의 문제점은,
+// 위 코드의 문제점은,
 // 사실 우리는 draw() 코드를 실제 실행하기 전까지는
 // load함수가 필요없다  
 
@@ -62,7 +68,7 @@ struct LazyBitmap : Image
 	private :
 		string filename;
 		// bitmap pointer
-		Bitmap *bmp(nullptr);
+		Bitmap *bmp = nullptr;
 }
 
 int main()
