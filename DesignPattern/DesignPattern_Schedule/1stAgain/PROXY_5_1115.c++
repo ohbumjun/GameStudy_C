@@ -1,3 +1,5 @@
+#include<iostream>
+
 /*
 Property Proxy
 - I want to use getter,setter functions
@@ -7,7 +9,7 @@ in class... ??
 
 // property proxy
 template<typename T> 
-static Property
+struct Property
 {
 	T value;
 	Property(T value)
@@ -15,12 +17,17 @@ static Property
 		*this = value; // call operator = below;
 	}
 	
+	// Getter 대신 
 	operator T()
 	{
 		return value;
 	}
 	
+	// Setter 대신 
 	T& operator=(T new_value){
+		// 대입 연산자 과정에 무언가
+		// 동작을 추가하고 싶다면 !
+		// additional behavior를 추가할 수 있다.
 		cout << "AssignMent\n" << endl;
 		return value = newValue;
 	};

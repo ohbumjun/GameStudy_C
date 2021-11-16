@@ -2,41 +2,44 @@
 
 using namespace std;
 
-struct Image
+template<typename T>
+struct Property
 {
-	virtual void draw() = 0;
+	T value;
+	Property(T value)
+	{
+		// 복사 대입 연산자 
+		*this = value;
+	}
+	// Instead of Getter 
+	operator T()
+	{
+		// cout << "operator()" << endl
+		return value;
+	}
+
+	// Instead of Setter
+	T& operator = (T new_value)
+	{
+		// 대입 연산자 중간에 
+		// 특정 동작을 추가하고 싶다면
+		// 여기 코드에 추가한다.
+		// 즉, 이런 구조 없이는
+		cout << "AssignMent\n" << endl;
+		return value = new_value;
+	}
 };
 
-struct Bitmap : public Image
+struct Creature
 {
-	Bitmap(const string& filename)
-	{
-		cout << filename << endl;
-		load();
-	}
-	void draw() { cout << "draw bitmap" << endl; }
-	void load() { cout << "load" << endl; }
-};
-
-struct LazyBitmap : public Image
-{
-private :
-	string filename;
-	Bitmap *bmp = nullptr;
-public :
-	LazyBitmap(const string& filename) : filename(filename){}
-	void draw()
-	{
-		if (!bmp)
-			bmp = new Bitmap(filename);
-		bmp->draw();
-	}
+	Property<int> strength{ 10 };
+	Property<int> agility{ 5 };
 };
 
 int main()
 {
-	LazyBitmap bmp{ "pokemon.png" };
-	// bmp.draw();
-
+	Creature c;
+	c.strength = 11;
+	int x = c.agility;
 	return 0;
 }
