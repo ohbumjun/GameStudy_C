@@ -18,6 +18,7 @@ struct Property
 	}
 	
 	// Getter 대신 
+	// 형변환
 	operator T()
 	{
 		return value;
