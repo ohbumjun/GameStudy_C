@@ -1,37 +1,51 @@
-#include <iostream>
+#include<iostream>
 
 using namespace std;
 
-template<typename T>
-struct Property
+// Target Interface
+struct IndianSocket
 {
-private :
-	T value;
-public :
-	Property(T new_value)
-	{
-		*this = value;
-	}
-	operator T()
-	{
-		return value;
-	}
-	T& operator = (T new_val)
-	{
-		return value = new_val;
-	}
+	virtual void indianCharge(int) = 0;
 };
 
-struct Creature
+// Adaptee
+struct UsaSocket
 {
-	Property<int> strength{ 10 };
-	Property<int> agility{ 10 };
+	void usaCharge() { cout << "usa charge" << endl; }
+};
+
+struct GSocket
+{
+	void gCharge() { cout << "g charge" << endl; }
+};
+
+// Adapter
+struct SocketAdpater : 
+	public IndianSocket,
+	public GSocket,
+	public UsaSocket
+{
+	virtual void indianCharge(int type) override
+	{
+		switch (type)
+		{
+		case 1 :
+			usaCharge();
+			break;
+		case 2 :
+			gCharge();
+			break;
+		default:
+			break;
+		}
+	}
 };
 
 int main()
 {
-	Creature c;
-	c.strength = 10;
-	int x = c.agility;
+	unique_ptr<IndianSocket> Socket = make_unique<SocketAdpater>();
+	Socket->indianCharge(1);
+	Socket->indianCharge(2);
+
 	return 0;
 }

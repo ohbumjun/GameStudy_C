@@ -141,13 +141,15 @@ https://anywayjhwa.tistory.com/12
 
 using namespace std;
 
-// different typeof charger : Indian,USA
-// Adaptee
+// Target Interface
 class IndianSocket
 {
 public:
     virtual void indianCharge(int) = 0;
-} class USASocket
+} 
+
+// different typeof charger : Indian,USA
+// Adapteeclass USASocket
 {
 public:
     void usaCharge()
