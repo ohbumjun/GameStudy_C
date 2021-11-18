@@ -21,6 +21,7 @@ class Duck
 public:
     virtual void Fly(void) = 0;
     virtual void Quack(void) = 0;
+    virtual ~Duck(){}
 };
 
 class MallardDuck : public Duck
@@ -36,6 +37,7 @@ class Turkey
 public:
     virtual void Fly() = 0;
     virtual void Gobble() = 0;
+    virtual ~Turkey(){}
 };
 
 class WildTurkey : public Turkey

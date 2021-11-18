@@ -23,6 +23,7 @@ class Drawing
 public:
     virtual void drawLine(int x, int y) = 0;
     virtual void fill() = 0;
+    virtual ~Drawing(){}
 };
 
 // Abstraction : 기능 계층의 최상위 클래스
@@ -40,7 +41,7 @@ private:
 
 public:
     Shape(Drawing *dr) : drawing(dr) {}
-
+    virtual ~Shape(){}
 public:
     virtual void draw() = 0;
     virtual void drawLine(int x, int y)

@@ -1,4 +1,29 @@
-// 추상부와 구현부를 분리한다.
-// 계층의 분리를 통해
-// 상호독립적인 update 가 가능하게 한다.
-// 즉, 계층의 추가를 이용한 유연성의 증대
+#include<iostream>
+
+using namespace std;
+
+struct Subject
+{
+	virtual void request() = 0;
+	virtual ~Subject(){}
+};
+
+struct RealSubject : public Subject
+{
+	virtual void request() { cout << "RealSubject.request()" << endl; }
+};
+
+class Proxy : public Subject
+{
+	Subject* realSubject;
+public :
+	Proxy():realSubject(new RealSubject){}
+	virtual void request() override { realSubject->request(); }
+};
+
+int main()
+{
+	Proxy p;
+	p.request();
+	return 0;
+}

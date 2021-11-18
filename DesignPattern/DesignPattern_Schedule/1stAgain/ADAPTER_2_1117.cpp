@@ -34,6 +34,7 @@ class NetWorkController
 public:
     virtual void Activate() = 0;
     virtual void Deactivate() = 0;
+    virtual ~NetWorkController(){}
 };
 
 // Adapter
