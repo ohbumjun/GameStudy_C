@@ -1,105 +1,30 @@
-// object wrapping other object
-// is a decorator object
+/*
+컴퓨터 시스템 주요 구성 요소
+- cpu
+- 캐쉬 // 컴퓨터 구조 
+- 램
+- 하드 디스크 // 운영체제 
 
-// attaches aditional responsibilities to an obj
-// 'dynamically' (run-time, compile-time)
-// decoreator provide flexible alternatives
-// to sub-classing for extending functionally
+*/
 
-// Decoreator 또한 본래 class 를 상속받는다.
-// 그러면서, 자기 자신이 interface 이기도 하다.
+/*
+하드웨어 구성 3가지 및 주요 원리
 
-// 1. 데코레이터 패턴
-// 객체에 기능을 추가할 수 있는 패턴
-// 1. 상속을 통한 기능의 추가
-// 2. 포함을 사용한 기능의 추가
-// 3. 인터페이스 추가하기 
+cpu, 메인 메모리, io bus
 
-#include<iostream>
+cpu
+- 중앙 처리 장치
+- 연산
 
-using namespace std;
+메모리
+= 램
 
-// Interface 추가
-struct IComponent
-{
-	virtual void Fire() = 0;
-	virtual ~IComponent(){}
-};
+입출력 버스
+- 데이터 송 수신
 
-class I_SpaceShip : public IComponent
-{
-public :
-	int color;
-	void Fire() { cout << "Fire Missile" << endl; }
-};
+alu : 실제 연산
+레지스터 : 저장 공간
+버스 인터페이스
+컨트롤 유닛 : 실질적인 brain
 
-class MiddleMissile : public IComponent
-{
-	IComponent* ss;
-public :
-	MiddleMissile(IComponent *p) : ss(p){}
-	void Fire()
-	{
-		ss->Fire();
-		cout << "Fire Left Missile" << endl;
-	}
-};
-
-class DownMissile : public IComponent
-{
-	IComponent* ss;
-public:
-	DownMissile(IComponent* p) : ss(p) {}
-	void Fire()
-	{
-		ss->Fire();
-		cout << "Fire Down  Missile" << endl;
-	}
-};
-
-// 상속을 이용한 기능의 추가
-// 정적인 기능의 추가
-// 코드를 작성할 때 기능이 추가 
-class  SpaceShip
-{
-public  :
-	int color;
-	void Fire() { cout << "Fire Missile" << endl; }
-};
-
-class LeftMissile : public SpaceShip
-{
-public :
-	void Fire()
-	{
-		SpaceShip::Fire();
-		cout << "Fire Left Missile" << endl;
-	}
-};
-
-// 포함을 사용한 기능의 추가
-// 클래스가 아닌 객체에 기능을 추가할 수 있다. 
-class RightMissile : public SpaceShip
-{
-	// 원본 객체 --> 포함 
-	SpaceShip* ss;
-public :
-	RightMissile(SpaceShip* p) : ss(p){}
-	void Fire()
-	{
-		ss->Fire();
-		cout << "Fire Right Missile" << endl;
-	}
-};
-
-int main()
-{
-	SpaceShip ss;
-	ss.Fire();
-
-	LeftMissile lm;
-	lm.Fire();
-
-	RightMissile rm(&lm);
-	rm.Fire();
-}
+*/
