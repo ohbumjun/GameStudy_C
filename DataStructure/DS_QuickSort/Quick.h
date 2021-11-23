@@ -1,5 +1,6 @@
 #pragma once
 #include<assert.h>
+#include<iostream>
 
 template<typename T>
 class CQuickSort
@@ -74,9 +75,9 @@ public:
 	{
 		if (Left < Right)
 		{
-			int Pivot = Partition(Left, Right, m_Array);
-			QuickSort(Left, Pivot - 1, m_Array);
-			QuickSort(Pivot + 1, Right, m_Array);
+			int Pivot = Partition(Left, Right, Array);
+			QuickSort(Left, Pivot - 1, Array);
+			QuickSort(Pivot + 1, Right, Array);
 		}
 	}
 	int Partition(int Left, int Right, T* Array)
@@ -89,22 +90,33 @@ public:
 			do
 			{
 				++Low;
-			} while (Low <= Right && m_Func(Value, m_Array[Low]);
+			} while (Low <= Right && m_Func(Value, Array[Low]));
 			do
 			{
 				--High;
-			} while (High >= Left && m_Func(m_Array[High], Value));
+			} while (High >= Left && m_Func(Array[High], Value));
 			if (Low < High)
 			{
-				T temp = m_Array[Low];
-				m_Array[Low] = m_Array[High];
-				m_Array[High] = temp;
+				T temp = Array[Low];
+				Array[Low] = Array[High];
+				Array[High] = temp;
 			}
 		} while (Low < High);
-		T temp = m_Array[High];
-		m_Array[High] = m_Array[Left];
-		m_Array[Left] = temp;
+
+		T temp = Array[High];
+		Array[High] = Array[Left];
+		Array[Left] = temp;
 		return High;
 	}
-
+private :
+	static bool SortFunction(const T& Left, const T& Right)
+	{
+		return Left > Right;
+	}
+public :
+	
+	void SetSortFunction(bool (*pFunc)(const T&, const T&))
+	{
+		m_Func = pFunc;
+	}
 };

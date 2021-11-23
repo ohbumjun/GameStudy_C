@@ -139,6 +139,7 @@ private:
 			T temp = Array[Left];
 		Array[Left] = Array[High];
 		Array[High] = Temp;
+		return High;
 	}
 private :
 	static bool SortFunction(const T& Left, const T& Right)
