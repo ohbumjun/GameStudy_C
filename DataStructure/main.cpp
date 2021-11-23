@@ -16,7 +16,7 @@ int FactorialTail(int Number, int Result)
 	if (Number == 1)
 		return Result;
 
-	return FactorialTail(Number - 1, Result * Number);
+	return FactorialTail(Number - 1, Result * Number); //
 }
 
 int FactorialTail(int Number)
@@ -66,7 +66,7 @@ int main()
 	iter = tree.Find(500);
 
 	if (iter == tree.end())
-		std::cout << "Ã£´Â µ¥ÀÌÅÍ°¡ ¾ø½À´Ï´Ù." << std::endl;
+		std::cout << "Ã£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½." << std::endl;
 
 	else
 	{
