@@ -1,51 +1,39 @@
 #include<iostream>
 
-// 기능 추가 : 상속, 포함
-// 상속 : 추가변수가 필요 없다
-// 포함 : 다형성을 이용할 수 있다
+// Real Subject 와 같은 Interface
+// Real Subject 에 대한 Ref 유지
+// Real Subject 에 대한 소멸, 생성 담당
+// - solve a problem that are access related
+// - it adds additional behavior just before you make an call to it
 
-struct ICompont
+class Subject
 {
-	virtual void Fire() = 0;
+	virtual void request() = 0;
 };
 
-struct SpaceShip : ICompont
+class RealSubject : public Subject
 {
-	void Fire()
+public:
+	void request()
 	{
-		std::cout << "Fire SpaceShip" << std::endl;
+		std::cout << "Real Subject Requset" << std::endl;
 	}
 };
 
-struct LeftMissile : ICompont
+class Proxy : public Subject
 {
-	ICompont* ss;
-	LeftMissile(ICompont* c) : ss(c){}
-	void Fire()
+	RealSubject* rs;
+public :
+	Proxy() : rs(new RealSubject){}
+	~Proxy() { delete rs; }
+	virtual void request() override
 	{
-		ss->Fire();
-		std::cout << "Fire LeftMissile" << std::endl;
-	}
-};
-
-struct RightMissle : ICompont
-{
-	ICompont* ss;
-	RightMissle(ICompont* c) : ss(c) {}
-	void Fire()
-	{
-		ss->Fire();
-		std::cout << "Fire RightMissle" << std::endl;
+		rs->request();
 	}
 };
 
 int main()
 {
-	SpaceShip ss;
-	ss.Fire();
-	LeftMissile lm(&ss);
-	lm.Fire();
-	RightMissle rm(&lm);
-	rm.Fire();
-	return 0;
+	Proxy p;
+	p.request();
 }
