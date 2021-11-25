@@ -1,32 +1,26 @@
-#pragma once
-
 #include<assert.h>
 
 template<typename T>
-class CHeap
+class CMergeSort
 {
 public :
-	CHeap()
+	CMergeSort()
 	{
-		m_Capacity = 8;
 		m_Size = 0;
-		m_Data = new T[m_Capacity];
+		m_Capacity = 8;
+		m_Array = new T[m_Capacity];
 		m_Func = SortFunction;
 	}
-	~CHeap()
+	~CMergeSort()
 	{
-		delete[] m_Data;
+		delete[] m_Array;
 	}
 private :
-	T* m_Data;
 	int m_Size;
 	int m_Capacity;
-	bool (*m_Func)(const T&, const T&);
-public :
-	void SetSortFunction(bool(*pFunc)(const T&, const T&))
-	{
-		m_Func = pFunc;
-	}
+	T* m_Array;
+	T* m_CopyArray;
+	bool (*pFunc)(const T&, const T&);
 public :
 	void push(const T& data)
 	{
@@ -34,82 +28,95 @@ public :
 		{
 			m_Capacity *= 2;
 			T* Array = new T[m_Capacity];
-			
-			memcpy(Array, m_Data, sizeof(T) * m_Size);
-			delete[] m_Data;
+			memcpy(Array, m_Array, sizeof(T) * m_Size);
+			delete[] m_Array;
+			m_Array = Array;
 
-			m_Data = Array;
+			delete[] m_CopyArray;
+			m_CopyArray = new T[m_Capacity];
 		}
-		m_Data[m_Size] = data;
-		// 힙으로 구성한다
-		InsertHeap(m_Size);
+		m_Array[m_Size] = data;
 		++m_Size;
 	}
-	void pop()
+	void push(T* Array, int Count)
 	{
-		if (empty()) assert(false);
-
-		// 하나만 남으면 그것만 지워주기
-		else if (m_Size == 1)
+		if (m_Capacity < Count)
 		{
-			m_Size = 0;
-			return;
+			m_Capacity = Count;
+			delete[] m_Array;
+			delete[] m_CopyArray;
+			m_Array = new T[m_Capacity];
+			m_CopyArray = new T[m_Capacity];
 		}
-		--m_Size;
-		// 가장 마지막 노드르 맨 위로 올린다
-		m_Data[0] = m_Data[m_Size];
-
-		DeleteHeap(0);
+		for (int i = 0; i < Count; i++)
+		{
+			m_Array[i] = Array[i];
+		}
+		m_Size = Count;
 	}
-private :
-	void InsertHeap(int Index)
+	void Sort()
 	{
-		// 아래에서부터, MinHeap을 만들어나가고자 한다
-		// Index가 0 이면, 루트노드. 라는 의미이다
-		// 그러므로, 더이상 작업을 안하고 반환한다.
-		if (Index == 0) return;
-
-		// 부모노드의 인덱스를 구해준다
-		int ParentIndex = (Index - 1) / 2;
-
-		if (m_Func(m_Data[ParentIndex], m_Data[Index]))
+		MergeSort(0, m_Size - 1, m_Array);
+	}
+	void Sort(T* Array, int Count)
+	{
+		MergeSort(0, Count - 1, Array);
+	}
+	void MergeSort(int Left, int Right, T* Array)
+	{
+		if (Left < Right)
 		{
-			T temp = m_Data[ParentIndex];
-			m_Data[ParentIndex] = m_Data[Index];
-			m_Data[Index] = temp;
-			InsertHeap(ParentIndex);
+			int Mid = (Left + Right) / 2;
+			MergeSort(Left, Mid, Array);
+			MergeSort(Mid+1, Right, Array);
+			Merge(Left, Mid, Right, Array);
 		}
 	}
-
-	void DeleteHeap(int Index)
+	void Merge(int Left, int Mid, int Right, T* Array)
 	{
-		// 왼쪽 자식노드의 인덱스를 구해준다
-		int LeftChild = Index * 2 + 1;
-		// m_Size 모다 크거나 같다면 더이상 자식 노드 x
-		if (LeftChildIndex >= m_Size)
-			return;
-
-		// 오른쪽 자식 노드의 인덱스를 구한다
-		int RightChildIndex = LeftChildIndex + 1;
-
-		int ChildIndex = LeftChildIndex;
-
-		// 오른쪽 자식노드가 있는지 판단한다
-		if (RightChildIndex < m_Size)
+		int Low = Left;
+		int High = Mid + 1;
+		int Pivot = Left;
+		// 둘다 정렬 
+		while (Low <= Mid && High <= Right)
 		{
-			// 오른쪽 자식 노드가 있을 경우
-			// 왼쪽과 오른쪽의 값을 비교하여 선택해준다
-			if (m_Func(m_Data[LeftChildIndex], m_Data[RightChildIndex]))
-				ChildIndex = RightChildIndex;
+			if (m_Func(Array[Low], Array[High]))
+			{
+				m_CopyArray[Pivot] = Array[High];
+				++High;
+				++Pivot;
+			}
+			else
+			{
+				m_CopyArray[Pivot] = Array[Low];
+				++Low;
+				++Pivot;
+			}
 		}
-
-		// 최종 선택된 ChildIndex 와 값을 비교한다
-		if (m_Func(m_Data[Index], m_Data[ChildIndex]))
+		// 왼쪽 정렬이 끝났을 때
+		if (Low > Mid)
 		{
-			T temp = m_Data[Index];
-			m_Data[Index] = m_Data[ChildIndex];
-			m_Data[ChildIndex] = temp;
-			DeleteHeap(ChildIndex);
+			// 오른쪽을 마저 정렬해준다
+			for (int i = High; i <= Right; i++)
+			{
+				m_CopyArray[Pivot] = Array[i];
+				Pivot++;
+			}
+		}
+		// 오른쪽 정렬이 끝났을 때
+		else
+		{
+			// 왼쪽을 마저 정렬해준다
+			for (int i = Low; i <= Mid; i++)
+			{
+				m_CopyArray[Pivot] = Array[i];
+				Pivot++;
+			}
+		}
+		// 원래 배열에 복사해서 넣어준다
+		for (int i = Left; i <= High; i++)
+		{
+			m_Array[i] = m_CopyArray[i];
 		}
 	}
 private :
