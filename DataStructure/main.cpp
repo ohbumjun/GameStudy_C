@@ -1,16 +1,19 @@
-/*
-- 명령어의 기본 모델
->> 32bit 시스템 사용
-- 그러면 레지스터도 32bit
+#include<iostream>
 
-왜냐하면, 32bit 보다 레지스터가 작게 되면
-하나의 데이터를 레지스터 안에 한번에 담을 수 없게 되기 때문이다.
+template<typename T>
+class CEdge
+{
 
-즉, 이래야 cpu로 명령어가 fetch 될ㄹ 때
-하나의 명령어가 하나의 레지스터에 저장이 가능하기 때문이다. 
+};
 
+template<typename T>
+class CGraphNode
+{
 
-*/
+};
 
+template<typename T>
+class CGraph
+{
 
-
+};
