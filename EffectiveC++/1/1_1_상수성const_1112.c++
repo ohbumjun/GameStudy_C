@@ -1,7 +1,8 @@
 
 char greeting[] = "Hello";
 
-// 비상수 포인터 ----------
+// 상수 데이터, 상수 포인터 -------------------------------------------------------------
+// 비상수 포인터
 // 상수 데이터
 const char* p = greeting;
 
@@ -14,22 +15,21 @@ const char* const p = greeting;
 void f1(const Widget* pw);
 void f2(Widget const *pw);
 
-// STL -------------
+// const + iterator -------------------------------------------------------------------
 // 어떤 반복자를 const로 선언하는 일은
 // 포인터를 상수로 선언하는 것
 const std::vector<int>::iterator iter = vec.begin();
-
 *iter = 10; // ok
 ++iter // 불가능 
 
-// 변경이 불가능한 객체를 가리키는 반복자가 필요 ?
-// const_iterator
+// 변경이 불가능한 객체를 가리키는 반복자
+// 즉, 포인터 자체는 변경 가능, 다만, 가리키는 대상은 변경 불가 == const iterator
 std::vector<int>::const_iterator cIter = vec.begin();
 
 *cIter = 10; // 불가능
 ++cIter; // 가능 
 
-// 상수 멤버 함수
+// 상수 멤버 함수 ---------------------------------------------------------------------
 // 멤버 함수에 붙는 const 키워드의 역할은
 // 해당 멤버함수가 상수 객체에 대해
 // 호출될 함수이다.
@@ -47,6 +47,15 @@ std::vector<int>::const_iterator cIter = vec.begin();
 
 // 참고 : const 가 있고 없고의 차이만 있는 멤버 함수들은
 // 오버로딩이 가능하다
+
+class TextBlock
+{
+    public :
+        // 상수 객체에 대한 operator 
+        const char& operator[] (~) const {return ~;}
+        // 비상수 객체에 대한 opearator 
+        char& operator [] {return ~;}
+}
 
 class TextBlock
 {
@@ -73,7 +82,7 @@ ctb[0] = 'x'
 
 
 // 비상수 멤버의 char 참조자(reference) 반환 ---
-// 만약 operaotr[]가 그냥 char를 반환하면
+// 만약 operaotr[]가 그냥 char (char& 이 아니라) 를 반환하면
 // 아래는 컴파일 에러가 난다
 tb[0] = 'x';
 
@@ -102,7 +111,7 @@ tb[0] = 'x';
 어떤 포인터가 가리키는 대상을 수정하는 멤버함수들 중
 상당수가 그렇다.
 
-아래의 경우, operaotr[] 함수가 상수 멤버함수로 선언되어 있다.
+아래의 경우, operator[] 함수가 상수 멤버함수로 선언되어 있다.
 멤버함수 그 어떤 것도 건드리지 않기 때문에
 비트 수준 상수성은 통과한다.
 */
@@ -135,10 +144,46 @@ char*pc = &cctb[0];
 상수 멤버 자격이 있다는 것이다 
 */
 
-// -----
-// 아래의 case 
-// 비상수 operator[]가 상수 버전을 호출하도록
-// 구현하는 것
+class CTextBlock
+{
+public :
+    std::size_t length() const ;
+private :
+    char* pText;
+    std::size_t textLength; // 바로 직전에 계산한 텍스트 길이
+    bool lengthIsValid; // 이 길이가 유요한다
+}
+
+// 아래의 코드는 비트 수준 상수성이랑 매우 멀다
+// textLength, lengthIsValid 멤버 변수가 변할 수 있기 때문이다
+std::size_t CTextBlock::length() const 
+{
+    if(!lengthIsValid)
+    {
+        textLength = std::strlen(pText);
+        lengthIsValid = true;
+    }
+    return textLength;
+}
+
+// Mutable 사용하기 -------------------------------------------------------------------------
+class CTextBlock
+{
+public :
+    std::size_t length() const ;
+private :
+    char* pText;
+    mutable std::size_t textLength; // 해당 데이터 멤버들은 어떤 순간에도 수정이 가능합니다. 상수 멤버 함수안에서도 수정할 수 있습니다 
+    mutable bool lengthIsValid; 
+}
+
+// 상수멤버 및 비상수멤버 함수에서 코드 중복 현상을 피하는 방법 ----------------------------
+// 만약 특정함수의 상수 버번이, 비상수버전과 하는 일이 똑같다면 ?
+// 유일한 차이가 const 가 있냐 없냐의 차이라면 ?
+// 이는 코드의 중복이다 
+
+// 이러한 코드의 중복을 없애기 위해서는
+// 비상수 operator[]가 상수 버전을 호출하도록 구현하는 것이다 
 
 class TextBlock
 {
@@ -147,21 +192,20 @@ class TextBlock
         {
             return text[position];
         }
-        // 위의 일을 하게 하고 싶다
+        // 지금 하는 일은 비상수 operator[] 가 
         char& operator[](std::size_t position)
         {
             return 
                 // operator[] 반환 값에서
-                // const를 떼어내는 캐스팅 
+                // const를 떼어내는 캐스팅
                 // const 를 제거하는 캐스팅은
                 // const_cast 밖에 없다.
                 const_char<char&>(
                     // 2번째 ---
                     // 원래의 타입인 TextBlock& 에서
                     // const TextBlock& 으로 바꾸는 것이다
-                    // *this에 const 를 붙이는 것 
-                    // 비상수 operator[]에서 상수버전으로
-                    // 호출하기 위해서 
+                    // *this에 const 를 붙이는 것
+                    // const operator [] 을 호출하겠다 !
                     static_cast<const TextBlock>(*this)[position];
                 )
         }
