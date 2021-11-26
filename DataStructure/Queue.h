@@ -23,7 +23,8 @@ class CQueue
 public :
 	CQueue() :
 		m_LastNode(nullptr),
-		m_FirstNode(nullptr){}
+		m_FirstNode(nullptr),
+		m_Size(0) {}
 	~CQueue()
 	{
 		CQueueNode<T>* DeleteNode = m_FirstNode;
@@ -37,13 +38,16 @@ public :
 private :
 	CQueueNode<T>* m_FirstNode;
 	CQueueNode<T>* m_LastNode;
+	int m_Size;
 public :
 	void push(const T& data)
 	{
 		CQueueNode<T>* NewNode = new CQueueNode<T>;
 		NewNode->m_Data = data;
 
-		NewNode->m_NextNode = m_LastNode;
+		if (m_LastNode)
+			m_LastNode->m_NextNode = NewNode;
+
 		if (!m_FirstNode)
 			m_FirstNode = NewNode;
 
@@ -59,5 +63,11 @@ public :
 	void pop()
 	{
 		if (empty()) assert(fase);
+		CQueueNode<T>* NextNode = m_FirstNode->m_NextNode;
+		delete m_FirstNode;
+		m_FirstNode = NextNode;
+		if (!m_FirstNode)
+			m_LastNode = nullptr;
+		--m_Size;
 	}
 };
