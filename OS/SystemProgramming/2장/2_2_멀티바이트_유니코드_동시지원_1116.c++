@@ -33,9 +33,9 @@ typedef CONST WCHAR* LPCWSTR;
 
 
 #ifdef _UNICODE 
-    #define __T(x) L##
+#define __T(x) L ## x
 #else 
-    #define __T(x) x 
+#define __T(x) x 
 #endif 
 
 #define _T(x) __T(x)

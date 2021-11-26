@@ -12,6 +12,5 @@ int _tmain(int argc, TCHAR* argv[])
 
 	_tprintf(_T("%d + %d = %d\n", val1, val2, val1 + val2));
 	_gettchar(); // 프로그램의 실행을 멈추기 위해
-	return;
-
+	return 0;
 }

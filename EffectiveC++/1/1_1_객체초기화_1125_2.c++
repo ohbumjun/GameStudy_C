@@ -44,6 +44,26 @@
 // 별개의 번역 단위에서 정의된 비지역 정적 객체들의 초기화 순서는
 // 정해져 있지 않기 때문이다.
 
+class FileSystem // 전역 객체 가정 
+{
+    public :
+        std::size_t numDisks() const ; // 많은 멤버 변수 중 하나 
+}
+extern FileSystem tfs; // 사용자가 쓰게 될 객체 
+
+class Directory // 다른 위치에서의 전역 객체 가정 
+{
+public :
+    Directory(params);
+}
+
+Directory::Directory(params)
+{
+    std::size_t disks = tfs.numDistks(); // tfs 가 초기화가 안된 상태에서 실행시 컴파일 에러 
+}
+
+Directory tempDir(params);
+
 
 // 이를 해결하는 방법은,
 // 비지역 정적 객체를 하나씩 맡는 함수를 준비하고
@@ -53,4 +73,54 @@
 
 // 사용자는 비지역 정적 객체를 직접 참조하는
 // 과거의 폐단을 버리고, 이제는 함수 호출로 대신한다.
-// 
+// 즉, 비지역 정적 객체가. 지역 정적 객체. 로 바뀐 것이다. 
+
+class FileSystem{} 
+
+FileSystem& tfs() // tfs 객체를, 이 함수로 대신한다. 이 함수는 클래스 안에 정적 멤버로 들어가도 된다. 
+{
+    static FileSystem fs;
+    return fs;
+}
+
+class Directory {...};
+
+Directory::Directory(params)
+{
+    // tfs 의 참조자 , 가 tfs() 로 바뀌었다. 
+    std::size_t disks = tfs().numDisks();
+}
+
+Directory& tempDir()
+{
+    // tempDir 객체를 이 함수로 대체한다.
+    static Directory td;
+    return td;
+}
+
+// tfs, tempDir 대신에 tfs() , tempDir() 을 참조하는 것으로 바꾼다.
+// 즉, 정적 객체 자체를 직접 사용하지 않고, 그 객체에 대한 참조자를 반환하는 함수를 용하고 있는 것이다.
+
+
+class FileSystem{}  // 지역 정적 객체 정의, 초기화 
+
+FileSystem& tfs() 
+{
+    static FileSystem fs;
+    return fs;
+}
+
+class Directory {...};
+
+Directory::Directory(params)
+{
+    // tfs 의 참조자 , 가 tfs() 로 바뀌었다. 
+    std::size_t disks = tfs().numDisks();
+}
+
+Directory& tempDir()
+{
+    // tempDir 객체를 이 함수로 대체한다.
+    static Directory td;
+    return td;
+}
