@@ -1,51 +1,63 @@
+// Composite PAttern
+// single object ~ multiple of single object로 구성된 object
+// 같은 interface 을 따르게 해서
+// treat them uniformly 하고 싶은 것이다
+
 #include<iostream>
+#include<vector>
+#include<string>
 
-// Remote
-// Virtual
-// Access 
-
-// 같은 Interface를 따르고
-// 해당 인스턴스 에 대한 Ref 유지
-// 해당 인스턴스 생성, 소멸에 관여
-
-struct Image
+struct Item
 {
-	virtual void draw() = 0;
+	std::string m_Name;
+	Item(std::string Name) :m_Name(Name) {};
+	virtual int getSize() = 0;
 };
 
-struct Bitmap : public Image
+struct File : public Item
 {
-	Bitmap(const std::string& fname) : filename(fname){}
-	virtual void draw() override
-	{
-		std::cout << "draw bmp" << std::endl;
-	}
-	void load() { std::cout << "load bmp" << std::endl; }
-private :
-	std::string filename;
+	int m_Size;
+	File(std::string Name, int Size) : Item(Name),m_Size(Size){}
+	virtual int getSize() override { return m_Size; }
 };
 
-// Gives you the apperance of working with same object
-// that you're used to working with
-// even though object might not have been created
-
-struct LazyBitmap : public Image
+struct Folder : public Item
 {
-	LazyBitmap(const std::string& fName) : filename(fName){}
-	virtual void draw()
+	std::vector<Item*> m_Vector;
+	Folder(std::string Name) : Item(Name)
 	{
-		if (!bmp)
-			bmp = new Bitmap(filename);
-		bmp->draw();
 	}
-private :
-	std::string filename;
-	Bitmap* bmp = nullptr;
+	~Folder()
+	{
+		for (size_t i = 0; i < m_Vector.size(); i++)
+			delete m_Vector[i];
+	}
+	void addItem(Item* p) { m_Vector.push_back(p); }
+	virtual int getSize() override
+	{
+		int sz = 0;
+		for (size_t i = 0; i < m_Vector.size(); i++)
+		{
+			sz += m_Vector[i]->getSize();
+		}
+		return sz;
+	}
 };
 
 int main()
 {
-	LazyBitmap bmp{ "pokemon.png" };
-	bmp.draw();
+	Folder* root = new Folder("Root");
+	Folder* A = new Folder("A");
+	File* f1 = new File("a.txt", 10);
+	File* f2 = new File("b.txt", 20);
+
+	root->addItem(A);
+	root->addItem(f1);
+	A->addItem(f2);
+
+	std::cout << f1->getSize() << std::endl;
+	std::cout << A->getSize() << std::endl;
+	std::cout << root->getSize() << std::endl;
+
 	return 0;
 }
