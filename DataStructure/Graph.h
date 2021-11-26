@@ -1,176 +1,46 @@
-#pragma once
+/*
+문자셋의 종류 3가지
+- Single Byte Charadter Set
+문자 표현하는데 1바이트 사용 = 아스키 코드
+- Multi Byte Character Set
+한글은 2바이트, 영문은 1 바이트
+- Wide Byte Character SEt
+뮨자를 표현하는데 2바이트 사용
+유니코드 
+*/
 
-#include "Stack.h"
-#include "Queue.h"
 
-template<typename T>
-class CEdge
+// 유니코드 기반
+// 1. char를 대신하는 wchar_t
+// 2. "ABC"를 대신하는 L"ABC"
+// 그냥 "ABC" --> 아스크 코드로 표현하겠다는 암묵적 의미
+
+// ex
+wchar_str str[] = L"ABC";
+
+int main()
 {
-	template<typename T>
-	friend class CGraphNode;
-	template<typename T>
-	friend class CGraph;
-public :
-	CEdge() : m_Node(nullptr)
-	{
-	}
-private :
-	class CGraphNode<T>* m_Node;
-};
+	wchar_t str[] = L"ABC";
 
-template<typename T>
-class CGraphNode
-{
-	template<typename T>
-	friend class CGraph;
-public :
-	CGraphNode()
-	{
-		m_Visit = false;
-		m_Size = 0;
-		m_Capacity = 4;
-		m_EdgeArray = new CEdge<T>*[m_Capacity];
-	}
-	~CGraphNode()
-	{
-		for (int i = 0; i < m_Size; i++)
-		{
-			delete m_EdgeArray[i];
-		}
-		delete[] m_EdgeArray;
-	}
-private :
-	T m_Data;
-	bool m_Visit;
-	int m_Size;
-	int m_Capacity;
-	CEdge<T>** m_EdgeArray;
-public :
-	bool empty() const { return m_Size == 0; }
-	void AddEdge(const CGraphNode<T>* Node)
-	{
-		if (m_Size == m_Capacity)
-		{
-			m_Capacity *= 2;
-			CEdge<T>** NewArray = new CEdge<T>*[m_Capacity];
-			memcpy(NewArray, m_EdgeArray, sizeof(CEdge<T>*) * m_Size);
-			delete[] m_EdgeArray;
-			m_EdgeArray = Array;
-		}
-		CEdge<T>* NewEdge = new CEdge<T>;
-		NewEdge->m_Node = Node;
-		m_EdgeArray[m_Size] = NewEdge;
-		++m_Size;
-	}
-	void Add(CStack<T>& stack)
-	{
-		// 나의 연결된 애들은 stack에 넣어야 한다.
-		for (int i = 0; i < m_Size; i++)
-		{
-			if (m_EdgeArray[i]->m_Node->m_Visit) continue;
-			m_EdgeArray[i]->m_Node->m_Visit = true;
-			stack.push(m_EdgeArray[i]->m_Node);
-		}
-	}
-	void Add(CQueue<T>& queue)
-	{
-		// 나의 연결된 애들은 stack에 넣어야 한다.
-		for (int i = 0; i < m_Size; i++)
-		{
-			if (m_EdgeArray[i]->m_Node->m_Visit) continue;
-			m_EdgeArray[i]->m_Node->m_Visit = true;
-			queue.push(m_EdgeArray[i]->m_Node);
-		}
-	}
-};
+	// 문자열을 다루는 방법과 관계없이
+	// 할당된 메모리크기는 그대로
+	// 즉, 영어는 1 바이트, 한글은 2바이트 로 메모리 크기를 할당한다는 것이다 
+	int size = sizeof(str);
 
+	// 문자열 길이를 반환하는 함수
+	// strlen(char*) : char* 타입을 인자로 기대한다.
+	//  wcslen(wchar_t* ) : wchar_t* 타입을 인자로 기대한다.
 
-template<typename T>
-class CGraph
-{
-public :
-	CGraph()
-	{
-		m_Size = 0;
-		m_Capacity = 4;
-		m_NodeArray = new CGraphNode<T>*[m_Capacity];
-	}
-	~CGraph()
-	{
-		for (int i = 0; i < m_Size; i++)
-		{
-			delete m_NodeArray[i];
-		}
-		delete [] m_NodeArray;
-	}
-private :
-	int m_Size;
-	int m_Capacity;
-	CGraphNode<T>** m_NodeArray;
-public :
-	void push(const T& data)
-	{
-		if (m_Size == m_Capacity)
-		{
-			m_Capacity *= 2;
-			CGraphNode<T>** NewArray = new CGraphNode<T>*[m_Capacity];
-			memcpy(NewArray, m_NodeArray, sizeof(CGraphNode<T>*) * m_Size);
-			delete[] m_NodeArray;
-			m_NodeArray = NewArray;
-		}
-		CGraphNode<T>* NewNode = new CGraphNode<T>;
-		NewNode->m_Data = data;
-		m_NodeArray[m_Size] = NewNode;
-		++m_Size;
-	}
-	void AddEdge(const T& Src, const T& End)
-	{
-		CGraphNode<T>* SrcNode = nullptr;
-		CGraphNode<T>* EndNode = nullptr;
-		for (int i = 0; i < m_Size; i++)
-		{
-			if (m_NodeArray[i]->m_Data == Src)
-				SrcNode = m_NodeArray[i];
-			else if (m_NodeArray[i]->m_Data == End)
-				EndNode = m_NodeArray[i];
-			if (SrcNode && EndNode) break;
-		}
-		if (!SrcNode || !EndNode) return;
-		SrcNode->AddEdge(EndNode);
-		EndNode->AddEdge(SrcNode);
-	}
-	void DFS(void (*pFunc)(const T&))
-	{
-		if (m_Size == 0) return;
-		for (int i = 0; i < m_Size; i++)
-			m_NodeArray[i]->m_Visit = false;
+	// 문자열 길이 3으로 인식 
+	// 한글 하나도 1개의 글자로 인식한다. 유니코드는 
+	int len = wcslen(str);
 
-		CStack<CGraphNode<T>*> stack;
-		stack.push(m_NodeArray[0]);
-		m_NodeArray[0]->m_Visit = true;
-		while (!stack)
-		{
-			CGraphNode<T>* Node = stack.top();
-			stack.pop();
-			Node->Add(stack);
-			pFunc(Node->m_Data);
-		}
-	}
-	void BFS(void (*pFunc)(const T&))
-	{
-		if (m_Size == 0) return;
-		for (int i = 0; i < m_Size; i++)
-			m_NodeArray[i]->m_Visit = false;
+	 // 아래는 아스키 코드 기반 처리
+	printf("배열 크기 : %d", size);
 
-		CQueue<CGraphNode<T>*> queue;
-		queue.push(m_NodeArray[0]);
-		m_NodeArray[0]->m_Visit = true;
-		while (!stack)
-		{
-			CGraphNode<T>* Node = queue.top();
-			queue.pop();
-			Node->Add(queue);
-			pFunc(Node->m_Data);
-		}
-	}
-};
+	// 통일 위해서 유닛 코드 기반 함수로 출력하기
+	wprintf(L"Array Size : ", size);
+
+	return 0;
+}
+
