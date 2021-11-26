@@ -1,4 +1,4 @@
-= #pragma once
+#pragma once
 
 template <typename KEY, typename VALUE>
 class CAVLTreeNode
@@ -375,8 +375,7 @@ public:
 			iter.m_Node->first = MaxNode->first;
 			iter.m_Node->second = MaxNode->second;
 
-			// 찾아준 노드를 제거해야하기 때문에 
-			// 부모로부터 연결을 끊고
+			// 찾아준 노드를 제거해야하기 때문에 부모로부터 연결을 끊고
 			// 제거해주도록 한다.
 			// 단, 찾아준 노드가 왼쪽 자식노드가 있을수도 있으므로
 			PNODE	LeftChild = MaxNode->m_Left;
@@ -388,8 +387,7 @@ public:
 			else
 				Parent->m_Right = LeftChild;
 
-			// 왼쪽 자식노드가 있을 경우라면 
-			// 부모로 MaxNode의 부모를
+			// 왼쪽 자식노드가 있을 경우라면 부모로 MaxNode의 부모를
 			// 지정해주도록 한다.
 			if (LeftChild)
 				LeftChild->m_Parent = Parent;
@@ -590,33 +588,27 @@ private:
 		// 기준노드의 오른쪽 자식노드를 얻어온다.
 		PNODE	RightChild = Node->m_Right;
 
-		// 기준노드의 오른쪽 자식노드의 
-		// 왼쪽 자식노드를 얻어온다.
+		// 기준노드의 오른쪽 자식노드의 왼쪽 자식노드를 얻어온다.
 		PNODE	RightLeftChild = RightChild->m_Left;
 
-		// 기준노드의 오른쪽 자식노드로 
-		// 오른쪽자식노드의 왼쪽자식노드를 붙여준다.
+		// 기준노드의 오른쪽 자식노드로 오른쪽자식노드의 왼쪽자식노드를 붙여준다.
 		Node->m_Right = RightLeftChild;
 
 		// 오른쪽 자식노드의 왼쪽 자식노드가 있을 경우 그 부모를 기준노드로 지정한다.
 		if (RightLeftChild)
 			RightLeftChild->m_Parent = Node;
 
-		// 기준노드를 오른쪽 자식노드의 
-		// 왼쪽 자식으로 붙여준다.
+		// 기준노드를 오른쪽 자식노드의 왼쪽 자식으로 붙여준다.
 		RightChild->m_Left = Node;
 
 		// 기준노드의 부모로 오른쪽 자식노드를 지정한다.
 		Node->m_Parent = RightChild;
 
-		// 오른쪽 자식노드의 부모노드를 
-		// 기준노드의 부모노드로 지정한다.
+		// 오른쪽 자식노드의 부모노드를 기준노드의 부모노드로 지정한다.
 		RightChild->m_Parent = Parent;
 
-		// 기준노드의 부모노드가 있을경우 기준노드가 
-		// 부모노드의 왼쪽자식인지 오른쪽 자식인지를
-		// 판단하여 그 방향으로 기준노드의 
-		// 오른쪽 자식노드를 붙여준다.
+		// 기준노드의 부모노드가 있을경우 기준노드가 부모노드의 왼쪽자식인지 오른쪽 자식인지를
+		// 판단하여 그 방향으로 기준노드의 오른쪽 자식노드를 붙여준다.
 		if (Parent)
 		{
 			if (Parent->m_Left == Node)
@@ -626,10 +618,8 @@ private:
 				Parent->m_Right = RightChild;
 		}
 
-		// 기준노드의 부모노드가 없다면 
-		// 기준노드는 루트노드라는 의미이다.
-		// 그러므로 기준노드의 자리에 
-		// RightChild가 오게되므로 루트노드를
+		// 기준노드의 부모노드가 없다면 기준노드는 루트노드라는 의미이다.
+		// 그러므로 기준노드의 자리에 RightChild가 오게되므로 루트노드를
 		// RightChild로 교체해주어야 한다.
 		else
 			m_Root = RightChild;
@@ -646,12 +636,10 @@ private:
 		// 기준노드의 왼쪽 자식노드를 얻어온다.
 		PNODE	LeftChild = Node->m_Left;
 
-		// 기준노드의 왼쪽 자식노드의 
-		// 오른쪽 자식노드를 얻어온다.
+		// 기준노드의 왼쪽 자식노드의 오른쪽 자식노드를 얻어온다.
 		PNODE	LeftRightChild = LeftChild->m_Right;
 
-		// 기준노드의 왼쪽 자식노드로 
-		// 왼쪽자식노드의 오른쪽자식노드를 붙여준다.
+		// 기준노드의 왼쪽 자식노드로 왼쪽자식노드의 오른쪽자식노드를 붙여준다.
 		Node->m_Left = LeftRightChild;
 
 		// 왼쪽 자식노드의 오른쪽 자식노드가 있을 경우 그 부모를 기준노드로 지정한다.
@@ -667,11 +655,8 @@ private:
 		// 왼쪽자식노드의 부모로 기준노드의 부모노드를 지정한다.
 		LeftChild->m_Parent = Parent;
 
-		// 기준노드의 부모노드가 있을경우 
-		// 기준노드가 부모노드의 왼쪽자식인지 
-		// 오른쪽 자식인지를
-		// 판단하여 그 방향으로 
-		// 기준노드의 왼쪽 자식노드를 붙여준다.
+		// 기준노드의 부모노드가 있을경우 기준노드가 부모노드의 왼쪽자식인지 오른쪽 자식인지를
+		// 판단하여 그 방향으로 기준노드의 왼쪽 자식노드를 붙여준다.
 		if (Parent)
 		{
 			if (Parent->m_Left == Node)
@@ -681,10 +666,8 @@ private:
 				Parent->m_Right = LeftChild;
 		}
 
-		// 기준노드의 부모노드가 없다면 
-		// 기준노드는 루트노드라는 의미이다.
-		// 그러므로 기준노드의 자리에 
-		// LeftChild가 오게되므로 루트노드를
+		// 기준노드의 부모노드가 없다면 기준노드는 루트노드라는 의미이다.
+		// 그러므로 기준노드의 자리에 LeftChild가 오게되므로 루트노드를
 		// LeftChild로 교체해주어야 한다.
 		else
 			m_Root = LeftChild;
@@ -742,12 +725,10 @@ private:
 			// 오른쪽 왼쪽으로 균형이 무너졌을 경우이다.
 			else
 			{
-				// 오른쪽 자식노드를 중심으로 
-				// 오른쪽 회전을 한다.
+				// 오른쪽 자식노드를 중심으로 오른쪽 회전을 한다.
 				RotationRight(Node->m_Right);
 
-				// 기준노들를 중심으로 
-				// 왼쪽 회전을 시켜준다.
+				// 기준노들를 중심으로 왼쪽 회전을 시켜준다.
 				Node = RotationLeft(Node);
 			}
 		}
@@ -760,25 +741,21 @@ private:
 			// 왼쪽 왼쪽으로 균형이 무너졌을 경우
 			if (LeftFactor >= 0)
 			{
-				// 기준노드를 중심으로 
-				// 오른쪽으로 회전한다.
+				// 기준노드를 중심으로 오른쪽으로 회전한다.
 				Node = RotationRight(Node);
 			}
 
 			// 왼쪽 오른쪽으로 균형이 무너졌을 경우
 			else
 			{
-				// 기준노드의 왼쪽 자식노드를 
-				// 중심으로 왼쪽으로 회전한다.
+				// 기준노드의 왼쪽 자식노드를 중심으로 왼쪽으로 회전한다.
 				RotationLeft(Node->m_Left);
 
-				// 기준노드를 중심으로 
-				// 오른쪽으로 회전한다.
+				// 기준노드를 중심으로 오른쪽으로 회전한다.
 				Node = RotationRight(Node);
 			}
 		}
-		// 계속 부모를 타고 올라가면서
-		// 부모들에서 까지 균형을 맞춰준다 
+
 		ReBalance(Node->m_Parent);
 	}
 };
