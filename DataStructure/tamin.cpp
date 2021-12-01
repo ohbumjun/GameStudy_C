@@ -37,7 +37,7 @@ typedef LPCSTR LPCSTR;
 // #define _UNICODE
 // #define UNICODE
 
-
+/*
 int _tmain(int argc, TCHAR* argv[])
 {
 	STARTUPINFO si = { 0, };
@@ -52,3 +52,5 @@ int _tmain(int argc, TCHAR* argv[])
 	si.lpTitle = _T("I am a boy");
 	return 0;
 }
+
+*/
