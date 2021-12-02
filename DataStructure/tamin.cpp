@@ -13,7 +13,6 @@ typedef CONST CHAR* LPCSTR;
 
 typedef WCHAR* LPWSTR;
 typedef CONST WCHAR* LPCWSTR;
-*/
 
 #ifdef UNICODE 
 typedef WCHAR TCHAR;
@@ -33,6 +32,7 @@ typedef LPCSTR LPCSTR;
 
 #define _T(x) __T(x)
 #define _TEXT(x) __T(x)
+*/
 
 // #define _UNICODE
 // #define UNICODE
