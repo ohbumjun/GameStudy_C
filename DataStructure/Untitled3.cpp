@@ -1,10 +1,35 @@
-#include<stdio.h>
+#include<iostream>
+#include<string>
+#include<vector>
+#include <algorithm>
+
+using namespace std;
+
+void permutation(vector<int>& vec, int k)
+{
+	if (k == vec.size() - 1)
+	{
+		for(int i = 0; i < vec.size(); i++)
+			cout << vec[i] << ", ";
+		return;
+	}
+	for(int i = k; i < vec.size(); i++)
+	{
+		int temp = vec[i];
+		vec[i] = vec[k];
+		vec[k] = temp;
+		
+		permutation(vec , k+1);
+		
+		temp = vec[i];
+		vec[i] = vec[k];
+		vec[k] = temp;
+	}
+}
 
 int main()
 {
-	// 지역 변수
-	// 여기 선언된 변수는, 해당 함수가 호출될  때 
-	// 그 스택안에 들어있다는 것이다
-	// 해당 함수 스택 메모리, 그리고 그 함수가 종료되면 다 날라가 버린다. 
-	return 0; 
+	std::vector<int> vec = {10,40,30,50};
+	permutation(vec,0);
+	return 0;
 }

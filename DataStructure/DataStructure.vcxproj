@@ -142,6 +142,7 @@
   <ItemGroup>
     <ClCompile Include="AdderProcess.cpp" />
     <ClCompile Include="bit_operator.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="tamin.cpp" />
   </ItemGroup>
   <ItemGroup>
