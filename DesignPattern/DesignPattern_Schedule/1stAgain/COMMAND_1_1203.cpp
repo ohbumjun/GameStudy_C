@@ -129,5 +129,5 @@ main()
             if (p->CanUnDo())
                 p->Undo();
             delete p;
-        }
+        }// 
     }
