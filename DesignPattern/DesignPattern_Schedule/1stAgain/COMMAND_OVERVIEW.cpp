@@ -18,7 +18,7 @@ receiving the request , or object sending the request
 command itself 
 
 -->> "thereby letting you parameterize other objects with
-different requests queue or log requests ""
+different requests queue or log requests "
 - and then we can take a bunch of these encapsulated
 commands and compose them into some context 
 - we encapsulate multiple commands as objects , 
