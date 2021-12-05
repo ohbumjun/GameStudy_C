@@ -1,15 +1,15 @@
-#include <iostream>
+#include<iostream>
 
-void change(int* &p)
+class AA
 {
-	int a = 10;
-	p = &a; 
-}
+private :
+	int num;
+public :
+	AA(int n) : num(n){};
+};
 
 int main()
 {
-	int * ptr = NULL;
-	change(ptr);
-	printf("%d : ", *ptr);
+	AA a;
 	return 0;
 }
