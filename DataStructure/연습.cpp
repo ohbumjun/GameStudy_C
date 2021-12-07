@@ -15,6 +15,6 @@ int& function2()
 int main()
 {
 	int &ref1 = function1();
-	int &ref2 = function2();
+	// int &ref2 = function2();
 	std::cout << ref1;
 }
