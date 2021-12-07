@@ -91,7 +91,7 @@ void SimpleFunc(Simple ob)
 int main()
 {
     Simple obj;
-    SimpleFunc(obj);
+    SimpleFunc(obj); //
 }
 
 // 초기화의 대상은 obj 객체가 아니라, ob 객체이다
