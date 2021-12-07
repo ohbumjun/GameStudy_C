@@ -26,3 +26,22 @@ int main()
 
 // 객체의 주소값 저장이 가능한 포인터 변수로 이루어진 배열 
 Simple * arr[3];
+
+
+// Q. 아래에서 delete 이 아니라 [] 을 호출해주는 이유 
+class Test
+{
+private :
+    int m_Data;
+};
+
+int main()
+{
+    Test* test = new Test[5];
+
+    delete[] test;
+}
+
+// 5개의 Test 객체 모두에 대해서 소멸자를 호출해주기 위함이다
+// [] 을 붙이지 않는다면, 첫번째 원소에 해당하는 객체에 대한 소멸자만을 호출해주게 된다. 
+ 

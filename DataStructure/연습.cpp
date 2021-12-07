@@ -1,15 +1,20 @@
-#include<iostream>
+#include <iostream>
 
-class AA
+int& function1()
 {
-private :
-	int num;
-public :
-	AA(int n) : num(n){};
-};
+	int val = 10;
+	return val;
+}
+
+int& function2()
+{
+	int val = 20;
+	return val;
+}
 
 int main()
 {
-	AA a;
-	return 0;
+	int &ref1 = function1();
+	int &ref2 = function2();
+	std::cout << ref1;
 }

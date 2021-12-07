@@ -90,7 +90,7 @@ class Simple
 {
 public :
     Simple(){}
-    Simple createObj()
+    Simple& createObj()
     {
         Simple* ptr = new Simple;
         return *ptr;
@@ -102,7 +102,7 @@ int main()
     Simple origin;
     // 참조형을 반환하는 함수는, 참조자로 받을 수 있다.
     // 참조자를 통해 힙에 할당된 메모리 공간을 참조할 수 있다 ! 
-    Simple& obj = Simple.createObj(); 
+    Simple& obj = origin.createObj(); 
     return 0;
 }
 
