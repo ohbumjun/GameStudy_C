@@ -71,5 +71,5 @@ public :
 class Simple
 {
 public :
-    const static int RUSSIA = 100;
+    const static int RUSSIA = 100; //
 }
