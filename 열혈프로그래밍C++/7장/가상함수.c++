@@ -232,7 +232,7 @@ public :
 	}
 };
 
-class Third : public Second
+class Third : public Second //
 {
 public :
 	virtual void func()
