@@ -1,20 +1,35 @@
 #include <iostream>
 
-int& function1()
-{
-	int val = 10;
-	return val;
-}
+using namespace std;
 
-int& function2()
+class Employee
 {
-	int val = 20;
-	return val;
-}
+private :
+    int cost;
+public :
+    void GetPay()
+    {
+        cout << "Em" << endl;
+    }
+    void ShowInfo()
+    {
+        GetPay();
+    } 
+};
+
+class PermanentWorker : public Employee
+{
+private :
+    int cost;
+public :
+    void GetPay()
+    {
+        cout << "Per" << endl;
+    }
+};
 
 int main()
 {
-	int &ref1 = function1();
-	// int &ref2 = function2();
-	std::cout << ref1;
+	PermanentWorker wk;
+	wk.ShowInfo();
 }

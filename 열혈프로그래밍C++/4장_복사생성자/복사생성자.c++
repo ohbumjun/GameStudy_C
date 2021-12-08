@@ -114,9 +114,7 @@ class Simple
 int main()
 {
     Simple obj;
-    // 1. obj --> ob 의 복사 생성자 호출 ( 인자 )
-    // 2. return : ob --> 임시 객체의 복사 생성자 호출 ( return 문에서, 임시객체를 생성)
-    // 3. 함수 호출이 끝나면, 지역적으로 선언된 객체 ob는 사라지고 obj, 임시 객체만 남는다. 
+
     SimpleFunc(obj).AddNum(30);
 }
 
