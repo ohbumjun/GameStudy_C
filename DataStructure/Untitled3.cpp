@@ -2,51 +2,33 @@
 
 using namespace std;
 
-class AAA
+class A
 {
-private :
-    int num;
 public :
-    AAA(int n = 0) : num(n)
-    {
-        cout << "A constructor" << endl;
-    }
-    AAA(const AAA& refA) : num(refA.num)
-    {
-        cout << "A copy consructor" << endl;
-    }
-    AAA& operator = (const AAA& refA) 
-    {
-        cout << "A = operator" << endl;
-        num = refA.num;
-    }
-};
-
-class B
-{
-private :
-    AAA bA;
-public :
-    B(const AAA& refA) : bA(refA){}
-};
-
-class C
-{
-private :
-    AAA cA;
-public :
-    C(const AAA& refA) 
-    {
-        cA = refA;
-    }
+	~A()
+	{
+		cout << "A destruct" << endl;
+	}
 };
 
 int main()
 {
-    AAA obj(12);
-    cout << endl;
-    B obj2(obj);
-    cout << endl;
-    C obj3(obj);
-    return 0;
+	A** Array_A = new A*[5]; // 원소 각각은 1차원 배열에 대한 포인터  
+	for (int i = 0; i < 5; i++)
+	{
+		Array_A[i] = new A;
+		cout << (Array_A[i][0]) << endl;	
+	}
+
+	for (int i = 0; i < 5; i++)
+	{
+		// cout << "i : " << i << endl;
+		delete Array_A[i];
+	}
+	delete [] Array_A;
+	
+	// A* A_A = new A[5];
+	// delete [] A_A;
+	
+	return 0;
 }
