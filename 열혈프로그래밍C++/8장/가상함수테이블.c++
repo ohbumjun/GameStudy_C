@@ -28,7 +28,7 @@
 class A 
 {
 public :
-    void func(){}
+    void func(){} //
 };
 
 class B
