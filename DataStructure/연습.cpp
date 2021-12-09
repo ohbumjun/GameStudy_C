@@ -1,35 +1,58 @@
-#include <iostream>
+#include<iostream>
 
 using namespace std;
 
-class Employee
+class Point
 {
-private :
-    int cost;
+    int x,y;
 public :
-    void GetPay()
+    Point(int px = 0, int py = 0) : x(px), y(py){}
+
+    Point& operator ++ ()
     {
-        cout << "Em" << endl;
+        x++;
+        y++;
+        return *this;
     }
-    void ShowInfo()
+    // 후위 증가  
+    const Point operator ++ (int) // 인자에 int를 붙임으로써, 후위증가임을 명시해준다.
     {
-        GetPay();
-    } 
+        const Point obj(x,y);
+        x++;
+        y++;
+        cout << "after ++ operator" << endl;
+        return obj;
+    };
+    void ShowInfo() const 
+    {
+        cout << x << y << endl;
+    }
+    friend Point& operator --(Point& ref);
+    friend const Point operator --(Point& ref, int);
 };
 
-class PermanentWorker : public Employee
+Point& operator -- (Point& ref)
 {
-private :
-    int cost;
-public :
-    void GetPay()
-    {
-        cout << "Per" << endl;
-    }
+    --ref.x;
+    --ref.y;
+    return ref;
 };
 
+// 후위 증가
+const Point operator -- (Point& ref, int)
+{
+    const Point obj(ref.x,ref.y);
+    --ref.x;
+    --ref.y;
+    return obj;
+}
+
+// Q. 후의 증가에서 const를 붙여준 이유
 int main()
 {
-	PermanentWorker wk;
-	wk.ShowInfo();
+    Point pos(1,2);
+	const Point posAfter = pos++;
+    posAfter.ShowInfo(); // 1,2
+    pos.ShowInfo(); // 2.3
 }
+

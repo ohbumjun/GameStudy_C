@@ -2,53 +2,51 @@
 
 using namespace std;
 
-class SpaceShip
+class AAA
 {
-public:
-    int color;
-    void Fire() { cout << "Fire Missile" << endl; }
-};
-
-// 1) 상속을 사용한 기능의 추가
-// - 정적인 기능의 추가 : 코드를 작성할 때, 기능이 추가되는 것
-// - 클래스에 기능을 추가하는 것
-class LeftMissle : public SpaceShip
-{
-public:
-    void Fire()
+private :
+    int num;
+public :
+    AAA(int n = 0) : num(n)
     {
-        SpaceShip::Fire(); // 원래 기능 사용
-        cout << "Fire Left Missile" << endl;
+        cout << "A constructor" << endl;
+    }
+    AAA(const AAA& refA) : num(refA.num)
+    {
+        cout << "A copy consructor" << endl;
+    }
+    AAA& operator = (const AAA& refA) 
+    {
+        cout << "A = operator" << endl;
+        num = refA.num;
     }
 };
 
-// 2) 포함을 사용한 기능의 추가
-// - 클래스가 아닌 객체에 기능을 추가할 수 있다
-// - 실행 시간에 동적으로 기능이 추가된다.
-class RightMissile : public SpaceShip
+class B
 {
-    SpaceShip *ss; // 원본 객체 --> 포함
-public:
-    RightMissile(SpaceShip *p) : ss(p) {}
-    void Fire()
+private :
+    AAA bA;
+public :
+    B(const AAA& refA) : bA(refA){}
+};
+
+class C
+{
+private :
+    AAA cA;
+public :
+    C(const AAA& refA) 
     {
-        ss->Fire(); // 원본 객체의 기능을 수행하고
-        cout << "Fire Left Missile" << endl;
+        cA = refA;
     }
 };
 
 int main()
 {
-    SpaceShip ss;
-    ss.Fire();
-
-    LeftMissle lm;
-    lm.Fire();
-
-    //OCP위반!
-    RightMissile rm(&lm); // error.- 공통의 부모가 필요하다.
-    // RightMissile rm(&ss);
-    rm.Fire();
-    
+    AAA obj(12);
+    cout << endl;
+    B obj2(obj);
+    cout << endl;
+    C obj3(obj);
     return 0;
 }
