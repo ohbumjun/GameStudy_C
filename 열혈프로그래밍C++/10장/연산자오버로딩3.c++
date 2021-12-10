@@ -98,3 +98,162 @@ void operator delete (void * adr)
 
 // void * operator [] (size_t size){...} : new 연산자를 이용한 배열할당시 호출되는 함수
 // void operator delete [] (void* adr) : 배열소멸시 호출되는 함수 
+
+
+// Q. 포인터 연산자 오버로딩 ------------------------------------------------------------------------------------
+
+// Q. 대표적인 포인터 연산자 2가지
+
+// - '->' : 포인터가 가리키는 객체의 멤버에 접근
+// - '*'  : 포인터가 가리키는 객체에 접근 
+
+// Q. 문제
+using namespace std;
+
+class Number
+{
+private :
+	int num;
+public :
+	Number(int n) : num(n){}
+	void ShowData() 
+	{
+		cout << num << endl;
+	};
+	Number* operator -> ()
+	{
+		return this;	
+	};	
+	Number& operator * ()
+	{
+		return *this;
+	};
+};
+
+int main()
+{
+	Number num(20);
+	num.ShowData();
+	
+	(*num) = 30;        // Q1. 여기서 발생하는 현상 
+	num->ShowData();    // Q2. 여기서 이루어지는 함수 호출의 형태 
+	
+	(*num).ShowData();
+	return 0;
+}
+
+// Q1. 답변 
+// 아래와 같은 대입 연산자가 위의 형태로 이루어진다
+// (*num)을 통해서, 객체자신을 참조형의 형태로 반환하고 있다. * 연산자 오버로딩의 결과  
+// 실제 (num.operator*()) = 30 의 형태 
+Number& operator = (int p_num)
+{
+    cout << "= operator" << endl;
+    num = p_num;
+};
+
+// Q2. 답변
+// num.operator -> () ShowData();
+// - num.operator -> () 가 반환하는 것은 그런데 주소값이다. 따라서 여기서 바로 ShowData 함수 호출은
+// 문법적으로 성립하지 않는다. 
+// 따라서, 반환되는 주소값을 대상으로, 적절한 연사니 가능하도록 -> 연산자를 한번 더 추가하여 해석을 진행한다.
+
+// num.oprator -> () -> ShowData();
+
+// >> () 연산자 오버로딩과 Functor 
+
+// Q. adder(2,4) 의 연산 형태 ?
+
+// 함수 호출에 사용되는, 인자의 전달에 사용되는  () 도 연산자.이다.
+// 이 연산자를 오버로딩 하면, 객체를 함수처럼 사용할 수도 있다
+// adder.operator () (2,4);
+
+// Q. Functor 의 의미 및 예시
+
+// 함수처럼 동작하는 클래스를 가치켜 펑터(Functor) , 혹은 "함수 오브젝트 Function Object" 라고도 불린다.
+class Adder
+{
+public :
+    int operator () (int n1, int n2)
+    {
+        return n1 + n2;
+    }
+}
+
+int main()
+{
+    Adder add;
+    cout << add(2,3) << endl;
+}
+
+// >> 임시 객체로의 자동 형변환 + 형 변환 연산자 (Conversion Operator) ---
+
+class Number
+{
+private :
+    int num;
+public :
+    Number (int n = 0) : num(n)
+    {
+        cout << "Number constructor" << endl;
+    }
+    Number& operator = (const Number& ref)
+    {
+        cout << "Number operator =" << endl;
+        num = ref.num;
+        return *this;
+    }
+    void ShowNumber()
+    {
+        cout << "num : " << num << endl;
+    }
+};
+int main()
+{
+    Number num(20);
+    Number num2(30);
+
+    num = num2; // 동일한 자료형의 객체간 대입 연산
+};
+
+// Q. 위와 같이 동일한 자료형의 객체간 대입 연산이 아니라, 다른 자료형의 객체가 대입 연산이 이루어지는 원리 ---
+
+int main()
+{
+    Number num(20);
+    
+    num = 30;
+};
+
+// A 형 "객체"가 와야할 위치에 B형 "데이터" 혹은 B형 "객체"가 왔을 경우
+// B형 데이터를 인자로 전달받는 A형 클래스의 생성자 호출을 통해서, A형 임시 객체를 생성한다.
+
+num = 30; ?
+// 1) num = Num(30);
+// 2) num.operator = (Number(30))
+// 이러한 2단계의 대입연산이 진행된다는 의미이다.
+
+// 즉, 기본 자료형 데이터를. 객체로 형 변환하는 것은, 적절한 생성자의 정의를 통해 얼마든지 가능하다.
+
+// Q. 반대로, 객체를 기본 자료형으로 형변환하는 방법 (아래 연산이 이루어지는 2가지 방법)  ---
+int main()
+{
+    Number num1(20);
+    
+    Number num2 = num1 + 30;
+};
+
+// 1. Number 클래스가 + 연산자 오버로딩을 수행하거나
+// 2. Number 클래스가 int 형 데이터로 형변환되거나 
+class Number
+{
+public :
+    operator int () // 형변환 연산자 오버로딩
+    {
+        return num;
+    }
+};
+
+// 형변환 연산자는, 반환형을 명시하지 않는다
+// 하지만, return 에 의한 값 반환은, 얼마든지 가능하다
+// 위의 함수는 int 형으로 형변환 할때 호출되는 함수! 라고 생각하면 된다.
