@@ -2,17 +2,16 @@
 
 using namespace std;
 
-class Adder
+template<typename T>
+T Add(const T& n1, const T& n2)
 {
-public :
-    int operator () (int n1, int n2)
-    {
-        return n1 + n2;
-    }
-};
+	return n1 + n2;
+}
 
 int main()
 {
-    Adder add;
-    cout << add(2,3) << endl;
+    int n = Add<int>(1,2);
+	double d = Add<double>(1.1, 2.2);
+	cout << n << endl;
+	cout << d << endl; 
 }
