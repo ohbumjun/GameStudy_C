@@ -136,7 +136,7 @@ int main()
 	num.ShowData();
 	
 	(*num) = 30;        // Q1. 여기서 발생하는 현상 
-	num->ShowData();    // Q2. 여기서 이루어지는 함수 호출의 형태 
+	num->ShowData();    // Q2. 여기서 이루어지는 함수 호출의 형태 /
 	
 	(*num).ShowData();
 	return 0;
