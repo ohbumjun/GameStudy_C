@@ -8,7 +8,7 @@
 
 using namespace std;
 
-class Shape // Invoker
+class Shape // Invoker ... Receiver ?
 {
 public:
     virtual void Draw() = 0;
@@ -64,7 +64,7 @@ class AddCircleCommand : public ICommand
     vector<Shape *> &v;
 
 public:
-    AddCircleCommand(vector<Shape *> &a) : v(a) {}
+    AddCircleCommand(vector<Shape *> &a) : v(a) {} /
     void Execute() { v.push_back(new Circle); }
     bool CanUndo() { return true; }
     void Undo()
