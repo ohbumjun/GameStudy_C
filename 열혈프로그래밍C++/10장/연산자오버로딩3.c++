@@ -178,13 +178,13 @@ public :
     {
         return n1 + n2;
     }
-}
+};
 
 int main()
 {
     Adder add;
     cout << add(2,3) << endl;
-}
+};
 
 // >> 임시 객체로의 자동 형변환 + 형 변환 연산자 (Conversion Operator) ---
 
