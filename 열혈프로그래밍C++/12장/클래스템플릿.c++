@@ -76,5 +76,8 @@ int main()
     Point<int> pos1(3,4);
     Point<int> pos2(1,2);
 
+    Point<int> pos3 = pos1 + pos2;
+    cout << pos3 << pos1 << pos2;
+
     return 0;
 }
