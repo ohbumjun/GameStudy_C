@@ -183,3 +183,91 @@ ex) 우리가 1492 라는 수를 기록할 때
 즉, 데이터를 읽거나, 메모리에 저장할 때
 아위 바이트를 먼저 읽거나, 하위 바이트가 먼저 저장된다는 것을 의미한다.
 */
+
+
+// Q. 기본형 -> 유도형 : dynamic_cast, static_cast 차이점 2개
+
+// 1) dynamic_cast의 조건은, 기본형 포인터가 가리키는 객체가 유도 클래스 객체이어야 한다는 점이다. 
+class Simple
+{
+public :
+	virtual void ShowInfo()
+	{
+		cout << "Simple" << endl;
+	}
+};
+
+class Complex : public Simple
+{
+public:
+	virtual void ShowInfo() override
+	{
+		cout << "Complex" << endl;
+	}
+};
+
+int main()
+{
+	Simple* simPtr = new Complex; // 실제 가리키는 객체가 애초부터 Complex 객체였으므로 
+	Complex* comPtr = dynamic_cast<Complex*>(simPtr); // Complex 형 포인터로 Complext 객체를 가리켜도 되는 것 
+
+	comPtr->ShowInfo();
+	return 0;
+}
+
+// Simple* simPtr = "new Simple"; 라고 수정하면, 결과는 Null 이 return 된다. 
+
+// 2) dynamic_cast 의 경우, 컴파일 시간이 아니라, 실행 시간 (프로그램이 실행 중인 동안에)
+// 안전성을 검사하도록 컴파일러가 바이너리 코드를 생성한다
+// 이로 인해, 실행 속도는 늦어지지만, 안정적인 형변환이 가능
+
+// 반면, static_cast는 안전성을 보장하지 않는다.
+// 컴파일러는 무조건 형변환이 되도록, 바이너리 코드를 생성하기 때문에
+// 그로 인한 실행의 겨로가는 전적으로 프로그래머
+// 즉, 실행 중인 동안에는 안전성 검사를 하지 않아서 static 
+
+
+// Q. dynamic_cast ~ bad_cast 예시
+
+// bad_Cast : 프로그래머가 정의하지 않아도 발생하는 예외 -> 형 변환시 발생하는 bad_cast
+
+#include <iostream>
+#include <new>
+
+using namespace std;
+
+class Simple
+{
+public:
+	virtual void ShowInfo()
+	{
+		cout << "Simple" << endl;
+	}
+};
+
+class Complex : public Simple
+{
+public:
+	virtual void ShowInfo() override
+	{
+		cout << "Complex" << endl;
+	}
+};
+
+int main()
+{
+	Simple simObj;
+	Simple& ref = simObj;
+
+	try
+	{
+		Complex& comRef = dynamic_cast<Complex&>(ref);
+		comRef.ShowInfo();
+	}
+	catch (bad_cast expt)
+	{
+		cout << expt.what() << endl;
+	}
+	
+	return 0;
+}
