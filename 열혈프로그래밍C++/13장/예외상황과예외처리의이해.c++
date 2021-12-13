@@ -18,7 +18,7 @@ try
 catch(type expn) // 예외 전달 
 {
     std::cerr << e.what() << '\n';
-}
+};
 
 // Q. 스택풀기 정의 + 이때 발생하는 일 
 

@@ -5,6 +5,7 @@ using namespace sf;
 int ts = 54; //tile size
 Vector2i offset(48,24);
 
+// Enter
 int x0,y0,x,y; 
 int click = 0; 
 Vector2i pos;
