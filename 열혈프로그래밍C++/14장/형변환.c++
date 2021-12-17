@@ -69,7 +69,7 @@ class Car
 {
 };
 
-class Truck : public Car
+class Truck : public Car // 
 {
 };
 
