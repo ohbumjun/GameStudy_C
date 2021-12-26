@@ -1,24 +1,15 @@
-#include <iostream>
-#include <list>
 
-using namespace std;
 
 template<typename T1, typename T2>
-void Add(T1 elem1, T2 elem2)
+class A
 {
-    cout << elem1 + elem2;
+    T1 n;
+    T2 n;
 };
 
-template<typename T1, int T2>
-void Add(T1 elem, int T2)
-{
-    cout << elem + T2 + 10;
-};
-
-int main()
-{
-    Add<char>('c', 1);
-    return 0;
-}
+template<typename T1>
+class A<T1, int>{}
 
 
+// 클래스 템플릿 매개변수로 , 값을 넘겨받을 수 있는 변수를 선언하면
+// 넘겨받은 값에 따라서, 서로 다른형의 클래스를 만들어낸다.
