@@ -12,7 +12,7 @@ m_SwapChain->GetBuffer(0, IID_PRV_ARGS(&BackSurface));
 // 2D용 렌더 타겟을 만들어준다.
 D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
     D2D1_RENDER_TARGET_TYPE_HARDWARE,
-    D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
+    D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED) //
 );
 
 if (FAILED(m_2DFactory->CreateSxgiSurfaceRenderTarget(BackSurface, props, &m_2DTarget)))
