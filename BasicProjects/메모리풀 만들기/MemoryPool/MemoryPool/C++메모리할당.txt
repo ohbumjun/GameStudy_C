@@ -91,5 +91,16 @@ MyData* ptr = new (&data) MyData(2);
 ( 참고 : ptr 에 대해 delete을 호출할 수는 없다.)
 
 
+> std::allocator
+std::vector, std::deque 등은 모두 내부적으로 메모리를 동적으로 할당한다
+그리고, 우리만의 고유한 memory allocator object를 사용하는데 보통
+std::allocator를 활용한다.
+
+new, delete을 사용하지 않는 다는 것인데
+그 이유는 메모리 할당과 객체 생성을 별도로 진행하고 싶어하기 때문이다.
+
+ex) vector는 capacity 부족할 때마다 크기를 2배로 추가로 미리 할당
+
+
 
 

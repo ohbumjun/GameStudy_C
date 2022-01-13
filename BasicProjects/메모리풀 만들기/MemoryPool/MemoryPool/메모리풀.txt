@@ -37,3 +37,78 @@
 	3) 메모리 단편화
 		쉽게 말해, 메모리를 할당, 해제, 다시 할당할 때, 빈공간이 있음에도, 해당 빈공간에 
 		메모리를 할당하지 못하고, 전체 메모리를 전부 활용하지 못하게 되는 것.
+
+-----------------------------------------------------------------------------------------
+https://betterprogramming.pub/c-memory-pool-and-small-object-allocator-8f27671bd9ee
+
+메모리 할당에서의 가장 큰 문제는 메모리 단편화이다.
+
+메모리 단편화의 핵심은, 크기가 작은 메모리들이 연속적이지 않은 공간에 
+크기가 큰 메모리들보다 오래 남아 있어서
+차후 크기가 큰 메모리 할당을 막는 것이다.
+
+C++의 경우, new, delete 을 통해 동적으로 메모리를 여기저기 할당한다
+그외 동적 할당을 요구로 하는 방식을 많이 사용하다보면
+우리도 모른체 메모리단편화를 일으킬 수도 있다.
+
+이를 위해서 malloc이나 new 연산자를 이용하여 가변적인 공간에 메모리를 할당하는 방식이 아니라 
+고정된 공간에 메모리를 할당하는 방식을 활용할 것이다.
+
+이를 통해, 연속된 공간에 크기가 작은 메모리들이 위치하게 할 수 있다
+
+> How ?
+메모리를 블록으로 나누고
+블록을 chunk로 나눈다. 마치 2차원 배열 처럼
+각 블록 내의 Chunk 들은 연속적으로 위치한다.
+
+
+> 같은 Type의 Pool
+Boost's Pool을 활용할 것이다
+우리의 프로그램 종료까지 남아있는 SingleTon Pool을 활용할 것이다
+default 32 * chunk size 이고,  
+공간이 다 찬다면, 계속해서 기존 크기의 2배 크기를 자동으로 할당하게 될 것이다.
+
+class Coordinate
+{
+public:
+    Coordinate() : x(1), y(2), z(3) {}
+    ~Coordinate() {}
+private:
+    int x, y, z;
+};
+
+struct coordinate_pool {};
+using singleton_coordinate_pool = boost::singleton_pool<coordinate_pool, sizeof(Coordinate)>;
+
+( coordinate_pool 은 SingleTon Pool 내부적으로 사용하는 Tag 이다. ) 
+
+Coordinate *coordPtr = (Coordinate *) singleton_coordinate_pool::malloc();
+singleton_coordinate_pool::free(coordPtr);
+
+( 위의 코드는 객체를 생성, 소멸하는 과정 없이 메모리를 할당 및 해제할 뿐이다 )
+
+Coordinate *coordPtr = (Coordinate *) singleton_coordinate_pool::malloc();
+new(coordPtr) Coordinate();
+singleton_coordinate_pool::free(coordPtr);
+
+( 객체를 생성하고 싶다면, 위와 같은 코드를 작성한다.)
+
+위의 코드의 경우
+- 메모리 할당 -> 객체 생성 -> 메모리 해제
+라는 3가지 과정을 알아야 한다는 불편함이 있다
+
+struct Coordinate
+{
+    Coordinate() : x(1), y(2), z(3) {}
+    int x, y, z;
+};
+
+int main()
+{
+    Coordinate *coord = new Coordinate; // 여기서 발생하는 일 ?
+}
+
+// 아래와 같이 컴파일러가 해석할 것이다. 
+Coordinate *coord = (Coordinate *) ::operator new(sizeof(Coordinate));
+Coordinate::Coordinate(coord);
+
