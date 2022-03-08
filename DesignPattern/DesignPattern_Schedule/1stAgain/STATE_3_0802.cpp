@@ -38,7 +38,7 @@ main()
 {
     NormalState ns;
     FastState fs;
-    Character *p = new Character;
+    Character *p = new Character; //
     p->setState(&ns);
     p->run();
     p->attack();

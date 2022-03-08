@@ -27,6 +27,12 @@ class ContactRecorder
 private:
     Record *m_Record;
 
+public :
+    void SetRecord(Record* Record)
+    {
+        m_Record = Record;
+    }    
+
 public:
     ContactRecorder(Record *a) : m_Record(a)
     {
@@ -127,7 +133,8 @@ int main()
     contact.store(data);
 
     DatabaseRecord dbRecord;
-    ContactRecorder contact2(&dbRecord);
+    // ContactRecorder contact2(&dbRecord);
+    contact.SetRecord(dbRecord);
     contact.store(data);
     return 0;
 }
