@@ -1,27 +1,12 @@
 #include <iostream>
 
-template <typename T>
-void wrapper(T&& u) {
-	g(std::forward<T>(u));
-}
+template <int N>
+struct Int {
+  static const int num = N;
+};
 
-class A {};
-
-void g(A& a) { std::cout << "좌측값 레퍼런스 호출" << std::endl; }
-void g(const A& a) { std::cout << "좌측값 상수 레퍼런스 호출" << std::endl; }
-void g(A&& a) { std::cout << "우측값 레퍼런스 호출" << std::endl; }
-
-int main() {
-	A a;
-	const A ca;
-
-	std::cout << "원본 --------" << std::endl;
-	g(a);
-	g(ca);
-	g(A());
-
-	std::cout << "Wrapper -----" << std::endl;
-	wrapper(a);
-	wrapper(ca);
-	wrapper(A());
+int main()
+{
+	std::cout << Int<1>::num;
+	return 0;
 }
