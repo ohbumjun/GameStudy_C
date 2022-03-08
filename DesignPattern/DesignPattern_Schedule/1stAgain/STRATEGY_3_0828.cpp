@@ -18,7 +18,7 @@ public:
 
 struct ContactData
 {
-    string first_name, last_name, phone, email;
+    string first_name, last_name, phone, email; //
 };
 
 // context -> has strategy
