@@ -5,7 +5,6 @@
 - no parameter
 - Invoker, Command Interface
 
-
 ---------------------------------------------------
 >> Basic Idea
 -->> "command pattern encapsulate a request as an object"
@@ -17,7 +16,7 @@ receiving the request , or object sending the request
 - we' re about to encapsulate the actual request , actual
 command itself 
 
--->> "thereby letting you parameterize other objects with
+-->> "thereby letting you parameterize other objects with //
 different requests queue or log requests "
 - and then we can take a bunch of these encapsulated
 commands and compose them into some context 
