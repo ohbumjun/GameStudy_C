@@ -97,7 +97,7 @@ class MacroCommand : public ICommand
     // Composite 패턴
     vector<ICommand *> v;
 
-public:
+public: //
     void AddCommand(ICommand *p) { v.push_back(p); }
     void Execute()
     {
