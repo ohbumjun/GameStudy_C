@@ -3,7 +3,7 @@
 #include <iostream>
 #include <cassert>
 
-using namespace std; ////
+using namespace std; //////
 
 class bucket {
 public :
