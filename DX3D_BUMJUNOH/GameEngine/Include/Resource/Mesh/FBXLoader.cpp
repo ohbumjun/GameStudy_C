@@ -95,8 +95,10 @@ bool CFBXLoader::LoadFBX(const char* FullPath, bool Static)
 	// Static Type 이 아니라는 것은, Animation 이 있는 Mesh 라는 것이다.
 	if (!Static)
 	{
+		// 현재 존재하는 Animation Stack 이름으로, Array 정보를 채워넣는다.
 		m_Scene->FillAnimStackNameArray(m_NameArr);
 
+		// 개수가 0 이상이라면, Animation이 존재한다는 의미이다.
 		if (m_NameArr.GetCount() > 0)
 		{
 			LoadAnimationClip();
@@ -611,8 +613,10 @@ void CFBXLoader::LoadAnimationClip()
 {
 	int	iCount = m_NameArr.GetCount();
 
+	// Time Mode 를 세팅하기 
 	FbxTime::EMode	eTimeMode = m_Scene->GetGlobalSettings().GetTimeMode();
 
+	// 애니메이션 이름 개수만큼 반복을 돌릴 것이다.
 	for (int i = 0; i < iCount; ++i)
 	{
 		// m_NameArr에 저장된 이름으로 Scene으로부터 FbxAnimStack 객체를 얻어온다.
@@ -621,21 +625,28 @@ void CFBXLoader::LoadAnimationClip()
 		if (!pAnimStack)
 			continue;
 
+		// 하나의 애니메이션 정보를 담는 FBXANIMATIONCLIP Class 를 동적할당한다.
 		PFBXANIMATIONCLIP	pClip = new FBXANIMATIONCLIP;
 
 		pClip->strName = pAnimStack->GetName();
 
+		// mixamo 에서 가져온 Animation의 경우, mixamo.com 이라는 이름으로 공통되게 들어온다.
+		// 이때는 m_Mixamo 를 사용한다고 표시한다.
 		if (pClip->strName == "mixamo.com")
 			m_Mixamo = true;
 
+		// Imported File의 정보를 지ㅣㄴ고 있다.
 		FbxTakeInfo* pTake = m_Scene->GetTakeInfo(pClip->strName.c_str());
 
+		// 시간 정보를 가져온다.
 		pClip->tStart = pTake->mLocalTimeSpan.GetStart();
 		pClip->tEnd = pTake->mLocalTimeSpan.GetStop();
-		// GetFrameCount 함수를 호출하고  time모드를 넣어주면 시간을 프레임으로
+
+		// GetFrameCount 함수를 호출하고  time 모드를 넣어주면 시간을 프레임으로
 		// 변환해준다. 몇프레임 짜리 애니메이션 인지를 구해준다.
 		pClip->lTimeLength = pClip->tEnd.GetFrameCount(eTimeMode) -
 			pClip->tStart.GetFrameCount(eTimeMode);
+
 		pClip->eTimeMode = eTimeMode;
 
 		m_vecClip.push_back(pClip);
@@ -646,6 +657,8 @@ void CFBXLoader::LoadBone(FbxNode* pNode)
 {
 	int	iChildCount = pNode->GetChildCount();
 
+	// Bone 의 경우, 트리구조로 되어 있다.
+	// 따라서 아래와 같이 세팅하는 것이다.
 	for (int i = 0; i < iChildCount; ++i)
 	{
 		LoadBoneRecursive(pNode->GetChild(i), 0, 0, -1);
@@ -656,19 +669,27 @@ void CFBXLoader::LoadBoneRecursive(FbxNode* pNode, int iDepth, int iIndex, int i
 {
 	FbxNodeAttribute* pAttr = pNode->GetNodeAttribute();
 
+	// Skeleton Attribute 를 들고 있는 Node 라면, 이를 바탕으로 FBXBONE Class 를 동적할당한다.
 	if (pAttr && pAttr->GetAttributeType() ==
 		FbxNodeAttribute::eSkeleton)
 	{
 		PFBXBONE	pBone = new FBXBONE;
 
 		pBone->strName = pNode->GetName();
+
+		// 앞에 불필요하게 붙은 .mixamo.com 이라는 글자를 지우기 위한 것이다.
 		if (m_Mixamo)
 			pBone->strName.erase(0, 10);
+
 		pBone->iDepth = iDepth;
 		pBone->iParentIndex = iParent;
 
 		m_vecBones.push_back(pBone);
 	}
+
+	// 그렇다면 Bone은 어떤 방식으로 세팅하는 것일까 ?
+	// ex) 손에 해당하는 Bone 에 칼. Item을 붙여놓으면 되는 식
+	// ex) 말 타기의 경우, 엉덩이 아래에 Riding Bone 을 만들어두고, 거기에 Riding Horse 를 세팅한다.
 
 	int	iChildCount = pNode->GetChildCount();
 
@@ -681,6 +702,8 @@ void CFBXLoader::LoadBoneRecursive(FbxNode* pNode, int iDepth, int iIndex, int i
 
 void CFBXLoader::LoadAnimation(FbxMesh* pMesh, PFBXMESHCONTAINER pContainer)
 {
+	// FbxSkin 에 저점의 Skinning 정보를 담고 있고, FbxSkin은 FbxDeformer 객체를 상속받고 있다.
+	// 아래 함수를 통해, FbxSkin 개수가 나오게 된다.
 	int	iSkinCount = pMesh->GetDeformerCount(FbxDeformer::eSkin);
 
 	if (iSkinCount <= 0)
@@ -689,31 +712,36 @@ void CFBXLoader::LoadAnimation(FbxMesh* pMesh, PFBXMESHCONTAINER pContainer)
 	// 메쉬의 정점 수를 얻어온다.
 	int	iCPCount = pMesh->GetControlPointsCount();
 
-	// 정점의 가중치 정보와 본인덱스 정보는 정점 수만큼
+	// 정점의 가중치 정보와 본인덱스 정보는 "정점 수"만큼
 	// 만들어져야 한다.
 	pContainer->vecBlendWeight.resize(iCPCount);
 	pContainer->vecBlendIndex.resize(iCPCount);
-
 	pContainer->Animation = true;
 
-	FbxAMatrix	matTransform = GetTransform(pMesh->GetNode());
+	FbxAMatrix 	matTransform = GetTransform(pMesh->GetNode());
 
+	// Skinning 개수만큼 반복한다.
 	for (int i = 0; i < iSkinCount; ++i)
 	{
+		// 정점의 Skinning 정보를 담고 있는 FbxSkin 정보를 가져온다.
 		FbxSkin* pSkin = (FbxSkin*)pMesh->GetDeformer(i, FbxDeformer::eSkin);
 
 		if (!pSkin)
 			continue;
 
+		// Skinning 정보를 가져온다.
 		FbxSkin::EType	eSkinningType = pSkin->GetSkinningType();
 
 		if (eSkinningType == FbxSkin::eRigid ||
 			eSkinningType == FbxSkin::eLinear ||
 			eSkinningType == FbxSkin::eBlend)
 		{
-			// Cluster : 관절을 의미한다.
+			// Cluster : 관절을 의미한다. 뼈대. ?
+			// ex) Cluster 는, Skinning 정보가 있는 뼈대의 갯수만 준다
+			// ex) 뼈대가 70 개이고, 그 중에서 Skinning 정보가 있는 뼈대가 20개만 있다고 하면, GetClusterCount 함수로 나온 값은 20이 된다.
 			int	iClusterCount = pSkin->GetClusterCount();
 
+			// 이 관절 개수만큼 반복을 돌릴 것이다.
 			for (int j = 0; j < iClusterCount; ++j)
 			{
 				FbxCluster* pCluster = pSkin->GetCluster(j);
