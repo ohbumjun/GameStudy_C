@@ -8,7 +8,7 @@ CPlayer::CPlayer()
 
 CPlayer::CPlayer(const CPlayer& obj)
 {
-	m_MainMesh = (CStaticMeshComponent*)FindComponent("Mesh");
+	m_MainMesh = (CAnimationMeshComponent*)FindComponent("Mesh");
 	m_Arm = (CArm*)FindComponent("Arm");
 	m_Camera = (CCameraComponent*)FindComponent("Camera");
 }
@@ -19,7 +19,7 @@ CPlayer::~CPlayer()
 
 bool CPlayer::Init()
 {
-	m_MainMesh = CreateComponent<CStaticMeshComponent>("Mesh");
+	m_MainMesh = CreateComponent<CAnimationMeshComponent>("Mesh");
 	SetRootComponent(m_MainMesh);
 
 	m_Arm = CreateComponent<CArm>("Arm");

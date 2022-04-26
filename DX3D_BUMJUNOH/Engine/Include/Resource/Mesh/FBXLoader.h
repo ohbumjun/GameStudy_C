@@ -51,8 +51,8 @@ typedef struct _tagFbxAnimationClip
 
 typedef struct _tagFbxWeight
 {
-	int		iIndex;
-	double	dWeight;
+	int		iIndex; // 해당 Bone의 Idx ?
+	double	dWeight; // 해당 Bone이 , 해당 정점에 영향을 주는 정도 ?
 }FBXWEIGHT, * PFBXWEIGHT;
 
 typedef struct _tagFbxMaterial
@@ -84,7 +84,9 @@ typedef struct _tagFBXMeshContainer
 	// Subset 이란, Mesh의 특정 부위 ex) 팔 Mesh --> 주먹 부분, 이두
 	std::vector<std::vector<UINT>>	vecIndices; 
 
-	std::unordered_map<int, std::vector<FBXWEIGHT>>	mapWeights;	// 애니메이션 관련 정보
+	// 애니메이션 관련 정보
+	std::unordered_map<int, std::vector<FBXWEIGHT>>	mapWeights;
+
 	bool				Bump;
 	bool				Animation;
 

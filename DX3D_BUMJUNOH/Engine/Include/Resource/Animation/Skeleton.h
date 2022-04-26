@@ -4,11 +4,11 @@
 
 struct Bone
 {
-	std::string		strName;
-	int				iDepth;
-	int				iParentIndex;
+	std::string		strName; // 이름 
+	int				iDepth; // 트리에서의 깊이
+	int				iParentIndex; // 부모 Bone Idx
 	Matrix		matOffset;
-	Matrix		matBone;
+	Matrix		matBone; // 해당 Bone Space 로의 변환 ...?
 	int				iRefCount;
 
 	Bone() :
@@ -17,6 +17,7 @@ struct Bone
 	}
 };
 
+// Skeleton --> Bone 들을 가지고 있게 세팅할 것이다.
 class CSkeleton :
     public CRef
 {
@@ -32,7 +33,12 @@ private:
 
 private:
 	std::vector<Bone*>				m_vecBones;
+
+	// 구조화 버퍼를 사용한다 -->각 Bone 에 대한 Transformation Matrix --> Animation Matrix 정보를 매 Frame 마다
+	// 넘겨줄 것이다 --> Matrix Appedix 기법 ..?
+	// Key Frame 을 이용해서, 보간 처리를 한 다음, Bone 정보를 뽑는 것을 계산 셰이더에서 뽑아낼 것이다.
 	class CStructuredBuffer* m_pOffsetMatrixBuffer;
+
 	//std::vector<class CBoneSocket*>	m_BoneSocket;
 
 public:
@@ -51,6 +57,7 @@ public:
 	bool SaveSkeletonFullPath(const char* pFullPath);
 	bool LoadSkeleton(class CScene* pScene, const std::string& strName, const char* pFileName, const std::string& strPathName = MESH_PATH);
 	bool LoadSkeletonFullPath(class CScene* pScene, const std::string& strName, const char* pFullPath);
+	// Bone 정보를 Shader 측에 넘겨주는 함수
 	void SetShader();
 	void ResetShader();
 	//void AddSocket(const std::string& BoneName, const std::string& SocketName,

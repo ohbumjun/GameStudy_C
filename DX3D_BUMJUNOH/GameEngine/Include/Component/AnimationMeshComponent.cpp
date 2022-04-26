@@ -31,11 +31,45 @@ CAnimationMeshComponent::~CAnimationMeshComponent()
 void CAnimationMeshComponent::SetMesh(const std::string& Name)
 {
 	m_Mesh = (CAnimationMesh*)m_Scene->GetResource()->FindMesh(Name);
+
+	m_Skeleton = m_Mesh->GetSkeleton();
+
+	m_vecMaterialSlot.clear();
+
+	// 해당 Mesh 에 저장된 모든 Material 정보들을 복사해서 세팅할 것이다.
+	const std::vector<CSharedPtr<CMaterial>>* pMaterialSlots = m_Mesh->GetMaterialSlots();
+
+	std::vector<CSharedPtr<CMaterial>>::const_iterator iter = pMaterialSlots->begin();
+	std::vector<CSharedPtr<CMaterial>>::const_iterator iterEnd = pMaterialSlots->end();
+
+	for (;iter != iterEnd; ++iter)
+	{
+		m_vecMaterialSlot.push_back((*iter)->Clone());
+
+		(*iter)->SetScene(m_Scene);
+	}
 }
 
 void CAnimationMeshComponent::SetMesh(CAnimationMesh* Mesh)
 {
 	m_Mesh = Mesh;
+
+	m_Skeleton = m_Mesh->GetSkeleton();
+
+	m_vecMaterialSlot.clear();
+
+	// 해당 Mesh 에 저장된 모든 Material 정보들을 복사해서 세팅할 것이다.
+	const std::vector<CSharedPtr<CMaterial>>* pMaterialSlots = m_Mesh->GetMaterialSlots();
+
+	std::vector<CSharedPtr<CMaterial>>::const_iterator iter = pMaterialSlots->begin();
+	std::vector<CSharedPtr<CMaterial>>::const_iterator iterEnd = pMaterialSlots->end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		m_vecMaterialSlot.push_back((*iter)->Clone());
+
+		(*iter)->SetScene(m_Scene);
+	}
 }
 
 void CAnimationMeshComponent::SetMaterial(CMaterial* Material, int Index)

@@ -94,7 +94,6 @@ private:
 	std::vector<BoneKeyFrame*>	m_vecKeyFrame;
 	char						m_FullPath[MAX_PATH];
 	class CStructuredBuffer* m_KeyFrameBuffer; // Compute Shader 로 돌려줘야 하기 때문에 구조화 버퍼를 세팅할 것이다.
-	std::vector<AnimationNotify*>	m_vecNotify;
 
 public:
 	int GetKeyFrameCount()	const

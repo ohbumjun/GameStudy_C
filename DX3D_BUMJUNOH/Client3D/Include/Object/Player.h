@@ -2,6 +2,7 @@
 
 #include "GameObject/GameObject.h"
 #include "Component/StaticMeshComponent.h"
+#include "Component/AnimationMeshComponent.h"
 #include "Component/CameraComponent.h"
 #include "Component/Arm.h"
 
@@ -16,7 +17,7 @@ protected:
     virtual ~CPlayer();
 
 private:
-    CSharedPtr<CStaticMeshComponent>    m_MainMesh;
+    CSharedPtr<CAnimationMeshComponent>    m_MainMesh;
     CSharedPtr<CArm>                    m_Arm;
     CSharedPtr<CCameraComponent>        m_Camera;
 

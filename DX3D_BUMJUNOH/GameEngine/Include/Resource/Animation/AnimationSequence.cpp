@@ -37,24 +37,6 @@ CAnimationSequence::CAnimationSequence(const CAnimationSequence& anim)
 	{
 		++m_vecKeyFrame[i]->iRefCount;
 	}
-
-	{
-		m_vecNotify.clear();
-
-		auto	iter = anim.m_vecNotify.begin();
-		auto	iterEnd = anim.m_vecNotify.end();
-
-		for (; iter != iterEnd; ++iter)
-		{
-			AnimationNotify* pNotify = new AnimationNotify;
-
-			pNotify->Name = (*iter)->Name;
-			pNotify->Time = (*iter)->Time;
-			pNotify->pOwner = this;
-
-			m_vecNotify.push_back(pNotify);
-		}
-	}
 }
 
 CAnimationSequence::~CAnimationSequence()
@@ -70,17 +52,6 @@ CAnimationSequence::~CAnimationSequence()
 	}
 
 	m_vecKeyFrame.clear();
-
-
-	{
-		auto	iter = m_vecNotify.begin();
-		auto	iterEnd = m_vecNotify.end();
-
-		for (; iter != iterEnd; ++iter)
-		{
-			SAFE_DELETE((*iter));
-		}
-	}
 }
 
 CAnimationSequence* CAnimationSequence::Clone()
@@ -679,6 +650,7 @@ void CAnimationSequence::Clear()
 {
 }
 
+/*
 void CAnimationSequence::AddNotify(const std::string& Name, float Time)
 {
 	AnimationNotify* pNotify = new AnimationNotify;
@@ -689,3 +661,4 @@ void CAnimationSequence::AddNotify(const std::string& Name, float Time)
 
 	m_vecNotify.push_back(pNotify);
 }
+*/
