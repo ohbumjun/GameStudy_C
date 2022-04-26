@@ -7,12 +7,19 @@ struct KeyFrame
 	double	dTime;
 	Vector3	vPos;
 	Vector3	vScale;
-	Vector4	vRot;
+	Vector4	vRot; // 4원수이다. 이 녀석들을 보간해서 행렬을 만들어낸다.
+						// Key Frame 사이를 보간해서 행렬을 만들어내는 원리이다.
 };
 
+// 한개의 Bone의 Animation Frame 정보 --> 하나의 Bone 이 여러개의 Frame 정보를 가지고 있다 -- 이것들이 하나의 Bone Motion 
 struct BoneKeyFrame
 {
+	// 몇번째 Bone 인지 
 	int		iBoneIndex;
+
+	// ex) 칼을 휘두를 때, Bone 마다, Key Frame 이 다르다.
+	// 60 Frame 이라고 한다면, 60 Frame * Bone 개수 만큼의 Key Frame 이 필요하다
+	// 각각의 Bone 에 대해서, 각 Frame 때마다, 어느 위치에 Bone 이 있어야 하는지 잡아둬야 하기 때문이다.
 	std::vector<KeyFrame*>	vecKeyFrame;
 	int			iRefCount;
 
@@ -70,21 +77,23 @@ private:
 private:
 	class CScene*				m_Scene;
 	bool						m_Loop;
-	float						m_StartTime;
-	float						m_EndTime;
+	float						m_StartTime; // 어디서부터
+	float						m_EndTime;  // 어디까지 Motion 이 진행되는가 
 	float						m_TimeLength;
-	float						m_FrameTime;
+	float						m_FrameTime; // 한 프레임 당의 진행 시간
 	float						m_PlayTime;
-	float						m_PlayScale;
+	float						m_PlayScale; // ex) PlayTime 을 1로 하면, 해당 Motion은 1초 동안 진행된다.
+													// 원본 애니메이션 재생 속도 --> PlayScale 2배 -> 2배가 되는 것인가 ..?
 	int							m_StartFrame;
 	int							m_EndFrame;
 	int							m_FrameLength;
 	int							m_FrameMode;
 	int							m_ChangeFrame;
 	bool						m_End;
+	// 해당 Animation 과정에서, 각 Bone 들의 Frame 정보 --> vector 형태로 담아두기
 	std::vector<BoneKeyFrame*>	m_vecKeyFrame;
 	char						m_FullPath[MAX_PATH];
-	class CStructuredBuffer* m_KeyFrameBuffer;
+	class CStructuredBuffer* m_KeyFrameBuffer; // Compute Shader 로 돌려줘야 하기 때문에 구조화 버퍼를 세팅할 것이다.
 	std::vector<AnimationNotify*>	m_vecNotify;
 
 public:

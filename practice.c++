@@ -34,7 +34,7 @@ vector<int> solution(vector<vector<string>> places) {
         {
             for (int col = 0; col < 5; ++col)
             {
-                // 응시자 자리인 경우만 조사한다.
+                // 응시자 자리인 경우만 조사한다.//
                 if (places[i][row][col] != 'P')
                     continue;
                 

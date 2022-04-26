@@ -242,8 +242,11 @@ bool CSkeleton::LoadSkeletonFullPath(CScene* pScene, const std::string& strName,
 void CSkeleton::SetShader()
 {
 	//CONTEXT->VSSetShaderResources(3, 1, &m_pBoneSRV);
+
 	if (!m_pOffsetMatrixBuffer)
 	{
+		// 구조화 버퍼가 없을 경우, Matrix 들을 담는 배열을 세팅한 이후
+		// 모든 Bone의 (Animation?) 변환 행렬 정보를 차례대로 세팅한다.
 		m_pOffsetMatrixBuffer = new CStructuredBuffer;
 
 		std::vector<Matrix>	vecOffset;
@@ -253,6 +256,7 @@ void CSkeleton::SetShader()
 			vecOffset.push_back(m_vecBones[i]->matOffset);
 		}
 
+		// 계산 셰이더 측에 넘겨준다.
 		m_pOffsetMatrixBuffer->Init("OffsetMatrixBuffer", sizeof(Matrix),
 			(unsigned int)vecOffset.size(), 14, true, (int)Buffer_Shader_Type::Compute);
 

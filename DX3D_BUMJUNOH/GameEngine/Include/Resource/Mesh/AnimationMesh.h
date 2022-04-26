@@ -9,6 +9,7 @@ protected:
 	CAnimationMesh();
 	virtual ~CAnimationMesh();
 
+	// Skeleton 을 들고 있는 녀석이 AnimationMesh 이다.
 private:
 	CSharedPtr<class CSkeleton>	m_Skeleton;
 
@@ -27,6 +28,7 @@ public:
 
 
 public:
+	// 여기서 Mesh 저보를 모두 뽑아오는데, 이 과정에서 Bone 정보도 뽑아올 것이다.
 	virtual bool ConvertFBX(class CFBXLoader* Loader, const char* FullPath);
 	virtual bool SaveMesh(FILE* File);
 	virtual bool LoadMesh(FILE* File);

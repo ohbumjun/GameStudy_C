@@ -71,6 +71,7 @@ bool CAnimationMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 	if (pvecBone->empty())
 		return true;
 
+	// Mesh 이름에 이름을 만들고, Skeleton Class 하나를 만든다.
 	std::string	strSkeletonName = m_Name + "_Skeleton";
 
 	m_Skeleton = new CSkeleton;
@@ -81,6 +82,7 @@ bool CAnimationMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 
 	for (iterB = pvecBone->begin(); iterB != iterBEnd; ++iterB)
 	{
+		// 전체 Bone 들을 반복하면서, Bone Class 를 만들어낼 것이다.
 		Bone* pBone = new Bone;
 
 		pBone->strName = (*iterB)->strName;
@@ -91,6 +93,7 @@ bool CAnimationMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 		{
 			for (int j = 0; j < 4; ++j)
 			{
+				// 4 * 4 행렬을 matData 안의 matData 형태로 표현하고 있다.
 				pBone->matOffset[i][j] = (float)(*iterB)->matOffset.mData[i].mData[j];
 			}
 		}
@@ -113,7 +116,8 @@ bool CAnimationMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 	char	strAnimPath[MAX_PATH] = {};
 	strcpy_s(strAnimPath, FullPath);
 
-	int	iLength = (int)strlen(strAnimPath);
+	int 	iLength = (int)strlen(strAnimPath);
+
 	for (int i = iLength - 1; i >= 0; --i)
 	{
 		// aa/bb.exe 9개, 2번인덱스 3 ~ 8번까지 제거
@@ -130,13 +134,16 @@ bool CAnimationMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 
 	for (iterC = pvecClip->begin(); iterC != iterCEnd; ++iterC)
 	{
+		// 각 Clip 하나가 하나의 Motion, 즉, 하나의 Clip 이다.
 		m_Scene->GetResource()->LoadAnimationSequence((*iterC)->strName, false, *iterC);
 
+		// 중복 방지
 		CAnimationSequence* pSequence = m_Scene->GetResource()->FindAnimationSequence((*iterC)->strName);
 
 		if (!pSequence)
 			continue;
 
+		// 각각의 Animation 파일들을 .sqc 형태로 저장할 것이다.
 		char	strAnimFullPath[MAX_PATH] = {};
 		strcpy_s(strAnimFullPath, strAnimPath);
 		strcat_s(strAnimFullPath, (*iterC)->strName.c_str());
@@ -145,6 +152,7 @@ bool CAnimationMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 		pSequence->SaveFullPathMultibyte(strAnimFullPath);
 	}
 
+	// 한편 Skeleton이 있다면, .bne 형식으로 저장할 것이다.
 	if (m_Skeleton)
 	{
 		char	SkeletonPath[MAX_PATH] = {};

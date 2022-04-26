@@ -29,6 +29,10 @@ CAnimationSequence::CAnimationSequence(const CAnimationSequence& anim)
 
 	m_KeyFrameBuffer = nullptr;
 
+	// m_vecKeyFrame 은 고정이다. 오크 몬스터가 달리는 모션이 있다고 해보자
+	// 오크를 100마리 생성해도, 다 같은 모션을 취할 것이다.
+	// - 마치 이미지 하나를 같은 Animation 들이 Shared Ptr 형태로 공유했던 것처럼
+	// 그러나, 사실 복사 생성자는 ... 굳이 만들 필요가 없을 수도 있다. 굳이 복사하지 않을 경우가 더 많기 때문이다.
 	for (size_t i = 0; i < m_vecKeyFrame.size(); ++i)
 	{
 		++m_vecKeyFrame[i]->iRefCount;
@@ -98,6 +102,7 @@ bool CAnimationSequence::LoadFbxAnimation(const char* pFullPath, bool bLoop)
 {
 	CFBXLoader	loader;
 
+	// 해당 Full Path 의 파일이, Motion 하나하나를 의미하는 것이다
 	loader.LoadFBX(pFullPath, false);
 
 	// 애니메이션 클립을 추가한다.
@@ -344,15 +349,17 @@ void CAnimationSequence::SetPlayScale(float fScale)
 
 void CAnimationSequence::SetPlayTime(float fTime)
 {
+	// 해당 Animation의 진행 시간을 세팅할 것이다.
 	m_PlayTime = fTime;
 
 	m_EndTime = m_PlayTime;
 	m_TimeLength = m_PlayTime;
 
+	// 애니메이션 상에서 한 Frame 의 재생 시간.
 	m_FrameTime = m_PlayTime / m_FrameLength;
 
-	// 키 프레임 수만큼 반복하며 각각의 프레임을 보간할 행렬 정보를 위치, 크기, 회전정보로
-	// 뽑아온다.
+	// 키 프레임 수만큼 반복하며 각각의 프레임을 보간할 행렬 정보를 (위치, 크기, 회전 정보) 로 뽑아온다.
+	// m_vecKeyFrame -> Animation 상, 모든 Bone 들의 Animation 들을 Vector 형태로 저장한 것.
 	for (size_t i = 0; i < m_vecKeyFrame.size(); ++i)
 	{
 		BoneKeyFrame* pBoneKeyFrame = m_vecKeyFrame[i];
@@ -377,6 +384,7 @@ bool CAnimationSequence::CreateSequence(bool bLoop,
 
 	switch (pClip->eTimeMode)
 	{
+		// ex) 24 Frame 짜리 인지, 30Frame 짜리 인지. 를 구분해서 세팅해줄 것이다.
 	case FbxTime::eFrames24:
 		m_FrameMode = 24;
 		break;
@@ -391,15 +399,19 @@ bool CAnimationSequence::CreateSequence(bool bLoop,
 	// FBXANIMATIONCLIP에 있는 starttime 과 endtime 을 이용하여 keyframe 을 얻어온다.
 	m_StartFrame = pClip->tStart.GetFrameCount(pClip->eTimeMode);
 	m_EndFrame = pClip->tEnd.GetFrameCount(pClip->eTimeMode);
+
+	// 총 프레임 개수
 	m_FrameLength = m_EndFrame - m_StartFrame + 1;
 
 	// 시간 정보를 저장해준다.
 	m_StartTime = 0.f;
-	m_EndTime = m_PlayTime;
+	m_EndTime = m_PlayTime; // 총 애니메이션 진행 시간
 	m_TimeLength = m_PlayTime;
 
+	// 애니메이션 상 한 프레임당의 시간
 	m_FrameTime = m_PlayTime / m_FrameLength;
 
+	// 해당 Animation 상에서의 모든 Bone 내의 Animation 관련 Frame 을 하나의 일차원 배열로 만들어서 저장할 것이다.
 	std::vector<AnimationFrameTrans>	vecFrameTrans;
 	vecFrameTrans.resize(pClip->vecBoneKeyFrame.size() * m_FrameLength);
 
@@ -412,17 +424,20 @@ bool CAnimationSequence::CreateSequence(bool bLoop,
 	{
 		BoneKeyFrame* pBoneKeyFrame = new BoneKeyFrame;
 
+		// 몇번째 Bone 의 Key Frame 정보인지 에 대한 Idx 
 		pBoneKeyFrame->iBoneIndex = pClip->vecBoneKeyFrame[i].iBoneIndex;
 
 		m_vecKeyFrame.push_back(pBoneKeyFrame);
 
 		// 아래부터 키프레임 정보를 저장한다.
+		// 해당 Bone 의 KeyFrame 정보들을 세팅해줄 것이다.
 		pBoneKeyFrame->vecKeyFrame.reserve(pClip->vecBoneKeyFrame[i].vecKeyFrame.size());
 
 		for (size_t j = 0; j < pClip->vecBoneKeyFrame[i].vecKeyFrame.size(); ++j)
 		{
 			KeyFrame* pKeyFrame = new KeyFrame;
 
+			// 시작 시간 ..?
 			pKeyFrame->dTime = j * m_FrameTime;
 
 			// 현재 본의 키 프레임에 해당하는 행렬 정보를 얻어온다.
@@ -436,13 +451,17 @@ bool CAnimationSequence::CreateSequence(bool bLoop,
 			vScale = mat.GetS();
 			qRot = mat.GetQ();
 
+			// Pos, Scale 은 3차원 
 			pKeyFrame->vScale = Vector3((float)vScale.mData[0], (float)vScale.mData[1],
 				(float)vScale.mData[2]);
 			pKeyFrame->vPos = Vector3((float)vPos.mData[0], (float)vPos.mData[1],
 				(float)vPos.mData[2]);
+
+			// Rot 은 4차원
 			pKeyFrame->vRot = Vector4((float)qRot.mData[0], (float)qRot.mData[1],
 				(float)qRot.mData[2], (float)qRot.mData[3]);
 
+			// 해당 Bone 의 Key Frame 정보 배열에 Push 해준다.
 			pBoneKeyFrame->vecKeyFrame.push_back(pKeyFrame);
 
 			if (j < m_FrameLength)
@@ -454,6 +473,7 @@ bool CAnimationSequence::CreateSequence(bool bLoop,
 					pKeyFrame->vPos.z, 1.f);
 				tFrame.qRot = pKeyFrame->vRot;
 
+				// 일차원 배열 형태로, 모든 Bone의 모든 Frame 정보들을 저장할 것이다.
 				vecFrameTrans[i * m_FrameLength + j] = tFrame;
 			}
 
@@ -467,6 +487,7 @@ bool CAnimationSequence::CreateSequence(bool bLoop,
 	m_KeyFrameBuffer->Init("KeyFrameBuffer", sizeof(AnimationFrameTrans),
 		vecFrameTrans.size(), 13, true, (int)Buffer_Shader_Type::Compute);
 
+	// 위에서 만들어준 일차원 배열 정보를 Shader 측에 구조화 버퍼 형태로 넘겨줄 것이다.
 	m_KeyFrameBuffer->UpdateBuffer(&vecFrameTrans[0],
 		vecFrameTrans.size());
 
@@ -490,6 +511,7 @@ bool CAnimationSequence::CreateSequence(bool bLoop,
 			}
 		}
 
+		// .sqc 라는 형식의 파일로 만들어줄 것이다.
 		char	strAnimFullPath[MAX_PATH] = {};
 		strcpy_s(strAnimFullPath, strAnimPath);
 		strcat_s(strAnimFullPath, strAnimName);
@@ -644,6 +666,7 @@ void CAnimationSequence::ResetShader()
 
 void CAnimationSequence::SetChangeShader()
 {
+	// 모든 Bone의 모든 Frame 을 하나의 Vector 로 만든 다음, 그것을 기반으로 만들어낸 구조화 버퍼. 이것을 Shader 측에 넘겨줄 것이다.
 	m_KeyFrameBuffer->SetShader(15, (int)Buffer_Shader_Type::Compute);
 }
 

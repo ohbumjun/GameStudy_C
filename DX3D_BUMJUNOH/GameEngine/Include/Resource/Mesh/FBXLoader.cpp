@@ -704,7 +704,7 @@ void CFBXLoader::LoadAnimation(FbxMesh* pMesh, PFBXMESHCONTAINER pContainer)
 {
 	// FbxSkin 에 저점의 Skinning 정보를 담고 있고, FbxSkin은 FbxDeformer 객체를 상속받고 있다.
 	// 아래 함수를 통해, FbxSkin 개수가 나오게 된다.
-	int	iSkinCount = pMesh->GetDeformerCount(FbxDeformer::eSkin);
+	int 	iSkinCount = pMesh->GetDeformerCount(FbxDeformer::eSkin);
 
 	if (iSkinCount <= 0)
 		return;
@@ -712,12 +712,13 @@ void CFBXLoader::LoadAnimation(FbxMesh* pMesh, PFBXMESHCONTAINER pContainer)
 	// 메쉬의 정점 수를 얻어온다.
 	int	iCPCount = pMesh->GetControlPointsCount();
 
-	// 정점의 가중치 정보와 본인덱스 정보는 "정점 수"만큼
+	// 정점의 가중치 정보와 본 인덱스 정보는 "정점 수"만큼
 	// 만들어져야 한다.
 	pContainer->vecBlendWeight.resize(iCPCount);
 	pContainer->vecBlendIndex.resize(iCPCount);
 	pContainer->Animation = true;
 
+	// 해당 노드에 대한, 최종 월드 행렬
 	FbxAMatrix 	matTransform = GetTransform(pMesh->GetNode());
 
 	// Skinning 개수만큼 반복한다.
@@ -736,30 +737,37 @@ void CFBXLoader::LoadAnimation(FbxMesh* pMesh, PFBXMESHCONTAINER pContainer)
 			eSkinningType == FbxSkin::eLinear ||
 			eSkinningType == FbxSkin::eBlend)
 		{
-			// Cluster : 관절을 의미한다. 뼈대. ?
+			// Cluster : 관절을 의미한다. 
 			// ex) Cluster 는, Skinning 정보가 있는 뼈대의 갯수만 준다
 			// ex) 뼈대가 70 개이고, 그 중에서 Skinning 정보가 있는 뼈대가 20개만 있다고 하면, GetClusterCount 함수로 나온 값은 20이 된다.
-			int	iClusterCount = pSkin->GetClusterCount();
+			int 	iClusterCount = pSkin->GetClusterCount();
 
 			// 이 관절 개수만큼 반복을 돌릴 것이다.
 			for (int j = 0; j < iClusterCount; ++j)
 			{
+				// 실제 특정 뼈대, 관절을 얻는다.
 				FbxCluster* pCluster = pSkin->GetCluster(j);
 
+				// 클러스터에 대응되는 Node 도 얻을 수 있다. GetLink 함수를 통해서
 				if (!pCluster->GetLink())
 					continue;
 
+				// 해당 노드의 뼈대 / 관절 이름을 얻을 수 있다.
 				std::string	strBoneName = pCluster->GetLink()->GetName();
 
 				if (m_Mixamo)
 					strBoneName.erase(0, 10);
 
-				int	iBoneIndex = FindBoneFromName(strBoneName);
+				// 관절 ? 뼈대 ? 이름을 통해서, BoneIndex 를 얻어낼 수 있다.
+				int 	iBoneIndex = FindBoneFromName(strBoneName);
 
 				LoadWeightAndIndex(pCluster, iBoneIndex, pContainer);
 
+				// Bone 정보는 기본적으로 각각의 Bone Space 에서 정의된 형식으로 들어온다.
+				// 따라서, 우리가 사용하는 공간으로 옮겨줘야 한다.
 				LoadOffsetMatrix(pCluster, matTransform, iBoneIndex, pContainer);
 
+				// 해당 Bone 의 변환행렬 정보를 세팅해준다.
 				m_vecBones[iBoneIndex]->matBone = matTransform;
 
 				LoadTimeTransform(pMesh->GetNode(), pCluster,
@@ -793,6 +801,9 @@ int CFBXLoader::FindBoneFromName(const std::string& strName)
 
 void CFBXLoader::LoadWeightAndIndex(FbxCluster* pCluster, int iBoneIndex, PFBXMESHCONTAINER pContainer)
 {
+	// 각 정점에 대한 Idx Array 내의 원소 개수를 가져온다.
+	// pCluster 안에는, Bone 에 대한 정보가 들어있다 .. ? (관절)
+	// 그렇다면, 해당 Bone 이 영향을 주는 정점의 개수 ..?
 	int	iControlIndicesCount = pCluster->GetControlPointIndicesCount();
 
 	for (int i = 0; i < iControlIndicesCount; ++i)
@@ -800,12 +811,18 @@ void CFBXLoader::LoadWeightAndIndex(FbxCluster* pCluster, int iBoneIndex, PFBXME
 		FBXWEIGHT	tWeight = {};
 
 		tWeight.iIndex = iBoneIndex;
+
+		// Get the array of control point weights. --> 즉, 해당 Bone 이 i번째 정점에 영향을 주는 
 		tWeight.dWeight = pCluster->GetControlPointWeights()[i];
 
-		int	iClusterIndex = pCluster->GetControlPointIndices()[i];
+		int 	iClusterIndex = pCluster->GetControlPointIndices()[i];
 
 		// map의 특징 : 키를 이용해 인덱스처럼 접근할 경우 해당 키가 없다면
 		// 만들어준다.
+
+		// 그러면, 각 정점 idx 가 key 값이고, 해당 정점에 영향을 미치는 Bone들으 Weight 정보를 vector 형식으로 넣어주는 것인가 ?
+
+		// 선생님 말로는, 해당 map 에 최대 4개만 들어올 수 있다.... 한 정점에 영향을 주는 Bone 은 최대 4개만 처리한다는 의미...?
 		pContainer->mapWeights[iClusterIndex].push_back(tWeight);
 	}
 }
@@ -814,14 +831,19 @@ void CFBXLoader::LoadOffsetMatrix(FbxCluster* pCluster,
 	const FbxAMatrix& matTransform, int iBoneIndex,
 	PFBXMESHCONTAINER pContainer)
 {
-	FbxAMatrix	matCluster;
-	FbxAMatrix	matClusterLink;
+	// matTransform : 원본 해당 관절 ? 의 World 행렬 정보가 들어가 있다.
 
+	FbxAMatrix	 matCluster;
+	FbxAMatrix	 matClusterLink;
+
+	// Cluster 행렬 정보
 	pCluster->GetTransformMatrix(matCluster);
+
+	// Cluster 에 걸려 있는 링크노드의 행렬 정보
 	pCluster->GetTransformLinkMatrix(matClusterLink);
 
 	FbxVector4	v1 = { 1.0, 0.0, 0.0, 0.0 };
-	FbxVector4	v2 = { 0.0, 0.0, 1.0, 0.0 };
+	FbxVector4	v2 = { 0.0, 0.0, 1.0, 0.0 }; 
 	FbxVector4	v3 = { 0.0, 1.0, 0.0, 0.0 };
 	FbxVector4	v4 = { 0.0, 0.0, 0.0, 1.0 };
 
@@ -837,6 +859,14 @@ void CFBXLoader::LoadOffsetMatrix(FbxCluster* pCluster,
 	0 1 0 0 * 9 0 1 2 * 0 1 0 0
 	0 0 0 1   3 4 5 6   0 0 0 1
 
+	1) 한번 곱하면, 가운데 행 2개가 바뀌는 것을 확인할 수 있다.
+	1 0 0 0   1 2 3 4   
+	0 0 1 0   5 6 7 8   
+	0 1 0 0 * 9 0 1 2 * 
+	0 0 0 1   3 4 5 6
+
+	2) 2번째 곱해주면, 열 2개가 바뀌는 것을 확인할 수 있다.
+	이러한 과정을 진행해주는 이유는, Y,Z 가 Dx 와 Fbx 가 서로 다르기 때문이다.
 	1 2 3 4   1 0 0 0
 	9 0 1 2   0 0 1 0
 	5 6 7 8 * 0 1 0 0
@@ -849,7 +879,11 @@ void CFBXLoader::LoadOffsetMatrix(FbxCluster* pCluster,
 	*/
 
 	FbxAMatrix	matOffset;
+
 	matOffset = matClusterLink.Inverse() * matCluster * matTransform;
+
+	// 결과적으로 offset 행렬이 만들어진다.
+	// 그냥 DX 공간으로 만들어주는 FBX 의 공식이라고 할 수 있다.
 	matOffset = matReflect * matOffset * matReflect;
 
 	m_vecBones[iBoneIndex]->matOffset = matOffset;
@@ -877,6 +911,7 @@ void CFBXLoader::LoadTimeTransform(FbxNode* pNode,
 
 		for (iter = m_vecClip.begin(); iter != iterEnd;)
 		{
+			// Mixamo 에서 가져온 것에서는, Mixamo 이어야만 제대로 된 것이라고 할 수 있다.
 			if ((*iter)->strName != "mixamo.com")
 			{
 				SAFE_DELETE((*iter));
@@ -889,11 +924,15 @@ void CFBXLoader::LoadTimeTransform(FbxNode* pNode,
 		}
 	}
 
+	// m_vecClip -> 애니메이션 배열 
 	for (size_t i = 0; i < m_vecClip.size(); ++i)
 	{
+		// 현재 우리는 Key Frame Animation 을 활용하고 있다.
+		// 그러면 2개의 Key Frame Animation 정보를 구하고, 그 사이의 Animation 들은, Key Frame 사이의 보간을 통해서 구해낼 수 있다.
 		FbxLongLong	Start = m_vecClip[i]->tStart.GetFrameCount(m_vecClip[i]->eTimeMode);
 		FbxLongLong	End = m_vecClip[i]->tEnd.GetFrameCount(m_vecClip[i]->eTimeMode);
 
+		// i번째 Animation --> 그때의 iBoneIndex 번째 Bone의 BoneIndex 를 iBoneIndex로 세팅
 		m_vecClip[i]->vecBoneKeyFrame[iBoneIndex].iBoneIndex = iBoneIndex;
 
 		// 전체 프레임 수만큼 반복한다.
@@ -915,6 +954,7 @@ void CFBXLoader::LoadTimeTransform(FbxNode* pNode,
 			tKeyFrame.dTime = tTime.GetSecondDouble();
 			tKeyFrame.matTransform = matCur;
 
+			// i번째 Animation 의 iBoneIndex 번째 Bone 의 KeyFrame Vector 목록에 현재 만들어낸 tKeyFrame 정보를 넣어준다.
 			m_vecClip[i]->vecBoneKeyFrame[iBoneIndex].vecKeyFrame.push_back(tKeyFrame);
 		}
 	}
@@ -927,6 +967,8 @@ void CFBXLoader::ChangeWeightAndIndices(PFBXMESHCONTAINER pContainer)
 
 	for (iter = pContainer->mapWeights.begin(); iter != iterEnd; ++iter)
 	{
+		// 모든 Weight 정보들을 돌면서
+		// 4개 이상의 Weight이 있다면, 가중치 값에 따라 내림차순 한 이후
 		if (iter->second.size() > 4)
 		{
 			// 가중치 값에 따라 내림차순 정렬한다.
@@ -946,7 +988,10 @@ void CFBXLoader::ChangeWeightAndIndices(PFBXMESHCONTAINER pContainer)
 
 			std::vector<FBXWEIGHT>::iterator	iterErase = iter->second.begin() + 4;
 
+			// 최대 4개만 되도록 세팅하고
 			iter->second.erase(iterErase, iter->second.end());
+
+			// 앞이 1이 되게 세팅한다.
 			iter->second[0].dWeight += dInterpolate;
 		}
 
@@ -959,6 +1004,7 @@ void CFBXLoader::ChangeWeightAndIndices(PFBXMESHCONTAINER pContainer)
 			vIndex[i] = iter->second[i].iIndex;
 		}
 
+		// 해당 정점의 Weight 정보, 영향을 주는 Bone Idx 정보들을 Vector4 에 저장한다.
 		pContainer->vecBlendWeight[iter->first] = vWeight;
 		pContainer->vecBlendIndex[iter->first] = vIndex;
 	}
