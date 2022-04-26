@@ -37,5 +37,7 @@ public:
 - 각 Mesh 안쪽에 Mesh 에 영향을 주는 Bone 이 있다.
 - 즉, Animation 을 돌리는 것은, Bone 을 이동시키고 , 회전시키는 것이다.
 - 그렇다면, Bone 정보가 필요하다. 
-
+- Bone 을 움직이는 방식은, Key Frame Animation 을 통해 움직이게 한다.
+  1 Frame 당 모든 Bone 이 각각 얼만큼 이동시키는지.를 기준으로 세팅한다는 것이다.
+- 즉, 2D 처럼 Animation Texture 를 여러 개 들고 있는 것이 아니라, Bone 처럼 이동 시키는 것이다.
  */

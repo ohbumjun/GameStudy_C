@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneComponent.h"
+
 class CArm :
     public CSceneComponent
 {

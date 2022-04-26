@@ -38,6 +38,7 @@ typedef	struct _tagFbxBoneKeyFrame
 }FBXBONEKEYFRAME, * PFBXBONEKEYFRAME;
 
 // Fbx Animation Clip
+// FBX 에서는 Motion 하나하나를 Clip 이라고 한다.
 typedef struct _tagFbxAnimationClip
 {
 	std::string			strName;
