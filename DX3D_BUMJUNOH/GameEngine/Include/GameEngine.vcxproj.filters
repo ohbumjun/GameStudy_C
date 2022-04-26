@@ -624,6 +624,9 @@
     <ClCompile Include="Animation\AnimationSequenceData.cpp">
       <Filter>07. Animation\02. 3D</Filter>
     </ClCompile>
+    <ClCompile Include="Animation\AnimationSequenceInstance.cpp">
+      <Filter>07. Animation\02. 3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1038,6 +1041,9 @@
       <Filter>07. Animation\01. 2D</Filter>
     </ClInclude>
     <ClInclude Include="Animation\AnimationSequenceData.h">
+      <Filter>07. Animation\02. 3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\AnimationSequenceInstance.h">
       <Filter>07. Animation\02. 3D</Filter>
     </ClInclude>
   </ItemGroup>

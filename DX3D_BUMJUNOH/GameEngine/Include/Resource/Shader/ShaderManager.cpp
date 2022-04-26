@@ -110,6 +110,9 @@ bool CShaderManager::Init()
 	CreateConstantBuffer("TileMapCBuffer", sizeof(TileMapCBuffer), 11,
 		(int)Buffer_Shader_Type::Graphic);
 
+	CreateConstantBuffer("AnimationCBuffer", sizeof(AnimationCBuffer), 11,
+		(int)Buffer_Shader_Type::Compute);
+
 	return true;
 }
 
