@@ -25,7 +25,7 @@ vector<int> solution(vector<vector<string>> places) {
     answer.resize(5);
         
     // 1) 각각의 대기실 별로
-    for (int i = 0; i < 5; ++i)
+    for (int i = 0; i < 5; ++i) //
     {
         bool pass = true;
         
