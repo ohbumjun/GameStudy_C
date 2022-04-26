@@ -52,9 +52,9 @@ public:
 protected:
     CSharedPtr<CGraphicShader>  m_Shader;
     std::vector<MaterialTextureInfo>    m_TextureInfo;
-    Vector4     m_BaseColor;
+    Vector4     m_BaseColor; // 이것이 Diffuse Color 가 된다. (난반사 과정에서, 계산되는 물체 고유의 색상) 
     Vector4		m_AmbientColor;
-    Vector4		m_SpecularColor;
+    Vector4		m_SpecularColor; // 정반사 --> Gray Scale 형태를 띄게 된다...?
     Vector4     m_EmissiveColor;
     float       m_Opacity;
     bool        m_Animation3D;

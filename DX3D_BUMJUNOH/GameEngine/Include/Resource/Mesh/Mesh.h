@@ -23,12 +23,14 @@ public:
 
 protected:
 	std::vector<MeshContainer*>	m_vecContainer;
+	// FBX 상에서 Mesh 를 Load 할 때, Material 까지 같이 Load 하고 있으므로
+	// 재질 정보를 담아두기 위해 추가 Vector 도 만들어준다.
 	std::vector<MeshSlot*>		m_vecMeshSlot;
 	std::vector<CSharedPtr<CMaterial>>	m_vecMaterialSlot;
 
 	Vector3	m_Min;
 	Vector3	m_Max;
-	Mesh_Type	m_MeshType;
+	Mesh_Type	 m_MeshType;
 
 public:
 	const std::vector<CSharedPtr<CMaterial>>* GetMaterialSlots()	const
@@ -50,7 +52,8 @@ public:
 	bool LoadMesh(const TCHAR* FileName, const std::string& PathName = MESH_PATH);
 	bool LoadMeshFullPath(const TCHAR* FullPath);
 	bool LoadMeshMultibyte(const char* FileName, const std::string& PathName = MESH_PATH);
-	virtual bool LoadMeshFullPathMultibyte(const char* FullPath);
+	// 가상 함수 처리하기
+	virtual bool LoadMeshFullPathMultibyte(const char* FullPath); 
 	virtual bool Init();
 	virtual void Render();
 	virtual void Render(int SlotNumber);

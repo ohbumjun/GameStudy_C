@@ -8,7 +8,7 @@ CPlayer::CPlayer()
 
 CPlayer::CPlayer(const CPlayer& obj)
 {
-	m_Mesh = (CStaticMeshComponent*)FindComponent("Mesh");
+	m_MainMesh = (CStaticMeshComponent*)FindComponent("Mesh");
 	m_Arm = (CArm*)FindComponent("Arm");
 	m_Camera = (CCameraComponent*)FindComponent("Camera");
 }
@@ -19,25 +19,28 @@ CPlayer::~CPlayer()
 
 bool CPlayer::Init()
 {
-	m_Mesh = CreateComponent<CStaticMeshComponent>("Mesh");
+	m_MainMesh = CreateComponent<CStaticMeshComponent>("Mesh");
+	SetRootComponent(m_MainMesh);
+
 	m_Arm = CreateComponent<CArm>("Arm");
 	m_Camera = CreateComponent<CCameraComponent>("Camera");
 
-	m_Mesh->AddChild(m_Arm);
-
+	// Arm 을 Mesh에 달아주고
+	m_MainMesh->AddChild(m_Arm);
+	// Arm 에 카메라를 달아준다.
 	m_Arm->AddChild(m_Camera);
 
+	// Arm의 회전에 영향을 받게 할 것이다.
 	m_Camera->SetInheritRotX(true);
 	m_Camera->SetInheritRotY(true);
 	m_Camera->SetInheritRotZ(true);
 
-	SetRootComponent(m_Mesh);
+	m_MainMesh->SetMesh("PlayerMesh");
+	m_MainMesh->SetRelativeScale(0.05f, 0.05f, 0.05f);
 
-	m_Mesh->SetMesh("PlayerMesh");
-
-	m_Mesh->SetRelativeScale(0.05f, 0.05f, 0.05f);
-
+	// 카메라를 건드릴 필요 없이, Arm 만 건드리면 된다.
 	m_Arm->SetOffset(0.f, 1.f, 0.f);
+	// Arm 을 회전시키면, 딸려 있는 카메라도 회전하게 된다.
 	m_Arm->SetRelativeRotation(15.f, 0.f, 0.f);
 	m_Arm->SetTargetDistance(10.f);
 
@@ -48,7 +51,8 @@ void CPlayer::Update(float DeltaTime)
 {
 	CGameObject::Update(DeltaTime);
 
-	//m_Arm->AddRelativeRotationY(90.f * DeltaTime);
+	// Y축을 기준으로 계속 회전하게 세팅한다.
+	m_Arm->AddRelativeRotationY(90.f * DeltaTime);
 }
 
 void CPlayer::PostUpdate(float DeltaTime)

@@ -230,6 +230,8 @@ bool CMesh::LoadMeshFile(const char* FullPath)
 
 bool CMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 {
+	// 1) 재질 --> vector 안의 vector ? => Subset 마다의 Material 모음을 의미하는 것이기 때문이다.
+	// 2) Mesh 컨테이너 정보를 가져온다. --> 사실상, vecContainer 는 정점 정보 들의 모음 ? 이라고 생각해도 되지 않을까 ?
 	const std::vector<std::vector<PFBXMATERIAL>>* vecMaterials = Loader->GetMaterials();
 	const std::vector<PFBXMESHCONTAINER>* vecContainers = Loader->GetMeshContainers();
 
@@ -243,12 +245,15 @@ bool CMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 
 	int ContainerIndex = 0;
 
+	// Mesh 컨테이너를 순회한다.
 	for (; iter != iterEnd; ++iter, ++ContainerIndex)
 	{
 		MeshContainer* Container = new MeshContainer;
 
 		m_vecContainer.push_back(Container);
 
+		// Subset 이 비어있는 경우는, 건너뛰게 할 것이다.
+		// ex) 디자이너가 특정 Mesh를 안만들었거나, 만들다 만 경우들을, 코드로 걸러내기 위함이다.
 		std::vector<bool>    vecEmpty;
 		vecEmptyIndex.push_back(vecEmpty);
 
@@ -258,6 +263,7 @@ bool CMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 		if ((*iter)->Animation)
 			AnimationEnable = true;
 
+		// Mesh 들을 순회하면서, 여기에서 발견한 정점 정보들을, Vertex3D 정보를 세팅할 것이다.
 		std::vector<Vertex3D>   vecVtx;
 
 		size_t  VtxCount = (*iter)->vecPos.size();
@@ -268,6 +274,7 @@ bool CMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 		{
 			Vertex3D    Vtx = {};
 
+			// 정점 개수를 반복 돌면서,  Vertex3D 구조체의 정보를 채워줄 것이다.
 			Vtx.Pos = (*iter)->vecPos[i];
 			Vtx.Normal = (*iter)->vecNormal[i];
 			Vtx.UV = (*iter)->vecUV[i];
@@ -357,13 +364,16 @@ bool CMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 		// 서브셋 수만큼 반복한다.
 		size_t  Size = (*iterM).size();
 
+		// 각 Subset 안의 재질 정보를 확인한다.
 		for (size_t i = 0; i < Size; ++i)
 		{
+			// 해당 위치의 Subset 이 비었다면, 해당 Subset 에서의 Material 정보를 안만들어주면 된다.
 			if (!vecEmptyIndex[ContainerIndex][i])
 				continue;
 
 			PFBXMATERIAL    Mtrl = (*iterM)[i];
 
+			// 만일 재질 정보가 들어있다면, 우리의 재질 형식으로 바꿔줄 것이다.
 			CMaterial* Material = new CMaterial;
 
 			Material->CreateConstantBuffer();
@@ -376,11 +386,13 @@ bool CMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 
 			Material->SetShader("Standard3DShader");
 
+			// m_vecMaterialSlot 라는 재질 Vector 에 Push 하는 것.
 			AddMaterialSlot(Material);
 
 			// Texture
 			char    FileName[MAX_PATH] = {};
-			_splitpath_s(Mtrl->DifTex.c_str(), 0, 0, 0, 0, FileName, MAX_PATH, 0, 0);
+			_splitpath_s(Mtrl->DifTex.c_str(), 0, 0, 0, 0, 
+				FileName, MAX_PATH, 0, 0);
 
 			TCHAR   FullPath[MAX_PATH] = {};
 
@@ -392,9 +404,12 @@ bool CMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 			strcpy_s(FullPath, Mtrl->DifTex.c_str());
 #endif // UNICODE
 
+			// 해당 재질의 Texture 의 FullPath 정보를 가져와서, 해당 경로에 있는 Material 정보를 추가해줄 것이다.
 			Material->AddTextureFullPath(0, (int)Buffer_Shader_Type::Pixel,
 				FileName, FullPath);
-
+			
+			// 자. Emissive, Ambient 등 마다, 다른 Texture 를 사용해야 하며, 이를 분리해서 작업해야 한다.
+			// Bump 는 Normal 이라고 생각하면 된다. (Normal Map 을 의미하는 것인가?)
 			if (!Mtrl->BumpTex.empty())
 			{
 				Material->EnableBump();
@@ -402,7 +417,6 @@ bool CMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 				_splitpath_s(Mtrl->BumpTex.c_str(), 0, 0, 0, 0, FileName, MAX_PATH, 0, 0);
 
 				memset(FullPath, 0, sizeof(TCHAR) * MAX_PATH);
-
 #ifdef UNICODE
 				int PathLength = MultiByteToWideChar(CP_ACP, 0, Mtrl->BumpTex.c_str(),
 					-1, 0, 0);
@@ -450,6 +464,8 @@ bool CMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 
 	strcpy_s(MeshFullPath, FullPath);
 	int PathLength = (int)strlen(FullPath);
+
+	// .msh 라는 포멧으로, 우리의 포멧을 만들어낼 것이다.
 	memcpy(&MeshFullPath[PathLength - 3], "msh", 3);
 
 	SaveMeshFile(MeshFullPath);

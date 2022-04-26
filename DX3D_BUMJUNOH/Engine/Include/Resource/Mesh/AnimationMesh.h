@@ -32,3 +32,10 @@ public:
 	virtual bool LoadMesh(FILE* File);
 };
 
+/*
+기본적으로 Bone Animation 중심으로 돌아가게 할 것이다.
+- 각 Mesh 안쪽에 Mesh 에 영향을 주는 Bone 이 있다.
+- 즉, Animation 을 돌리는 것은, Bone 을 이동시키고 , 회전시키는 것이다.
+- 그렇다면, Bone 정보가 필요하다. 
+
+ */

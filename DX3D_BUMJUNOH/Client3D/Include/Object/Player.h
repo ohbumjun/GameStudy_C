@@ -16,7 +16,7 @@ protected:
     virtual ~CPlayer();
 
 private:
-    CSharedPtr<CStaticMeshComponent>    m_Mesh;
+    CSharedPtr<CStaticMeshComponent>    m_MainMesh;
     CSharedPtr<CArm>                    m_Arm;
     CSharedPtr<CCameraComponent>        m_Camera;
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "SceneComponent.h"
+
 class CArm :
     public CSceneComponent
 {
@@ -12,7 +13,10 @@ protected:
 	virtual ~CArm();
 
 protected:
+	// Distance : Target 으로부터 얼마나 떨어져 있는가 --> 마치 셀카봉 같은 것이다.
 	float	m_TargetDistance;
+
+	// 바라보는 위치를 어디로 세팅할 것이냐 
 	Vector3	m_Offset;
 
 public:

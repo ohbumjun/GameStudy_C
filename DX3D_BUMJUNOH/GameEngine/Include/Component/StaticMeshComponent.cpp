@@ -30,6 +30,7 @@ CStaticMeshComponent::~CStaticMeshComponent()
 
 void CStaticMeshComponent::SetMesh(const std::string& Name)
 {
+	// 기존의 Mesh 정보를 교체해주고
 	m_Mesh = (CStaticMesh*)m_Scene->GetResource()->FindMesh(Name);
 
 	m_vecMaterialSlot.clear();
@@ -40,6 +41,7 @@ void CStaticMeshComponent::SetMesh(const std::string& Name)
 	std::vector<CSharedPtr<CMaterial>>::const_iterator	iter = pMaterialSlots->begin();
 	std::vector<CSharedPtr<CMaterial>>::const_iterator	iterEnd = pMaterialSlots->end();
 
+	// Mesh 가 들고 있는 Material Slot 들을 순회하면서, 다시 Material Slot 정보들을 채워준다.
 	for (; iter != iterEnd; ++iter)
 	{
 		m_vecMaterialSlot.push_back((*iter)->Clone());

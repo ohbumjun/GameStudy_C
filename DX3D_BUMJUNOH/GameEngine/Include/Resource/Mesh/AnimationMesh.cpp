@@ -45,6 +45,7 @@ bool CAnimationMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 	_splitpath_s(FullPath, 0, 0, 0, 0, 0, 0, Ext, _MAX_EXT);
 	_strupr_s(Ext);
 
+	// FBX 파일을, 우리의 File 형태로 바꿀 것이다.
 	if (strcmp(Ext, ".FBX") == 0)
 	{
 		CFBXLoader  Loader;
@@ -52,6 +53,7 @@ bool CAnimationMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 		if (!Loader.LoadFBX(FullPath, false))
 			return false;
 
+		// 우리의 파일 형태로 바꿔준다.
 		return ConvertFBX(&Loader, FullPath);
 	}
 

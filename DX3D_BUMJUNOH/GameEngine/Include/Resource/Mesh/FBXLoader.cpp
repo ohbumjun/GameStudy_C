@@ -92,6 +92,7 @@ bool CFBXLoader::LoadFBX(const char* FullPath, bool Static)
 	if (m_Scene->GetGlobalSettings().GetAxisSystem() != FbxAxisSystem::Max)
 		m_Scene->GetGlobalSettings().SetAxisSystem(FbxAxisSystem::Max);
 
+	// Static Type 이 아니라는 것은, Animation 이 있는 Mesh 라는 것이다.
 	if (!Static)
 	{
 		m_Scene->FillAnimStackNameArray(m_NameArr);
@@ -411,6 +412,7 @@ void CFBXLoader::LoadMesh(FbxMesh* pMesh, bool bStatic)
 
 		// 인덱스 버퍼 ? 정보를 세팅해준다.
 		// ex) 팔 컨테이너 --> 주먹 Subset 에서 사용되는 인덱스 버퍼 정보 , 이두 Subset 에서 사용되는 인덱스 버퍼 정보
+		// DX 기준으로 Y,Z 를 바꿔주기 위해 0, 2, 1 순으로 넣어준다.
 		pContainer->vecIndices[iMtrlID].push_back(iIdx[0]);
 		pContainer->vecIndices[iMtrlID].push_back(iIdx[2]);
 		pContainer->vecIndices[iMtrlID].push_back(iIdx[1]);
@@ -513,7 +515,9 @@ void CFBXLoader::LoadUV(FbxMesh* pMesh, PFBXMESHCONTAINER pContainer,
 	// 실제 UV 정보를 가져온다.
 	FbxVector2 	vUV = pUV->GetDirectArray().GetAt(iUVIndex);
 
+	// UV 좌표를 0 에서 1 사이의 값으로 맞춰준다.
 	pContainer->vecUV[iControlIndex].x = (float)vUV.mData[0] - (int)vUV.mData[0];
+	// DX 에서는 Y 좌표가 위, 아래 반전되어 있기 때문에, DX 에서 다시 반전 시켜서 활용한다.
 	pContainer->vecUV[iControlIndex].y = 1.f - (float)(vUV.mData[1] - (int)vUV.mData[1]);
 }
 
@@ -525,6 +529,7 @@ void CFBXLoader::LoadTangent(FbxMesh* pMesh,
 	if (!pTangent)
 		return;
 
+	// Tangent 사용시 Bump 를 true 로 세팅한다.
 	pContainer->Bump = true;
 
 	int	iTangentIndex = iVtxID;
@@ -562,6 +567,7 @@ void CFBXLoader::LoadTangent(FbxMesh* pMesh,
 void CFBXLoader::LoadBinormal(FbxMesh* pMesh, 
 	PFBXMESHCONTAINER pContainer, int iVtxID, int iControlIndex)
 {
+	// Binormal 도 LoadTangent 와 구조가 동일
 	FbxGeometryElementBinormal* pBinormal = pMesh->GetElementBinormal();
 
 	if (!pBinormal)

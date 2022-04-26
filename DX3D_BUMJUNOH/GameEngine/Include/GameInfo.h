@@ -163,8 +163,8 @@ struct MeshContainer
 
 struct MeshSlot
 {
-	VertexBuffer* VB;
-	IndexBuffer* IB;
+	VertexBuffer* VB; // 정점 버퍼 메모리 주소
+	IndexBuffer* IB; // 인덱스 버퍼 메모리 주소
 	D3D11_PRIMITIVE_TOPOLOGY	Primitive;
 
 	MeshSlot() :

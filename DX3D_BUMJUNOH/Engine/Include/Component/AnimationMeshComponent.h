@@ -16,6 +16,9 @@ protected:
 
 protected:
     CSharedPtr<CAnimationMesh> m_Mesh;
+
+    // 여러개의 Material 을 들고 있으며, 아래의 SetMaterial, AddMaterial 함수 같이,
+    // 특정 Material 로 교체 및 추가하는 로직도 세팅한다.
     std::vector<CSharedPtr<CMaterial>> m_vecMaterialSlot;
 
 public:
