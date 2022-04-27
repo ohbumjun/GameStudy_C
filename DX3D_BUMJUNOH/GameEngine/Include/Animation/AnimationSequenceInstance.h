@@ -32,6 +32,9 @@ protected:
 	class CStructuredBuffer* m_OutputBuffer;	// 애니메이션 결과 저장용 버퍼
 	class CStructuredBuffer* m_BoneBuffer;
 
+	// 구조화 버퍼 내용을 복사해서 넣어주는 버퍼
+	ID3D11Buffer* m_BoneDataBuffer;
+
 	// 최종 갱신될 Bone Matrix 정보를 담아두기 위한 Vector
 	std::vector<Matrix>	m_vecBoneMatrix;
 
@@ -124,7 +127,7 @@ public:
 	template <typename T>
 	void SetEndFunction(const std::string& Name, T* Obj, void (T::* Func)())
 	{
-		CAnimationSequence2DData* Data = FindAnimation(Name);
+		CAnimationSequenceData* Data = FindAnimation(Name);
 
 		if (!Data)
 			return;
@@ -136,7 +139,7 @@ public:
 	void AddNotify(const std::string& Name, const std::string& NotifyName, int Frame,
 		T* Obj, void (T::* Func)())
 	{
-		CAnimationSequence2DData* Data = FindAnimation(Name);
+		CAnimationSequenceData* Data = FindAnimation(Name);
 
 		if (!Data)
 			return;

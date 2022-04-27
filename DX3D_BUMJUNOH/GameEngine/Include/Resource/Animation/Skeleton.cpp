@@ -5,7 +5,8 @@
 //#include "BoneSocket.h"
 
 CSkeleton::CSkeleton() :
-	m_pOffsetMatrixBuffer(nullptr)
+	m_pOffsetMatrixBuffer(nullptr),
+m_Scene(nullptr)
 {
 }
 

@@ -646,3 +646,75 @@ CAnimationSequence* CSceneResource::FindAnimationSequence(const std::string& Nam
 
 	return iter->second;
 }
+
+bool CSceneResource::LoadSkeleton(const std::string& Name, const TCHAR* FileName, const std::string& PathName,
+	CScene* Scene)
+{
+	if (FindSkeleton(Name))
+		return true;
+
+	if (!CResourceManager::GetInst()->LoadSkeleton(Name, FileName, PathName, m_Scene))
+		return false;
+
+	m_mapSkeleton.insert(std::make_pair(Name, CResourceManager::GetInst()->FindSkeleton(Name)));
+
+	return true;
+}
+
+bool CSceneResource::LoadSkeletonFullPath(const std::string& Name, const TCHAR* FullPath, CScene* Scene)
+{
+	if (FindSkeleton(Name))
+		return true;
+
+	if (!CResourceManager::GetInst()->LoadSkeletonFullPath(Name, FullPath, m_Scene))
+		return false;
+
+	m_mapSkeleton.insert(std::make_pair(Name, CResourceManager::GetInst()->FindSkeleton(Name)));
+
+}
+
+bool CSceneResource::LoadSkeletonMultibyte(const std::string& Name, const char* FileName, const std::string& PathName,
+	CScene* Scene)
+{
+	if (FindSkeleton(Name))
+		return true;
+
+	if (!CResourceManager::GetInst()->LoadSkeletonMultibyte(Name, FileName, PathName, m_Scene))
+		return false;
+
+	m_mapSkeleton.insert(std::make_pair(Name, CResourceManager::GetInst()->FindSkeleton(Name)));
+
+	return true;
+}
+
+bool CSceneResource::LoadSkeletonFullPathMultibyte(const std::string& Name, const char* FullPath, CScene* Scene)
+{
+	if (FindSkeleton(Name))
+		return true;
+
+	if (!CResourceManager::GetInst()->LoadSkeletonFullPathMultibyte(Name, FullPath, m_Scene))
+		return false;
+
+	m_mapSkeleton.insert(std::make_pair(Name, CResourceManager::GetInst()->FindSkeleton(Name)));
+
+	return true;
+}
+
+CSkeleton* CSceneResource::FindSkeleton(const std::string& Name)
+{
+	auto	iter = m_mapSkeleton.find(Name);
+
+	if (iter == m_mapSkeleton.end())
+	{
+		CSkeleton* Skeleton = CResourceManager::GetInst()->FindSkeleton(Name);
+
+		if (!Skeleton)
+			return nullptr;
+
+		m_mapSkeleton.insert(std::make_pair(Name, Skeleton));
+
+		return Skeleton;
+	}
+
+	return iter->second;
+}

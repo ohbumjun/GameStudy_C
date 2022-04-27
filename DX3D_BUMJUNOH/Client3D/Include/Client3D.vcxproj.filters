@@ -36,6 +36,9 @@
     <ClInclude Include="Object\Player.h">
       <Filter>02. Object</Filter>
     </ClInclude>
+    <ClInclude Include="Object\PlayerAnimation.h">
+      <Filter>02. Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client3D.rc">
@@ -58,6 +61,9 @@
       <Filter>01. SceneMode</Filter>
     </ClCompile>
     <ClCompile Include="Object\Player.cpp">
+      <Filter>02. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\PlayerAnimation.cpp">
       <Filter>02. Object</Filter>
     </ClCompile>
   </ItemGroup>

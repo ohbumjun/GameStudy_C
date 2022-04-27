@@ -37,11 +37,16 @@ bool CMainSceneMode::Init()
 
 void CMainSceneMode::LoadMesh()
 {
-	// m_Scene->GetResource()->LoadMesh(Mesh_Type::Animation, "PlayerMesh",
-	//	TEXT("Player_Default.fbx"));
+	m_Scene->GetResource()->LoadMesh(Mesh_Type::Animation, "PlayerMesh",
+		TEXT("Player_Default.msh"));
 
-	m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, "PlayerMesh",
-		TEXT("TestTank.FBX"));
+	// Bone 정보 미리 세팅
+	// m_Scene->GetResource()->SetMesh
+
+	// m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, "PlayerMesh",
+	//	TEXT("Hunter.FBX"));
+
+	
 }
 
 void CMainSceneMode::CreateMaterial()

@@ -174,6 +174,20 @@ struct MeshSlot
 	}
 };
 
+struct AnimationCBuffer {
+	int BoneCount;
+	int CurrentFrame;
+	int NextFrame;
+	float Ratio;          // Current Frame 과 Next Frame 사이의 비율 --> Key Frame 사이 어디즈음에 있는지
+	int FrameCount;
+	int RowIndex;     // 각 객체마다 Bone 변환 행렬 정보들을 ? 행렬 형태로 정보를 넣을 것이다
+	                         // 각 Row가 하나의 Bone 변환 행렬 정보
+					         // 그 중에서 몇번째 Bone 인지 
+	int ChangeAnimation; // 현재 Animation을 바꿔야 하는지
+	float ChangeRatio;
+	int ChangeFrameCount;
+	Vector3 Empty;
+};
 
 struct TransformCBuffer
 {

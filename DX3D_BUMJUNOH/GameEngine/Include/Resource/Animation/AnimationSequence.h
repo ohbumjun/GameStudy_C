@@ -47,20 +47,6 @@ struct AnimationFrameTrans
 	Vector4 qRot;
 };
 
-struct AnimationNotify
-{
-	std::string			Name;
-	class CAnimationSequence* pOwner;
-	float			Time;
-	bool			Call;
-
-	AnimationNotify()
-	{
-		Call = false;
-		Time = 0.f;
-	}
-};
-
 class CAnimationSequence :
     public CRef
 {
@@ -68,6 +54,7 @@ class CAnimationSequence :
 	friend class CResourceManager;
 	friend class CSceneResource;
 	friend class CAnimationManager3D;
+	friend class CAnimationSequenceInstance;
 
 private:
 	CAnimationSequence();

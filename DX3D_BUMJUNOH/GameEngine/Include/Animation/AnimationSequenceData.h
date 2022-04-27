@@ -66,7 +66,7 @@ public:
 	template <typename T>
 	void AddNotify(const std::string& Name, int Frame, T* Obj, void (T::* Func)())
 	{
-		Animation2DNotify* Notify = new Animation2DNotify;
+		AnimationNotify* Notify = new AnimationNotify;
 
 		Notify->Name = Name;
 		Notify->Frame = Frame;

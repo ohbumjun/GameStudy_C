@@ -1,5 +1,6 @@
 
 #include "Player.h"
+#include "PlayerAnimation.h"
 
 CPlayer::CPlayer()
 {
@@ -36,6 +37,7 @@ bool CPlayer::Init()
 	m_Camera->SetInheritRotZ(true);
 
 	m_MainMesh->SetMesh("PlayerMesh");
+	m_MainMesh->CreateAnimationInstance<CPlayerAnimation>();
 	m_MainMesh->SetRelativeScale(0.05f, 0.05f, 0.05f);
 
 	// 카메라를 건드릴 필요 없이, Arm 만 건드리면 된다.

@@ -470,3 +470,20 @@ void CResourceManager::ReleaseAnimationSequence3D(const std::string& Name)
 {
 	m_AnimationManager3D->ReleaseSequence(Name);
 }
+
+bool CResourceManager::LoadSkeleton(const std::string& Name, const TCHAR* FileName, const std::string& PathName,
+	CScene* Scene)
+{}
+
+bool CResourceManager::LoadSkeletonFullPath(const std::string& Name, const TCHAR* FullPath, CScene* Scene)
+{}
+
+bool CResourceManager::LoadSkeletonMultibyte(const std::string& Name, const char* FileName, const std::string& PathName,
+	CScene* Scene)
+{}
+
+bool CResourceManager::LoadSkeletonFullPathMultibyte(const std::string& Name, const char* FullPath, CScene* Scene)
+{}
+
+CSkeleton* CResourceManager::FindSkeleton(const std::string& Name)
+{}

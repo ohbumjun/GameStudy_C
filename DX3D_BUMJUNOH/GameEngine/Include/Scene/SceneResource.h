@@ -6,6 +6,7 @@
 #include "../Resource/Material/Material.h"
 #include "../Resource/Texture/Texture.h"
 #include "../Resource/Animation/AnimationSequence2D.h"
+#include "../Resource/Animation/Skeleton.h"
 #include "../Resource/Animation/AnimationSequence.h"
 #include "../Resource/ResourceManager.h"
 #include "../Resource/Sound/Sound.h"
@@ -31,6 +32,7 @@ private:
 	std::unordered_map<std::string, CSharedPtr<CSound>>		m_mapSound;
 	std::unordered_map<std::string, CSharedPtr<CParticle>>		m_mapParticle;
 	std::unordered_map<std::string, CSharedPtr<CAnimationSequence>>	m_mapSequence;
+	std::unordered_map<std::string, CSharedPtr<CSkeleton>>	m_mapSkeleton;
 
 public:	// =================== Mesh =====================
 
@@ -142,5 +144,18 @@ public:	// =================== Sequence3D =====================
 		const std::string& PathName = ANIMATION_PATH);
 	bool LoadAnimationSequenceFullPathMultibyte(bool Loop, const std::string& Name, const char* FullPath);
 	CAnimationSequence* FindAnimationSequence(const std::string& Name);
+
+	public:	// =================== Skeleton =====================
+	bool LoadSkeleton(const std::string& Name, const TCHAR* FileName,
+		const std::string& PathName = ANIMATION_PATH,
+		class CScene* Scene = nullptr);
+	bool LoadSkeletonFullPath(const std::string& Name, const TCHAR* FullPath,
+		class CScene* Scene = nullptr);
+	bool LoadSkeletonMultibyte(const std::string& Name, const char* FileName,
+		const std::string& PathName = ANIMATION_PATH,
+		class CScene* Scene = nullptr);
+	bool LoadSkeletonFullPathMultibyte(const std::string& Name, const char* FullPath,
+		class CScene* Scene = nullptr);
+	CSkeleton* FindSkeleton(const std::string& Name);
 };
 

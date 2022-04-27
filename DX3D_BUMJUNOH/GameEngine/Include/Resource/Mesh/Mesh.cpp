@@ -127,7 +127,7 @@ bool CMesh::LoadMeshMultibyte(const char* FileName,
 
 bool CMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 {
-	return false;
+	return true;
 }
 
 bool CMesh::Init()
@@ -524,7 +524,7 @@ bool CMesh::SaveMesh(FILE* File)
 	}
 
 
-	return false;
+	return true;
 }
 
 bool CMesh::LoadMesh(FILE* File)
@@ -615,7 +615,7 @@ bool CMesh::LoadMesh(FILE* File)
 		Material->Load(File);
 	}
 
-	return false;
+	return true;
 }
 
 void CMesh::Render()

@@ -89,6 +89,9 @@ bool CAnimationMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 		pBone->iDepth = (*iterB)->iDepth;
 		pBone->iParentIndex = (*iterB)->iParentIndex;
 
+		// 일반적인 Bone 행렬이, 우리가 사용하는 Bone 공간과 다르다.
+		// 따라서, Offset 행렬을 사용해서, 우리가 사용하는
+		// Local Bone 공간으로 가져와야 한다.
 		for (int i = 0; i < 4; ++i)
 		{
 			for (int j = 0; j < 4; ++j)

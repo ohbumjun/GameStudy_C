@@ -47,20 +47,6 @@ struct AnimationFrameTrans
 	Vector4 qRot;
 };
 
-struct AnimationNotify
-{
-	std::string			Name;
-	class CAnimationSequence* pOwner;
-	float			Time;
-	bool			Call;
-
-	AnimationNotify()
-	{
-		Call = false;
-		Time = 0.f;
-	}
-};
-
 class CAnimationSequence :
     public CRef
 {
@@ -68,6 +54,7 @@ class CAnimationSequence :
 	friend class CResourceManager;
 	friend class CSceneResource;
 	friend class CAnimationManager3D;
+	friend class CAnimationSequenceInstance;
 
 private:
 	CAnimationSequence();
@@ -94,7 +81,6 @@ private:
 	std::vector<BoneKeyFrame*>	m_vecKeyFrame;
 	char						m_FullPath[MAX_PATH];
 	class CStructuredBuffer* m_KeyFrameBuffer; // Compute Shader 로 돌려줘야 하기 때문에 구조화 버퍼를 세팅할 것이다.
-	std::vector<AnimationNotify*>	m_vecNotify;
 
 public:
 	int GetKeyFrameCount()	const

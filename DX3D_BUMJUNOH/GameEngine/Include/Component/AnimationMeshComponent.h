@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SceneComponent.h"
+#include "../Animation/AnimationSequenceInstance.h"
 #include "../Resource/Mesh/AnimationMesh.h"
 #include "../Resource/Material/Material.h"
 #include "../Resource/Animation/Skeleton.h"
@@ -23,6 +24,8 @@ protected:
     std::vector<CSharedPtr<CMaterial>> m_vecMaterialSlot;
 
     CSharedPtr<CSkeleton> m_Skeleton;
+
+    class CAnimationSequenceInstance* m_Animation;
 
 public:
     CMaterial* GetMaterial(int Index = 0)    const
@@ -75,5 +78,44 @@ public:
     virtual CAnimationMeshComponent* Clone();
     virtual void Save(FILE* File);
     virtual void Load(FILE* File);
+
+public :
+    template<typename T>
+    void CreateAnimationInstance()
+{
+        T* Anim = new T;
+
+        Anim->SetScene(m_Scene);
+        Anim->SetOwner(this);
+
+    if (!Anim->Init())
+    {
+        SAFE_DELETE(Anim);
+        return;
+    }
+
+    SAFE_DELETE(m_Animation);
+
+    m_Animation = Anim;
+
+    if (m_Skeleton)
+        m_Animation->SetSkeleton(m_Skeleton);
+}
+
+    template <typename T>
+    void LoadAnimationInstance()
+{
+        T* Anim = new T;
+
+        Anim->SetScene(m_Scene);
+        Anim->SetOwner(this);
+
+        SAFE_DELETE(m_Animation);
+
+        m_Animation = Anim;
+
+        if (m_Skeleton)
+            m_Animation->SetSkeleton(m_Skeleton);
+}
 };
 

@@ -144,7 +144,6 @@ public:	// =================== Font =====================
 	IDWriteFontCollection1* FindFontFile(const std::string& Name);
 	IDWriteTextFormat* FindFont(const std::string& Name);
 
-
 public:	// =================== Particle =====================
 	bool CreateParticle(const std::string& Name);
 	CParticle* FindParticle(const std::string& Name);
@@ -164,6 +163,19 @@ public:
 	bool LoadAnimationSequenceFullPathMultibyte(bool Loop, const std::string& Name, const char* FullPath, class CScene* Scene = nullptr);
 	CAnimationSequence* FindAnimationSequence(const std::string& Name);
 	void ReleaseAnimationSequence3D(const std::string& Name);
+
+public : // =================== Skeleton =====================
+	bool LoadSkeleton(const std::string& Name, const TCHAR* FileName,
+		const std::string& PathName = ANIMATION_PATH,
+		class CScene* Scene = nullptr);
+	bool LoadSkeletonFullPath(const std::string& Name, const TCHAR* FullPath,
+		class CScene* Scene = nullptr);
+	bool LoadSkeletonMultibyte(const std::string& Name, const char* FileName,
+		const std::string& PathName = ANIMATION_PATH,
+		class CScene* Scene = nullptr);
+	bool LoadSkeletonFullPathMultibyte(const std::string& Name, const char* FullPath,
+		class CScene* Scene = nullptr);
+	CSkeleton* FindSkeleton(const std::string& Name);
 
 	DECLARE_SINGLE(CResourceManager)
 };

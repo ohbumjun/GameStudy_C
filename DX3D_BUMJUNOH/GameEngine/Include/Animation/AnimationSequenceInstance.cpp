@@ -8,11 +8,13 @@
 #include "../Resource/Shader/AnimationUpdateShader.h"
 #include "../Resource/Animation/Skeleton.h"
 #include "../Resource/Shader/StructuredBuffer.h"
+#include "../Device.h"
 
 CAnimationSequenceInstance::CAnimationSequenceInstance() :
 	m_Scene(nullptr),
 	m_Owner(nullptr),
 	m_PlayAnimation(true),
+	m_BoneDataBuffer(nullptr),
 	m_GlobalTime(0.f),
 	m_SequenceProgress(0.f),
 	m_ChangeTimeAcc(0.f),
@@ -41,7 +43,7 @@ CAnimationSequenceInstance::CAnimationSequenceInstance(const CAnimationSequenceI
 	if (Anim.m_BoneBuffer)
 		m_BoneBuffer = Anim.m_BoneBuffer->Clone();
 
-
+	m_Skeleton = Anim.m_Skeleton;
 
 	m_mapAnimation.clear();
 
@@ -63,10 +65,26 @@ CAnimationSequenceInstance::CAnimationSequenceInstance(const CAnimationSequenceI
 
 		m_mapAnimation.insert(std::make_pair(iter->first, Data));
 	}
+
+	// CopyResource 를 이용해서, 구조화 버퍼에 있는 것을 복사해서 넣어주는 개념이다.
+	// 자. 우리는 Shader 측에 넘겨준 m_vecBoneMatrix 정보를 cpu 쪽으로 가져와야 한다.
+	D3D11_BUFFER_DESC	Desc = {};
+
+	// 행렬 * Bone 개수. 
+	Desc.ByteWidth = sizeof(Matrix) * (unsigned int)m_Skeleton->GetBoneCount();
+	// Usage 는 CPU 에서 GPU 자원을 읽어온 후, 저장용. 이므로, Staging 처리를 한다.
+	Desc.Usage = D3D11_USAGE_STAGING;
+	// CPU 에서 읽기가 가능해야 한다.
+	Desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+
+	CDevice::GetInst()->GetDevice()->CreateBuffer(&Desc, nullptr, &m_BoneDataBuffer);
+
+
 }
 
 CAnimationSequenceInstance::~CAnimationSequenceInstance()
 {
+	SAFE_RELEASE(m_BoneDataBuffer);
 	SAFE_DELETE(m_OutputBuffer);
 	SAFE_DELETE(m_BoneBuffer);
 	SAFE_DELETE(m_AnimationUpdateCBuffer);
@@ -275,6 +293,14 @@ void CAnimationSequenceInstance::Start()
 
 	m_BoneBuffer->Init("OutputBone", sizeof(Matrix),
 		(unsigned int)m_Skeleton->GetBoneCount(), 1);
+
+	D3D11_BUFFER_DESC	Desc = {};
+
+	Desc.ByteWidth = sizeof(Matrix) * (unsigned int)m_Skeleton->GetBoneCount();
+	Desc.Usage = D3D11_USAGE_STAGING;
+	Desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+
+	CDevice::GetInst()->GetDevice()->CreateBuffer(&Desc, nullptr, &m_BoneDataBuffer);
 }
 
 bool CAnimationSequenceInstance::Init()
@@ -343,8 +369,9 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 
 		for (size_t i = 0; i < Size; ++i)
 		{
+			// FrameIndex : 시간에 맞춰서 Frame 을 구해준 요소이다.
 			if (!m_CurrentAnimation->m_vecNotify[i]->Call &&
-				m_CurrentAnimation->m_vecNotify[i]->Frame == m_CurrentAnimation->m_Frame)
+				m_CurrentAnimation->m_vecNotify[i]->Frame == FrameIndex)
 			{
 				m_CurrentAnimation->m_vecNotify[i]->Call = true;
 				m_CurrentAnimation->m_vecNotify[i]->Function();
@@ -399,6 +426,7 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 
 	m_Skeleton->ResetShader();
 
+	// OutputBuffer 에 연산을 위한 행렬 정보를 모두 넘겨주었다.
 	m_OutputBuffer->ResetShader();
 
 	if (Change)
@@ -413,39 +441,34 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 		m_ChangeTimeAcc = 0.f;
 		m_GlobalTime = 0.f;
 	}
+
+	// 구조화 버퍼에 있는 본 정보를 DataBuffer로 복사한다.
+	// 구조화 버퍼는, 처음에 Usage 를 CPU가 읽을 수 없는 Usage 로 세팅해서 넘겨주었기 때문에
+	// CPU 측에서 읽을 수 없다.
+	// 따라서, 중간 버퍼를 만들어서, 구조화 버퍼의 메모리 내용을 여기에다가 복사하고
+	// 해당 버퍼로 부터 CPU가 읽어서, m_vecBoneMatrix 에 읽은 내용을 세팅하는 것이다.
+	CDevice::GetInst()->GetContext()->CopyResource(m_BoneDataBuffer, m_BoneBuffer->GetBuffer());
+
+	D3D11_MAPPED_SUBRESOURCE	Map = {};
+
+	CDevice::GetInst()->GetContext()->Map(m_BoneDataBuffer, 0, D3D11_MAP_READ, 0, &Map);
+
+	memcpy(&m_vecBoneMatrix[0], Map.pData, sizeof(Matrix) * m_vecBoneMatrix.size());;
+
+	CDevice::GetInst()->GetContext()->Unmap(m_BoneDataBuffer, 0);
+	m_Skeleton->Update(DeltaTime, m_vecBoneMatrix, m_Owner->GetWorldMatrix());
 }
 
 void CAnimationSequenceInstance::SetShader()
 {
-	if (!m_CurrentAnimation)
-		return;
-
-	else if (m_CurrentAnimation->m_Sequence->GetFrameCount() == 0)
-		return;
-
-	Vector2	StartUV, EndUV;
-
-	Vector2	Start = m_CurrentAnimation->m_Sequence->GetFrameData(m_CurrentAnimation->m_Frame).Start;
-	Vector2	FrameSize = m_CurrentAnimation->m_Sequence->GetFrameData(m_CurrentAnimation->m_Frame).Size;
-
-	StartUV = Start /
-		Vector2((float)m_CurrentAnimation->m_Sequence->GetTexture()->GetWidth(), (float)m_CurrentAnimation->m_Sequence->GetTexture()->GetHeight());
-
-	EndUV = (Start + FrameSize) /
-		Vector2((float)m_CurrentAnimation->m_Sequence->GetTexture()->GetWidth(), (float)m_CurrentAnimation->m_Sequence->GetTexture()->GetHeight());
-
-	if (m_CBuffer)
-	{
-		m_CBuffer->SetAnimation2DType(m_CurrentAnimation->m_Sequence->GetTexture()->GetImageType());
-		m_CBuffer->SetStartUV(StartUV);
-		m_CBuffer->SetEndUV(EndUV);
-
-		m_CBuffer->UpdateCBuffer();
-	}
+	// 정점 셰이더에, 각 Bone 들의 변환 행렬 정보를 넘겨주어 Skinning 처리를 해줘야 한다.
+	// 쉽게 말해서, Bone읨 움직임을 따라서, 각 정점들도 이동할 수 있게 세팅해야 하는 것이다.
+	m_OutputBuffer->SetShader(106, (int)Buffer_Shader_Type::Vertex);
 }
 
 void CAnimationSequenceInstance::ResetShader()
 {
+	m_OutputBuffer->ResetShader(106, (int)Buffer_Shader_Type::Vertex);
 }
 
 CAnimationSequenceInstance* CAnimationSequenceInstance::Clone()
@@ -491,18 +514,18 @@ void CAnimationSequenceInstance::Load(FILE* File)
 		fread(&Length, sizeof(int), 1, File);
 		fread(AnimName, sizeof(char), Length, File);
 
-		CAnimationSequence2DData* Data = new CAnimationSequence2DData;
+		CAnimationSequenceData* Data = new CAnimationSequenceData;
 
 		Data->Load(File);
 
 		if (m_Scene)
 		{
-			Data->m_Sequence = m_Scene->GetResource()->FindAnimationSequence2D(Data->m_SequenceName);
+			Data->m_Sequence = m_Scene->GetResource()->FindAnimationSequence(Data->m_SequenceName);
 		}
 
 		else
 		{
-			Data->m_Sequence = CResourceManager::GetInst()->FindAnimationSequence2D(Data->m_SequenceName);
+			Data->m_Sequence = CResourceManager::GetInst()->FindAnimationSequence(Data->m_SequenceName);
 		}
 
 		m_mapAnimation.insert(std::make_pair(AnimName, Data));
@@ -519,11 +542,11 @@ void CAnimationSequenceInstance::Load(FILE* File)
 	fread(&m_PlayAnimation, sizeof(bool), 1, File);
 
 
-	if (m_Scene)
-		m_CBuffer = m_Scene->GetResource()->GetAnimation2DCBuffer();
+	//if (m_Scene)
+	//	m_CBuffer = m_Scene->GetResource()->GetAnimation2DCBuffer();
 }
 
-CAnimationSequence2DData* CAnimationSequenceInstance::FindAnimation(const std::string& Name)
+CAnimationSequenceData* CAnimationSequenceInstance::FindAnimation(const std::string& Name)
 {
 	auto	iter = m_mapAnimation.find(Name);
 

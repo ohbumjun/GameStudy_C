@@ -32,7 +32,11 @@ void CAnimationMeshComponent::SetMesh(const std::string& Name)
 {
 	m_Mesh = (CAnimationMesh*)m_Scene->GetResource()->FindMesh(Name);
 
+	// Mesh 를 Load 하는 과정에서 Skeleton 도 모두 세팅된다.
 	m_Skeleton = m_Mesh->GetSkeleton();
+
+	if (m_Animation)
+		m_Animation->SetSkeleton(m_Skeleton);
 
 	m_vecMaterialSlot.clear();
 
@@ -55,6 +59,9 @@ void CAnimationMeshComponent::SetMesh(CAnimationMesh* Mesh)
 	m_Mesh = Mesh;
 
 	m_Skeleton = m_Mesh->GetSkeleton();
+
+	if (m_Animation)
+		m_Animation->SetSkeleton(m_Skeleton);
 
 	m_vecMaterialSlot.clear();
 
@@ -209,7 +216,8 @@ void CAnimationMeshComponent::Start()
 bool CAnimationMeshComponent::Init()
 {
 	//m_Mesh = (CSpriteMesh*)m_Scene->GetResource()->FindMesh("SpriteMesh");
-	SetMaterial(m_Scene->GetResource()->FindMaterial("Color"));
+	// SetMaterial(m_Scene->GetResource()->FindMaterial("Color"));
+	AddMaterial(m_Scene->GetResource()->FindMaterial("Color"));
 
 	return true;
 }
@@ -236,6 +244,9 @@ void CAnimationMeshComponent::Render()
 	if (!m_Mesh)
 		return;
 
+	if (m_Animation)
+		m_Animation->SetShader();
+
 	size_t	Size = m_vecMaterialSlot.size();
 
 	for (size_t i = 0; i < Size; ++i)
@@ -246,6 +257,9 @@ void CAnimationMeshComponent::Render()
 
 		m_vecMaterialSlot[i]->Reset();
 	}
+
+	if (m_Animation)
+		m_Animation->ResetShader();
 }
 
 void CAnimationMeshComponent::PostRender()

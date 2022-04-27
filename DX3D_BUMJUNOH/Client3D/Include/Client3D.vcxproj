@@ -160,6 +160,7 @@
     <ClInclude Include="Client3D.h" />
     <ClInclude Include="ClientManager3D.h" />
     <ClInclude Include="Object\Player.h" />
+    <ClInclude Include="Object\PlayerAnimation.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene\MainSceneMode.h" />
   </ItemGroup>
@@ -173,6 +174,7 @@
     <ClCompile Include="ClientManager3D.cpp" />
     <ClCompile Include="main3D.cpp" />
     <ClCompile Include="Object\Player.cpp" />
+    <ClCompile Include="Object\PlayerAnimation.cpp" />
     <ClCompile Include="Scene\MainSceneMode.cpp" />
   </ItemGroup>
   <ItemGroup>
