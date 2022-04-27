@@ -39,7 +39,7 @@ void CMainSceneMode::LoadMesh()
 {
 	m_Scene->GetResource()->LoadMesh(Mesh_Type::Animation, "PlayerMesh",
 		TEXT("Player_Default.msh"));
-		// TEXT("Player_Default.fbx"));
+		// TEXT("Player_Default.msh"));
 
 	// Bone 정보 미리 세팅
 	m_Scene->GetResource()->LoadSkeleton("PlayerSkeleton", TEXT("Player_Default.bne"),

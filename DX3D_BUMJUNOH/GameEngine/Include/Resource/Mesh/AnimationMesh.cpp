@@ -150,7 +150,7 @@ bool CAnimationMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 		// .bne 파일과 .sqc 파일의 경우, 저장하는 파일 이름을 동일하게 세팅할 것이다.
 		char	strAnimFullPath[MAX_PATH] = {};
 		strcpy_s(strAnimFullPath, FullPath);
-		memcpy(&strAnimFullPath[iLength - 3], "bne", 3);
+		memcpy(&strAnimFullPath[iLength - 3], "sqc", 3);
 
 		pSequence->SaveFullPathMultibyte(strAnimFullPath);
 	}

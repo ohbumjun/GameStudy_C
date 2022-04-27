@@ -308,6 +308,8 @@ bool CAnimationSequence::LoadFullPathMultibyte(const char* pFullPath)
 	m_KeyFrameBuffer->UpdateBuffer(&vecFrameTrans[0],
 		vecFrameTrans.size());
 
+
+
 	fclose(pFile);
 
 	return true;

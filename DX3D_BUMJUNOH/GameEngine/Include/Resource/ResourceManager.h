@@ -178,6 +178,6 @@ public : // =================== Skeleton =====================
 	bool LoadSkeletonFullPathMultibyte(const std::string& Name, const char* FullPath,
 		class CScene* Scene = nullptr);
 	CSkeleton* FindSkeleton(const std::string& Name);
-
+	void ReleaseSkeleton(const std::string& Name);
 	DECLARE_SINGLE(CResourceManager)
 };

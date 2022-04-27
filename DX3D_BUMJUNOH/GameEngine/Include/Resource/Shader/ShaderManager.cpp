@@ -13,6 +13,7 @@
 #include "ParticleRenderShader.h"
 #include "TileMapShader.h"
 #include "Standard3DShader.h"
+#include "AnimationUpdateShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -26,51 +27,30 @@ bool CShaderManager::Init()
 {
 	if (!CreateShader<CColorMeshShader>("ColorMeshShader"))
 		return false;
-
-
 	if (!CreateShader<CPosMeshShader>("PosMeshShader"))
 		return false;
-
-
 	if (!CreateShader<CMesh2DShader>("Mesh2DShader"))
 		return false;
-
-
 	if (!CreateShader<CColliderShader>("ColliderShader"))
 		return false;
-
-
 	if (!CreateShader<CColliderPixelShader>("ColliderPixelShader"))
 		return false;
-
-
 	if (!CreateShader<CWidgetShader>("WidgetShader"))
 		return false;
-
-
 	if (!CreateShader<CProgressBarShader>("ProgressBarShader"))
 		return false;
-
-
 	if (!CreateShader<CNumberShader>("NumberShader"))
 		return false;
-
-
 	if (!CreateShader<CParticleUpdateShader>("ParticleUpdateShader"))
 		return false;
-
-
 	if (!CreateShader<CParticleRenderShader>("ParticleRenderShader"))
 		return false;
-
-
 	if (!CreateShader<CTileMapShader>("TileMapShader"))
 		return false;
-
-
 	if (!CreateShader<CStandard3DShader>("Standard3DShader"))
 		return false;
-
+	if (!CreateShader<CAnimationUpdateShader>("AnimationUpdateShader"))
+		return false;
 
 
 

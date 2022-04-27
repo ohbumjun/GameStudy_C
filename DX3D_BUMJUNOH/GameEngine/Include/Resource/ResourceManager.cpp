@@ -512,3 +512,8 @@ CSkeleton* CResourceManager::FindSkeleton(const std::string& Name)
 {
 	return m_AnimationManager3D->FindSkeleton(Name);
 }
+
+void CResourceManager::ReleaseSkeleton(const std::string& Name)
+{
+	m_AnimationManager3D->ReleaseSkeleton(Name);
+}

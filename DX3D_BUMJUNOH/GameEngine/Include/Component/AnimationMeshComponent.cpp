@@ -229,6 +229,9 @@ bool CAnimationMeshComponent::Init()
 void CAnimationMeshComponent::Update(float DeltaTime)
 {
 	CSceneComponent::Update(DeltaTime);
+
+	if (m_Animation)
+		m_Animation->Update(DeltaTime);
 }
 
 void CAnimationMeshComponent::PostUpdate(float DeltaTime)

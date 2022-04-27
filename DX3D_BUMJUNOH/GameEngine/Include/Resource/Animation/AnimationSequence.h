@@ -23,7 +23,7 @@ struct BoneKeyFrame
 	std::vector<KeyFrame*>	vecKeyFrame;
 	int			iRefCount;
 
-	BoneKeyFrame()
+	BoneKeyFrame() :iRefCount(1)
 	{
 	}
 
