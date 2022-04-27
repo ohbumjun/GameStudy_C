@@ -26,6 +26,7 @@ CAnimationMeshComponent::CAnimationMeshComponent(const CAnimationMeshComponent& 
 
 CAnimationMeshComponent::~CAnimationMeshComponent()
 {
+	SAFE_DELETE(m_Animation);
 }
 
 void CAnimationMeshComponent::SetMesh(const std::string& Name)

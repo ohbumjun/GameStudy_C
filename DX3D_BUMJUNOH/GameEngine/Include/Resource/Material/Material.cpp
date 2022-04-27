@@ -483,6 +483,11 @@ void CMaterial::Load(FILE* File)
 	fread(&m_EmissiveTex, sizeof(bool), 1, File);
 	fread(&m_Bump, sizeof(bool), 1, File);
 
+	m_CBuffer->SetAnimation3D(m_Animation3D);
+	m_CBuffer->SetBump(m_Bump);
+	m_CBuffer->SetSpecularTex(m_SpecularTex);
+	m_CBuffer->SetEmissiveTex(m_EmissiveTex);
+	
 	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
 	{
 		bool	StateEnable = false;

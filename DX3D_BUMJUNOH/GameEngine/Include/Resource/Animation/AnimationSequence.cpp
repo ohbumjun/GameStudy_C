@@ -398,12 +398,17 @@ bool CAnimationSequence::CreateSequence(bool bLoop,
 		// 몇번째 Bone 의 Key Frame 정보인지 에 대한 Idx 
 		pBoneKeyFrame->iBoneIndex = pClip->vecBoneKeyFrame[i].iBoneIndex;
 
+		// m_vecKeyFrame ? -> 모든 Bone의 KeyFrame 정보 추가 --> Bone 개수만큼 지니고 있게 한다.
 		m_vecKeyFrame.push_back(pBoneKeyFrame);
 
 		// 아래부터 키프레임 정보를 저장한다.
-		// 해당 Bone 의 KeyFrame 정보들을 세팅해줄 것이다.
+		// 해당 Bone 의 KeyFrame 정보들을 세팅해줄 것이다. -> 당연히, 캐릭터 하나의 Full Animation 이 있을 때
+		// 캐릭터를 구성하는 모든 Bone 마다, Animation이 다 있을 것이다.
+		// 어떤 Bone 은 더 많은 Animation 이 있을 수 있다. 더 많이 움직이니까
+		// 혹은, 더 적은 Animation 의 Bone 이 있을 수 있다.더 적게 움직이니까 
 		pBoneKeyFrame->vecKeyFrame.reserve(pClip->vecBoneKeyFrame[i].vecKeyFrame.size());
 
+		// 해당 Bone 의 Animation 개수만큼 반복한다.
 		for (size_t j = 0; j < pClip->vecBoneKeyFrame[i].vecKeyFrame.size(); ++j)
 		{
 			KeyFrame* pKeyFrame = new KeyFrame;
@@ -445,6 +450,7 @@ bool CAnimationSequence::CreateSequence(bool bLoop,
 				tFrame.qRot = pKeyFrame->vRot;
 
 				// 일차원 배열 형태로, 모든 Bone의 모든 Frame 정보들을 저장할 것이다.
+				// i번째 Bone 의 j번째 Animation 정보를 의미할 것이다.
 				vecFrameTrans[i * m_FrameLength + j] = tFrame;
 			}
 
