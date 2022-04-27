@@ -36,7 +36,8 @@ public:	// =================== Mesh =====================
 		const std::string& PathName = MESH_PATH, class CScene* Scene = nullptr);
 	bool LoadMeshFullPathMultibyte(Mesh_Type Type, const std::string& Name,
 		const char* FullPath, class CScene* Scene = nullptr);
-
+	bool SetMeshSkeleton(const std::string& Name, const std::string& SkeletonName);
+	bool SetMeshSkeleton(const std::string& Name, class CSkeleton* Skeleton);
 	class CMesh* FindMesh(const std::string& Name);
 
 	void ReleaseMesh(const std::string& Name);
@@ -86,6 +87,7 @@ public:	// =================== Texture =====================
 	bool LoadTextureFullPath(const std::string& Name, const std::vector<TCHAR*>& vecFullPath);
 	class CTexture* FindTexture(const std::string& Name);
 	void ReleaseTexture(const std::string& Name);
+
 
 public:	// =================== Sequence2D =====================
 	bool CreateAnimationSequence2D(const std::string& Name, const std::string& TextureName,

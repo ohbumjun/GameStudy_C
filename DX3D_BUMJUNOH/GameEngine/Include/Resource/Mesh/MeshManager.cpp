@@ -217,3 +217,18 @@ void CMeshManager::ReleaseMesh(const std::string& Name)
 			m_mapMesh.erase(iter);
 	}
 }
+
+bool CMeshManager::SetMeshSkeleton(const std::string& Name, CSkeleton* Skeleton)
+{
+	CAnimationMesh* Mesh = (CAnimationMesh*)FindMesh(Name);
+
+	if (!Mesh)
+		return false;
+
+	else if (!Mesh->CheckType<CAnimationMesh>())
+		return false;
+
+	Mesh->SetSkeleton(Skeleton);
+
+	return true;
+}

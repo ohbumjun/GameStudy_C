@@ -211,6 +211,9 @@ void CAnimationMeshComponent::SetTexture(int MaterialIndex, int Index, int Regis
 void CAnimationMeshComponent::Start()
 {
 	CSceneComponent::Start();
+
+	if (m_Animation)
+		m_Animation->Start();
 }
 
 bool CAnimationMeshComponent::Init()

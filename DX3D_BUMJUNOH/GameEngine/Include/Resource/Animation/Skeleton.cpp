@@ -261,7 +261,7 @@ void CSkeleton::SetShader()
 		m_pOffsetMatrixBuffer->Init("OffsetMatrixBuffer", sizeof(Matrix),
 			(unsigned int)vecOffset.size(), 14, true, (int)Buffer_Shader_Type::Compute);
 
-		m_pOffsetMatrixBuffer->UpdateBuffer(&vecOffset[0], sizeof(Matrix) * (int)vecOffset.size());
+		m_pOffsetMatrixBuffer->UpdateBuffer(&vecOffset[0], (int)vecOffset.size());
 	}
 
 	m_pOffsetMatrixBuffer->SetShader();

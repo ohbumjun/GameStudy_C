@@ -160,6 +160,16 @@ bool CSceneResource::LoadMeshFullPathMultibyte(Mesh_Type Type, const std::string
 	return true;
 }
 
+bool CSceneResource::SetMeshSkeleton(const std::string& Name, const std::string& SkeletonName)
+{
+	return CResourceManager::GetInst()->SetMeshSkeleton(Name, SkeletonName);
+}
+
+bool CSceneResource::SetMeshSkeleton(const std::string& Name, CSkeleton* Skeleton)
+{
+	return CResourceManager::GetInst()->SetMeshSkeleton(Name, Skeleton);
+}
+
 CMesh* CSceneResource::FindMesh(const std::string& Name)
 {
 	auto	iter = m_mapMesh.find(Name);

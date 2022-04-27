@@ -36,7 +36,8 @@ public:	// =================== Mesh =====================
 		const std::string& PathName = MESH_PATH, class CScene* Scene = nullptr);
 	bool LoadMeshFullPathMultibyte(Mesh_Type Type, const std::string& Name,
 		const char* FullPath, class CScene* Scene = nullptr);
-
+	bool SetMeshSkeleton(const std::string& Name, const std::string& SkeletonName);
+	bool SetMeshSkeleton(const std::string& Name, class CSkeleton* Skeleton);
 	class CMesh* FindMesh(const std::string& Name);
 
 	void ReleaseMesh(const std::string& Name);
@@ -86,6 +87,7 @@ public:	// =================== Texture =====================
 	bool LoadTextureFullPath(const std::string& Name, const std::vector<TCHAR*>& vecFullPath);
 	class CTexture* FindTexture(const std::string& Name);
 	void ReleaseTexture(const std::string& Name);
+
 
 public:	// =================== Sequence2D =====================
 	bool CreateAnimationSequence2D(const std::string& Name, const std::string& TextureName,
@@ -144,7 +146,6 @@ public:	// =================== Font =====================
 	IDWriteFontCollection1* FindFontFile(const std::string& Name);
 	IDWriteTextFormat* FindFont(const std::string& Name);
 
-
 public:	// =================== Particle =====================
 	bool CreateParticle(const std::string& Name);
 	CParticle* FindParticle(const std::string& Name);
@@ -164,6 +165,19 @@ public:
 	bool LoadAnimationSequenceFullPathMultibyte(bool Loop, const std::string& Name, const char* FullPath, class CScene* Scene = nullptr);
 	CAnimationSequence* FindAnimationSequence(const std::string& Name);
 	void ReleaseAnimationSequence3D(const std::string& Name);
+
+public : // =================== Skeleton =====================
+	bool LoadSkeleton(const std::string& Name, const TCHAR* FileName,
+		const std::string& PathName = ANIMATION_PATH,
+		class CScene* Scene = nullptr);
+	bool LoadSkeletonFullPath(const std::string& Name, const TCHAR* FullPath,
+		class CScene* Scene = nullptr);
+	bool LoadSkeletonMultibyte(const std::string& Name, const char* FileName,
+		const std::string& PathName = ANIMATION_PATH,
+		class CScene* Scene = nullptr);
+	bool LoadSkeletonFullPathMultibyte(const std::string& Name, const char* FullPath,
+		class CScene* Scene = nullptr);
+	CSkeleton* FindSkeleton(const std::string& Name);
 
 	DECLARE_SINGLE(CResourceManager)
 };

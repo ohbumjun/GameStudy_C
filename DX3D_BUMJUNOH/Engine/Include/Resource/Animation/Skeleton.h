@@ -22,6 +22,7 @@ class CSkeleton :
     public CRef
 {
 	friend class CAnimationManager;
+	friend class CAnimationManager3D;
 	friend class CAnimationMesh;
 	friend class CAnimationSequence;
 	friend class CAnimation;
@@ -32,6 +33,7 @@ private:
 	~CSkeleton();
 
 private:
+	class CScene* m_Scene;
 	std::vector<Bone*>				m_vecBones;
 
 	// 구조화 버퍼를 사용한다 -->각 Bone 에 대한 Transformation Matrix --> Animation Matrix 정보를 매 Frame 마다

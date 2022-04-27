@@ -25,5 +25,7 @@ public:
 		const char* FullPath, class CScene* Scene = nullptr);
 	class CMesh* FindMesh(const std::string& Name);
 	void ReleaseMesh(const std::string& Name);
+
+	bool SetMeshSkeleton(const std::string& Name, class CSkeleton* Skeleton);
 };
 

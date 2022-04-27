@@ -44,7 +44,8 @@ public:	// =================== Mesh =====================
 		const std::string& PathName = MESH_PATH);
 	bool LoadMeshFullPathMultibyte(Mesh_Type Type, const std::string& Name,
 		const char* FullPath);
-
+	bool SetMeshSkeleton(const std::string& Name, const std::string& SkeletonName);
+	bool SetMeshSkeleton(const std::string& Name, class CSkeleton* Skeleton);
 	CMesh* FindMesh(const std::string& Name);
 
 
