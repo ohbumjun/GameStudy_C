@@ -98,8 +98,6 @@ bool CShaderManager::Init()
 	CreateConstantBuffer("LightCBuffer", sizeof(LightCBuffer), 5,
 		(int)Buffer_Shader_Type::Pixel);
 
-
-
 	CreateConstantBuffer("Animation2DCBuffer", sizeof(Animation2DCBuffer), 10,
 		(int)Buffer_Shader_Type::Graphic);
 

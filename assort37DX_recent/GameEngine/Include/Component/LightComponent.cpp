@@ -55,6 +55,7 @@ void CLightComponent::PostUpdate(float DeltaTime)
 
 	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
 
+	// 방향성 조명이 아니라면, 즉, 점 조명, Point 조명은, 조명의 위치.가 필요하다.
 	if (m_CBuffer->GetLightType() != Light_Type::Dir)
 	{
 		Vector3	Pos = GetWorldPos();
@@ -68,6 +69,8 @@ void CLightComponent::PostUpdate(float DeltaTime)
 			SetRelativeScale(m_CBuffer->GetLightDistance(), m_CBuffer->GetLightDistance(), m_CBuffer->GetLightDistance());
 	}
 
+	// 점 조명이 아니라면,
+	// 방향 벡터 정보가 필요하다.
 	if(m_CBuffer->GetLightType() != Light_Type::Point)
 	{
 		Vector3 Dir = GetWorldAxis(AXIS_Z);
