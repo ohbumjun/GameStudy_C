@@ -6,5 +6,5 @@
 struct LoadingMessage
 {
 	bool	Complete;
-	float	Percent;
+	float	Percent;//
 };
