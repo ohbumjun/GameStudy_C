@@ -8,3 +8,4 @@ struct LoadingMessage
 	bool	Complete;
 	float	Percent;////
 };
+// 
