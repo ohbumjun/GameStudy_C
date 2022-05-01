@@ -37,19 +37,18 @@ bool CMainSceneMode::Init()
 
 void CMainSceneMode::LoadMesh()
 {
-	/*
 	m_Scene->GetResource()->LoadMesh(Mesh_Type::Animation, "PlayerMesh",
-		TEXT("Player.msh"));
+		TEXT("Tank.fbx"));
 
 	m_Scene->GetResource()->LoadSkeleton("PlayerSkeleton",
-		TEXT("Jockey_crouchWalkW.bne"), MESH_PATH);
+		TEXT("Tank.bne"), MESH_PATH);
 
 	m_Scene->GetResource()->SetMeshSkeleton("PlayerMesh", "PlayerSkeleton");
 
 	m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerIdle",
-		TEXT("Jockey_crouchWalkW.sqc"), MESH_PATH);
-		*/
-	
+		TEXT("Tank.sqc"), MESH_PATH);
+
+	/*
 	m_Scene->GetResource()->LoadMesh(Mesh_Type::Animation, "PlayerMesh",
 		TEXT("Player_Default.msh"));
 
@@ -66,6 +65,7 @@ void CMainSceneMode::LoadMesh()
 
 	m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerWalk",
 		TEXT("PlayerWalk.sqc"), MESH_PATH);
+		*/
 }
 
 void CMainSceneMode::CreateMaterial()
