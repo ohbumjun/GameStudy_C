@@ -61,3 +61,9 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+
+./assort37DX_recent/Client2D/Bin
+./assort37DX_recent/Client3D/Bin
+./assort37DX_recent/Engine/Bin
+./assort37DX_recent/GameEngine/Bin
+./assort37DX_recent/Editor/Bin
