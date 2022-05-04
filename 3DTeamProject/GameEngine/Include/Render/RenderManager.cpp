@@ -128,6 +128,7 @@ bool CRenderManager::Init()
 
 	m_DepthDisable = m_RenderStateManager->FindRenderState("DepthDisable");
 	m_AlphaBlend = m_RenderStateManager->FindRenderState("AlphaBlend");
+	m_LightAccBlend = m_RenderStateManager->FindRenderState("LightAcc");
 
 	// 디퍼드 렌더링용 타겟 생성
 	Resolution RS = CDevice::GetInst()->GetResolution();
@@ -179,7 +180,36 @@ bool CRenderManager::Init()
 	GBufferTarget->SetDebugRender(true);
 	m_vecGBuffer.push_back(GBufferTarget);
 
+	// 조명 처리를 위해 4가지 조명 관련 색상이 필요하다
+	if (!CResourceManager::GetInst()->CreateTarget("LightDif", // Dif + Amb
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
 
+	if (!CResourceManager::GetInst()->CreateTarget("LightSpc",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	if (!CResourceManager::GetInst()->CreateTarget("LightEmv",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	CRenderTarget* LightTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("LightDif");
+	LightTarget->SetPos(Vector3(150.f, 0.f, 0.f));
+	LightTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	LightTarget->SetDebugRender(true);
+	m_vecLightBuffer.push_back(LightTarget);
+
+	LightTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("LightSpc");
+	LightTarget->SetPos(Vector3(150.f, 150.f, 0.f));
+	LightTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	LightTarget->SetDebugRender(true);
+	m_vecLightBuffer.push_back(LightTarget);
+
+	LightTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("LightEmv");
+	LightTarget->SetPos(Vector3(150.f, 300.f, 0.f));
+	LightTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	LightTarget->SetDebugRender(true);
+	m_vecLightBuffer.push_back(LightTarget);
 
 	return true;
 }
@@ -310,6 +340,62 @@ void CRenderManager::RenderGBuffer()
 	SAFE_RELEASE(PrevDepthTarget);
 
 	for (size_t i = 0; i < GBufferSize; ++i)
+	{
+		SAFE_RELEASE(vecPrevTarget[i]);
+	}
+}
+
+void CRenderManager::RenderLightAcc()
+{
+	std::vector<ID3D11RenderTargetView*> vecTarget;
+	std::vector<ID3D11RenderTargetView*> vecPrevTarget;
+	ID3D11DepthStencilView* PrevDepthTarget = nullptr;
+
+	size_t LightBufferSize = m_vecLightBuffer.size();
+
+	for (size_t i = 0; i < LightBufferSize; ++i)
+	{
+		m_vecLightBuffer[i]->ClearTarget();
+		vecTarget.push_back(m_vecLightBuffer[i]->GetTargetView());
+	}
+
+	// 현재 지정되어 있는 렌더타겟과 깊이타겟을 얻어온다.
+	CDevice::GetInst()->GetContext()->OMGetRenderTargets((unsigned int)LightBufferSize,
+		&vecPrevTarget[0], &PrevDepthTarget);
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)LightBufferSize,
+		&vecTarget[0], PrevDepthTarget);
+
+	// Light Acc Blend 를 적용하여 그려낼 것이다.
+	m_LightAccBlend->SetState();
+
+	m_DepthDisable->SetState();
+
+	// 먼저 만들어낸 기하 버퍼내의 Texture 정보들을 Shader 측에 넘겨준다.
+	m_vecGBuffer[0]->SetTargetShader(14);
+	m_vecGBuffer[1]->SetTargetShader(15);
+	m_vecGBuffer[2]->SetTargetShader(16);
+	m_vecGBuffer[3]->SetTargetShader(17);
+
+	// 이후, Light 을 그려낸다.
+	CSceneManager::GetInst()->GetScene()->GetLightManager()->Render();
+
+	// Reset
+	m_vecGBuffer[0]->ResetTargetShader(14);
+	m_vecGBuffer[1]->ResetTargetShader(15);
+	m_vecGBuffer[2]->ResetTargetShader(16);
+	m_vecGBuffer[3]->ResetTargetShader(17);
+
+	m_DepthDisable->ResetState();
+
+	m_LightAccBlend->ResetState();
+
+	// 원래의 Render Target 으로 되돌린다.
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)LightBufferSize,
+		&vecPrevTarget[0], PrevDepthTarget);
+
+	SAFE_RELEASE(PrevDepthTarget);
+	for (size_t i = 0; i < LightBufferSize; ++i)
 	{
 		SAFE_RELEASE(vecPrevTarget[i]);
 	}

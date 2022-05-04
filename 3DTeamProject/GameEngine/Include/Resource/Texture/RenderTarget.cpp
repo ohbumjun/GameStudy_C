@@ -102,3 +102,14 @@ void CRenderTarget::ResetTargetShader()
 	ID3D11ShaderResourceView* SRV = nullptr;
 	CDevice::GetInst()->GetContext()->PSSetShaderResources(0, 1, &SRV);
 }
+
+void CRenderTarget::SetTargetShader(int Register)
+{
+	CDevice::GetInst()->GetContext()->PSSetShaderResources(Register, 1, &m_vecTextureInfo[0]->SRV);
+}
+
+void CRenderTarget::ResetTargetShader(int Register)
+{
+	ID3D11ShaderResourceView* SRV = nullptr;
+	CDevice::GetInst()->GetContext()->PSSetShaderResources(Register, 1, &SRV);
+}
