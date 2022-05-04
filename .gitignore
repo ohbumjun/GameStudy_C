@@ -338,3 +338,8 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+./3DTeamProject/Client2D/Bin
+./3DTeamProject/Client3D/Bin
+./3DTeamProject/Editor/Bin
+./3DTeamProject/GameEngine/Bin
