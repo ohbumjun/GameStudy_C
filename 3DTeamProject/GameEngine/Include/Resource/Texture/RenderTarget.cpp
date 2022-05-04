@@ -77,7 +77,7 @@ void CRenderTarget::SetTarget(ID3D11DepthStencilView* DepthView)
 {
 	CDevice::GetInst()->GetContext()->OMGetRenderTargets(1, &m_PrevTargetView, &m_PrevDepthView);
 
-	ID3D11DepthStencilView* Depth = m_PrevDepthView; //
+	ID3D11DepthStencilView* Depth = m_PrevDepthView; ////
 
 	if (DepthView)
 		Depth = DepthView;
