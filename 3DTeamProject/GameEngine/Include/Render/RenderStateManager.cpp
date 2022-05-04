@@ -13,10 +13,20 @@ CRenderStateManager::~CRenderStateManager()
 
 bool CRenderStateManager::Init()
 {
+	// D3D11_RENDER_TARGET_BLEND_DESC 구조체 정보를 만들어서 추가한다.
 	AddBlendInfo("AlphaBlend");
 	CreateBlendState("AlphaBlend", true, false);
 
 	CreateDepthStencilState("DepthDisable", false, D3D11_DEPTH_WRITE_MASK_ZERO);
+	
+	// 원래는 일반적으로 SrcColor * Alpha + DestColor * (1 - Alpha ) 라는 식으로, 알파 블렌딩 효과를 적용한다.
+	// 즉, Src Color 는 현재 픽셀 셰이더에서 넘어온 픽셀 색상
+	// Dest Color 는 해당 픽셀 위치에서 Color Buffer 에 저장되어 있는 색상
+	// 그런데 조명 누적 버퍼, 즉, 여러개의 조명을 각 픽셀에 적용하여 얻은 색상 정보는
+	// 같은 픽셀 위치에 있는 그대로 누적해서 더해가야 한다.
+	// 따라서 SrcColor  + DestColor 와 같이. 색상 정보 그대로를 계속 누적해나가는 방식이다.
+	AddBlendInfo("LightAcc", true, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
+	CreateBlendState("LightAcc", true, false);
 
 	return true;
 }

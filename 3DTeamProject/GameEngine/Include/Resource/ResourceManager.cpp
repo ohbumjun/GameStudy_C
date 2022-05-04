@@ -88,7 +88,7 @@ void CResourceManager::RenderTarget()
 {
 	// Widget 용 Mesh 를 이용해서, RenderTarget 을 그려낼 것이다 (사각형)
 	CMesh* Mesh = m_MeshManager->FindMesh("WidgetMesh");
-	CShader* Shader = m_ShaderManager->FindShader("WidgetShader");
+	CShader* Shader = m_ShaderManager->FindShader("RenderTargetShader");
 
 	// 실제 그려내는 것은 Texture Manager 측에 위임한다.
 	m_TextureManager->RenderTarget(Mesh, Shader);

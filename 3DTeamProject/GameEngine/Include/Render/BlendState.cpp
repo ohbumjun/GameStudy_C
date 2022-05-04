@@ -40,6 +40,7 @@ bool CBlendState::CreateState(bool AlphaToCoverageEnable, bool IndependentBlendE
 
 	D3D11_BLEND_DESC	Desc = {};
 
+	// AlphaToCoverage 라는 기술을 Multi Sampling 기술로서 사용하여, 해당 Pixel 을 Render Target 에 그려내기
 	Desc.AlphaToCoverageEnable = AlphaToCoverageEnable;
 	Desc.IndependentBlendEnable = IndependentBlendEnable;
 
