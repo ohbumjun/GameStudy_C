@@ -238,6 +238,8 @@ void CRenderManager::Render()
 
 	RenderGBuffer();
 
+	RenderLightAcc();
+
 	/*
 	// 조명 정보를 Shader로 넘겨준다.
 	CSceneManager::GetInst()->GetScene()->GetLightManager()->SetShader();
