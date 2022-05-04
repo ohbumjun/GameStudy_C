@@ -95,7 +95,7 @@ void CTextureManager::RenderTarget(CMesh* Mesh, CShader* Shader)
 			Matrix matScale, matPos;
 
 			matScale.Scaling(Scale);
-			matPos.Translation(Pos);
+			matPos.Translation(Pos); //
 
 			// WVP 를 만들어내기 위해 Camera 로부터 투영행렬 정보를 가져온다.
 			// UI 처럼, 직교 투영을 그려낼 것이므로, View 변환은 필요없다. 카메라 위치에 관계없이
