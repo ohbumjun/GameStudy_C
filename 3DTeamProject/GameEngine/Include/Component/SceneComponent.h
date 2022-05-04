@@ -21,6 +21,10 @@ protected:
 	std::string		m_LayerName;
 
 public:
+	CTransform* GetTransform() const
+	{
+		return m_Transform;
+	}
 	std::string GetLayerName()	const
 	{
 		return m_LayerName;

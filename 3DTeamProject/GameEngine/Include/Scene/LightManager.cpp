@@ -2,6 +2,7 @@
 #include "LightManager.h"
 #include "Scene.h"
 #include "../GameObject/GameObject.h"
+#include "../Device.h"
 
 CLightManager::CLightManager()
 {
@@ -62,10 +63,10 @@ void CLightManager::Init()
 	m_GlobalLightComponent->SetLightType(Light_Type::Dir);
 	 
 	// 2) 점광
-	m_GlobalLightComponent->SetRelativePos(0.f, 1.f, -2.f);
-	m_GlobalLightComponent->SetLightType(Light_Type::Point);
-	m_GlobalLightComponent->SetAtt3(0.02f);
-	m_GlobalLightComponent->SetDistance(100.f);
+	// m_GlobalLightComponent->SetRelativePos(0.f, 1.f, -2.f);
+	// m_GlobalLightComponent->SetLightType(Light_Type::Point);
+	// m_GlobalLightComponent->SetAtt3(0.02f);
+	// m_GlobalLightComponent->SetDistance(100.f);
 
 	// 3) Spot Light
 	// m_GlobalLightComponent->SetRelativePos(0.f, 4.f, -5.f);
@@ -135,4 +136,39 @@ void CLightManager::Render()
 	// 이를 Null Buffer 라고 한다.
 
 	CShader* Shader = m_Scene->GetResource()->FindShader("LightAccShader");
+
+	// Light.fx 셰이더 파일을 컴파일해서 얻는 Shader 객체를 넘겨준다.
+	Shader->SetShader();
+
+	auto iter = m_LightList.begin();
+	auto iterEnd = m_LightList.end();
+
+	bool SendTransform = false;
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if (!(*iter)->IsEnable())
+			continue;
+
+		// Transform 정보는 딱 한번만 넘겨주면 된다.
+		// View 행렬로 돌아가게 하기 위해, 투영 행렬의 역행렬을 곱해줘야 하는데
+		// 이것은 Light Component가 모두 동일한 값을 지니고 있기 때문이다.
+		if (!SendTransform)
+		{
+			(*iter)->GetTransform()->SetTransform();
+			SendTransform = true;
+		}
+
+		// 각각의 Light Component가 들고 있는 Light 상수 버퍼 정보를 넘겨준다.
+		(*iter)->SetShader();
+
+		// Null Buffer 에 해당하는 Mesh 정보를 세팅해서 넘겨준다.
+		UINT Offset = 0;
+		CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, nullptr, &Offset);
+		CDevice::GetInst()->GetContext()->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+
+		// Idx 버퍼 사용 정보 없이, 4개의 정점을 그려낸다.
+		CDevice::GetInst()->GetContext()->Draw(4, 0);
+	}
 }

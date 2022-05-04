@@ -29,12 +29,16 @@ private:
 	class CStandard2DConstantBuffer* m_Standard2DCBuffer;
 	class CRenderState* m_DepthDisable;
 	class CRenderState* m_AlphaBlend;
+	class CRenderState* m_LightAccBlend;
 
 	// 인스턴싱용 구조화 버퍼를 만들어준다.
 	std::vector<class CStructuredBuffer*>	m_vecInstancingBuffer;
 
-	// GBuffer
+	// GBuffer --> Deferred Rendering
+	// 1번째 Pass : 전체 장면에 기하 버퍼를 채운다. (기하정보들이 들어간 Buffer, Texture)
 	std::vector<CSharedPtr<class CRenderTarget>>	m_vecGBuffer;
+	// 2번째 Pass : 각 빛마다, 하나의 렌더 대상 전체를 덮는, 사각형 하나를 렌더링한다.
+	std::vector<CSharedPtr<class CRenderTarget>>	m_vecLightBuffer;
 
 
 public:
@@ -59,6 +63,7 @@ public:
 
 private:
 	void RenderGBuffer();
+	void RenderLightAcc();
 
 	// Render State
 public:

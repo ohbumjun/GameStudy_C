@@ -271,7 +271,6 @@ void CRenderManager::Render()
 		}
 	}
 
-
 	// Widget 출력
 	m_DepthDisable->SetState();
 
@@ -354,6 +353,7 @@ void CRenderManager::RenderLightAcc()
 	ID3D11DepthStencilView* PrevDepthTarget = nullptr;
 
 	size_t LightBufferSize = m_vecLightBuffer.size();
+	vecPrevTarget.resize(LightBufferSize);
 
 	for (size_t i = 0; i < LightBufferSize; ++i)
 	{
@@ -371,6 +371,10 @@ void CRenderManager::RenderLightAcc()
 	// Light Acc Blend 를 적용하여 그려낼 것이다.
 	m_LightAccBlend->SetState();
 
+	// 깊이 버퍼를 비활성화해야 한다.
+	// 깊이 버퍼에 깊이값을 저장해두면
+	// 조명 누적 버퍼를 통해 기록된 값으로 인해
+	// 이후 그려낼 Particle 등의 정보등이 모두 씹혀서 안보니게 되기 때문이다.
 	m_DepthDisable->SetState();
 
 	// 먼저 만들어낸 기하 버퍼내의 Texture 정보들을 Shader 측에 넘겨준다.

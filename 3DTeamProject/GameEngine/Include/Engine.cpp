@@ -17,7 +17,7 @@ DEFINITION_SINGLE(CEngine)
 bool CEngine::m_Loop = true;
 
 CEngine::CEngine()	:
-	m_ClearColor{0.2f, 0.2f, 0.2f, 1.f},
+	m_ClearColor{0.0f, 0.0f, 0.0f, 1.f},
 	m_Timer(nullptr),
 	m_Start(false),
 	m_Play(true),

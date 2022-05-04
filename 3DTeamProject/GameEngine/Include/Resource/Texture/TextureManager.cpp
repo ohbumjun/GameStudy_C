@@ -107,6 +107,7 @@ void CTextureManager::RenderTarget(CMesh* Mesh, CShader* Shader)
 			matWVP.Transpose();
 
 			// 해당 Render Target 이 지니고 있는 Shader Resource View 정보를 Shader 로 넘긴다
+			// 10번 레지스터로 Texture2DMS 리소스를 세팅해준다.
 			Target->SetTargetShader();
 
 			m_CBuffer->SetWP(matWVP);

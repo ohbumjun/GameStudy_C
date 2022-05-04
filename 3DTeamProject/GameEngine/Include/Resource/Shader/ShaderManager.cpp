@@ -15,6 +15,7 @@
 #include "Standard3DShader.h"
 #include "AnimationUpdateShader.h"
 #include "RenderTargetShader.h"
+#include "LightAccShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -53,6 +54,8 @@ bool CShaderManager::Init()
 	if (!CreateShader<CAnimationUpdateShader>("AnimationUpdateShader"))
 		return false;
 	if (!CreateShader<CRenderTargetShader>("RenderTargetShader"))
+		return false;
+	if (!CreateShader<CLightAccShader>("LightAccShader"))
 		return false;
 
 	// =================== 상수버퍼 ===================

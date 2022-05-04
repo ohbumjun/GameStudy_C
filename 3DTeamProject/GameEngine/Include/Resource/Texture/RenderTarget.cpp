@@ -92,15 +92,16 @@ void CRenderTarget::ResetTarget()
 	SAFE_RELEASE(m_PrevDepthView);
 }
 
+// 10번 레지스터로 Texture2DMS 리소스를 세팅해준다.
 void CRenderTarget::SetTargetShader()
 {
-	CDevice::GetInst()->GetContext()->PSSetShaderResources(0, 1, &m_vecTextureInfo[0]->SRV);
+	CDevice::GetInst()->GetContext()->PSSetShaderResources(10, 1, &m_vecTextureInfo[0]->SRV);
 }
 
 void CRenderTarget::ResetTargetShader()
 {
 	ID3D11ShaderResourceView* SRV = nullptr;
-	CDevice::GetInst()->GetContext()->PSSetShaderResources(0, 1, &SRV);
+	CDevice::GetInst()->GetContext()->PSSetShaderResources(10, 1, &SRV);
 }
 
 void CRenderTarget::SetTargetShader(int Register)

@@ -31,5 +31,7 @@ public:
 	void PostUpdate(float DeltaTime);
 	void SetShader();
 	void Destroy();
+	void Render();
+
 };
 
