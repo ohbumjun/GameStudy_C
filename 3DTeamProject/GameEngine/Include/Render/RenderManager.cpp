@@ -211,6 +211,16 @@ bool CRenderManager::Init()
 	LightTarget->SetDebugRender(true);
 	m_vecLightBuffer.push_back(LightTarget);
 
+	// 최종 결과물을 담을 Render Target 만들기
+	if (!CResourceManager::GetInst()->CreateTarget("FinalScreen",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	CRenderTarget* FinalTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
+	FinalTarget->SetPos(Vector3(300.f, 0.f, 0.f));
+	FinalTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	FinalTarget->SetDebugRender(true);
+
 	return true;
 }
 
