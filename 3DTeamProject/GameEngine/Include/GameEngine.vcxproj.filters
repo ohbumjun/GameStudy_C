@@ -1034,9 +1034,6 @@
     <ClInclude Include="Render\RenderState.h">
       <Filter>06. Render\01. RenderState</Filter>
     </ClInclude>
-    <ClInclude Include="Render\RenderStateManager.h">
-      <Filter>06. Render\01. RenderState</Filter>
-    </ClInclude>
     <ClInclude Include="Collision\CollisionManager.h">
       <Filter>08. Collision</Filter>
     </ClInclude>
@@ -1132,6 +1129,9 @@
     </ClInclude>
     <ClInclude Include="GameObject\LightObj.h">
       <Filter>04. GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\RenderStateManager.h">
+      <Filter>06. Render\01. RenderState</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

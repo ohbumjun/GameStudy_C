@@ -114,9 +114,17 @@ void CLightManager::SetShader()
 
 void CLightManager::Destroy()
 {
-	m_LightList.clear();
 	m_GlobalLightComponent = nullptr;
 	m_GlobalLight = nullptr;
+
+	// 이를 통해, 모든 LightComponent 들이 Ref Count가 1에서 2가 된다.
+	std::list<CSharedPtr<CLightComponent>> List = m_LightList;
+
+	// 이를 통해 Ref Count가 2에서 다시 1이 된다.
+	m_LightList.clear(); 
+
+	// 그리고 , 여기를 빠져나가면서, 다시 m_LightList.clear(); 을 해주게 된다. (꼭 명시안해줘도)
+	// 이때 Ref count가 1에서 0으로 되면서, 최종 삭제
 }
 
 void CLightManager::Render()
