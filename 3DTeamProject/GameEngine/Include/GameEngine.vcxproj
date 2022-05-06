@@ -106,6 +106,8 @@
     <ClCompile Include="Resource\Shader\GlobalConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\GraphicShader.cpp" />
     <ClCompile Include="Resource\Shader\LightAccShader.cpp" />
+    <ClCompile Include="Resource\Shader\LightBlendRenderShader.cpp" />
+    <ClCompile Include="Resource\Shader\LightBlendShader.cpp" />
     <ClCompile Include="Resource\Shader\LightConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\MaterialConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\Mesh2DShader.cpp" />
@@ -251,6 +253,8 @@
     <ClInclude Include="Resource\Shader\GlobalConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\GraphicShader.h" />
     <ClInclude Include="Resource\Shader\LightAccShader.h" />
+    <ClInclude Include="Resource\Shader\LightBlendRenderShader.h" />
+    <ClInclude Include="Resource\Shader\LightBlendShader.h" />
     <ClInclude Include="Resource\Shader\LightConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\MaterialConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\Mesh2DShader.h" />

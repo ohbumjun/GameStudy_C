@@ -221,6 +221,9 @@ bool CRenderManager::Init()
 	FinalTarget->SetScale(Vector3(150.f, 150.f, 1.f));
 	FinalTarget->SetDebugRender(true);
 
+	// m_LightBlendShader;
+	// m_LightBlendRenderShader;
+
 	return true;
 }
 
