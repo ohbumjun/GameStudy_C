@@ -255,6 +255,8 @@ void CRenderManager::Render()
 
 	RenderLightBlend();
 
+	RenderLightBlendRender();
+
 	/*
 	// 조명 정보를 Shader로 넘겨준다.
 	CSceneManager::GetInst()->GetScene()->GetLightManager()->SetShader();
@@ -383,7 +385,7 @@ void CRenderManager::RenderLightAcc()
 	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)LightBufferSize,
 		&vecTarget[0], PrevDepthTarget);
 
-	// Light Acc Blend 를 적용하여 그려낼 것이다.
+	// Light Acc Blend 를 적용하여 그려낼 것이다. --> 조명들을 누적해서 더해줄 것이다.
 	m_LightAccBlend->SetState();
 
 	// 깊이 버퍼를 비활성화해야 한다.
@@ -459,6 +461,25 @@ void CRenderManager::RenderLightBlend()
 
 void CRenderManager::RenderLightBlendRender()
 {
+	CRenderTarget* FinalScreenTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
+
+	FinalScreenTarget->SetTargetShader(21);
+
+	m_LightBlendRenderShader->SetShader();
+
+	m_DepthDisable->SetState();
+
+	UINT Offset = 0;
+	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, nullptr, &Offset);
+	CDevice::GetInst()->GetContext()->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+
+	CDevice::GetInst()->GetContext()->Draw(4, 0);
+
+	m_DepthDisable->ResetState();
+
+	FinalScreenTarget->ResetTargetShader(21);
+
 }
 
 void CRenderManager::SetBlendFactor(const std::string& Name, float r, float g,

@@ -678,6 +678,9 @@
     <ClCompile Include="Resource\Shader\LightBlendShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\10. Light</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject\LightObj.cpp">
+      <Filter>04. GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1126,6 +1129,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Shader\LightBlendShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\10. Light</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\LightObj.h">
+      <Filter>04. GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
