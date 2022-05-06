@@ -66,6 +66,8 @@ public:
 private:
 	void RenderGBuffer();
 	void RenderLightAcc();
+	void RenderLightBlend();
+	void RenderLightBlendRender();
 
 	// Render State
 public:

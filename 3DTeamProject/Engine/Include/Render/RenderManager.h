@@ -40,6 +40,8 @@ private:
 	// 2번째 Pass : 각 빛마다, 하나의 렌더 대상 전체를 덮는, 사각형 하나를 렌더링한다.
 	std::vector<CSharedPtr<class CRenderTarget>>	m_vecLightBuffer;
 
+	CSharedPtr<class CShader> m_LightBlendShader;
+	CSharedPtr<class CShader> m_LightBlendRenderShader;
 
 public:
 	class CStandard2DConstantBuffer* GetStandard2DCBuffer()	const
@@ -64,6 +66,8 @@ public:
 private:
 	void RenderGBuffer();
 	void RenderLightAcc();
+	void RenderLightBlend();
+	void RenderLightBlendRender();
 
 	// Render State
 public:

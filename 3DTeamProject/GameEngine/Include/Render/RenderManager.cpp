@@ -221,8 +221,8 @@ bool CRenderManager::Init()
 	FinalTarget->SetScale(Vector3(150.f, 150.f, 1.f));
 	FinalTarget->SetDebugRender(true);
 
-	// m_LightBlendShader;
-	// m_LightBlendRenderShader;
+	m_LightBlendShader = CResourceManager::GetInst()->FindShader("LightBlendShader");
+	m_LightBlendRenderShader = CResourceManager::GetInst()->FindShader("LightBlendRenderShader");;
 
 	return true;
 }
@@ -252,6 +252,8 @@ void CRenderManager::Render()
 	RenderGBuffer();
 
 	RenderLightAcc();
+
+	RenderLightBlend();
 
 	/*
 	// 조명 정보를 Shader로 넘겨준다.
@@ -418,6 +420,45 @@ void CRenderManager::RenderLightAcc()
 	{
 		SAFE_RELEASE(vecPrevTarget[i]);
 	}
+}
+
+void CRenderManager::RenderLightBlend()
+{
+	CRenderTarget* FinalRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
+
+	FinalRenderTarget->ClearTarget();
+
+	// Null Buffer 를 이용하는 Render Target 을 세팅한다.
+	FinalRenderTarget->SetTarget(nullptr);
+
+	m_vecGBuffer[0]->SetTargetShader(14);
+	m_vecLightBuffer[0]->SetTargetShader(18);
+	m_vecLightBuffer[1]->SetTargetShader(19);
+	m_vecLightBuffer[2]->SetTargetShader(20);
+
+	m_LightBlendShader->SetShader();
+
+	m_DepthDisable->SetState();
+
+	UINT Offset = 0;
+	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, nullptr, &Offset);
+	CDevice::GetInst()->GetContext()->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+
+	CDevice::GetInst()->GetContext()->Draw(4, 0);
+
+	m_DepthDisable->ResetState();
+
+	m_vecGBuffer[0]->ResetTargetShader(14);
+	m_vecLightBuffer[0]->ResetTargetShader(18);
+	m_vecLightBuffer[1]->ResetTargetShader(19);
+	m_vecLightBuffer[2]->ResetTargetShader(20);
+
+	FinalRenderTarget->ResetTarget();
+}
+
+void CRenderManager::RenderLightBlendRender()
+{
 }
 
 void CRenderManager::SetBlendFactor(const std::string& Name, float r, float g,

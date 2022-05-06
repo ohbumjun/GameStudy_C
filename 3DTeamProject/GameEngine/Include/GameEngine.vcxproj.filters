@@ -672,11 +672,11 @@
     <ClCompile Include="Resource\Shader\LightAccShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\10. Light</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Shader\LightBlendShader.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Shader\LightBlendRenderShader.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>02. Resource\02. Shader\02. ShaderClass\10. Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\LightBlendShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\10. Light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1121,11 +1121,11 @@
     <ClInclude Include="Resource\Shader\LightAccShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\10. Light</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Shader\LightBlendShader.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\Shader\LightBlendRenderShader.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>02. Resource\02. Shader\02. ShaderClass\10. Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\LightBlendShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\10. Light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
