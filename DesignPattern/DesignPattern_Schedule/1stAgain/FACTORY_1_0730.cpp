@@ -23,7 +23,7 @@ public:                                \
         return instance;               \
     }
 
-class Shape
+class Shape //
 {
 public:
     virtual void Draw() = 0;
