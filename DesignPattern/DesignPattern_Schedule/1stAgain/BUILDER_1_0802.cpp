@@ -22,7 +22,7 @@
 
 using namespace std;
 
-typedef string Character;
+typedef string Character; //
 
 struct IBuilder
 {
