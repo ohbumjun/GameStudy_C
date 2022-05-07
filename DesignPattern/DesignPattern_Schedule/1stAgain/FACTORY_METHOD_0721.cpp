@@ -24,7 +24,7 @@ struct IEdit
 //-------------------------------
 struct XPButton : public IButton
 {
-    void Draw() { cout << "XPButton Draw" << endl; }
+    void Draw() { cout << "XPButton Draw" << endl; } //
 };
 struct XPEdit : public IEdit
 {
