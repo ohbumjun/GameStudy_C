@@ -38,7 +38,7 @@ bool CMainSceneMode::Init()
 	((CLightComponent*)Light->GetRootComponent())->SetLightType(Light_Type::Point);
 	((CLightComponent*)Light->GetRootComponent())->SetDistance(10.f);
 	((CLightComponent*)Light->GetRootComponent())->SetAtt3(0.02f);
-	((CLightComponent*)Light->GetRootComponent())->SetColor(Vector4(1.f, 0.f, 0.f, 1.f));
+	((CLightComponent*)Light->GetRootComponent())->SetColor(Vector4(1.f, 1.f, 1.f, 1.f));
 		
 	CLightObj* Light2 = m_Scene->CreateGameObject<CLightObj>("Light2");
 
@@ -46,7 +46,7 @@ bool CMainSceneMode::Init()
 	((CLightComponent*)Light2->GetRootComponent())->SetLightType(Light_Type::Point);
 	((CLightComponent*)Light2->GetRootComponent())->SetDistance(10.f);
 	((CLightComponent*)Light2->GetRootComponent())->SetAtt3(0.02f);
-	((CLightComponent*)Light2->GetRootComponent())->SetColor(Vector4(0.f, 1.f, 0.f, 1.f));
+	((CLightComponent*)Light2->GetRootComponent())->SetColor(Vector4(1.f, 1.f, 0.f, 1.f));
 	
 	return true;
 }
@@ -66,6 +66,7 @@ void CMainSceneMode::LoadMesh()
 		TEXT("Jockey_crouchWalkE_NormalMap.sqc"), MESH_PATH);
 		*/
 
+	/*
 	m_Scene->GetResource()->LoadMesh(Mesh_Type::Animation, "PlayerMesh",
 		TEXT("Player_Default.msh"));
 
@@ -82,6 +83,24 @@ void CMainSceneMode::LoadMesh()
 
 	m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerWalk",
 		TEXT("PlayerWalk.sqc"), MESH_PATH);
+		*/
+
+	m_Scene->GetResource()->LoadMesh(Mesh_Type::Animation, "PlayerMesh",
+		TEXT("vladi_spell4.msh"));
+
+	m_Scene->GetResource()->LoadSkeleton("PlayerSkeleton",
+		TEXT("vladi_spell4.bne"), MESH_PATH);
+
+	m_Scene->GetResource()->SetMeshSkeleton("PlayerMesh", "PlayerSkeleton");
+
+	m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerIdle",
+		TEXT("vladi_spell4.sqc"), MESH_PATH);
+
+	m_Scene->GetResource()->LoadAnimationSequence(false, "PlayerAttack",
+		TEXT("Vladi_attack1.sqc"), MESH_PATH);
+
+	m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerWalk",
+		TEXT("vladi_spell4.sqc"), MESH_PATH);
 }
 
 void CMainSceneMode::CreateMaterial()

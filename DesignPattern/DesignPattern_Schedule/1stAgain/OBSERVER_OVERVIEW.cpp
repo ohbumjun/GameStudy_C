@@ -96,7 +96,7 @@ class WeatherStation : public IObservable
     int temperature = 0;
     void Add(IObserver *obs)
     {
-        this.observers.push_back(obs);
+        this.observers.push_back(obs); //
     }
     void Remove(IObserver obs)
     {

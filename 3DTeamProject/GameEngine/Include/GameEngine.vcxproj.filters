@@ -681,6 +681,12 @@
     <ClCompile Include="GameObject\LightObj.cpp">
       <Filter>04. GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="Render\RasterizerState.cpp">
+      <Filter>06. Render\01. RenderState</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject\SkyObject.cpp">
+      <Filter>04. GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1133,6 +1139,12 @@
     <ClInclude Include="Render\RenderStateManager.h">
       <Filter>06. Render\01. RenderState</Filter>
     </ClInclude>
+    <ClInclude Include="Render\RasterizerState.h">
+      <Filter>06. Render\01. RenderState</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject\SkyObject.h">
+      <Filter>04. GameObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\Shader\ColorMesh.fx">
@@ -1163,6 +1175,9 @@
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Light.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Sky.fx">
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
   </ItemGroup>

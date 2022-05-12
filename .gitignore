@@ -344,6 +344,9 @@ healthchecksdb
 ./3DTeamProject/Editor/Bin
 ./3DTeamProject/GameEngine/Bin
 
+*.svn
+./3DTeamProject/.svn
+
 ./3DTeamProject/Client2D/Include/Resource/Mesh/fbxsdk
 ./3DTeamProject/Client3D/Include/Resource/Mesh/fbxsdk
 ./3DTeamProject/Editor/Include/Resource/Mesh/fbxsdk

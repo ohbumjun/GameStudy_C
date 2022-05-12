@@ -1,81 +1,152 @@
 #include <iostream>
-#include <conio.h>
-#include <string>
+#include <cstdlib>
 
-using namespace std;
 
-// 전략 패턴 -> 행위를 클래스로 캡슐화 하여
-// 동적으로 행위를 자유롭게 바꿀 수 있게 해주는 패턴
+using std::cout;
+using std::endl;
 
-// "전략" 에 해당하는 Class 들의 추상 Interface 를 정의하고
-// 각각의 "Client" 가 해당 "전략"의 Class 들을 소유. 하게 하는 원리이다.
 
-struct IValidator
-{
-	virtual bool validate(string s, char c) = 0;
-	virtual bool iscomplete(string s) { return true; }
+struct Chunk {
+	/**
+	 * When a chunk is free, the `next` contains the
+	 * address of the next chunk in a list.
+	 *
+	 * When it's allocated, this space is used by
+	 * the user.
+
+	 즉, Allocation Pointer 가, 그 다음 Allocate 할
+	 공간을 가리키고 있게 한다.
+	 */
+	Chunk* next;
 };
 
-struct LimitDigitValidator : public IValidator
+/**
+ * The allocator class.
+ *
+ * Features:
+ *
+ *   - Parametrized by number of chunks per block
+ *   - Keeps track of the allocation pointer
+ *   - Bump-allocates chunks
+ *   - Requests a new larger block when needed
+ *
+ */
+
+class PoolAllocator {
+public:
+	PoolAllocator(size_t chunksPerBlock) : mChunksPerBlock(chunksPerBlock){}
+	void* allocate(size_t size);
+	void deallocate(void* ptr, size_t size);
+private :
+	/**
+   * Number of chunks per larger block.
+   */
+	size_t mChunksPerBlock;
+
+	// Allocation Pointer
+	Chunk* m_Alloc = nullptr;
+
+	// Allocate Larger Block (Pool) for Chunks
+	Chunk* allocateBlock(size_t size);
+
+};
+
+inline void* PoolAllocator::allocate(size_t size)
 {
-	int value;
+	// No Chunks Left In The Current Block, Or Any Block Exist Yet
+	// Allocate New One
+	if (m_Alloc = nullptr)
+		m_Alloc = allocateBlock(size);
 
-public :
-	LimitDigitValidator(int n) : value(n)
-	{
+	// 현재 Allocation Pointer 의 위치를 리턴한다
+	Chunk* freeChunk = m_Alloc;
 
-	}
-	virtual bool validate(string s, char c) override
+	// 다은 Chunk로 이동킨다.
+	// 만약, 더이상의 chunk가 남아있지 않다면, m_Alloc 은 nullptr 이 될 것이다.
+	// 그렇게 되면, 다음 요청 때는 새로운 Block 을 만들게 된다.
+	m_Alloc = m_Alloc->next;
+
+	return freeChunk;
+}
+
+// Chunk 를 Chunk 목록 앞에 넣는다.
+inline void PoolAllocator::deallocate(void* chunk, size_t size)
+{
+	// 메모리 해제된 녀석은 Allocation Pointer 의 앞에 놓이게 된다
+	reinterpret_cast<Chunk*>(chunk)->next = m_Alloc;
+
+	// 다시 Allocation Pointer 의 위치를 앞으로 옮긴다.
+	m_Alloc = reinterpret_cast<Chunk*>(chunk);
+}
+
+// Allocate New Block From OS
+// Returns Chunk Pointer Set To Beginning Of Block
+inline Chunk* PoolAllocator::allocateBlock(size_t chunkSize)
+{
+	// chunkSize --> ex) Attack Effect Class 크기 
+
+	size_t blockSize = chunkSize * mChunksPerBlock;
+
+	Chunk* blockBegin = reinterpret_cast<Chunk*>(malloc(blockSize));
+
+	// Once The Block Is Allocated, We Need To Chain All
+	// The Chunks In This Block
+	Chunk* chunk = blockBegin;
+
+	for (int i = 0; i < mChunksPerBlock - 1; ++i)
 	{
-		return s.size() < value && isdigit(c);
+		chunk->next = reinterpret_cast<Chunk*>((char*)(chunk)+chunkSize);
+		chunk = chunk->next;
 	}
-	virtual bool iscomplete(string s)
+
+	chunk->next = nullptr;
+
+	return blockBegin;
+}
+
+
+// new , delete 연산자를 오버로딩하여, Custom Allocator 를 활용할 것이다.
+struct Object {
+	// Object data -> 16byte 를 활용한다.
+	uint64_t data[2]; // 64 bit 크기의 data 2개 -> 8byte 의 data 크기 2개 --> 16byte
+
+	static PoolAllocator allocator;
+
+	static void* operator new (size_t size)
 	{
-		return s.size() == value;
+		return allocator.allocate(size);
+	}
+
+	static void operator delete (void* ptr, size_t size)
+	{
+		return allocator.deallocate(ptr, size);
 	}
 };
 
-struct LineEdit
-{
-	string data;
-	IValidator* pValidator;
-public :
-	LineEdit() : pValidator(0){}
-	void setValidator(IValidator* Validator) { pValidator = Validator; }
-	string getData()
-	{
-		data.clear();
-
-		while (1)
-		{
-			char c = _getch();
-
-			if (pValidator == 0 || pValidator->iscomplete(data))
-				break;
-			if (pValidator == 0 || pValidator->validate(data, c))
-			{
-				data.push_back(c);
-				cout << c;
-			}
-		}
-		cout << endl;
-		return data;
-	}
-};
-
+PoolAllocator Object::allocator{ 8 };
 
 int main()
 {
-	LineEdit edit;
+	// Allocate 10 pointers to our "Object" Instances
+	constexpr int arryaSize = 10;
 
-	LimitDigitValidator v(5);
+	Object* objects[arryaSize];
 
-	edit.setValidator(&v);
+	// Two `uint64_t`, 16 bytes.
+	cout << "size(Object) = " << sizeof(Object) << endl << endl;
 
-	while (1)
+	for (int i = 0; i < arryaSize; ++i)
 	{
-		string s = edit.getData();
-		cout << "s : " << s << endl;
+		// 맨 처음 : new Object() --> Object 크기의,  8개 Chunk 를 가진 Block 하나를 만들어내는 것이다.
+		// 이후, new Object() 마다 다음 위치의 주소값을 가리키게 하고 -> 그곳의 메모리를 사용한다.
+		objects[i] = new Object();
+		cout << "new [" << i << "] = " << objects[i] << endl;
+	}
+
+	for (int i = arryaSize - 1; i >= 0; --i)
+	{
+		cout << "delete [" << i << "] = " << objects[i] << endl;
+		delete objects[i];
 	}
 
 	return 0;

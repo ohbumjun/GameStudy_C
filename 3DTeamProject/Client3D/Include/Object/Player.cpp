@@ -41,6 +41,7 @@ bool CPlayer::Init()
 	m_Animation = (CPlayerAnimation*)m_Mesh->GetAnimationInstance();
 
 	m_Mesh->SetRelativeScale(0.05f, 0.05f, 0.05f);
+	// m_Mesh->AddRelativeRotationX(180.f);
 
 	m_Arm->SetOffset(0.f, 1.f, 0.f);
 	m_Arm->SetRelativeRotation(15.f, 0.f, 0.f);
@@ -52,8 +53,8 @@ bool CPlayer::Init()
 	CInput::GetInst()->SetKeyCallback<CPlayer>("MoveBack", KeyState_Push,
 		this, &CPlayer::MoveBack);
 
-	// CInput::GetInst()->SetKeyCallback<CPlayer>("Attack1", KeyState_Down,
-	// 	this, &CPlayer::Attack);
+	CInput::GetInst()->SetKeyCallback<CPlayer>("Attack1", KeyState_Down,
+		this, &CPlayer::Attack);
 
 
 	return true;

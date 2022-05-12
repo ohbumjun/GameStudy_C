@@ -49,6 +49,7 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameObject\GameObject.cpp" />
     <ClCompile Include="GameObject\LightObj.cpp" />
+    <ClCompile Include="GameObject\SkyObject.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="IMGUIButton.cpp" />
     <ClCompile Include="IMGUIComboBox.cpp" />
@@ -74,6 +75,7 @@
     <ClCompile Include="Ref.cpp" />
     <ClCompile Include="Render\BlendState.cpp" />
     <ClCompile Include="Render\DepthStencilState.cpp" />
+    <ClCompile Include="Render\RasterizerState.cpp" />
     <ClCompile Include="Render\RenderManager.cpp" />
     <ClCompile Include="Render\RenderState.cpp" />
     <ClCompile Include="Render\RenderStateManager.cpp" />
@@ -195,6 +197,7 @@
     <ClInclude Include="GameInfo.h" />
     <ClInclude Include="GameObject\GameObject.h" />
     <ClInclude Include="GameObject\LightObj.h" />
+    <ClInclude Include="GameObject\SkyObject.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="IMGUIButton.h" />
@@ -221,6 +224,7 @@
     <ClInclude Include="Ref.h" />
     <ClInclude Include="Render\BlendState.h" />
     <ClInclude Include="Render\DepthStencilState.h" />
+    <ClInclude Include="Render\RasterizerState.h" />
     <ClInclude Include="Render\RenderManager.h" />
     <ClInclude Include="Render\RenderState.h" />
     <ClInclude Include="Render\RenderStateManager.h" />
@@ -395,6 +399,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Sky.fx" />
     <FxCompile Include="..\Bin\Shader\Standard3D.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Standard3DVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
