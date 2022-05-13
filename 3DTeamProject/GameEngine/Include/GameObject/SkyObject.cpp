@@ -20,12 +20,19 @@ bool CSkyObject::Init()
 {
 	m_Mesh = CreateComponent<CStaticMeshComponent>("Mesh");
 
+	// Sky Mesh ¼¼ÆÃ
 	m_Mesh->SetMesh("SpherePos");
 
 	CMaterial* Material = m_Scene->GetResource()->FindMaterial("SkyMaterial");
 
 	Material->SetRenderState("FrontFaceCulling");
+	Material->SetRenderState("SkyDepth");
 
+	// Sky Shader + Sky Texture
+	m_Mesh->AddMaterial(Material);
+
+	m_Mesh->SetLayerName("Back");
+	
 	return true;
 }
 

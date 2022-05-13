@@ -48,7 +48,12 @@ public:	// =================== Mesh =====================
 	bool SetMeshSkeleton(const std::string& Name, class CSkeleton* Skeleton);
 
 	CMesh* FindMesh(const std::string& Name);
-
+	bool CreateMesh(Mesh_Type Type,
+		const std::string& Name, void* VtxData, int Size,
+		int Count, D3D11_USAGE Usage,
+		D3D11_PRIMITIVE_TOPOLOGY Primitive, void* IdxData,
+		int IdxSize, int IdxCount, D3D11_USAGE IdxUsage,
+		DXGI_FORMAT Fmt);
 
 public:	// =================== Shader =====================
 	template <typename T>

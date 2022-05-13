@@ -38,6 +38,11 @@ public:
 	}
 
 public:
+	CGameObject* GetSkyObject() const
+	{
+		return m_SkyObject;
+	}
+
 	CSceneResource* GetResource()	const
 	{
 		return m_Resource;

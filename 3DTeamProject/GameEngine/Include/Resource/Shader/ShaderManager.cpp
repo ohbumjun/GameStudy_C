@@ -19,6 +19,8 @@
 #include "LightBlendShader.h"
 #include "LightBlendRenderShader.h"
 #include "SkyShader.h"
+#include "LandScapeConstantBuffer.h"
+#include "LandScapeShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -66,6 +68,8 @@ bool CShaderManager::Init()
 		return false;
 	if (!CreateShader<CSkyShader>("SkyShader"))
 		return false;
+	if (!CreateShader<CLandScapeShader>("LandScapeShader"))
+		return false;
 
 	// =================== 상수버퍼 ===================
 	CreateConstantBuffer("TransformCBuffer", sizeof(TransformCBuffer), 0,
@@ -94,6 +98,8 @@ bool CShaderManager::Init()
 		(int)Buffer_Shader_Type::Graphic);
 	CreateConstantBuffer("AnimationCBuffer", sizeof(AnimationCBuffer), 11,
 		(int)Buffer_Shader_Type::Compute);
+	CreateConstantBuffer("LandScapeCBuffer", sizeof(LandScapeCBuffer), 11,
+		(int)Buffer_Shader_Type::Pixel);
 
 	return true;
 }

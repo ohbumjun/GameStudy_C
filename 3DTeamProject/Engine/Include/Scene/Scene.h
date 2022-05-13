@@ -27,6 +27,7 @@ private:
 	CLightManager* m_LightManager;
 	
 	std::list<CSharedPtr<CGameObject>>	m_ObjList;
+	CSharedPtr<CGameObject> m_SkyObject;
 	bool		m_Start;
 	bool		m_Change;
 
@@ -37,6 +38,11 @@ public:
 	}
 
 public:
+	CGameObject* GetSkyObject() const
+	{
+		return m_SkyObject;
+	}
+
 	CSceneResource* GetResource()	const
 	{
 		return m_Resource;

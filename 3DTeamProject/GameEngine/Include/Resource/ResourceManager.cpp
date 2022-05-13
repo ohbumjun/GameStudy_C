@@ -144,6 +144,16 @@ void CResourceManager::ReleaseMesh(const std::string& Name)
 	m_MeshManager->ReleaseMesh(Name);
 }
 
+bool CResourceManager::CreateMesh(Mesh_Type Type, const std::string& Name, 
+	void* VtxData, int Size, int Count, D3D11_USAGE Usage,
+	D3D11_PRIMITIVE_TOPOLOGY Primitive, void* IdxData, int IdxSize, 
+	int IdxCount, D3D11_USAGE IdxUsage, DXGI_FORMAT Fmt, class CScene* Scene)
+{
+	return m_MeshManager->CreateMesh(Type, Name, VtxData, Size, Count,
+		Usage, Primitive, IdxData, IdxSize, IdxCount, IdxUsage,
+		Fmt, Scene);
+}
+
 CShader* CResourceManager::FindShader(const std::string& Name)
 {
 	return m_ShaderManager->FindShader(Name);

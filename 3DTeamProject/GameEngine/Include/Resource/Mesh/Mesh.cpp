@@ -8,7 +8,7 @@
 
 #include "FBXLoader.h"
 
-CMesh::CMesh()	:
+CMesh::CMesh() :
 	m_Scene(nullptr)
 {
 }
@@ -64,6 +64,13 @@ bool CMesh::CreateMesh(void* VtxData, int Size, int Count, D3D11_USAGE Usage, D3
 	Container->VB.Data = new char[Size * Count];
 	memcpy(Container->VB.Data, VtxData, Size * Count);
 
+	MeshSlot* Slot = new MeshSlot;
+
+	m_vecMeshSlot.push_back(Slot);
+
+	Slot->VB = &Container->VB;
+	Slot->Primitive = Container->Primitive;
+
 	if (IdxData != nullptr)
 	{
 		Container->vecIB.resize(1);
@@ -78,14 +85,17 @@ bool CMesh::CreateMesh(void* VtxData, int Size, int Count, D3D11_USAGE Usage, D3
 
 		Container->vecIB[0].Data = new char[IdxSize * IdxCount];
 		memcpy(Container->vecIB[0].Data, IdxData, IdxSize * IdxCount);
+
+		Slot->IB = &Container->vecIB[0];
 	}
 
 	m_vecContainer.push_back(Container);
 
+
 	return true;
 }
 
-bool CMesh::LoadMesh(const TCHAR* FileName, 
+bool CMesh::LoadMesh(const TCHAR* FileName,
 	const std::string& PathName)
 {
 	const PathInfo* Path = CPathManager::GetInst()->FindPath(PathName);
@@ -139,7 +149,7 @@ bool CMesh::CreateBuffer(Buffer_Type Type, void* Data, int Size,
 	int Count, D3D11_USAGE Usage, ID3D11Buffer** Buffer)
 {
 	D3D11_BUFFER_DESC	Desc = {};
-	
+
 	Desc.ByteWidth = Size * Count;
 	Desc.Usage = Usage;
 
@@ -291,7 +301,7 @@ bool CMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 		}
 
 		// MeshÀÇ Vertex »ý¼º
-		if (!CreateBuffer(Buffer_Type ::Vertex,
+		if (!CreateBuffer(Buffer_Type::Vertex,
 			&vecVtx[0], sizeof(Vertex3D), (int)vecVtx.size(),
 			D3D11_USAGE_DEFAULT, &Container->VB.Buffer))
 			return false;
@@ -322,7 +332,7 @@ bool CMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 
 			Slot->VB = &Container->VB;
 			Slot->Primitive = Container->Primitive;
-			
+
 			IndexBuffer IdxBuffer = {};
 
 			Container->vecIB.push_back(IdxBuffer);
@@ -481,7 +491,7 @@ bool CMesh::SaveMesh(FILE* File)
 
 		fwrite(&Container->VB.Size, sizeof(int), 1, File);
 		fwrite(&Container->VB.Count, sizeof(int), 1, File);
-		fwrite(Container->VB.Data, Container->VB.Size, 
+		fwrite(Container->VB.Data, Container->VB.Size,
 			Container->VB.Count, File);
 
 		int	IdxCount = (int)Container->vecIB.size();

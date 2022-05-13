@@ -248,6 +248,11 @@ void CRenderManager::Render()
 			(*iter)->PrevRender();
 		}	
 	}
+	
+	// È¯°æ ¸Ê Ãâ·Â
+	CGameObject* SkyObj = CSceneManager::GetInst()->GetScene()->GetSkyObject();
+
+	SkyObj->Render();
 
 	RenderGBuffer();
 

@@ -189,6 +189,21 @@ CMesh* CSceneResource::FindMesh(const std::string& Name)
 	return iter->second;
 }
 
+bool CSceneResource::CreateMesh(Mesh_Type Type, const std::string& Name, void* VtxData, int Size, int Count, D3D11_USAGE Usage, D3D11_PRIMITIVE_TOPOLOGY Primitive, void* IdxData, int IdxSize, int IdxCount, D3D11_USAGE IdxUsage, DXGI_FORMAT Fmt)
+{
+	if (FindMesh(Name))
+		return true;
+
+	if (!CResourceManager::GetInst()->CreateMesh(Type, Name, VtxData, Size, Count,
+		Usage, Primitive, IdxData, IdxSize, IdxCount, IdxUsage,
+		Fmt, m_Scene))
+		return false;
+
+	m_mapMesh.insert(std::make_pair(Name, CResourceManager::GetInst()->FindMesh(Name)));
+
+	return true;
+}
+
 CShader* CSceneResource::FindShader(const std::string& Name)
 {
 	auto	iter = m_mapShader.find(Name);

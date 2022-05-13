@@ -105,7 +105,126 @@ void CMainSceneMode::LoadMesh()
 
 void CMainSceneMode::CreateMaterial()
 {
-	
+	// Land Scape Material 을 세팅한다.
+	m_Scene->GetResource()->CreateMaterial<CMaterial>("LandScape");
+
+	CMaterial* Material = m_Scene->GetResource()->FindMaterial("LandScape");
+
+	Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel,
+		"LandScapeSplat1Dif", TEXT("LandScape/ROCK_01+MOSS_COLOR_1.png")); // Diffuse 색상
+	Material->AddTexture(1, (int)Buffer_Shader_Type::Pixel,
+		"LandScapeSplat1Nrm", TEXT("LandScape/ROCK_01+MOSS_NRM.png")); // Normal Vector 정보
+	Material->AddTexture(2, (int)Buffer_Shader_Type::Pixel,
+		"LandScapeSplat1Spc", TEXT("LandScape/ROCK_01+MOSS_SPEC.png")); // Specular 색상 정보
+
+	std::vector<TCHAR*>	vecDiffuseFileName;
+	std::vector<TCHAR*>	vecNormalFileName;
+	std::vector<TCHAR*>	vecSpecularFileName;
+	std::vector<TCHAR*>	vecAlphaFileName;
+
+	TCHAR* FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/RoadAlpha1.bmp"));
+	vecAlphaFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/GrassFirstAlpha.bmp"));
+	vecAlphaFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/SandBaseAlpha.bmp"));
+	vecAlphaFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/WaterBaseAlpha.bmp"));
+	vecAlphaFileName.push_back(FileName);
+
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/BD_Terrain_Cave_01.dds"));
+	vecDiffuseFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/BD_Terrain_Cave_01_NRM.bmp"));
+	vecNormalFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/BD_Terrain_Cave_01_SPEC.bmp"));
+	vecSpecularFileName.push_back(FileName);
+
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/BD_Terrain_Cliff05.dds"));
+	vecDiffuseFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/BD_Terrain_Cliff05_NRM.bmp"));
+	vecNormalFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/BD_Terrain_Cliff05_SPEC.bmp"));
+	vecSpecularFileName.push_back(FileName);
+
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/Terrain_Cliff_15_Large.dds"));
+	vecDiffuseFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/Terrain_Cliff_15_Large_NRM.bmp"));
+	vecNormalFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/Terrain_Cliff_15_Large_SPEC.bmp"));
+	vecSpecularFileName.push_back(FileName);
+
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/Terrain_Pebbles_01.dds"));
+	vecDiffuseFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/Terrain_Pebbles_01_NRM.bmp"));
+	vecNormalFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/Terrain_Pebbles_01_SPEC.bmp"));
+	vecSpecularFileName.push_back(FileName);
+
+	Material->AddTexture(30, (int)Buffer_Shader_Type::Pixel,
+		"SplatDiffuse", vecDiffuseFileName);
+	Material->AddTexture(31, (int)Buffer_Shader_Type::Pixel,
+		"SplatNormal", vecNormalFileName);
+	Material->AddTexture(32, (int)Buffer_Shader_Type::Pixel,
+		"SplatSpecular", vecSpecularFileName);
+	Material->AddTexture(33, (int)Buffer_Shader_Type::Pixel,
+		"SplatAlpha", vecAlphaFileName);
+
+	SAFE_DELETE_ARRAY_VECLIST(vecDiffuseFileName);
+	SAFE_DELETE_ARRAY_VECLIST(vecNormalFileName);
+	SAFE_DELETE_ARRAY_VECLIST(vecSpecularFileName);
+	SAFE_DELETE_ARRAY_VECLIST(vecAlphaFileName);
+
+	Material->SetShader("LandScapeShader");
+
+	Material->EnableBump();
+	Material->EnableSpecularTex();
+	Material->SetSpecularPower(2.5f);
 }
 
 void CMainSceneMode::CreateAnimationSequence()
