@@ -1,0 +1,32 @@
+
+	vecPoints.resize(4);
+	vecPoints[0] = GetWorldPos();
+	vecPoints[1] = Vector3(GetWorldPos().x + 50.f, GetWorldPos().y, GetWorldPos().z + 150.f);
+	vecPoints[2] = Vector3(GetWorldPos().x + 90.f, GetWorldPos().y, GetWorldPos().z + 200.f);
+	vecPoints[3] = Vector3(GetWorldPos().x + 110.f, GetWorldPos().y, GetWorldPos().z + 0.f);
+
+	
+	for (int i = 0; i < 100; ++i)
+	{
+		float amt = i / 100.f;
+
+		Vector3 q0 = (vecPoints[1] - vecPoints[0]) * amt + vecPoints[0];
+		Vector3 q1 = (vecPoints[2] - vecPoints[1]) * amt + vecPoints[1];
+		Vector3 q2 = (vecPoints[3] - vecPoints[2]) * amt + vecPoints[2];
+
+		Vector3 r1 = q1 - q0;
+
+		Vector3 NewPos = q0 + (r1 * amt);
+
+		stackMoveTargetPoint.push(NewPos);
+
+		// SetWorldPos(NewPos);
+
+		vecPoints[0] = q0;
+		vecPoints[1] = q1;
+		vecPoints[2] = q2;
+	}
+
+	TargetPos = GetWorldPos();
+
+    // 즉, 계속 선형 보간을 해서 이동할 정점을 골라나가는 것이다
