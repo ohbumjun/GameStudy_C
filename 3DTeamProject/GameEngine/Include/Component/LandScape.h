@@ -40,8 +40,8 @@ public:
 	void SetDetailLevel(float Level);
 	void SetSplatCount(int Count);
 
-public:
-
+private:
+	float GetHeight(const Vector3& Pos);
 public:
 	virtual void Start();
 	virtual bool Init();

@@ -265,6 +265,42 @@ void CLandScape::SetSplatCount(int Count)
 {
 }
 
+float CLandScape::GetHeight(const Vector3& Pos)
+{
+	Vector3 Convert = (Pos - GetWorldPos()) / GetWorldScale();
+
+	// Z 좌표 역을 계산
+	// LandScape 은 좌표가 왼쪽 상단부터 x,z가 0으로 시작하기 때문이다.
+	Convert.z = m_CountZ - 1 - Convert.z;
+
+	int IndexX = (int)Convert.x;
+	int IndexZ = (int)Convert.z;
+
+	// 왜 X는 - 1 을 안해주고, Z만 해주는 것일까 ?
+	if (IndexX < 0 || IndexX >= m_CountX || IndexZ < 0 || IndexZ >= m_CountZ - 1)
+		return Pos.y;
+
+	int Index = IndexZ * m_CountX + IndexX;
+
+	float RatioX = Convert.x - IndexX;
+	float RatioZ = Convert.z - IndexZ;
+
+	// 왼상, 오상, 왼하, 오하
+	float Y[4] =
+	{
+		m_vecPos[Index].y,
+		m_vecPos[Index + 1].y,
+		m_vecPos[Index + m_CountX].y,
+		m_vecPos[Index + m_CountX + 1].y,
+	};
+
+	// 우상단 삼각형
+	if (RatioX > RatioZ)
+		return Y[0] + (Y[1] - Y[0]) * RatioX + (Y[3] - Y[1])
+
+		return Y[0] + (Y[1] - Y[0] * RatioX) + (Y[2] - Y[0]);
+}
+
 void CLandScape::Start()
 {
 }

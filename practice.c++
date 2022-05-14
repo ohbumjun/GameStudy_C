@@ -238,8 +238,62 @@ private :
             PNODE Parent = MaxNode->m_Parent;
 
             if (Parent->m_Left == MaxNode)
-                Parent->m_Left = LeftChild; //
+                Parent->m_Left = LeftChild; 
+            else 
+                Parent->m_Right = LeftChild;
+
+            if (LeftChild)
+                LeftChild->m_Parent = Parent;
+
+            PNODE Prev = MaxNode->m_Prev;
+            PNODE Next = MaxNode->m_Next;
+
+            Prev->m_Next = Next;
+            Next->m_Prev = Prev;
+
+            delete MaxNode;
+
+            --m_Size;
+
+            iterator result;
+            result.m_Node = Next;
+
+            return result;
         }
+
+        // 지울 노드의 오른쪽 노드만 존재할 경우
+        // 오른쪽 노드에서 가장 작은 노드를 찾아온다.
+        PNODE MinNode = FindMin(iter.m_Node->m_Right);
+
+        // 찾아준 노드의 key, value 값으로 변경해준다.
+        iter.m_Node->first = MinNode->first;
+        iter.m_Node->second = MinNode->second;
+
+        PNODE RightChild = MinNode->m_Right;
+        PNODE Parent = MinNode->m_Parent;
+
+        if (Parent->m_Left == MinNode)
+            Parent->m_Left = RightChild;
+        else 
+            Parent->m_Right = RightChild;
+
+        if (RightChild)
+            RightChild->m_Parent = Parent;
+
+        PNODE Prev = MinNode->m_Prev;
+        PNODE Next = MinNode->m_Next;
+
+        Prev->m_Next = Next;
+        Next->m_Prev = Prev;
+
+        delete MinNode;
+
+        --m_Size;
+
+        iterator result;
+        result.m_Node = Next;
+
+        return result;
     }
     iterator Find(const KEY& key) const{
         return Find(key, m_Root);
