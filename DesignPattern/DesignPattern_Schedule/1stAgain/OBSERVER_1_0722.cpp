@@ -115,7 +115,7 @@ int main()
 {
     Table table;
     IObserver *pieGraph = table.Add(new PieGraph);
-    IObserver *barGraph = table.Add(new BarGraph);
+    IObserver *barGraph = table.Add(new BarGraph); //
     table.Notify();
     table.Remove(pieGraph);
     table.Notify();
