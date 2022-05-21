@@ -106,7 +106,7 @@ int main()
         else if (cmd == 9)
         {
             for (int i = 0; i < v.size(); i++)
-                v[i]->Draw();
+                v[i]->Draw(); //
         }
     }
     return 0;
