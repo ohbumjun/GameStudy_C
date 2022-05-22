@@ -996,7 +996,7 @@
        <RmStringVariable NAME="Editing Shader" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC=""><RmTextDataBlock TYPE="TEXT"><![CDATA[
 Pixel Shader]]></RmTextDataBlock></RmStringVariable>
        <RmStringVariable NAME="Editing Pass" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC=""><RmTextDataBlock TYPE="TEXT"><![CDATA[
-Sepia]]></RmTextDataBlock></RmStringVariable>
+EdgeDetection]]></RmTextDataBlock></RmStringVariable>
        <RmIntegerVariable NAME="Y" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="0" MIN="-10" MAX="10" CLAMP="FALSE"/>
        <RmIntegerVariable NAME="Width" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="1007" MIN="-10" MAX="10" CLAMP="FALSE"/>
        <RmIntegerVariable NAME="Height" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="645" MIN="-10" MAX="10" CLAMP="FALSE"/>
@@ -1008,9 +1008,7 @@ Sepia]]></RmTextDataBlock></RmStringVariable>
       </RmRegistryBranch>
      </RmRegistryBranch>
      <RmRegistryBranch NAME="RmRenderStateBlockEditor" API="" XML_VERSION="RenderMonkey 1.71">
-      <RmRegistryBranch NAME="EditNodeRepository" API="" XML_VERSION="RenderMonkey 1.71">
-       <RmRegistryBranch NAME="Effect Workspace.ColorConversion.NoEffect.Render State" API="" XML_VERSION="RenderMonkey 1.71"/>
-      </RmRegistryBranch>
+      <RmRegistryBranch NAME="EditNodeRepository" API="" XML_VERSION="RenderMonkey 1.71"/>
       <RmRegistryBranch NAME="NodeRepository" API="" XML_VERSION="RenderMonkey 1.71">
        <RmRegistryBranch NAME="Effect Workspace.ColorConversion" API="" XML_VERSION="RenderMonkey 1.71">
         <RmIntegerVariable NAME="X" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="52" MIN="-10" MAX="10" CLAMP="FALSE"/>
@@ -1018,16 +1016,14 @@ Sepia]]></RmTextDataBlock></RmStringVariable>
         <RmIntegerVariable NAME="Width" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="1118" MIN="-10" MAX="10" CLAMP="FALSE"/>
         <RmIntegerVariable NAME="Height" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="370" MIN="-10" MAX="10" CLAMP="FALSE"/>
         <RmIntegerVariable NAME="ShowStatus" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="1" MIN="-10" MAX="10" CLAMP="FALSE"/>
-        <RmIntegerVariable NAME="Visible" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="1" MIN="-10" MAX="10" CLAMP="FALSE"/>
+        <RmIntegerVariable NAME="Visible" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="0" MIN="-10" MAX="10" CLAMP="FALSE"/>
         <RmIntegerVariable NAME="Minimized X" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="-1" MIN="-10" MAX="10" CLAMP="FALSE"/>
         <RmIntegerVariable NAME="Minimized Y" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="-1" MIN="-10" MAX="10" CLAMP="FALSE"/>
        </RmRegistryBranch>
       </RmRegistryBranch>
      </RmRegistryBranch>
      <RmRegistryBranch NAME="RmTextureObjectEditor" API="" XML_VERSION="RenderMonkey 1.71">
-      <RmRegistryBranch NAME="EditNodeRepository" API="" XML_VERSION="RenderMonkey 1.71">
-       <RmRegistryBranch NAME="Effect Workspace.ColorConversion.Sepia.SceneSampler" API="" XML_VERSION="RenderMonkey 1.71"/>
-      </RmRegistryBranch>
+      <RmRegistryBranch NAME="EditNodeRepository" API="" XML_VERSION="RenderMonkey 1.71"/>
       <RmRegistryBranch NAME="NodeRepository" API="" XML_VERSION="RenderMonkey 1.71">
        <RmRegistryBranch NAME="Effect Workspace.ColorConversion" API="" XML_VERSION="RenderMonkey 1.71">
         <RmIntegerVariable NAME="X" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="52" MIN="-10" MAX="10" CLAMP="FALSE"/>
@@ -1035,7 +1031,7 @@ Sepia]]></RmTextDataBlock></RmStringVariable>
         <RmIntegerVariable NAME="Width" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="1118" MIN="-10" MAX="10" CLAMP="FALSE"/>
         <RmIntegerVariable NAME="Height" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="370" MIN="-10" MAX="10" CLAMP="FALSE"/>
         <RmIntegerVariable NAME="ShowStatus" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="1" MIN="-10" MAX="10" CLAMP="FALSE"/>
-        <RmIntegerVariable NAME="Visible" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="1" MIN="-10" MAX="10" CLAMP="FALSE"/>
+        <RmIntegerVariable NAME="Visible" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="0" MIN="-10" MAX="10" CLAMP="FALSE"/>
         <RmIntegerVariable NAME="Minimized X" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="-1" MIN="-10" MAX="10" CLAMP="FALSE"/>
         <RmIntegerVariable NAME="Minimized Y" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="-1" MIN="-10" MAX="10" CLAMP="FALSE"/>
        </RmRegistryBranch>
@@ -1058,7 +1054,7 @@ Sepia]]></RmTextDataBlock></RmStringVariable>
     </RmRegistryBranch>
     <RmRegistryBranch NAME="WORKSPACE" API="" XML_VERSION="RenderMonkey 1.71">
      <RmStringVariable NAME="LAST_SAVE" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC=""><RmTextDataBlock TYPE="TEXT"><![CDATA[
-22/5/2022 11:23:52]]></RmTextDataBlock></RmStringVariable>
+22/5/2022 13:16:1]]></RmTextDataBlock></RmStringVariable>
      <RmStringVariable NAME="VERSION" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC=""><RmTextDataBlock TYPE="TEXT"><![CDATA[
 RenderMonkey Version 1.82 (build 322)]]></RmTextDataBlock></RmStringVariable>
      <RmStringVariable NAME="XML_VERSION" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC=""><RmTextDataBlock TYPE="TEXT"><![CDATA[
@@ -1096,7 +1092,7 @@ C:\Users\dhsys\Desktop\Coding\CodingStudyStuff\gameStudy\Codes\ShaderProjects\]]
    </RmStreamMap>
    <RmModelData NAME="Model" API="" FILE_NAME="..\..\..\..\..\..\..\..\Program Files (x86)\AMD\RenderMonkey 1.82\Examples\Media\Models\Teapot.3ds" ORIENTATION="0"/>
    <RmModelData NAME="ScreenAlignedQuad" API="" FILE_NAME="..\..\..\..\..\..\..\..\Program Files (x86)\AMD\RenderMonkey 1.82\Examples\Media\Models\ScreenAlignedQuad.3ds" ORIENTATION="0"/>
-   <RmPass NAME="NoEffect" API="D3D" PASS_INDEX="1" ENABLED="TRUE">
+   <RmPass NAME="EdgeDetection" API="D3D" PASS_INDEX="1" ENABLED="TRUE">
     <RmModelReference NAME="ScreenAlignedQuad" API=""/>
     <RmRenderStateBlock NAME="Render State" API="D3D">
      <RmState NAME="D3DRS_CULLMODE" API="D3D" STATE="22" VALUE="1" USAGE="RENDER_STATE"/>
@@ -1157,20 +1153,79 @@ struct PS_INPUT
 
 sampler2D SceneSampler;
 
-float4 ps_main (PS_INPUT Input) : COLOR
+// Kernels
+// - 좌우 외곽선 --> 인접한 3x3 픽셀이 모두 같다면, Lx 는 0 이 왼다. (즉, 외곽선이 없다면)
+// - 오른쪽 피셀들의 명암이 왼쪽에 비해 크다면, 양수값이 될 것이다
+// - 반대로 . 왼쪽 픽셀들의 명암이 , 오른쪽에 비해 크다면, 음수값이 될 것이다.
+// - 결과의 절대값으로 해당 픽셀이 외곽선인지 아닌지를 판별할 수 있다.
+// - 절대값이 크면, 외곽선, 작으면 외곽선 X
+float3x3 Kx = {-1,0,1,
+               -2,0,2,
+               -1,0,1};
+// - 같은 윈리 --> 상하 외곽선 판별
+float3x3 Ky = {-1,2,1,
+                0,0,0,
+               -1,-2,1}
+
+float2 gPixelOffset;
+
+
+float4 ps_main(PS_INPUT Input) : COLOR
 {   
-   float4 tex = tex2D(SceneSampler, Input.mUV);
+   float Lx = 0;
+   float Ly = 0;
    
-   return tex;
+   // For Loop -> Multiply Kx, Ky To Nearby Pixels
+   // - Comparing Nearby Pixels To Check Whether Current Pixel Is 외곽선
+   // - Difference In "명암" Has To Be Big In Order To Be 외곽선 
+   // - Will Accumulate Result In Lx,Ly Variable
+   for (int y = -1; y <= 1; ++y)
+   {
+      for (int x = -1; x <= 1; ++x)
+      {
+         // Dif Between Current Pixel ~ Nearby Pixel Position ?
+         // UV : 0 ~ 1
+         // -> U : (1 / ViewPort Width)
+         // -> V : (1 / ViewPort Height)
+         
+         // Have To Texture Height, Width Info From CPU
+         // - Will Temporarily Define These By "gPixelOffset" (Diff Pixel Pos)
+         // - Therefore, Do Not Have To Calculate (1 / ViewPort Width), (1 / ViewPort Height) 
+         // - (In Personal Project you Have To !!)
+         float2 offset = float2(x,y) * gPixelOffset;
+         float3 tex = tex2D(SceneSampler, Input.mUV + offset).rgb;
+         
+         // Edge Detect By Using Difference In "명암" <==> Changing Color Img Into Gray Scale Img
+         // "명암" 
+         float luminance = dot(tex, float3(0.2, 0.59, 0.11)); // Gray Scale
+         
+         Lx += luminance * Kx[y+1][x+1];
+         Ly += luminance * Ky[y+1][x+1];
+      }
+   }
+   
+   // Sum Lx, Ly Using Pitagoras Rule
+   // - 상하 / 좌우. 커널 계산 결과를 더해줄 것이다. 
+   float L = sqrt((Lx * Lx) + (Ly * Ly));
+   
+   // No Different In "명암" --> Black Color
+   // Yes Different In "명암" --> White Color
+   return float4(L.xxx, 1);
+   
+   return float4(1,1,1,1);
    
 }
 
 
 
-]]></RmShaderCode>
-     <RmSampler NAME="SceneSampler" API="" REGISTER="0"/>
-    </RmHLSLShader>
+]]></RmShaderCode></RmHLSLShader>
     <RmStreamMapReference NAME="Stream Mapping" API=""/>
+    <RmDynamicVariable NAME="gPixelOffset" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="ViewportDimensionsInverse" VARIABLE_TYPE="FLOAT" ROWS="2" COLUMNS="1" FIXED_SIZE="TRUE" MIN="-1.000000" MAX="1.000000" CLAMP="FALSE" NORMALIZE="FALSE">
+     <RmDynamicVariableValueContainer>
+      <RmDynamicVariableValue ROW_INDEX="0" COLUMN_INDEX="0" VALUE="0.001149"/>
+      <RmDynamicVariableValue ROW_INDEX="1" COLUMN_INDEX="0" VALUE="0.002141"/>
+     </RmDynamicVariableValueContainer>
+    </RmDynamicVariable>
     <RmTextureObject NAME="SceneSampler" API="D3D" STATE_INDEX="0" VERTEX_TEXTURE="FALSE">
      <RmTextureReference NAME="SceneTexture" API=""/>
     </RmTextureObject>
@@ -1372,7 +1427,7 @@ float4 ps_main(PS_INPUT Input) : COLOR
      <RmTextureReference NAME="DiffuseMap" API=""/>
     </RmTextureObject>
    </RmPass>
-   <RmPass NAME="GrayScale" API="D3D" PASS_INDEX="2" ENABLED="FALSE">
+   <RmPass NAME="Emboss" API="D3D" PASS_INDEX="2" ENABLED="FALSE">
     <RmModelReference NAME="ScreenAlignedQuad" API=""/>
     <RmRenderStateBlock NAME="Render State" API="D3D">
      <RmState NAME="D3DRS_CULLMODE" API="D3D" STATE="22" VALUE="1" USAGE="RENDER_STATE"/>
@@ -1433,76 +1488,104 @@ struct PS_INPUT
 
 sampler2D SceneSampler;
 
+// Kernels
+// Embossing Effect
+// - 약각기법
+// - 명암의 변화가 없는 곳은 중간회색
+// - 명암이 바뀜에 따라 튀어나오는 곳은, 밝은 회색이나 흰색
+// - 움푹 들어가는 곳은 어두운 회색이나 검정색 
+
+// ex) Window 버튼 
+// - 왼쪽 위에 하이라이트를 주고, 오른쪽 아래에 그림자를 드리우는 방식 
+// - 현재 픽셀 기준으로, 왼쪽 위의 픽셀 보다, 오른쪽 아래의 픽셀이 발다면, 하이라이트 
+// - 그와 반대로, 왼쪽 위 픽셀이 오른쪽 아래 픽셀보다 밝다면, 그림자를 드리워 줘야 한다.
+// - 아래와 같이 필터를 작성하게 되면, 왼쪽 위에 있는 픽셀들은 결과 값을 감소시키고, 오른쪽 아래에 있는
+// - 숫자들은, 결과값을 증가시키므로, 의도한 결과가 나온다.
+
+// - 만약, 해당 커널이 커버하는 픽셀들의 값이, 모두 같다면 0 이 될 것이다
+// - 이럴 때는 평평한 회색판을 보여주기로 했으니, 이 값에 0.5 를 더해줄 것이다. 
+// - 그러면, 컨벌루션 결과가 0 이상이면, 0.5 이상의 하이라이트가 등장할 것이고
+// - 0 이하라면, 0.5 이하의 그림자가 보일 것이다.
+float3x3 K = {-2,-1,0,
+               -1,0,1,
+               0,1,2};
+
+float2 gPixelOffset;
+
+
 float4 ps_main (PS_INPUT Input) : COLOR
 {   
-   float4 tex = tex2D(SceneSampler, Input.mUV);
+   float res = 0;
+   // For Loop -> Multiply Kx, Ky To Nearby Pixels
+   // - Comparing Nearby Pixels To Check Whether Current Pixel Is 외곽선
+   // - Difference In "명암" Has To Be Big In Order To Be 외곽선 
+   // - Will Accumulate Result In Lx,Ly Variable
+   for (int y = -1; y <= 1; ++y)
+   {
+      for (int x = -1; x <= 1; ++x)
+      {
+         // Dif Between Current Pixel ~ Nearby Pixel Position ?
+         // UV : 0 ~ 1
+         // -> U : (1 / ViewPort Width)
+         // -> V : (1 / ViewPort Height)
+         
+         // Have To Texture Height, Width Info From CPU
+         // - Will Temporarily Define These By "gPixelOffset" (Diff Pixel Pos)
+         // - Therefore, Do Not Have To Calculate (1 / ViewPort Width), (1 / ViewPort Height) 
+         // - (In Personal Project you Have To !!)
+         float2 offset = float2(x,y) * gPixelOffset;
+         float3 tex = tex2D(SceneSampler, Input.mUV + offset).rgb;
+         
+         // Edge Detect By Using Difference In "명암" <==> Changing Color Img Into Gray Scale Img
+         // "명암" 
+         float luminance = dot(tex, float3(0.2, 0.59, 0.11)); // Gray Scale
+         
+         res += luminance * K[y+1][x+1];
+      }
+   }
    
-   // In Order To Change Image Into Gray-Scale
-   // Change Color Of Pixel Loaded From SceneSampler
+   res += 0.5f;
+   return float4(res.xxx, 1);
    
-   // 1) Gray Scale -> All, r,g, b Value Same
-   // tex.rgb = (tex.r + tex.g + tex.b) / 3.f;
-   
-   // 2) Eye Detect RGB Contrast Differently 
-   // - Have To Reflect Difference 
-   tex.rgb = dot(tex.rgb , float3(0.3, 0.59, 0.11));
-   
-   return tex;
    
 }
 
 
 
-]]></RmShaderCode>
-     <RmSampler NAME="SceneSampler" API="" REGISTER="0"/>
-    </RmHLSLShader>
+]]></RmShaderCode></RmHLSLShader>
     <RmStreamMapReference NAME="Stream Mapping" API=""/>
+    <RmDynamicVariable NAME="gPixelOffset" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="ViewportDimensionsInverse" VARIABLE_TYPE="FLOAT" ROWS="2" COLUMNS="1" FIXED_SIZE="TRUE" MIN="-1.000000" MAX="1.000000" CLAMP="FALSE" NORMALIZE="FALSE">
+     <RmDynamicVariableValueContainer>
+      <RmDynamicVariableValue ROW_INDEX="0" COLUMN_INDEX="0" VALUE="0.001149"/>
+      <RmDynamicVariableValue ROW_INDEX="1" COLUMN_INDEX="0" VALUE="0.002141"/>
+     </RmDynamicVariableValueContainer>
+    </RmDynamicVariable>
     <RmTextureObject NAME="SceneSampler" API="D3D" STATE_INDEX="0" VERTEX_TEXTURE="FALSE">
      <RmTextureReference NAME="SceneTexture" API=""/>
     </RmTextureObject>
    </RmPass>
-   <RmPass NAME="Sepia" API="D3D" PASS_INDEX="3" ENABLED="TRUE">
-    <RmModelReference NAME="ScreenAlignedQuad" API=""/>
-    <RmRenderStateBlock NAME="Render State" API="D3D">
-     <RmState NAME="D3DRS_CULLMODE" API="D3D" STATE="22" VALUE="1" USAGE="RENDER_STATE"/>
-    </RmRenderStateBlock>
+   <RmPass NAME="Pass 3" API="D3D" PASS_INDEX="3" ENABLED="FALSE">
+    <RmModelReference NAME="Model" API=""/>
     <RmHLSLShader NAME="Vertex Shader" API="D3D" PIXEL_SHADER="FALSE" TARGET="vs_2_0" ENTRY_POINT="vs_main" COMPILER_FLAGS="0"><RmShaderCode TYPE="TEXT"><![CDATA[
-// Post Processing ?
-// - Bring Rendering Result Into 2D Plane
-// - After That, Apply Various Filters
-
-// How ?
-// - 1) Bringing Into 2D Plane => Use Render Target (Draw Scene Into Render Target)
-// - 2) After Drawing Scene Into Render Target => Apply Post Processing (Redrawing Scene With Render Target)
-//   - Render Screen Sized 2D Rectanble -> Render 2D Texture (Render Target) Onto This Rectangle
-//   - Pos Info Of Rectangle ? This Rectangle's Purpose Is To Fill Full Screen, 
-//     Therefore, Assume This Rectangle Is Already In Clip Space
-// - 3) Exact Vertex Space Of Rectangle ? => Clip Space X,Y (-1 ~ 1)
-// - 4) Apply Various Effect To Each Pixel After Loading Pixel Info Saved In Render Target
+float4x4 matViewProjection;
 
 struct VS_INPUT 
 {
-   float4 mPosition : POSITION0;
-   float2 mUV : TEXCOORD0;
+   float4 Position : POSITION0;
    
 };
 
 struct VS_OUTPUT 
 {
-   float4 mPosition : POSITION0;
-   float2 mUV : TEXCOORD0;
+   float4 Position : POSITION0;
+   
 };
 
 VS_OUTPUT vs_main( VS_INPUT Input )
 {
    VS_OUTPUT Output;
 
-   // Assume Vertexs Are Already In Clip Space
-   Output.mPosition = Input.mPosition;
-   Output.mUV = Input.mUV;
-   
-   // Additinoal Setting Needed
-   // Turn Off Back Face Culling
+   Output.Position = mul( Input.Position, matViewProjection );
    
    return( Output );
    
@@ -1510,43 +1593,20 @@ VS_OUTPUT vs_main( VS_INPUT Input )
 
 
 
-]]></RmShaderCode></RmHLSLShader>
+]]></RmShaderCode>
+     <RmShaderConstant NAME="matViewProjection" API="" REGISTER="0"/>
+    </RmHLSLShader>
     <RmHLSLShader NAME="Pixel Shader" API="D3D" PIXEL_SHADER="TRUE" TARGET="ps_2_0" ENTRY_POINT="ps_main" COMPILER_FLAGS="0"><RmShaderCode TYPE="TEXT"><![CDATA[
-
-// Just Load Render Target And Render On Screen
-
-struct PS_INPUT
-{
-   float2 mUV : TEXCOORD0;
-};
-
-sampler2D SceneSampler;
-
-float4 ps_main (PS_INPUT Input) : COLOR
+float4 ps_main() : COLOR0
 {   
-   float4 tex = tex2D(SceneSampler, Input.mUV);
-   
-   // Sepia Effect
-   float4 sepia;
-   sepia.a = tex.a;
-   
-   sepia.r = dot(tex.rgb, float3(0.393f, 0.769f, 0.189f));
-   sepia.g = dot(tex.rgb, float3(0.349f, 0.686f, 0.168f));
-   sepia.b = dot(tex.rgb, float3(0.272f, 0.534f, 0.131f));
-   
-   return sepia;
+   return( float4( 1.0f, 0.0f, 0.0f, 1.0f ) );
    
 }
 
 
 
-]]></RmShaderCode>
-     <RmSampler NAME="SceneSampler" API="" REGISTER="0"/>
-    </RmHLSLShader>
+]]></RmShaderCode></RmHLSLShader>
     <RmStreamMapReference NAME="Stream Mapping" API=""/>
-    <RmTextureObject NAME="SceneSampler" API="D3D" STATE_INDEX="0" VERTEX_TEXTURE="FALSE">
-     <RmTextureReference NAME="SceneTexture" API=""/>
-    </RmTextureObject>
    </RmPass>
   </RmDirectXEffect>
  </RmEffectWorkspace>
