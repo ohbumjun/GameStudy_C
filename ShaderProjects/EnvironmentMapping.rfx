@@ -1030,7 +1030,7 @@ Pass 0]]></RmTextDataBlock></RmStringVariable>
     </RmRegistryBranch>
     <RmRegistryBranch NAME="WORKSPACE" API="" XML_VERSION="RenderMonkey 1.71">
      <RmStringVariable NAME="LAST_SAVE" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC=""><RmTextDataBlock TYPE="TEXT"><![CDATA[
-21/5/2022 22:56:46]]></RmTextDataBlock></RmStringVariable>
+23/5/2022 12:51:11]]></RmTextDataBlock></RmStringVariable>
      <RmStringVariable NAME="VERSION" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC=""><RmTextDataBlock TYPE="TEXT"><![CDATA[
 RenderMonkey Version 1.82 (build 322)]]></RmTextDataBlock></RmStringVariable>
      <RmStringVariable NAME="XML_VERSION" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC=""><RmTextDataBlock TYPE="TEXT"><![CDATA[
@@ -1042,7 +1042,7 @@ C:\Users\dhsys\Desktop\Coding\CodingStudyStuff\gameStudy\Codes\ShaderProjects\]]
   </RmRegistryBranch>
   <RmDirectXEffect NAME="EnvironmentMapping" API="D3D" ACTIVE_CAMERA="Camera">
    <RmVectorVariable NAME="gWorldLightPosition" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE_0="500.000000" VALUE_1="500.000000" VALUE_2="-500.000000" VALUE_3="1.000000" MIN="-10.000000" MAX="10.000000" CLAMP="FALSE" NORMALIZE="FALSE"/>
-   <RmVectorVariable NAME="gWorldCameraPosition" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="ViewPosition" VALUE_0="0.000000" VALUE_1="0.000000" VALUE_2="-200.000000" VALUE_3="1.000000" MIN="-10.000000" MAX="10.000000" CLAMP="FALSE" NORMALIZE="FALSE"/>
+   <RmVectorVariable NAME="gWorldCameraPosition" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="ViewPosition" VALUE_0="-13.102147" VALUE_1="-49.890617" VALUE_2="612.309387" VALUE_3="1.000000" MIN="-10.000000" MAX="10.000000" CLAMP="FALSE" NORMALIZE="FALSE"/>
    <RmDynamicVariable NAME="gLightColor" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VARIABLE_TYPE="FLOAT" ROWS="3" COLUMNS="1" FIXED_SIZE="TRUE" MIN="-1.000000" MAX="1.000000" CLAMP="FALSE" NORMALIZE="FALSE">
     <RmDynamicVariableValueContainer>
      <RmDynamicVariableValue ROW_INDEX="0" COLUMN_INDEX="0" VALUE="0.700000"/>
@@ -1050,11 +1050,12 @@ C:\Users\dhsys\Desktop\Coding\CodingStudyStuff\gameStudy\Codes\ShaderProjects\]]
      <RmDynamicVariableValue ROW_INDEX="2" COLUMN_INDEX="0" VALUE="1.000000"/>
     </RmDynamicVariableValueContainer>
    </RmDynamicVariable>
-   <RmMatrixVariable NAME="gWorldViewProjectionMatrix" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="WorldViewProjection" VALUE_0="1.295906" VALUE_1="0.000000" VALUE_2="0.000000" VALUE_3="0.000000" VALUE_4="0.000000" VALUE_5="2.414214" VALUE_6="0.000000" VALUE_7="0.000000" VALUE_8="0.000000" VALUE_9="0.000000" VALUE_10="1.001001" VALUE_11="199.199203" VALUE_12="0.000000" VALUE_13="0.000000" VALUE_14="1.000000" VALUE_15="200.000000"/>
+   <RmMatrixVariable NAME="gWorldViewProjectionMatrix" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="WorldViewProjection" VALUE_0="-0.782806" VALUE_1="-1.027855" VALUE_2="-0.100499" VALUE_3="0.000000" VALUE_4="-1.923291" VALUE_5="1.457176" VALUE_6="0.077577" VALUE_7="-0.000921" VALUE_8="0.021344" VALUE_9="0.081273" VALUE_10="-0.997468" VALUE_11="614.092407" VALUE_12="0.021322" VALUE_13="0.081192" VALUE_14="-0.996470" VALUE_15="614.478271"/>
    <RmMatrixVariable NAME="gWorldMatrix" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE_0="1.000000" VALUE_1="0.000000" VALUE_2="0.000000" VALUE_3="0.000000" VALUE_4="0.000000" VALUE_5="1.000000" VALUE_6="0.000000" VALUE_7="0.000000" VALUE_8="0.000000" VALUE_9="0.000000" VALUE_10="1.000000" VALUE_11="0.000000" VALUE_12="0.000000" VALUE_13="0.000000" VALUE_14="0.000000" VALUE_15="1.000000"/>
-   <Rm2DTextureVariable NAME="NormalMap" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" FILE_NAME="..\..\..\..\..\..\..\..\Program Files (x86)\AMD\RenderMonkey 1.82\Examples\Media\Textures\FieldstoneBumpDOT3.tga" ORIGIN="0"/>
+   <RmFloatVariable NAME="gTime" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="Time0_X" VALUE="109.449020" MIN="-1.000000" MAX="1.000000" CLAMP="FALSE"/>
    <Rm2DTextureVariable NAME="SpecularMap" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" FILE_NAME="..\..\..\..\..\..\Downloads\ShaderPrimerKR-master\ShaderPrimerKR-master\05_DiffuseSpecularMapping\fieldstone_SM.tga" ORIGIN="0"/>
    <Rm2DTextureVariable NAME="DiffuseMap" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" FILE_NAME="..\..\..\..\..\..\..\..\Program Files (x86)\AMD\RenderMonkey 1.82\Examples\Media\Textures\Fieldstone.tga" ORIGIN="0"/>
+   <Rm2DTextureVariable NAME="NormalMap" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" FILE_NAME="..\..\..\..\..\..\..\..\Program Files (x86)\AMD\RenderMonkey 1.82\Examples\Media\Textures\FieldstoneBumpDOT3.tga" ORIGIN="0"/>
    <RmCubemapVariable NAME="EnvironmentMap" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" FILE_NAME="..\..\..\..\..\..\..\..\Program Files (x86)\AMD\RenderMonkey 1.82\Examples\Media\Textures\Snow.dds" ORIGIN="0"/>
    <RmStreamMap NAME="Stream Mapping" API="">
     <RmStream NAME="Stream" API="" STRIDE="56">
@@ -1065,7 +1066,7 @@ C:\Users\dhsys\Desktop\Coding\CodingStudyStuff\gameStudy\Codes\ShaderProjects\]]
      <RmStreamChannel NAME="Binormal_0" API="" DATA_SIZE="12" DATA_TYPE="2" REGISTER="0" USAGE="7" USAGE_INDEX="0" ATTRIBUTE_NAME="rm_Binormal"/>
     </RmStream>
    </RmStreamMap>
-   <RmModelData NAME="Model" API="" FILE_NAME="..\..\..\..\..\..\..\..\Program Files (x86)\AMD\RenderMonkey 1.82\Examples\Media\Models\Teapot.3ds" ORIENTATION="0"/>
+   <RmModelData NAME="Model" API="" FILE_NAME="..\..\..\..\..\..\..\..\Program Files (x86)\AMD\RenderMonkey 1.82\Examples\Media\Models\OceanSurface.3ds" ORIENTATION="1"/>
    <RmPass NAME="Pass 0" API="D3D" PASS_INDEX="0" ENABLED="TRUE">
     <RmModelReference NAME="Model" API=""/>
     <RmHLSLShader NAME="Vertex Shader" API="D3D" PIXEL_SHADER="FALSE" TARGET="vs_2_0" ENTRY_POINT="vs_main" COMPILER_FLAGS="0"><RmShaderCode TYPE="TEXT"><![CDATA[
@@ -1168,6 +1169,7 @@ sampler2D SpecularSampler;
 sampler2D NormalSampler;
 samplerCUBE EnvironmentSampler;
 
+float gTime;
 float3 gLightColor;
 
 // 난반사광 = 빛의 색상 * 난반사광의 양(빛의 강도) * Diffuse Map의 값 (기존 물질의 색상)
@@ -1176,13 +1178,20 @@ float3 gLightColor;
 float4 ps_main(PS_INPUT Input) : COLOR
 {
    // 0 ~ 1
-   float3 tangentNormal = tex2D(NormalSampler, Input.mUV).xyz;
+   float2 UV1 = Input.mUV + float2(gTime * 0.025f, 0.f);
+   float2 UV2 = Input.mUV + float2(gTime * 0.025f * -1.f, 0.f);
+   
+   float3 Normal1 = tex2D(NormalSampler, UV1).xyz;
+   float3 Normal2 = tex2D(NormalSampler, UV2).xyz;
+   
+   // float3 tangentNormal = tex2D(NormalSampler, Input.mUV).xyz;
+   float3 tangentNormal = (Normal1 + Normal2) * 0.5f;
    
    // -1 ~ 1
    tangentNormal = normalize(tangentNormal * 2 - 1);
    
    // Temporarily Edit Normal Value To Check Reflection Of Environment Map
-   tangentNormal = float3(0, 0, 1);
+   // tangentNormal = float3(0, 0, 1);
    
    // Transform Tangent Space Normal Vector Into World Space Normal Vector
    float3x3 TBNTransform = float3x3(normalize(Input.T), normalize(Input.B), normalize(Input.N));
@@ -1196,12 +1205,18 @@ float4 ps_main(PS_INPUT Input) : COLOR
    // World Space Light Dir
    float3 LightDir = normalize(Input.mLightDir);
    
-   // 
+   // Rim (Fresnel Effect)
+   float rim = saturate(dot(worldNormal, Input.mViewDir));
+   float rim1 = pow(1 - rim, 20);
+   
+   
    // Diffuse Intensity  (Both In World Space) --> From -1 ~ 1 To 0 ~ 1
    float3 diffuse = saturate(dot(worldNormal, -LightDir));
    // Reflect 1) Light Color 2) Material Color
    diffuse *= gLightColor * albedo.rgb;
-
+   
+   float Alpha = rim1;
+   
    // Camera -> Pos
    float3 viewDir = normalize(Input.mViewDir);
    
@@ -1236,10 +1251,12 @@ float4 ps_main(PS_INPUT Input) : COLOR
    
    // return float4(ambient + diffuse + specular + environment, 1); --> Just Add Environment Map Result 
    // return float4(ambient + diffuse + specular + environment * 0.5f, 1); --> Can Control Amount Of Env Map Freely
-   return float4(environment, 1);
+   // return float4(environment, Alpha);
 }
 ]]></RmShaderCode>
-     <RmSampler NAME="EnvironmentSampler" API="" REGISTER="0"/>
+     <RmSampler NAME="EnvironmentSampler" API="" REGISTER="1"/>
+     <RmSampler NAME="NormalSampler" API="" REGISTER="0"/>
+     <RmShaderConstant NAME="gTime" API="" REGISTER="0"/>
     </RmHLSLShader>
     <RmStreamMapReference NAME="Stream Mapping" API=""/>
     <RmTextureObject NAME="DiffuseSampler" API="D3D" STATE_INDEX="0" VERTEX_TEXTURE="FALSE">

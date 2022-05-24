@@ -1128,7 +1128,7 @@ float4 ps_main(PS_INPUT Input) : COLOR
    float3 diffuse = gLightColor * albedo.rgb *  saturate(Input.mDiffuse);
    
    float3 reflection = normalize(Input.mReflection);
-   float3 viewDir = normalize(Input.mViewDir); 
+   float3 viewDir = normalize(Input.mViewDir); //
    float3 specular = 0;
    if ( diffuse.x > 0 )
    {

@@ -996,7 +996,7 @@
        <RmStringVariable NAME="Editing Shader" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC=""><RmTextDataBlock TYPE="TEXT"><![CDATA[
 Pixel Shader]]></RmTextDataBlock></RmStringVariable>
        <RmStringVariable NAME="Editing Pass" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC=""><RmTextDataBlock TYPE="TEXT"><![CDATA[
-EdgeDetection]]></RmTextDataBlock></RmStringVariable>
+Emboss]]></RmTextDataBlock></RmStringVariable>
        <RmIntegerVariable NAME="Y" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="0" MIN="-10" MAX="10" CLAMP="FALSE"/>
        <RmIntegerVariable NAME="Width" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="1007" MIN="-10" MAX="10" CLAMP="FALSE"/>
        <RmIntegerVariable NAME="Height" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="" VALUE="645" MIN="-10" MAX="10" CLAMP="FALSE"/>
@@ -1054,7 +1054,7 @@ EdgeDetection]]></RmTextDataBlock></RmStringVariable>
     </RmRegistryBranch>
     <RmRegistryBranch NAME="WORKSPACE" API="" XML_VERSION="RenderMonkey 1.71">
      <RmStringVariable NAME="LAST_SAVE" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC=""><RmTextDataBlock TYPE="TEXT"><![CDATA[
-22/5/2022 13:16:1]]></RmTextDataBlock></RmStringVariable>
+22/5/2022 15:14:6]]></RmTextDataBlock></RmStringVariable>
      <RmStringVariable NAME="VERSION" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC=""><RmTextDataBlock TYPE="TEXT"><![CDATA[
 RenderMonkey Version 1.82 (build 322)]]></RmTextDataBlock></RmStringVariable>
      <RmStringVariable NAME="XML_VERSION" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC=""><RmTextDataBlock TYPE="TEXT"><![CDATA[
@@ -1092,7 +1092,7 @@ C:\Users\dhsys\Desktop\Coding\CodingStudyStuff\gameStudy\Codes\ShaderProjects\]]
    </RmStreamMap>
    <RmModelData NAME="Model" API="" FILE_NAME="..\..\..\..\..\..\..\..\Program Files (x86)\AMD\RenderMonkey 1.82\Examples\Media\Models\Teapot.3ds" ORIENTATION="0"/>
    <RmModelData NAME="ScreenAlignedQuad" API="" FILE_NAME="..\..\..\..\..\..\..\..\Program Files (x86)\AMD\RenderMonkey 1.82\Examples\Media\Models\ScreenAlignedQuad.3ds" ORIENTATION="0"/>
-   <RmPass NAME="EdgeDetection" API="D3D" PASS_INDEX="1" ENABLED="TRUE">
+   <RmPass NAME="EdgeDetection" API="D3D" PASS_INDEX="1" ENABLED="FALSE">
     <RmModelReference NAME="ScreenAlignedQuad" API=""/>
     <RmRenderStateBlock NAME="Render State" API="D3D">
      <RmState NAME="D3DRS_CULLMODE" API="D3D" STATE="22" VALUE="1" USAGE="RENDER_STATE"/>
@@ -1154,18 +1154,12 @@ struct PS_INPUT
 sampler2D SceneSampler;
 
 // Kernels
-// - 좌우 외곽선 --> 인접한 3x3 픽셀이 모두 같다면, Lx 는 0 이 왼다. (즉, 외곽선이 없다면)
-// - 오른쪽 피셀들의 명암이 왼쪽에 비해 크다면, 양수값이 될 것이다
-// - 반대로 . 왼쪽 픽셀들의 명암이 , 오른쪽에 비해 크다면, 음수값이 될 것이다.
-// - 결과의 절대값으로 해당 픽셀이 외곽선인지 아닌지를 판별할 수 있다.
-// - 절대값이 크면, 외곽선, 작으면 외곽선 X
 float3x3 Kx = {-1,0,1,
                -2,0,2,
                -1,0,1};
-// - 같은 윈리 --> 상하 외곽선 판별
 float3x3 Ky = {-1,2,1,
                 0,0,0,
-               -1,-2,1}
+               -1,-2,1};
 
 float2 gPixelOffset;
 
@@ -1195,8 +1189,7 @@ float4 ps_main(PS_INPUT Input) : COLOR
          float2 offset = float2(x,y) * gPixelOffset;
          float3 tex = tex2D(SceneSampler, Input.mUV + offset).rgb;
          
-         // Edge Detect By Using Difference In "명암" <==> Changing Color Img Into Gray Scale Img
-         // "명암" 
+         // Edge Detect By Using Difference In Luminance <==> Changing Color Img Into Gray Scale Img
          float luminance = dot(tex, float3(0.2, 0.59, 0.11)); // Gray Scale
          
          Lx += luminance * Kx[y+1][x+1];
@@ -1204,21 +1197,24 @@ float4 ps_main(PS_INPUT Input) : COLOR
       }
    }
    
-   // Sum Lx, Ly Using Pitagoras Rule
-   // - 상하 / 좌우. 커널 계산 결과를 더해줄 것이다. 
+   // Sum Lx, Ly Using Pitagoras Rule 
    float L = sqrt((Lx * Lx) + (Ly * Ly));
    
-   // No Different In "명암" --> Black Color
-   // Yes Different In "명암" --> White Color
+   // No Different In "luminance" --> Black Color
+   // Yes Different In "luminance" --> White Color
    return float4(L.xxx, 1);
    
-   return float4(1,1,1,1);
    
 }
 
 
 
-]]></RmShaderCode></RmHLSLShader>
+]]></RmShaderCode>
+     <RmSampler NAME="SceneSampler" API="" REGISTER="0"/>
+     <RmShaderConstant NAME="Ky" API="" REGISTER="3"/>
+     <RmShaderConstant NAME="Kx" API="" REGISTER="0"/>
+     <RmShaderConstant NAME="gPixelOffset" API="" REGISTER="6"/>
+    </RmHLSLShader>
     <RmStreamMapReference NAME="Stream Mapping" API=""/>
     <RmDynamicVariable NAME="gPixelOffset" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="ViewportDimensionsInverse" VARIABLE_TYPE="FLOAT" ROWS="2" COLUMNS="1" FIXED_SIZE="TRUE" MIN="-1.000000" MAX="1.000000" CLAMP="FALSE" NORMALIZE="FALSE">
      <RmDynamicVariableValueContainer>
@@ -1427,7 +1423,7 @@ float4 ps_main(PS_INPUT Input) : COLOR
      <RmTextureReference NAME="DiffuseMap" API=""/>
     </RmTextureObject>
    </RmPass>
-   <RmPass NAME="Emboss" API="D3D" PASS_INDEX="2" ENABLED="FALSE">
+   <RmPass NAME="Emboss" API="D3D" PASS_INDEX="2" ENABLED="TRUE">
     <RmModelReference NAME="ScreenAlignedQuad" API=""/>
     <RmRenderStateBlock NAME="Render State" API="D3D">
      <RmState NAME="D3DRS_CULLMODE" API="D3D" STATE="22" VALUE="1" USAGE="RENDER_STATE"/>
@@ -1490,22 +1486,6 @@ sampler2D SceneSampler;
 
 // Kernels
 // Embossing Effect
-// - 약각기법
-// - 명암의 변화가 없는 곳은 중간회색
-// - 명암이 바뀜에 따라 튀어나오는 곳은, 밝은 회색이나 흰색
-// - 움푹 들어가는 곳은 어두운 회색이나 검정색 
-
-// ex) Window 버튼 
-// - 왼쪽 위에 하이라이트를 주고, 오른쪽 아래에 그림자를 드리우는 방식 
-// - 현재 픽셀 기준으로, 왼쪽 위의 픽셀 보다, 오른쪽 아래의 픽셀이 발다면, 하이라이트 
-// - 그와 반대로, 왼쪽 위 픽셀이 오른쪽 아래 픽셀보다 밝다면, 그림자를 드리워 줘야 한다.
-// - 아래와 같이 필터를 작성하게 되면, 왼쪽 위에 있는 픽셀들은 결과 값을 감소시키고, 오른쪽 아래에 있는
-// - 숫자들은, 결과값을 증가시키므로, 의도한 결과가 나온다.
-
-// - 만약, 해당 커널이 커버하는 픽셀들의 값이, 모두 같다면 0 이 될 것이다
-// - 이럴 때는 평평한 회색판을 보여주기로 했으니, 이 값에 0.5 를 더해줄 것이다. 
-// - 그러면, 컨벌루션 결과가 0 이상이면, 0.5 이상의 하이라이트가 등장할 것이고
-// - 0 이하라면, 0.5 이하의 그림자가 보일 것이다.
 float3x3 K = {-2,-1,0,
                -1,0,1,
                0,1,2};
@@ -1536,8 +1516,8 @@ float4 ps_main (PS_INPUT Input) : COLOR
          float2 offset = float2(x,y) * gPixelOffset;
          float3 tex = tex2D(SceneSampler, Input.mUV + offset).rgb;
          
-         // Edge Detect By Using Difference In "명암" <==> Changing Color Img Into Gray Scale Img
-         // "명암" 
+         // Edge Detect By Using Difference In "luminance" <==> Changing Color Img Into Gray Scale Img
+
          float luminance = dot(tex, float3(0.2, 0.59, 0.11)); // Gray Scale
          
          res += luminance * K[y+1][x+1];
@@ -1552,7 +1532,11 @@ float4 ps_main (PS_INPUT Input) : COLOR
 
 
 
-]]></RmShaderCode></RmHLSLShader>
+]]></RmShaderCode>
+     <RmSampler NAME="SceneSampler" API="" REGISTER="0"/>
+     <RmShaderConstant NAME="K" API="" REGISTER="0"/>
+     <RmShaderConstant NAME="gPixelOffset" API="" REGISTER="3"/>
+    </RmHLSLShader>
     <RmStreamMapReference NAME="Stream Mapping" API=""/>
     <RmDynamicVariable NAME="gPixelOffset" API="" ARTIST_EDITABLE="FALSE" VARIABLE_SEMANTIC="ViewportDimensionsInverse" VARIABLE_TYPE="FLOAT" ROWS="2" COLUMNS="1" FIXED_SIZE="TRUE" MIN="-1.000000" MAX="1.000000" CLAMP="FALSE" NORMALIZE="FALSE">
      <RmDynamicVariableValueContainer>
@@ -1563,50 +1547,6 @@ float4 ps_main (PS_INPUT Input) : COLOR
     <RmTextureObject NAME="SceneSampler" API="D3D" STATE_INDEX="0" VERTEX_TEXTURE="FALSE">
      <RmTextureReference NAME="SceneTexture" API=""/>
     </RmTextureObject>
-   </RmPass>
-   <RmPass NAME="Pass 3" API="D3D" PASS_INDEX="3" ENABLED="FALSE">
-    <RmModelReference NAME="Model" API=""/>
-    <RmHLSLShader NAME="Vertex Shader" API="D3D" PIXEL_SHADER="FALSE" TARGET="vs_2_0" ENTRY_POINT="vs_main" COMPILER_FLAGS="0"><RmShaderCode TYPE="TEXT"><![CDATA[
-float4x4 matViewProjection;
-
-struct VS_INPUT 
-{
-   float4 Position : POSITION0;
-   
-};
-
-struct VS_OUTPUT 
-{
-   float4 Position : POSITION0;
-   
-};
-
-VS_OUTPUT vs_main( VS_INPUT Input )
-{
-   VS_OUTPUT Output;
-
-   Output.Position = mul( Input.Position, matViewProjection );
-   
-   return( Output );
-   
-}
-
-
-
-]]></RmShaderCode>
-     <RmShaderConstant NAME="matViewProjection" API="" REGISTER="0"/>
-    </RmHLSLShader>
-    <RmHLSLShader NAME="Pixel Shader" API="D3D" PIXEL_SHADER="TRUE" TARGET="ps_2_0" ENTRY_POINT="ps_main" COMPILER_FLAGS="0"><RmShaderCode TYPE="TEXT"><![CDATA[
-float4 ps_main() : COLOR0
-{   
-   return( float4( 1.0f, 0.0f, 0.0f, 1.0f ) );
-   
-}
-
-
-
-]]></RmShaderCode></RmHLSLShader>
-    <RmStreamMapReference NAME="Stream Mapping" API=""/>
    </RmPass>
   </RmDirectXEffect>
  </RmEffectWorkspace>
