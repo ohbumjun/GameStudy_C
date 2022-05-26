@@ -10,7 +10,7 @@ class Utils
     {
         const size_t multiplier = (baseAddress / alignment) + 1;
         const size_t alignedAddress = multiplier * alignment;
-        const size_t padding = alignedAddress - multiplier;
+        const size_t padding = alignedAddress - baseAddress;
 
         return padding;
     }
