@@ -1,7 +1,7 @@
 #ifndef STACKALLOCATOR_H
 #define STACKALLOCATOR_H
 
-#include "../Allocator.h"
+#include "Allocator.h"
 
 class StackAllocator : public Allocator {
 protected:
@@ -20,11 +20,10 @@ public:
 
     virtual void Reset();
 private:
-    StackAllocator(StackAllocator& stackAllocator);
+    StackAllocator(StackAllocator &stackAllocator);
 
     struct AllocationHeader {
         char padding;
-        AllocationHeader(char pad) : padding(pad){}
     };
 
 };
