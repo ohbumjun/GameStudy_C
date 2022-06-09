@@ -15,7 +15,7 @@ void StackAllocator::Init() {
     if (m_start_ptr != nullptr) {
         free(m_start_ptr);
     }
-    m_start_ptr = malloc(m_totalSize); //
+    m_start_ptr = malloc(m_totalSize); ////
     m_offset = 0;
 }
 
