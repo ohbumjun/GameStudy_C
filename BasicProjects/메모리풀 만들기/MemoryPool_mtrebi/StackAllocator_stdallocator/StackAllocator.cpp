@@ -6,7 +6,7 @@
 #include <iostream>
 #endif
 
-StackAllocator::StackAllocator(const std::size_t totalSize)
+StackAllocator::StackAllocator(const std::size_t totalSize) //
 : Allocator(totalSize) {
 
 }
