@@ -49,6 +49,7 @@ public :
 		CStackNode<T>* Next = m_LastNode->m_Next;
 		delete m_LastNode;
 		m_LastNode = Next;
+		--Size;
 	}
 	void clear()
 	{
@@ -62,7 +63,7 @@ public :
 	}
 	void push(const T& data)
 	{
-		CStackNode<T>* NewNode = new CStackNode<T>;
+		CStackNode<T>* NewNode = new CStackNode<T>; //
 		NewNode->m_Data = data;
 		NewNode->m_Next = m_LastNode;
 		m_LastNode = NewNode;
