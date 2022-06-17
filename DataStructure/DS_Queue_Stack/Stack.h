@@ -26,7 +26,7 @@ class CStack
 public :
 	CStack()
 	{
-		m_LastNode = nullptr;
+		m_LastNode = nullptr;//
 		m_Size = 0;
 	}
 	~CStack()
