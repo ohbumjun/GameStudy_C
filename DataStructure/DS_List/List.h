@@ -3,7 +3,7 @@
 #include <assert.h>
 
 // friend : �Ʒ�ó�� Listnode�� List�� friend�� �����ϸ� List������ ListNode��
-// private�� ������ �� �ִ�. //
+// private�� ������ �� �ִ�. ////
 
 template <typename T>
 class CListNode
