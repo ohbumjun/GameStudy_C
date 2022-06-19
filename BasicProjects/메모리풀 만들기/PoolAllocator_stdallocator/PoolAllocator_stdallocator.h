@@ -28,7 +28,8 @@ namespace bbe
 
 	// 소멸과, 메모리 해제는 다르다. 
 	// 
-	template<typename T, typename Allocator = std::allocator<PoolChunk<T>>>
+	template<typename T, 
+	typename Allocator = std::allocator<PoolChunk<T>>>
 	class PoolAllocator
 	{
 	private :
@@ -43,7 +44,8 @@ namespace bbe
 		int m_openAllocations = 0;
 
 	public :
-		explicit PoolAllocator(size_t size = POOLALLOCATORDEFAULTSIZE, Allocator *parentAllocator = nullptr) :
+		explicit PoolAllocator(size_t size = POOLALLOCATORDEFAULTSIZE, 
+		Allocator *parentAllocator = nullptr) :
 			m_size(size)
 		{
 			if (!m_parentAllcator)
