@@ -269,7 +269,8 @@ public:
 
 		// ��������� ��� �θ�κ��� ������ �����ϰ�
 		// ��带 �������ش�.
-		if (!iter.m_Node->m_Left && !iter.m_Node->m_Right)
+		if (!iter.m_Node->m_Left && 
+		!iter.m_Node->m_Right)
 		{
 			// �θ��带 ���´�.
 			PNODE	Parent = iter.m_Node->m_Parent;
@@ -536,7 +537,7 @@ private:
 	PNODE FindMax(PNODE Node)
 	{
 		if (Node->m_Right)
-			return FindMax(Node->m_Right);
+			return FindMax(Node->m_Right); //
 
 		return Node;
 	}
