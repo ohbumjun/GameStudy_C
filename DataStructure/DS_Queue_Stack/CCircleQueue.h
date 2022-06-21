@@ -21,7 +21,7 @@ public :
 		m_Tail = 0;
 		// + 1 : ����� 1���� ����� ��
 		// ��, ������ size - 1�� ��ŭ �����ϴ� �� 
-		m_Capacity = SIZE + 1;
+		m_Capacity = SIZE + 1; //
 	}
 	~CCircleQueue()
 	{
