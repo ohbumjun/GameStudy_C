@@ -16,7 +16,7 @@ private :
 	unsigned __int64 m_HashKey;
 public :
 	template<typename Key>
-	unsigned __int64 GetHash(const Key& key)
+	unsigned __int64 GetHash(const Key& key) //
 	{
 		m_HashKey = 0;
 		size_t Length = sizeof(key);
