@@ -177,7 +177,7 @@ public:
 		return iter;
 	}
 
-	bool IsValid(const iterator& iter)	const
+	bool IsValid(const iterator& iter)	const //
 	{
 		return iter.m_Node != nullptr;
 	}
