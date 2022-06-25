@@ -9,7 +9,7 @@ class CBinaryTreeNode
 	friend class CBinaryTreeIterator;
 
 private:
-	CBinaryTreeNode() :
+	CBinaryTreeNode()	:
 		m_Left(nullptr),
 		m_Right(nullptr),
 		m_Parent(nullptr),
@@ -54,7 +54,7 @@ private:
 	CBinaryTreeNode<KEY, VALUE>* m_Node;
 
 public:
-	// iterator���� ���� ������ �ִ� ��尡 ���� ��� ���ٰ� �Ǵ��Ѵ�.
+	// iterator끼리 서로 가지고 있는 노드가 같을 경우 같다고 판단한다.
 	bool operator == (const CBinaryTreeIterator<KEY, VALUE>& iter)	const
 	{
 		return m_Node == iter.m_Node;
@@ -101,10 +101,10 @@ public:
 	}
 };
 
-// Key�� Ž���� �ϱ� ���� Ÿ���̴�.
-// Value�� ���� �����ϱ� ���� ������ Ÿ���̴�.
-// �׷��� Ž���� �Ҷ��� KeyŸ������ �Ѵ�.
-// ���� KeyŸ���� ���ڿ��̶�� ���ڿ��� Ž���� �� �� �ִ� ���̴�.
+// Key는 탐색을 하기 위한 타입이다.
+// Value는 실제 저장하기 위한 데이터 타입이다.
+// 그래서 탐색을 할때는 Key타입으로 한다.
+// 만약 Key타입이 문자열이라면 문자열로 탐색을 할 수 있는 것이다.
 template <typename KEY, typename VALUE>
 class CBinaryTree
 {
@@ -137,7 +137,7 @@ public:
 
 private:
 	typedef CBinaryTreeNode<KEY, VALUE>		NODE;
-	typedef CBinaryTreeNode<KEY, VALUE>* PNODE;
+	typedef CBinaryTreeNode<KEY, VALUE>*	PNODE;
 
 public:
 	typedef CBinaryTreeIterator<KEY, VALUE>	iterator;
@@ -151,7 +151,7 @@ private:
 public:
 	void insert(const KEY& key, const VALUE& value)
 	{
-		// ó�� �����͸� �߰��� ���
+		// 처음 데이터를 추가할 경우
 		if (!m_Root)
 		{
 			m_Root = new NODE;
@@ -168,7 +168,7 @@ public:
 
 		else
 		{
-			insert(key, value, m_Root); //
+			insert(key, value, m_Root);
 		}
 
 		++m_Size;
@@ -225,11 +225,11 @@ public:
 	}
 
 	/*
-	����Ʈ���� 3������ ��ȸ����� �ִ�.
-	������ȸ, ������ȸ, ������ȸ
-	������ȸ : Root -> Left -> Right
-	������ȸ : Left -> Root -> Right
-	������ȸ : Left -> Right -> Root
+	이진트리는 3가지의 순회방법이 있다.
+	전위순회, 중위순회, 후위순회
+	전위순회 : Root -> Left -> Right
+	중위순회 : Left -> Root -> Right
+	후위순회 : Left -> Right -> Root
 	*/
 	void PreOrder(void(*pFunc)(const KEY&, const VALUE&))
 	{
@@ -267,19 +267,15 @@ public:
 		else if (iter.m_Node == nullptr)
 			return end();
 
-		// ��������� ��� �θ�κ��� ������ �����ϰ�
-		// ��带 �������ش�.
-		if (!iter.m_Node->m_Left && 
-		!iter.m_Node->m_Right)
+		// 리프노드일 경우 부모로부터 연결을 제거하고 노드를 제거해준다.
+		if (!iter.m_Node->m_Left && !iter.m_Node->m_Right)
 		{
-			// �θ��带 ���´�.
+			// 부모노드를 얻어온다.
 			PNODE	Parent = iter.m_Node->m_Parent;
 
-			// ���� �θ��尡 ���ٸ� 
-			// ���� ������� ���� ��Ʈ����� ���̴�.
-			// �׷��� ��Ʈ��尡 ��������� ���� 
-			// �� ��� 1���� ���Ҵٴ�
-			// ���̴�.
+			// 만약 부모노드가 없다면 현재 지우려는 노드는 루트노드라는 것이다.
+			// 그런데 루트노드가 리프노드라는 말은 이 노드 1개만 남았다는
+			// 것이다.
 			if (!Parent)
 			{
 				delete	iter.m_Node;
@@ -287,16 +283,15 @@ public:
 				m_Root = nullptr;
 				--m_Size;
 
-				// �� �������� Begin�� End���� �����Ѵ�.
+				// 다 지웠으니 Begin과 End끼리 연결한다.
 				m_Begin->m_Next = m_End;
 				m_End->m_Prev = m_Begin;
 
 				return end();
 			}
 
-			// ������� ��尡 �θ������ 
-			// ���� ������� ������ ���������
-			// �Ǵ��Ͽ� �θ���� ������ �����ش�.
+			// 지우려는 노드가 부모느드의 왼쪽 노드인지 오른쪽 노드인지를
+			// 판단하여 부모와의 연결을 끊어준다.
 			if (Parent->m_Left == iter.m_Node)
 				Parent->m_Left = nullptr;
 
@@ -314,32 +309,27 @@ public:
 			--m_Size;
 
 
-			// ���� ����� ������带 �־ 
-			// iterator�� ��ȯ���ش�.
+			// 지운 노드의 다음노드를 넣어서 iterator를 반환해준다.
 			iterator	result;
 			result.m_Node = Next;
 
 			return result;
 		}
 
-		// ���� ���� ��尡 ���� ��� 
-		// ���� ��忡�� ���� ū ��带 ã�Ƽ�
-		// ���� ����� ���� �������ְ� 
-		// ã���� ��带 �����Ѵ�.
+		// 만약 왼쪽 노드가 있을 경우 왼쪽 노드에서 가장 큰 노드를 찾아서
+		// 지울 노드의 값을 변경해주고 찾아준 노드를 제거한다.
 		if (iter.m_Node->m_Left)
 		{
-			// ���ʿ� �����ϴ� ������ ���� ū ��带 ã�ƿ´�.
+			// 왼쪽에 존재하는 노드들중 가장 큰 노드를 찾아온다.
 			PNODE	MaxNode = FindMax(iter.m_Node->m_Left);
 
-			// ã���� ����� Key, Value ������ �������ش�.
+			// 찾아준 노드의 Key, Value 값으로 변경해준다.
 			iter.m_Node->first = MaxNode->first;
 			iter.m_Node->second = MaxNode->second;
 
-			// ã���� ��带 �����ؾ��ϱ� ������ 
-			// �θ�κ��� ������ ����
-			// �������ֵ��� �Ѵ�.
-			// ��, ã���� ��尡 ���� �ڽĳ�尡 
-			// �������� �����Ƿ�
+			// 찾아준 노드를 제거해야하기 때문에 부모로부터 연결을 끊고
+			// 제거해주도록 한다.
+			// 단, 찾아준 노드가 왼쪽 자식노드가 있을수도 있으므로
 			PNODE	LeftChild = MaxNode->m_Left;
 			PNODE	Parent = MaxNode->m_Parent;
 
@@ -349,8 +339,8 @@ public:
 			else
 				Parent->m_Right = LeftChild;
 
-			// ���� �ڽĳ�尡 ���� ����� �θ�� MaxNode�� �θ�
-			// �������ֵ��� �Ѵ�.
+			// 왼쪽 자식노드가 있을 경우라면 부모로 MaxNode의 부모를
+			// 지정해주도록 한다.
 			if (LeftChild)
 				LeftChild->m_Parent = Parent;
 
@@ -370,20 +360,17 @@ public:
 			return result;
 		}
 
-		// ���� ����� ������ ��常 ������ ��� 
-		// ������ ��忡�� ���� ���� ��带
-		// ã�ƿ´�.
+		// 지울 노드의 오른쪽 노드만 존재할 경우 오른쪽 노드에서 가장 작은 노드를
+		// 찾아온다.
 		PNODE	MinNode = FindMin(iter.m_Node->m_Right);
 
-		// ã���� ����� Key, Value ������ �������ش�.
+		// 찾아준 노드의 Key, Value 값으로 변경해준다.
 		iter.m_Node->first = MinNode->first;
 		iter.m_Node->second = MinNode->second;
 
-		// ã���� ��带 �����ؾ��ϱ� ������ 
-		// �θ�κ��� ������ ����
-		// �������ֵ��� �Ѵ�.
-		// ��, ã���� ��尡 ������ �ڽĳ�尡 
-		// �������� �����Ƿ�
+		// 찾아준 노드를 제거해야하기 때문에 부모로부터 연결을 끊고
+		// 제거해주도록 한다.
+		// 단, 찾아준 노드가 오른쪽 자식노드가 있을수도 있으므로
 		PNODE	RightChild = MinNode->m_Right;
 		PNODE	Parent = MinNode->m_Parent;
 
@@ -393,9 +380,8 @@ public:
 		else
 			Parent->m_Right = RightChild;
 
-		// ������ �ڽĳ�尡 ���� ����� 
-		// �θ�� MinNode�� �θ�
-		// �������ֵ��� �Ѵ�.
+		// 오른쪽 자식노드가 있을 경우라면 부모로 MinNode의 부모를
+		// 지정해주도록 한다.
 		if (RightChild)
 			RightChild->m_Parent = Parent;
 
@@ -416,31 +402,30 @@ public:
 	}
 
 private:
-	PNODE insert(const KEY& key, 
-	const VALUE& value, PNODE Node)
+	PNODE insert(const KEY& key, const VALUE& value, PNODE Node)
 	{
-		// ���س�庸�� �۴ٸ� �����̴�.
+		// 기준노드보다 작다면 왼쪽이다.
 		if (Node->first > key)
 		{
-			// ���� ���س���� ���� �ڽĳ�尡 �ִٸ� �� ���� �ڽĳ�带
-			// ���س��� �Ͽ� �ٽ� Ž���� �ϰ� �Ѵ�.
+			// 만약 기준노드의 왼쪽 자식노드가 있다면 그 왼쪽 자식노드를
+			// 기준노드로 하여 다시 탐색을 하게 한다.
 			if (Node->m_Left)
 				return insert(key, value, Node->m_Left);
 
-			// ���̻� ���� �ڽĳ�尡 ���� ��� �� ��ġ�� ���� ��带 �����Ͽ�
-			// �߰����־�� �Ѵ�.
+			// 더이상 왼쪽 자식노드가 없을 경우 이 위치에 새로 노드를 생성하여
+			// 추가해주어야 한다.
 			PNODE	NewNode = new NODE;
 
 			NewNode->first = key;
 			NewNode->second = value;
 
-			// ���س���� ���� �ڽĳ��� �����Ѵ�.
+			// 기준노드의 왼쪽 자식노드로 지정한다.
 			Node->m_Left = NewNode;
 			NewNode->m_Parent = Node;
 
-			// �������� ��ġ�� �ȴٴ°��� �θ��庸�� �۴ٴ� ���̴�.
-			// �׷��Ƿ� �θ����� �������� �θ��� ���̿� ���� ������
-			// ��带 ����Ʈ�� �������ֵ��� �Ѵ�.
+			// 왼쪽으로 배치가 된다는것은 부모노드보다 작다는 것이다.
+			// 그러므로 부모노드의 이전노드와 부모노드 사이에 새로 생성된
+			// 노드를 리스트로 연결해주도록 한다.
 			PNODE	Prev = Node->m_Prev;
 
 			Prev->m_Next = NewNode;
@@ -452,20 +437,20 @@ private:
 			return NewNode;
 		}
 
-		// ����� �������� ���� ũ�ٴ� ���̹Ƿ� ���������� Ž���� �غ��� �Ѵ�.
-		// ���� ������ �ڽĳ�尡 ���� ��� ���س�带 ������ �ڽĳ��� �Ͽ�
-		// Ž���ϰ� �Ѵ�.
+		// 여기로 내려오면 값이 크다는 것이므로 오른쪽으로 탐색을 해봐야 한다.
+		// 만약 오른쪽 자식노드가 있을 경우 기준노드를 오른쪽 자식노드로 하여
+		// 탐색하게 한다.
 		if (Node->m_Right)
 			return insert(key, value, Node->m_Right);
 
-		// ���̻� ������ �ڽĳ�尡 ���� ��� �� ��ġ�� ���� ��带 �����Ͽ�
-		// �߰����־�� �Ѵ�.
+		// 더이상 오른쪽 자식노드가 없을 경우 이 위치에 새로 노드를 생성하여
+		// 추가해주어야 한다.
 		PNODE	NewNode = new NODE;
 
 		NewNode->first = key;
 		NewNode->second = value;
 
-		// ���س���� ������ �ڽĳ��� �����Ѵ�.
+		// 기준노드의 오른쪽 자식노드로 지정한다.
 		Node->m_Right = NewNode;
 		NewNode->m_Parent = Node;
 
@@ -482,8 +467,8 @@ private:
 
 	iterator Find(const KEY& key, PNODE Node)	const
 	{
-		// ���س�尡 nullptr�� ��� ���̻� Ž���� ��尡 �����Ƿ�
-		// end�� �����Ѵ�. ��ã�Ҵٴ� ���̴�.
+		// 기준노드가 nullptr일 경우 더이상 탐색할 노드가 없으므로
+		// end를 리턴한다. 못찾았다는 것이다.
 		if (!Node)
 			return end();
 
@@ -494,15 +479,14 @@ private:
 			return iter;
 		}
 
-		// Ű�� ���Ͽ� ������ ����, ũ�� ���������� Ž���ؼ� ����.
+		// 키를 비교하여 작으면 왼쪽, 크면 오른쪽으로 탐색해서 들어간다.
 		if (Node->first > key)
 			return Find(key, Node->m_Left);
 
 		return Find(key, Node->m_Right);
 	}
 
-	void PreOrder(void(*pFunc)(const KEY&, 
-	const VALUE&), PNODE Node)
+	void PreOrder(void(*pFunc)(const KEY&, const VALUE&), PNODE Node)
 	{
 		if (!Node)
 			return;
@@ -512,8 +496,7 @@ private:
 		PreOrder(pFunc, Node->m_Right);
 	}
 
-	void InOrder(void(*pFunc)(const KEY&, 
-	const VALUE&), PNODE Node)
+	void InOrder(void(*pFunc)(const KEY&, const VALUE&), PNODE Node)
 	{
 		if (!Node)
 			return;
@@ -523,21 +506,20 @@ private:
 		InOrder(pFunc, Node->m_Right);
 	}
 
-	void PostOrder(void(*pFunc)(const KEY&, 
-	const VALUE&), PNODE Node)
+	void PostOrder(void(*pFunc)(const KEY&, const VALUE&), PNODE Node)
 	{
 		if (!Node)
 			return;
 
 		PostOrder(pFunc, Node->m_Left);
 		PostOrder(pFunc, Node->m_Right);
-		pFunc(Node->first, Node->second); //
+		pFunc(Node->first, Node->second);
 	}
 
 	PNODE FindMax(PNODE Node)
 	{
 		if (Node->m_Right)
-			return FindMax(Node->m_Right); //
+			return FindMax(Node->m_Right);
 
 		return Node;
 	}

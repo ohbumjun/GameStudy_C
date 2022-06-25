@@ -84,7 +84,7 @@ public :
 	}
 	bool empty() const
 	{
-		return m_Size == 0;
+		return m_Size == 0; //
 	}
 	void clear()
 	{
