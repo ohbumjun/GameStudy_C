@@ -24,7 +24,7 @@ void StackLinkedList<T>::push(Node* newNode)
 }
 
 template <typename T>
-typename StackLinkedList<T>::Node* StackLinkedList<T>::pop()
+typename StackLinkedList<T>::Node* StackLinkedList<T>::pop() //
 {
 	Node* PopNode = head;
 	head = head->Next;
