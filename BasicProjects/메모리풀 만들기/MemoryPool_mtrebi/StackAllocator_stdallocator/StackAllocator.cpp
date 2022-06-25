@@ -1,12 +1,12 @@
 #include "StackAllocator.h"
-#include "../Utils.h"  /* CalculatePadding */
+#include "Utils.h"  /* CalculatePadding */
 #include <stdlib.h>     /* malloc, free */
 #include <algorithm>    /* max */
 #ifdef _DEBUG
 #include <iostream>
 #endif
 
-StackAllocator::StackAllocator(const std::size_t totalSize) //////
+StackAllocator::StackAllocator(const std::size_t totalSize)
 : Allocator(totalSize) {
 
 }
@@ -15,7 +15,7 @@ void StackAllocator::Init() {
     if (m_start_ptr != nullptr) {
         free(m_start_ptr);
     }
-    m_start_ptr = malloc(m_totalSize); //////
+    m_start_ptr = malloc(m_totalSize);
     m_offset = 0;
 }
 

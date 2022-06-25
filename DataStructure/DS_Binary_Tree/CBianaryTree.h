@@ -168,7 +168,7 @@ public:
 
 		else
 		{
-			insert(key, value, m_Root);
+			insert(key, value, m_Root); //
 		}
 
 		++m_Size;
