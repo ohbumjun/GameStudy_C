@@ -9,7 +9,7 @@ Allocator(totalSize), m_chunkSize(chunkSize)
 
 void* PoolAllocator::Allocate(const std::size_t allocationSize, const std::size_t alignment)
 {
-	assert(allocationSize == m_chunkSize);
+	assert(allocationSize == m_chunkSize); //
 
 	Node* PopNode = m_freeList.pop();
 
