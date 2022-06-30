@@ -92,7 +92,7 @@ public:
 			m_Data[Index] = temp;
 			DeleteHeap(ChildIndex);
 		}
-	};
+	}; //
 
 private:
 	static bool SortFunction(const T& Left, const T& Right)
