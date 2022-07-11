@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 // 이름있는 파이프 서버
 #include <stdio.h>
 #include <tchar.h>
@@ -8,9 +10,12 @@ int CommToClient(HANDLE);
 
 int _tmain(int argc, TCHAR* argv[])
 {
-	LPCTSTR pipeName = _T("\\\\.\\pipe\\ simple_pipe");
+	LPCTSTR pipeName = _T("\\\\.\\pipe\\simple_pipe");
 	HANDLE hPipe;
 
+	// while ?
+	// 여러 클라이언트와 통신 가능하다
+	// 하지만, 한순간에 한 클라이언트만 가능하다.
 	while (1)
 	{
 		// 서버 입장에서 파이프 생성
@@ -32,6 +37,8 @@ int _tmain(int argc, TCHAR* argv[])
 		}
 
 		// 파이프를 연결 상태로 만들기 
+		// 즉, 클라이언트의 연결 요청을 수락하는 역할
+		// 클라이언트가 연결될 때까지 Blocked 상태에 놓인다.
 		BOOL isSuccess = 0;
 		isSuccess = ConnectNamedPipe(
 			hPipe, NULL
@@ -46,6 +53,9 @@ int _tmain(int argc, TCHAR* argv[])
 	return 1;
 }
 
+// 클라이언트와 연결이 성립되면
+// 이때 사용한 파이프 핸들을 전달하면서
+// 해당 함수가 호출된다.
 int CommToClient(HANDLE hPipe)
 {
 	TCHAR fileName[MAX_PATH];
@@ -105,7 +115,15 @@ int CommToClient(HANDLE hPipe)
 		}
 	}
 
+	// 파이프 연결을 종료하기 위한 코드들
+	// FlushFileBuffer : 출력 버퍼를 비우는 역할
+	// 비운다는 것은, 목적지로의 전송을 의미한다.
+	// 이미 전송되었다고 생각하는 데이터들이
+	// 목적지의 상황에 따라, 아직까지 시스템 메모리에
+	// 남아있을 수 있다.
 	FlushFileBuffers(hPipe);
+
+	// 클라이언트가 에러 메시지를 받을 수 있게 한다.
 	DisconnectNamedPipe(hPipe);
 	CloseHandle(hPipe);
 	return 1;
