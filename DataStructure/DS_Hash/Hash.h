@@ -33,7 +33,7 @@ public :
 	template<>
 	unsigned __int64 GetHash(const std::string &key)
 	{
-		m_HashKey = 0;
+		m_HashKey = 0; //
 		size_t Length = key.length();
 		for (size_t i = 0; i < Length; i++)
 		{
