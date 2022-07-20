@@ -117,6 +117,6 @@ public :
 	
 	void SetSortFunction(bool (*pFunc)(const T&, const T&))
 	{
-		m_Func = pFunc; //
+		m_Func = pFunc; 
 	}
 };

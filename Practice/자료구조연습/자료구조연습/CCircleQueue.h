@@ -59,6 +59,6 @@ public :
 			assert(false);
 
 		--m_Size;
-		++m_Head;
+		++m_Head; //
 }
 };
