@@ -74,7 +74,7 @@ public:
 			m_Array[i] = Array[i];
 		}
 
-		m_Size = Count;
+		m_Size = Count; //
 	}
 
 	int	size()	const
