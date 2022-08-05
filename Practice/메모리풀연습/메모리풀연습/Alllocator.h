@@ -8,7 +8,8 @@ protected :
 public :
 	Allocator(size_t totalSize);
 	virtual ~Allocator();
-	virtual void* Allocate(const size_t allocateSize, const size_t alignment = 0) = 0;
+	virtual void* Allocate(const size_t allocateSize,
+	 const size_t alignment = 0) = 0;
 	virtual void Init() = 0;
 	virtual void Free(void* ptr) = 0;
 };

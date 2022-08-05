@@ -11,7 +11,8 @@ private :
 	void* m_start_ptr;
 	size_t m_chunkSize;
 public :
-	PoolAllocator(const size_t totalSize, const size_t chunkSize);
+	PoolAllocator(const size_t totalSize, 
+	const size_t chunkSize);
 	virtual ~PoolAllocator();
 	virtual void* Allocate(const size_t allocateSize, const size_t alignment) override;
 	virtual void Free(void* ptr) override;
