@@ -389,7 +389,7 @@ public:
 		PNODE	Next = MinNode->m_Next;
 
 		Prev->m_Next = Next;
-		Next->m_Prev = Prev;
+		Next->m_Prev = Prev;//
 
 		delete	MinNode;
 
@@ -486,7 +486,8 @@ private:
 		return Find(key, Node->m_Right);
 	}
 
-	void PreOrder(void(*pFunc)(const KEY&, const VALUE&), PNODE Node)
+	void PreOrder(void(*pFunc)(const KEY&, const VALUE&), 
+	PNODE Node)
 	{
 		if (!Node)
 			return;
