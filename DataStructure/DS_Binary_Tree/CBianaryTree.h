@@ -389,7 +389,7 @@ public:
 		PNODE	Next = MinNode->m_Next;
 
 		Prev->m_Next = Next;
-		Next->m_Prev = Prev;////
+		Next->m_Prev = Prev;//////
 
 		delete	MinNode;
 
