@@ -47,6 +47,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Thread", "Thread\Thread.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MemoryAddresS_Synchronization", "MemoryAddresS_Synchronization\MemoryAddresS_Synchronization.vcxproj", "{D2E3CBF7-996E-40D5-809D-D4A3406D057F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EventSynchronization", "EventSynchronization\EventSynchronization.vcxproj", "{C5C7F695-2AC8-4AD9-A787-26E99AE49E86}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TimerBasedSynchronization", "TimerBasedSynchronization\TimerBasedSynchronization.vcxproj", "{1C7C7057-F7FE-4D9C-A7EE-B3A7D13B598C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -231,6 +235,22 @@ Global
 		{D2E3CBF7-996E-40D5-809D-D4A3406D057F}.Release|x64.Build.0 = Release|x64
 		{D2E3CBF7-996E-40D5-809D-D4A3406D057F}.Release|x86.ActiveCfg = Release|Win32
 		{D2E3CBF7-996E-40D5-809D-D4A3406D057F}.Release|x86.Build.0 = Release|Win32
+		{C5C7F695-2AC8-4AD9-A787-26E99AE49E86}.Debug|x64.ActiveCfg = Debug|x64
+		{C5C7F695-2AC8-4AD9-A787-26E99AE49E86}.Debug|x64.Build.0 = Debug|x64
+		{C5C7F695-2AC8-4AD9-A787-26E99AE49E86}.Debug|x86.ActiveCfg = Debug|Win32
+		{C5C7F695-2AC8-4AD9-A787-26E99AE49E86}.Debug|x86.Build.0 = Debug|Win32
+		{C5C7F695-2AC8-4AD9-A787-26E99AE49E86}.Release|x64.ActiveCfg = Release|x64
+		{C5C7F695-2AC8-4AD9-A787-26E99AE49E86}.Release|x64.Build.0 = Release|x64
+		{C5C7F695-2AC8-4AD9-A787-26E99AE49E86}.Release|x86.ActiveCfg = Release|Win32
+		{C5C7F695-2AC8-4AD9-A787-26E99AE49E86}.Release|x86.Build.0 = Release|Win32
+		{1C7C7057-F7FE-4D9C-A7EE-B3A7D13B598C}.Debug|x64.ActiveCfg = Debug|x64
+		{1C7C7057-F7FE-4D9C-A7EE-B3A7D13B598C}.Debug|x64.Build.0 = Debug|x64
+		{1C7C7057-F7FE-4D9C-A7EE-B3A7D13B598C}.Debug|x86.ActiveCfg = Debug|Win32
+		{1C7C7057-F7FE-4D9C-A7EE-B3A7D13B598C}.Debug|x86.Build.0 = Debug|Win32
+		{1C7C7057-F7FE-4D9C-A7EE-B3A7D13B598C}.Release|x64.ActiveCfg = Release|x64
+		{1C7C7057-F7FE-4D9C-A7EE-B3A7D13B598C}.Release|x64.Build.0 = Release|x64
+		{1C7C7057-F7FE-4D9C-A7EE-B3A7D13B598C}.Release|x86.ActiveCfg = Release|Win32
+		{1C7C7057-F7FE-4D9C-A7EE-B3A7D13B598C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
