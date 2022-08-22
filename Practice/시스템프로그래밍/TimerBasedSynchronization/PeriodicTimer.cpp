@@ -1,4 +1,4 @@
-// 수동 리셋 타이머
+// 주기적 타이머
 
 // 해당 코드를 넣어야 한다. 왜냐하면
 // CreateWaitableTimer, SetWaitableTimer 함수가
@@ -49,6 +49,10 @@ int _tmain(int argc, TCHAR* argv[])
 
 		// 타이머가 주기적으로 알람을 울리게할 때 사용하는 전달인자
 		// 0을 전달할 경우, 주기적인 알람을 사용하지 않겠다는 의미가 된다.
+		// 주기적 타이머를 설정할 경우, 타이머 오브젝트는 반드시 "자동 리셋 모드"로 설정해야 한다.
+		// 그래야 WaitForSingleObject 함수를 지나갈 때마다, 해당 타이머 오브젝트가 다시
+		// Signaled 상태가 되고, 
+		// 이로 인해 Timer 가 주기적으로 반응할 수 있기 때문이다.
 		5000,
 		NULL,
 		NULL,
@@ -62,8 +66,6 @@ int _tmain(int argc, TCHAR* argv[])
 		_tprintf(_T("Timer was signaled.\n"));
 		MessageBeep(MB_ICONEXCLAMATION);
 	}
-
-
 
 	return 0;
 }
