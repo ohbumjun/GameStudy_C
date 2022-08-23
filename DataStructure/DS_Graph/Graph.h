@@ -161,7 +161,7 @@ public :
 		CStack<CGraphNode<T>*> stack;
 		stack.push(m_NodeArray[0]);
 		m_NodeArray[0]->m_Visit = true;
-		while (!stack.empty())
+		while (!stack.empty()) //
 		{
 			CGraphNode<T>* Node = stack.top();
 			stack.pop();
