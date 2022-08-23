@@ -13,7 +13,7 @@ class CEdge
 public :
 	CEdge()
 	{
-		m_Node = nullptr;
+		m_Node = nullptr; //
 	}
 	~CEdge()
 	{
