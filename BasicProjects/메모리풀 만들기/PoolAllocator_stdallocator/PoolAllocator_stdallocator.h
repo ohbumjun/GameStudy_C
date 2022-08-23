@@ -115,7 +115,7 @@ namespace bbe
 		{
 			// 소멸자 호출시켜주기 
 			data->~T();
-			PoolChunk<T>* poolChunk = reinterpret_cast<PoolChunk<T>*>(data);
+			PoolChunk<T>* poolChunk = reinterpret_cast<PoolChunk<T>*>(data); //
 			poolChunk->nextPoolChunk = m_head;
 			m_head = poolChunk;
 
