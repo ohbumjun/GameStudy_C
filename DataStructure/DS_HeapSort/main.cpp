@@ -17,7 +17,7 @@ int main()
 
 	for (int i = 0; i < 20; ++i)
 	{
-		heap.push(rand()); //
+		heap.push(rand()); ////
 	}
 	while (!heap.empty())
 	{
