@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <tchar.h>
 #include <windows.h>
+#include <iostream>
 
 #define BUF_SIZE 1024
 int CommToClient(HANDLE);
@@ -22,7 +23,8 @@ int _tmain(int argc, TCHAR* argv[])
 		hPipe = CreateNamedPipe(
 			pipeName, // 파이프 이름
 			PIPE_ACCESS_DUPLEX, // 읽기, 쓰기 모드 (읽기,쓰기 모두 가능)
-			PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT, // 텍스트 모드로 통신
+			PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE 
+			| PIPE_WAIT, // 텍스트 모드로 통신
 			PIPE_UNLIMITED_INSTANCES, // 최대 파이프 개수
 			BUF_SIZE, // 출력 버퍼 사이즈
 			BUF_SIZE, // 입력 버퍼 사이즈
@@ -42,7 +44,7 @@ int _tmain(int argc, TCHAR* argv[])
 		BOOL isSuccess = 0;
 		isSuccess = ConnectNamedPipe(
 			hPipe, NULL
-		);
+		) ? TRUE : (GetLastError() == ERROR_PIPE_CONNECTED);
 
 		if (isSuccess)
 			CommToClient(hPipe);
@@ -74,6 +76,8 @@ int CommToClient(HANDLE hPipe)
 		NULL
 		);
 
+	_tprintf(_T("Server Opening File : %s\n"), fileName);
+
 	if (!isSuccess || fileNameSize == 0)
 	{
 		_tprintf(_T("Pipe read message error!\n"));
@@ -96,7 +100,9 @@ int CommToClient(HANDLE hPipe)
 	while (!feof(filePtr))
 	{
 		// 해당 파일 포인터로부터, 데이터를 읽어들인다..
-		bytesRead = fread(dataBuf, 1, BUF_SIZE, filePtr);
+		bytesRead = fread(dataBuf, sizeof(TCHAR), BUF_SIZE, filePtr);
+
+		_tprintf(_T("Data Read From Server : %s\n"), dataBuf);
 
 		WriteFile(
 			hPipe, // 파이프 핸들
@@ -123,8 +129,11 @@ int CommToClient(HANDLE hPipe)
 	// 남아있을 수 있다.
 	FlushFileBuffers(hPipe);
 
+	// 파이프 연결 끊기
 	// 클라이언트가 에러 메시지를 받을 수 있게 한다.
-	DisconnectNamedPipe(hPipe);
+	DisconnectNamedPipe(hPipe); 
+
 	CloseHandle(hPipe);
+
 	return 1;
 }

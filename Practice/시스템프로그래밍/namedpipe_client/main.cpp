@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <tchar.h>
 #include <windows.h>
+#include <iostream>
 
 #define BUF_SIZE 1024
 
@@ -23,8 +24,11 @@ int _tmain(int argc, TCHAR* argv[])
 			pipeName, // 연결할 파이프 이름
 			GENERIC_READ |
 			GENERIC_WRITE, // 읽기, 쓰기 모드 동시 지정
-			0, NULL, OPEN_EXISTING,
-			0, NULL
+			0, 
+			NULL, 
+			OPEN_EXISTING,
+			0,
+			NULL
 		);
 
 		// 연결되었다면 빠져나간다.
@@ -51,7 +55,7 @@ int _tmain(int argc, TCHAR* argv[])
 	DWORD pipeMode = PIPE_READMODE_MESSAGE |
 		PIPE_WAIT; // 메시지 기반으로 모드 변경
 
-	//파이프의 속성을 변경시켜주는 ㅎ마수 이다.
+	//파이프의 속성을 변경시켜주는 함수 이다.
 	BOOL isSuccess = SetNamedPipeHandleState(
 		hPipe, // 서버 파이프와 연결된 핸들
 		&pipeMode, // 변경할 모드 정보
@@ -70,7 +74,7 @@ int _tmain(int argc, TCHAR* argv[])
 
 	// 파이프를 통해서, 서버에 데이터를 전송할 것이다.
 	isSuccess = WriteFile(
-		hPipe, // 서버 파이프와 연결된 핸들
+		hPipe,    // 서버 파이프와 연결된 핸들
 		fileName, // 전송할 메세지
 		(_tcslen(fileName) + 1) * sizeof(TCHAR), // 메시지 길이
 		&bytesWritten,
@@ -84,6 +88,7 @@ int _tmain(int argc, TCHAR* argv[])
 	}
 
 	DWORD bytesRead = 0;
+
 	while (1)
 	{
 		// server 측에서 파이프를 통해
@@ -96,18 +101,25 @@ int _tmain(int argc, TCHAR* argv[])
 			NULL
 			);
 
+
 		// 서버 측에서
 		// DisconnectNamedPipe 를 호출해줌으로써
 		// Error 메세지를 받게 되고
 		// 이제 while 문 break
 		if (!isSuccess && GetLastError() != ERROR_MORE_DATA)
+		{
+			_tprintf(_T("EXIT!\n"));
 			break;
+		}
 	
 		// 문자열 끝임을 알려주기
 		readDataBuf[bytesRead] = 0;
-		_tprintf(_T("%s\n", readDataBuf));
+
+		_tprintf(_T("Bytes Read %d \n"), bytesRead);
+		_tprintf(_T("Client Read Data : %s\n"), readDataBuf);
 	}
 
 	CloseHandle(hPipe);
+
 	return 0;
 }
