@@ -59,6 +59,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "예외처리2", "예외처�
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "파일입출력", "파일입출력\파일입출력.vcxproj", "{C8915468-834E-4553-9311-FA1D5CF11AB2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "중첩IO", "중첩IO\중첩IO.vcxproj", "{FBFDABEF-A484-4FCF-841C-ED0655F22F08}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -291,6 +293,14 @@ Global
 		{C8915468-834E-4553-9311-FA1D5CF11AB2}.Release|x64.Build.0 = Release|x64
 		{C8915468-834E-4553-9311-FA1D5CF11AB2}.Release|x86.ActiveCfg = Release|Win32
 		{C8915468-834E-4553-9311-FA1D5CF11AB2}.Release|x86.Build.0 = Release|Win32
+		{FBFDABEF-A484-4FCF-841C-ED0655F22F08}.Debug|x64.ActiveCfg = Debug|x64
+		{FBFDABEF-A484-4FCF-841C-ED0655F22F08}.Debug|x64.Build.0 = Debug|x64
+		{FBFDABEF-A484-4FCF-841C-ED0655F22F08}.Debug|x86.ActiveCfg = Debug|Win32
+		{FBFDABEF-A484-4FCF-841C-ED0655F22F08}.Debug|x86.Build.0 = Debug|Win32
+		{FBFDABEF-A484-4FCF-841C-ED0655F22F08}.Release|x64.ActiveCfg = Release|x64
+		{FBFDABEF-A484-4FCF-841C-ED0655F22F08}.Release|x64.Build.0 = Release|x64
+		{FBFDABEF-A484-4FCF-841C-ED0655F22F08}.Release|x86.ActiveCfg = Release|Win32
+		{FBFDABEF-A484-4FCF-841C-ED0655F22F08}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
