@@ -15,13 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Info.h">
+    <ClInclude Include="헤더.h">
       <Filter>헤더 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="hello_serv.cpp">
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="tcp_serv.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="hello_client.cpp">
+    <ClCompile Include="tcp_client.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

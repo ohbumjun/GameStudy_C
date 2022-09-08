@@ -36,4 +36,14 @@ int closesocket(SOCKET s);
 
 /* 윈도우 기반 입출력 함수
 int send(SOCKET s, const char* buf, int len, int flags);
+	s : 데이터 전송 대상 소켓 핸들
+	buf : 전송 데이터
+	len : 전송할 바이트 수
+	flags : 옵션
+
+int recv(SOCKET s, const char* buf, int len, int flags);
+	s : 데이터 수신 대상 소켓 핸들
+	buf : 전송 데이터
+	len : 전송할 바이트 수
+	flags : 옵션
 */
