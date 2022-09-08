@@ -109,7 +109,7 @@ private :
 
 	while (Low <= Mid && High <= Right)
 	{
-		if (m_Func(m_Array[Low], m_Array[High])) //
+		if (m_Func(m_Array[Low], m_Array[High])) ////
 		{
 			m_CopyArray[Pivot] = m_Array[Low];
 			++Low;
