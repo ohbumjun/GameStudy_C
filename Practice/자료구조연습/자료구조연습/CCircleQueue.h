@@ -56,7 +56,7 @@ public :
 	void pop()
 {
 		if (empty())
-			assert(false);
+			assert(false); //
 
 		--m_Size;
 		++m_Head; //
