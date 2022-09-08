@@ -90,7 +90,7 @@ public :
 private :
 	void MergeSort(int Left, int Right, T* Array)
 {
-	// ÇÏ³ª°¡ ³²À» ¶§±îÁö °è¼Ó ºÐÇÒÇÏ±â
+	// ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
 	if (Left < Right)
 	{
 		int Mid = (Left + Right) / 2;
@@ -109,7 +109,7 @@ private :
 
 	while (Low <= Mid && High <= Right)
 	{
-		if (m_Func(m_Array[Low], m_Array[High]))
+		if (m_Func(m_Array[Low], m_Array[High])) //
 		{
 			m_CopyArray[Pivot] = m_Array[Low];
 			++Low;
@@ -122,7 +122,7 @@ private :
 		++Pivot;
 	}
 
-	// ¿ÞÂÊ ¸ðµÎ Á¤·Ä
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (Low > Mid)
 	{
 		for (int i = High; i <= Right; ++i)
@@ -132,7 +132,7 @@ private :
 		}
 	}
 
-	// ¿À¸¥ÂÊ ¸ðµÎ Á¤·Ä
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (High > Right)
 	{
 		for (int i = Low; i <= Mid; ++i)
