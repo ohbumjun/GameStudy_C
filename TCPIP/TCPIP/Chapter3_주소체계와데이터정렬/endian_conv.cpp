@@ -1,3 +1,4 @@
+/*
 #include <stdio.h>
 #include <WinSock2.h>
 
@@ -21,5 +22,17 @@ int main(int argc, char* argv)
 	net_port = htons(host_port);
 	net_addr = htonl(host_addr);
 
-	
+	printf("Host  ordered port : %#x \n", host_port);
+	printf("NetW ordered port : %#x \n", net_port);
+
+	printf("Host  ordered addr : %#x \n", host_addr);
+	printf("NetW ordered addr : %#x \n", net_addr);
+
+	WSACleanup();
+
+	return 0;
 }
+
+void ErrorHandling(const char*)
+{}
+*/
