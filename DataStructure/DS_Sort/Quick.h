@@ -29,16 +29,16 @@ public :
 			m_Capacity *= 2;
 			T* Array = new T[m_Capacity];
 
-			// memcpy : ¸Þ¸ð¸® º¹»ç ÇÔ¼ö 
+			// memcpy : ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ 
 			memcpy(Array, m_Data, sizeof(T) * m_Size);
 			delete[] m_Data;
 
 			m_Data = Array;
 		}
-		m_Data[m_Size] = data; // ¿©±â±îÁö´Â array¿Íµ¿ÀÏ
+		m_Data[m_Size] = data; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ arrayï¿½Íµï¿½ï¿½ï¿½
 
-		// ÈüÁ¤·ÄÀº Ãß°¡ÇÏ¸é¼­ Á¤·Ä
-		// ÄüÁ¤·ÄÀº Ãß°¡´Ù ÇÏ°í, ±× ´ÙÀ½ ÇÑ²¨¹ø¿¡ Á¤·Ä 
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ï¸é¼­ ï¿½ï¿½ï¿½ï¿½
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ ï¿½Ï°ï¿½, ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ²ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 
 
 		++m_Size;
 	}
@@ -65,28 +65,28 @@ public :
 		return m_Size == 0;
 	}
 
-	// º°µµÀÇ Á¤·ÄÇÔ¼ö¸¦ ¸¶·ÃÇÑ´Ù. 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. 
 	void Sort()
 	{
 		QuickSort(0, m_Size - 1, m_Data);
 	}
 	void Sort(T* Array, int Count)
 	{
-		// ¿ÜºÎ¹è¿­ ¹Ù·Î Á¤·Ä
+		// ï¿½ÜºÎ¹è¿­ ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½ï¿½
 		QuickSort(0, Count - 1, Array);
 	}
 private:
 	void QuickSort(int Left, int Right, T* Array)
 	{
-		// pivot ±âÁØÀ¸·Î,¿Þ,¿À ºÐÇÒ
+		// pivot ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½,ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		if (Left < Right)
 		{
-			// pivot ¼¼ÆÃ
+			// pivot ï¿½ï¿½ï¿½ï¿½
 			int Pivot = Partition(Left, Right, Array);
 			// left ~ pivot -1 , pivot + 1 ~ right
 			
-			// ÇÇº¿ ±âÁØÀ¸·Î
-			// ¿ÞÂÊ, ¿À¸¥ÂÊÀ» ºÐÇÒÇØ¼­ µé¾î°£´Ù
+			// ï¿½Çºï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			// ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½î°£ï¿½ï¿½
 			QuickSort(Left, Pivot - 1, Array);
 			QuickSort(Pivot+1, right, Array);
 		}
@@ -94,35 +94,35 @@ private:
 	int Partition(int Left, int Right, T* Array)
 	{
 		int Low = Left;
-		// Right°¡ idxÀÎµ¥µµ ¿Ö +1  ?
-		// Right´Â µ¥ÀÌÅÍÀÇ °³¼ö... ?
+		// Rightï¿½ï¿½ idxï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ +1  ?
+		// Rightï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½... ?
 		int High = Right + 1;
 
-		// °¡Àå ¿ÞÂÊ°ªÀ» ±âÁØ°ªÀ¸·Î »ç¿ëÇÑ´Ù
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ê°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½
 		T Value = Array[Left];
 
 
-		// ¹Ù²Ü low, high¸¦ Ã£±â 
+		// ï¿½Ù²ï¿½ low, highï¿½ï¿½ Ã£ï¿½ï¿½ 
 		do
 		{
 			do
 			{
 
-				// µé¾î°¡ÀÚ¸¶ÀÚ Low¸¦ 1Áõ°¡
-				// Áï, Ã³À½ ±âÁØ°ªÀ¸·Î Array[Left]·Î ÇßÀ¸³ª
-				// Low = LEft // Low ++ ÇßÀ¸¹Ç·Î
-				// ´Ù¸¥°ª³¢¸® ºñ±³ ½ÃÀÛ 
+				// ï¿½ï¿½î°¡ï¿½Ú¸ï¿½ï¿½ï¿½ Lowï¿½ï¿½ 1ï¿½ï¿½ï¿½ï¿½
+				// ï¿½ï¿½, Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½Ø°ï¿½ï¿½ï¿½ï¿½ï¿½ Array[Left]ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+				// Low = LEft // Low ++ ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½
+				// ï¿½Ù¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 
 				++Low;
 
-			// ±âÁØ°ªÀÌ¶û , ArrayÀÇ low ºñ±³
+			// ï¿½ï¿½ï¿½Ø°ï¿½ï¿½Ì¶ï¿½ , Arrayï¿½ï¿½ low ï¿½ï¿½
 			// 
 			}while(Low <= Right && m_Func(Value, Array[Low]))
 		
-			// ¿©±â¼­´Â High ¿¡ ´ëÇØ Ã³¸®
+			// ï¿½ï¿½ï¿½â¼­ï¿½ï¿½ High ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 			do
 			{
-				// Ã³À½ ¿©±â µé¾î¿À¸é
-				// ¸Ç ¸¶Áö¸· data idx¸¦ °¡¸®Å²´Ù.
+				// Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+				// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ data idxï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å²ï¿½ï¿½.
 				--High;
 			}while(High >= Left && m_Func(Array[High],Value))
 		
@@ -134,15 +134,15 @@ private:
 			}
 
 		} while (Low < High)
-			// pivot°ú ±³Ã¼
-			// High ¹øÂ°²¨¿¡ pivot ÀÌ µé¾î°£´Ù.
+			// pivotï¿½ï¿½ ï¿½ï¿½Ã¼
+			// High ï¿½ï¿½Â°ï¿½ï¿½ï¿½ï¿½ pivot ï¿½ï¿½ ï¿½ï¿½î°£ï¿½ï¿½.
 			T temp = Array[Left];
 		Array[Left] = Array[High];
 		Array[High] = Temp;
 		return High;
 	}
 private :
-	static bool SortFunction(const T& Left, const T& Right)
+	static bool SortFunction(const T& Left, const T& Right) //
 	{
 		return Left > Right;
 	}
