@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{4cf2bcdf-69ca-4eab-837b-80ddf42a9f50}</ProjectGuid>
-    <RootNamespace>APCQueue</RootNamespace>
+    <ProjectGuid>{bffe403c-e169-45ce-b1dd-b856532463c3}</ProjectGuid>
+    <RootNamespace>VirtualMemory</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -139,7 +139,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="소스.cpp" />
+    <ClCompile Include="DynamicArray.cpp" />
+    <ClCompile Include="SYSTEMINFO.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

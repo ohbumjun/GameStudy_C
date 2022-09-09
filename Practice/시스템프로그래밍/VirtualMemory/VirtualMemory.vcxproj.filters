@@ -15,7 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="소스.cpp">
+    <ClCompile Include="SYSTEMINFO.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicArray.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
