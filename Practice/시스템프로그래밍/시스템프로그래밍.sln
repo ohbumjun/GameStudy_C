@@ -67,6 +67,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "APCQueue", "APCQueue\APCQue
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VirtualMemory", "VirtualMemory\VirtualMemory.vcxproj", "{BFFE403C-E169-45CE-B1DD-B856532463C3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HeapCtrl", "HeapCtrl\HeapCtrl.vcxproj", "{834A93C3-BBAC-4339-B92D-F508629CDF00}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -331,6 +333,14 @@ Global
 		{BFFE403C-E169-45CE-B1DD-B856532463C3}.Release|x64.Build.0 = Release|x64
 		{BFFE403C-E169-45CE-B1DD-B856532463C3}.Release|x86.ActiveCfg = Release|Win32
 		{BFFE403C-E169-45CE-B1DD-B856532463C3}.Release|x86.Build.0 = Release|Win32
+		{834A93C3-BBAC-4339-B92D-F508629CDF00}.Debug|x64.ActiveCfg = Debug|x64
+		{834A93C3-BBAC-4339-B92D-F508629CDF00}.Debug|x64.Build.0 = Debug|x64
+		{834A93C3-BBAC-4339-B92D-F508629CDF00}.Debug|x86.ActiveCfg = Debug|Win32
+		{834A93C3-BBAC-4339-B92D-F508629CDF00}.Debug|x86.Build.0 = Debug|Win32
+		{834A93C3-BBAC-4339-B92D-F508629CDF00}.Release|x64.ActiveCfg = Release|x64
+		{834A93C3-BBAC-4339-B92D-F508629CDF00}.Release|x64.Build.0 = Release|x64
+		{834A93C3-BBAC-4339-B92D-F508629CDF00}.Release|x86.ActiveCfg = Release|Win32
+		{834A93C3-BBAC-4339-B92D-F508629CDF00}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

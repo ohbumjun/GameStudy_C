@@ -27,7 +27,7 @@ int PageFaultExceptionFilter(DWORD);
 int _tmain(int argc, TCHAR* argv[])
 {
 	LPVOID baseAddr;
-	int* lpPtr;
+	int* lpPtr; // 해당 포인터 타입을 변경하면, 2차원 배열도 구현 가능
 	SYSTEM_INFO sSysInfo;
 
 	GetSystemInfo(&sSysInfo);
