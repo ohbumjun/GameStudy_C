@@ -173,7 +173,7 @@ private:
 		// 복사본 배열에 정렬된 내용을 원본배열로 옮겨준다.
 		for (int i = Left; i <= Right; ++i)
 		{
-			Array[i] = m_CopyArray[i]; ///
+			Array[i] = m_CopyArray[i]; /////
 		}
 	}
 

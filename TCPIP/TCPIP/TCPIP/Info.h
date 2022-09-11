@@ -18,7 +18,7 @@ int WSACleanup(void);
 // 성공시 소켓 핸들 반환
 SOCKET socket(int af, int type, int protocol);
 
-// IP 주소, PORT 번호 할당 목적
+// IP 주소, PORT 번호 할당 목적 (즉, 소켓에 주소 할당)
 int bind(SOCKET s, const struct sockaddr* name, int namelen);
 
 // 연결 요청 수락 상태로 만들기
