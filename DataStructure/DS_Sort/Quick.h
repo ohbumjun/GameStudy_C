@@ -133,10 +133,10 @@ private:
 					Array[High] = Temp;
 			}
 
-		} while (Low < High)
+		} while (Low < High);
 			// pivot�� ��ü
 			// High ��°���� pivot �� ����.
-			T temp = Array[Left];
+		T temp = Array[Left];
 		Array[Left] = Array[High];
 		Array[High] = Temp;
 		return High;
