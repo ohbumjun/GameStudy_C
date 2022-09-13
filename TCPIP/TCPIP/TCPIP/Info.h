@@ -42,8 +42,9 @@ int send(SOCKET s, const char* buf, int len, int flags);
 	flags : 옵션
 
 int recv(SOCKET s, const char* buf, int len, int flags);
-	s : 데이터 수신 대상 소켓 핸들
-	buf : 전송 데이터
-	len : 전송할 바이트 수
-	flags : 옵션
+	s             : 데이터 수신 대상 소켓 핸들
+	buf          : 전송 데이터
+	len          : 수신할 바이트 수
+	flags       : 옵션
+	return 값 : 수신한 바이트 개수
 */

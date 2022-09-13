@@ -157,7 +157,7 @@ public :
 	{
 		if (m_Size == 0) return;
 		for (int i = 0; i < m_Size; i++)
-			m_NodeArray[i]->m_Visit = false;////
+			m_NodeArray[i]->m_Visit = false;/////
 		CStack<CGraphNode<T>*> stack;
 		stack.push(m_NodeArray[0]);
 		m_NodeArray[0]->m_Visit = true;
