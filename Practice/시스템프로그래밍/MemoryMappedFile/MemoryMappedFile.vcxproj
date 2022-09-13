@@ -140,6 +140,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="MemoryMappedFileRead.cpp" />
+    <ClCompile Include="MemoryMappedFileSort.cpp" />
+    <ClCompile Include="MemoryMappedFile_CopyOnWrite.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
