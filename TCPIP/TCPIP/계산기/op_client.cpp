@@ -3,7 +3,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 #include <WinSock2.h>
+#include <bitset>
+
+using namespace std;
 
 static const int BUF_SIZE = 1024;
 
@@ -54,6 +58,9 @@ int main(int argc, char* argv[])
 	scanf("%d", &opCnt);
 
 	opMsg[0] = (char)opCnt;
+
+	cout << "opCnt : " <<  bitset<8>(opCnt) << endl;
+	cout << "opMsg[0] : " <<  bitset<8>(opMsg[0]) << endl;
 
 	// 2. 서버에 전달하는 정수 하나는 4바이트
 

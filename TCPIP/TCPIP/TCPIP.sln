@@ -11,7 +11,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter3_주소체계와데
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter4_TCP기반서버클라이언트1", "Chapter4_TCP기반서버클라이언트1\Chapter4_TCP기반서버클라이언트1.vcxproj", "{54DA44D3-D181-4EC1-86BB-9AADA6DCF8F9}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "계산기", "계산기\계산기.vcxproj", "{E364BF12-FEBE-408A-B918-CB1ED8AFE0BC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter5_TCP기반서버클라이언트2", "계산기\계산기.vcxproj", "{E364BF12-FEBE-408A-B918-CB1ED8AFE0BC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chapter6_UDP기반서버클라이언트", "Chapter6_UDP기반서버클라이언트\Chapter6_UDP기반서버클라이언트.vcxproj", "{E6722EF0-149E-4ED4-970E-1438926DDDE1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +63,14 @@ Global
 		{E364BF12-FEBE-408A-B918-CB1ED8AFE0BC}.Release|x64.Build.0 = Release|x64
 		{E364BF12-FEBE-408A-B918-CB1ED8AFE0BC}.Release|x86.ActiveCfg = Release|Win32
 		{E364BF12-FEBE-408A-B918-CB1ED8AFE0BC}.Release|x86.Build.0 = Release|Win32
+		{E6722EF0-149E-4ED4-970E-1438926DDDE1}.Debug|x64.ActiveCfg = Debug|x64
+		{E6722EF0-149E-4ED4-970E-1438926DDDE1}.Debug|x64.Build.0 = Debug|x64
+		{E6722EF0-149E-4ED4-970E-1438926DDDE1}.Debug|x86.ActiveCfg = Debug|Win32
+		{E6722EF0-149E-4ED4-970E-1438926DDDE1}.Debug|x86.Build.0 = Debug|Win32
+		{E6722EF0-149E-4ED4-970E-1438926DDDE1}.Release|x64.ActiveCfg = Release|x64
+		{E6722EF0-149E-4ED4-970E-1438926DDDE1}.Release|x64.Build.0 = Release|x64
+		{E6722EF0-149E-4ED4-970E-1438926DDDE1}.Release|x86.ActiveCfg = Release|Win32
+		{E6722EF0-149E-4ED4-970E-1438926DDDE1}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
