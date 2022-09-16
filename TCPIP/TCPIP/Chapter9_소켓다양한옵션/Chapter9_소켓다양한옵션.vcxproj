@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{79a36d73-6ee4-452c-88b3-3f3ca7595328}</ProjectGuid>
-    <RootNamespace>Chapter7소켓우아한연결종료</RootNamespace>
+    <ProjectGuid>{e1266580-f490-4105-b5a8-00e179e11021}</ProjectGuid>
+    <RootNamespace>Chapter9소켓다양한옵션</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -92,6 +92,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -139,8 +140,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="shutdown_client.cpp" />
-    <ClCompile Include="shutdown_server.cpp" />
+    <ClInclude Include="헤더.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="입출력버퍼크기변경.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
