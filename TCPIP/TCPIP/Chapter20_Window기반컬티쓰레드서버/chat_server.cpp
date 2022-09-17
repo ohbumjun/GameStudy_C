@@ -1,3 +1,5 @@
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -71,7 +73,7 @@ int main(int argc, char* argv[])
 		// 매 클라이언트 요청에 대해 새로운 쓰레드를 생성한다.
 		hThread = (HANDLE)_beginthreadex(NULL, 0, HandleClnt, (void*)&hClntSock, 0, NULL);
 
-		printf("Connected Client IP : %s\n", inet_ntoa(clntAddr.sin_addr));
+		printf("Connected %dth Client IP : %s\n", clntCnt, inet_ntoa(clntAddr.sin_addr));
 	}
 
 
@@ -95,6 +97,8 @@ unsigned WINAPI HandleClnt(void* arg)
 	while ((strLen = recv(hClntSock, msg, sizeof(msg), 0)) != 0)
 		SendMsg(msg, strLen);
 
+	fputs("Client Disconnected", stdout);
+
 	WaitForSingleObject(hMutex, INFINITE);
 
 	// remove disconnected client (즉, 자기 자신을 제거하는 것이다)
@@ -103,7 +107,7 @@ unsigned WINAPI HandleClnt(void* arg)
 		if (hClntSock == clntSocks[i])
 		{
 			while (i++ < clntCnt - 1)
-				clntSocks[i] = clntSocks[i + 1];
+				clntSocks[i] = clntSocks[i+1];
 			break;
 		}
 	}
@@ -133,3 +137,4 @@ void ErrorHandling(const char* message)
 	fputc('\n', stderr);
 	exit(1);
 }
+
