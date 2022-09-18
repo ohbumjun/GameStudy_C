@@ -136,7 +136,7 @@ public :
 		SrcNode->AddEdge(DestNode);
 		DestNode->AddEdge(SrcNode);
 	}
-	void BFS(void (*pFunc)(const T&)) ///////
+	void BFS(void (*pFunc)(const T&)) ////
 	{
 		if (m_Size == 0) return;
 		for (int i = 0; i < m_Size; i++)
