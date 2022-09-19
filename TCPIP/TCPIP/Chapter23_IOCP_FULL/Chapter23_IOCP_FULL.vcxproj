@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{5e7c2e97-89a6-42fa-9b00-577471ff5629}</ProjectGuid>
-    <RootNamespace>Chapter22OverlappedIO</RootNamespace>
+    <ProjectGuid>{8abbfc14-19e3-4826-8f24-26971ca98b73}</ProjectGuid>
+    <RootNamespace>Chapter23IOCPFULL</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -92,6 +92,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -139,13 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Info.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Overlapped_CompletionRoutine_Recv.cpp" />
-    <ClCompile Include="Overlapped_CompletionRoutine_Send.cpp" />
-    <ClCompile Include="Overlapped_Event_RecvWin.cpp" />
-    <ClCompile Include="Overlapped_Event_Send_win.cpp" />
+    <ClCompile Include="IOCPEchoServ_Win.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

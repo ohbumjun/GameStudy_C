@@ -33,7 +33,7 @@ DWORD WSAWaitForMultipleEvents(WORD cEvents, const WSAEVENT* lphEvents, BOOL fWa
 - fWaitAll : TRUE 시 모든 Event 오브젝트가 signaled 상태가 되어야 반환, FALSE 면 하나만 되어도 반환
 - dwTimeout : 1/1000 초 단위 지정, WSA_INFINITE 전달시 signaled 상태가 될 때까지 반환하지 않는다.
               0을 전달하면 함수호출과 동시에 반환이 이뤄진다. (단, Event 오브젝트가 manual-reset 모드여야만 가능하다)
-- fAlertable : TRUe 전달 시, alertable 상태로의 진입 
+- fAlertable : TRUe 전달 시, alertable Wait 상태로의 진입 --> Completion Routing IO 형태로 전행 
 - 반환값 : WSA_WAIT_EVENT_0을 빼면, signaled 상태가 된 Event 오브젝트의 핸들이 저장된 인덱스 계산 , 만약 둘 이상 ? 더 작은 인덱스 값 계산
            만일 타임아웃 발생하면 WAIT_TIMEOUT 반환
 
