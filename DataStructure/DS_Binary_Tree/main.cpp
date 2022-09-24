@@ -66,7 +66,7 @@ int main()
 	iter = tree.Find(500);
 
 	if (iter == tree.end())
-		std::cout << "Ã£´Â µ¥ÀÌÅÍ°¡ ¾ø½À´Ï´Ù." << std::endl;
+		std::cout << "Ã£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½." << std::endl;
 
 	else
 	{
@@ -100,7 +100,7 @@ int main()
 	for (iter = tree.begin(); iter != tree.end(); ++iter)
 	{
 		std::cout << "key : " << iter->first << " value : " <<
-			iter->second << std::endl;
+			iter->second << std::endl;//
 	}
 
 	return 0;
