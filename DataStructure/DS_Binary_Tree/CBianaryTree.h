@@ -528,7 +528,7 @@ private:
 	PNODE FindMin(PNODE Node)
 	{
 		if (Node->m_Left)
-			return FindMin(Node->m_Left); //
+			return FindMin(Node->m_Left); ///
 
 		return Node;
 	}
