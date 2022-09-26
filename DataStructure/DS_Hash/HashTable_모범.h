@@ -156,7 +156,7 @@ public:
 		{
 			Value	addValue;
 			m_Array[Index].Add(key, addValue);
-			Node = m_Array[Index].Get(key);
+			Node = m_Array[Index].Get(key);//
 		}
 
 		return Node->second;
