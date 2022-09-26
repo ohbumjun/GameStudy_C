@@ -11,7 +11,7 @@ int main()
 {
 	CGraph<int>	graph;
 
-	for (int i = 1; i <= 9; ++i)
+	for (int i = 1; i <= 9; ++i) //
 	{
 		graph.insert(i);
 	}
