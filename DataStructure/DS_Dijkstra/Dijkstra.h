@@ -66,8 +66,8 @@ public :
 	}
 	void Add(CHeap<CDijkstraNode<T>*>& heap)
 	{
-		// ´ÙÀÍ½ºÆ®¶ó : ¾ÆÁ÷ ¹æ¹®¾ÈÇÑ ³ëµå Áß¿¡¼­ °¡Àå °Å¸®°¡ ÂªÀº ³ëµå¸¦ ¹æ¹®ÇÑ´Ù.
-		// ±×¸®°í °¢ Á¡±îÁöÀÇ ÃÖ¼Ò °Å¸®µéÀ» update ÇØ°£´Ù
+		// ï¿½ï¿½ï¿½Í½ï¿½Æ®ï¿½ï¿½ : ï¿½ï¿½ï¿½ï¿½ ï¿½æ¹®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ß¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ Âªï¿½ï¿½ ï¿½ï¿½å¸¦ ï¿½æ¹®ï¿½Ñ´ï¿½.
+		// ï¿½×¸ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ï¿½ update ï¿½Ø°ï¿½ï¿½ï¿½
 		for (int i = 0; i < m_Size; i++)
 		{
 			if (m_Cost + m_EdgeArray[i]->m_Cost < m_EdgeArray[i]->m_Node->m_Cost)
@@ -123,7 +123,7 @@ public :
 		CDijkstraNode<T>* EndNode   = FindNode(End);
 		if (!EndNode) return false;
 
-		// ÃÊ±âÈ­
+		// ï¿½Ê±ï¿½È­
 		for (int i = 0; i < m_Size; i++)
 		{
 			m_NodeArray[i]->m_Visit = false;

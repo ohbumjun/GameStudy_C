@@ -1,57 +1,27 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <vector>
 #include <iostream>
+#include <bitset>
+#include <string>
 
 using namespace std;
 
-void Bresenham(int stR, int stC, int edR, int edC, vector<pair<int, int>>& vecP)
-{
-	// 가로 
-	int x = stC;
-	// 세로 
-	int y = stR;
+template<typename T,
+         typename = decltype(std::declval<T>().begin()),
+         typename = decltype(std::declval<T>().end())>
+void A(T& t){}
 
-	int dx = edC - stC;
-	int dy = edR - stR;
+template<typename T>
 
-	int detP = 2 * dy - dx;
 
-	cout << "dx,dy : " << dx << "." << dy << endl;
 
-	while (x <= edC)
-	{
-		cout << "x,y : " << x << "." << y << endl;
-		cout << "detP : " << detP << endl;
+int main() {
 
-		vecP.push_back(make_pair(x, y));
-		++x;
+    unsigned int n = -1; 
 
-		if (detP < 0)
-			detP = detP + 2 * dy;
-		else
-		{
-			detP = detP + 2 * dy - 2 * dx;
-			y++;
-		}
-	}
+    cout << bitset<8>(n) << endl;
+
+    return 0;
 }
 
-int main()
-{
-	//
-	vector<pair<int, int>> vecPixel;
-	vector<vector<int>> vecVec;
-	vecVec.resize(8);
-
-	for (int i = 0; i < 8; ++i)
-		vecVec[i].resize(8);
-
-	Bresenham(0, 0, 4, 7, vecPixel);
-
-	for (const auto& e : vecPixel)
-		cout << e.first << ", " << e.second << ".";
-	cout << endl;
-
-	return 0;
-}
+// Insertion Sort 알고리즘을 사용해서 작은 값이
+// 앞으로 오도록 List를 정렬한 다음
+// head 를 반환하는 함수를 만드세요
