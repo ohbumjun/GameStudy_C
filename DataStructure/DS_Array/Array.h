@@ -7,7 +7,7 @@ template <typename T>
 class CArray
 {
 public:
-	CArray() //
+	CArray() ////
 	{
 		m_Size = 0;
 		m_Capacity = 4;
