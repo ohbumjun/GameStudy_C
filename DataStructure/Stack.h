@@ -29,7 +29,7 @@ private :
 	CStackNode<T>* m_LastNode;
 	int m_Size;
 public :
-	bool empty() const { return m_Size == 0; }
+	bool empty() const { return m_Size == 0; } //
 	void push(const T& data)
 	{
 		CStackNode<T>* NewNode = new CStackNode<T>;
