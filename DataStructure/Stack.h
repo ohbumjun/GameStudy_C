@@ -46,7 +46,7 @@ public :
 	void pop()
 	{
 		if (empty()) assert(false);
-		CStackNode<T>* NextNode = m_LastNode->m_NextNode; ///
+		CStackNode<T>* NextNode = m_LastNode->m_NextNode; /////
 		delete m_LastNode;
 		m_LastNode = NextNode;
 		--m_Size;
