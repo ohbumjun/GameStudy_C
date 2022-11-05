@@ -1134,7 +1134,7 @@ sampler2D SpecularSampler;
 
 float3 gLightColor;
 
-// 난반사광 = 빛의 색상 * 난반사광의 양(빛의 강도) * Diffuse Map의 값 (기존 물질의 색상)
+// 난반사광 = 빛의 색상 * 난반사광의 양(빛의 강도) * Diffuse Map의 값 (기존 물질의 색상) //
 // 정반사광 = 빛의 색상 * 정반사광의 양 (빛의 강도) * Specular Map 값 (Gray Scale 색상)
 
 float4 ps_main(PS_INPUT Input) : COLOR

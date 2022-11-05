@@ -1,44 +1,53 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <iostream>
-#include <mutex>  // mutex 를 사용하기 위해 필요
-#include <thread>
-#include <vector>
-#include <string>
-#include <bitset>
+#include <stdio.h>
+#include <cstddef>
+#include <cstring>
 
 using namespace std;
 
-struct A{
-   
-    // A(A&& a)
-    // {
-    //     cout << "Move copy" << endl;
-    // }
-   
-    int i = 0;
+struct Base
+{
+public:
+	Base() { cout << "Base 생성자" << endl; }
+	virtual ~Base() { cout << "Base 소멸자" << endl; }
+public:
+	virtual void func1() { cout << "Base의 func1" << endl; }
+	virtual void func2() { cout << "Base의 func2" << endl; }
+	void func3() { cout << "Base의 func3" << endl; }
+public:
+	int iValue;
+	char cValue;
 };
 
-// A returnA(A a)
-
-A returnA()
+struct Child1 : Base
 {
-    A a;
-    return a;
-}
+public:
+	Child1() { cout << "Child1 생성자" << endl; }
+	~Child1() { cout << "Child1 소멸자" << endl; }
+public:
+	virtual void func1() { cout << "Child1의 func1" << endl; }
+	virtual void func2() { cout << "Child1의 func2" << endl; }
+	void func3() { cout << "Child1의 func3" << endl; }
+public:
+	float fValue;
+};
+
+struct Child2 : Child1
+{
+public:
+	Child2() { cout << "Child2 생성자" << endl; }
+	~Child2() { cout << "Child2 소멸자" << endl; }
+public:
+	virtual void func1() { cout << "Child2의 func1" << endl; }
+	virtual void func2() { cout << "Child2의 func2" << endl; }
+	void func3() { cout << "Child2의 func3" << endl; }
+public:
+};
 
 int main() {
-
-    // A pA;
-    A pB = returnA();
-
-   //auto two_i = [pA]() -> int {
-   //    
-   //    int a;
-   //    a = pA.i;
-   //
-   //    return a;
-   //};
-   //
-   //auto copyT = two_i;
-
-    return 0;
+	cout << sizeof(Base) << endl; // 16
+	cout << sizeof(Child1) << endl; // 24
+	cout << sizeof(Child2) << endl; // 24
 }
