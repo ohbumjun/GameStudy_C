@@ -1159,7 +1159,7 @@ float4 ps_main(PS_INPUT Input) : COLOR
       specular *= specularIntensity.rgb * gLightColor;
    }
 
-   // Ambient => Ambient Light Color * Matrial Color (= Albedo)
+   // Ambient => Ambient Light Color * Matrial Color (= Albedo) //
    float3 ambient = float3(0.1f, 0.1f, 0.1f) * albedo;
    
    return float4(ambient + diffuse + specular, 1);
