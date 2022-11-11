@@ -3,33 +3,46 @@
 #include <thread>
 #include <vector>
 #include <string>
+#include <bitset>
 
 using namespace std;
 
-int gstrcpy(char* src, char* dest)
-{
-    int sum = 0;
+#define MAX 1000001
 
-    for (int i = 0; i < sizeof(dest); ++i)
-    {
-        src[i] = dest[i];
-    }
-    return sum;
-}
+bool IsDecimal[MAX];
 
 int main() {
 
-    char cArra[] = "hello1";
-    char cArra2[] = "hello2";
+    memset(IsDecimal, true, sizeof(IsDecimal));
 
-    gstrcpy(cArra, cArra2);
+    int M, N;
 
-    cout << cArra << endl;
+    cin >> M >> N;
 
+       cout << "hl" << endl;
+
+    int minN = min(M, N);
+    int maxN = max(M, N);
+
+    for (int i = 2; i < sqrt(1000001); ++i)
+    {
+        if (IsDecimal[i] == false)
+            continue;
+
+        for (int j = i; j < MAX; j += i)
+            IsDecimal[j] = false;
+
+    }
+
+    IsDecimal[2] = true;
+    IsDecimal[3] = true;
+
+    for (int i = minN; i <= maxN; ++i)
+    {
+        if (IsDecimal[i])
+            cout << i << " ";
+    }
+
+    cout << endl;
     return 0;
 }
-
-// Insertion Sort 알고리즘을 사용해서 작은 값이
-// 앞으로 오도록 List를 정렬한 다음
-// head 를 반환하는 함수를 만드세요
-// (기본적으로 알고 있는 InsertionNode 의 반대를 출력한다고 생각하기)
