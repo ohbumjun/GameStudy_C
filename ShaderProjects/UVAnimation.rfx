@@ -1148,7 +1148,7 @@ float4 ps_main(PS_INPUT Input) : COLOR
    float3 reflection = normalize(Input.mReflection);
    float3 viewDir = normalize(Input.mViewDir); 
    float3 specular = 0;
-   if ( diffuse.x > 0 )
+   if ( diffuse.x > 0 ) //
    {
       specular = saturate(dot(reflection, -viewDir ));//
       specular = pow(specular, 20.0f);
