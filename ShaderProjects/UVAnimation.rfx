@@ -1150,7 +1150,7 @@ float4 ps_main(PS_INPUT Input) : COLOR
    float3 specular = 0;
    if ( diffuse.x > 0 ) //
    {
-      specular = saturate(dot(reflection, -viewDir ));//
+      specular = saturate(dot(reflection, -viewDir ));////
       specular = pow(specular, 20.0f);
       
       // Specular Map Include Specular Light Intensity In It
