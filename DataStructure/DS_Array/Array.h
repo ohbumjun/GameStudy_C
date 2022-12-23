@@ -159,7 +159,7 @@ public:
 		{
 			for (int j = i + 1; j < m_Size; ++j)
 			{
-				if (pFunc(m_Array[i], m_Array[j]))
+				if (pFunc(m_Array[i], m_Array[j]))//
 				{
 					T Temp = m_Array[i];
 					m_Array[i] = m_Array[j];

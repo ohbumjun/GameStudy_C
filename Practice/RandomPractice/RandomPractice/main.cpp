@@ -1,42 +1,31 @@
-#include <functional>
+#include <initializer_list>
 #include <iostream>
-#include <vector>
+#include <string>
 
-using namespace std;
-
-template<typename T, typename Pred>
-std::void_t<decltype(std::declval<T>().begin(), std::declval<T>().end())>
-deleteEven(T& t, Pred pred)
+class A
 {
-    auto iter = t.begin();
-    auto iterEnd = t.end();
+public:
+	A() { std::cout << "C" << std::endl; }
+	A(A& a) { std::cout << "&" << std::endl; }
+	A(A&& a) noexcept { std::cout << "&&" << std::endl; }
+	~A() { std::cout << "D" << std::endl; }
+};
 
-    for (; iter != iterEnd;)
-    {
-        if (pred(iter->first))
-        {
-            iter = t.erase(iter);
-            iterEnd = t.end();
-            continue;
-        }
-        ++iter;
-    }
-
-
+A F1(A a) { 
+	return a; 
 }
+A F2(A& a) { return a; }
 
-int main() {
-    std::unordered_map<int, int> m = { {1, 2}, {2, 3}, {3, 4} };
+int main()
+{
+	A a;
+	std::cout << "-------" << std::endl;
+	A b = a;
+	std::cout << "-------" << std::endl;
+	A c = F1(b);
+	std::cout << "-------" << std::endl;
+	A d = F2(c);
 
-    deleteEven(m, [](int elem) {return (elem & 1) == 0; });
-    
-    auto iter = m.begin();
-    auto iterEnd = m.end();
-
-    for (; iter != iterEnd; ++iter)
-    {
-        cout << iter->first << endl;
-    }
-
-    cout << endl;
+	return 0;
 }
+// 컴파일 결과 ?
