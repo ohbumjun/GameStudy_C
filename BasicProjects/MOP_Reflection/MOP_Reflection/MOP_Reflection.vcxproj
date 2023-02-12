@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{be16e338-effe-4c57-91f8-9ff19816b623}</ProjectGuid>
-    <RootNamespace>RandomPractice</RootNamespace>
+    <ProjectGuid>{a381c977-7589-4f0d-b8c0-42d8a7c706a0}</ProjectGuid>
+    <RootNamespace>MOPReflection</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -35,7 +35,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -88,7 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -103,6 +103,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -117,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -142,14 +143,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClInclude Include="Attribute.h" />
+    <ClInclude Include="Book.h" />
+    <ClInclude Include="CD.h" />
+    <ClInclude Include="ClassDef.h" />
+    <ClInclude Include="CppObject.h" />
+    <ClInclude Include="DynaObject.h" />
+    <ClInclude Include="Flag.h" />
+    <ClInclude Include="FuncValue.h" />
+    <ClInclude Include="MemPtr.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="Product.h" />
+    <ClInclude Include="RealValue.h" />
+    <ClInclude Include="SimpleObject.h" />
+    <ClInclude Include="Type.h" />
+    <ClInclude Include="Value.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="A.h" />
-    <ClInclude Include="Allocator.h" />
-    <ClInclude Include="B.h" />
-    <ClInclude Include="Utils.h" />
-    <ClInclude Include="헤더.h" />
+    <ClCompile Include="ClassDef.cpp" />
+    <ClCompile Include="DynaObject.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="SimpleObject.cpp" />
+    <ClCompile Include="Type.cpp" />
+    <ClCompile Include="Value.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
