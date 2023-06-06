@@ -63,7 +63,21 @@ private:
 	virtual void readEndArray() ;
 	virtual void readEndObject() ;
 
+
 private :
+	struct Context
+	{
+		void* value = nullptr;
+		size_t objNum = 0;
+
+		Context() = default;
+		Context(void* value) : value(){}
+	};
+
+	void* getNextValue(Context* context);
+
 	void* m_Document;
+	std::stack<Context> _contextStack;
+	std::stack<const char*> _keyStack;
 };
 

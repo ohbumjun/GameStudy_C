@@ -28,6 +28,12 @@ JsonDomSerializer::JsonDomSerializer(const char* json) :
 
 JsonDomSerializer::~JsonDomSerializer()
 {
+	Document* doc = reinterpret_cast<Document*>(m_Document);
+
+	if (doc)
+	{
+		delete doc;
+	}
 }
 
 std::string JsonDomSerializer::GetResult()
@@ -198,4 +204,9 @@ void JsonDomSerializer::readEndArray()
 
 void JsonDomSerializer::readEndObject()
 {
+}
+
+void* JsonDomSerializer::getNextValue(Context* context)
+{
+	return nullptr;
 }
