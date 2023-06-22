@@ -15,7 +15,7 @@ struct PRRedBlackNode
 	PRRedBlackNode* right;
 	PRRedBlackNode* next;
 
-	//if have duplicate key save in bucket as linked list
+	//if have duplicate key save in bucket as linked list //
 	//only first node has left/right/parent, next linked nodes don't have any of them
 	PRRedBlackNode* parent;
 	PRRedBlackNode color;
