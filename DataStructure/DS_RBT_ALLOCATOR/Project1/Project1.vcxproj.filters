@@ -24,16 +24,13 @@
     <ClCompile Include="UpgradeRedblackTree.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Allocable.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="CHeapAllocator.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Memory.c">
+    <ClCompile Include="Memory.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CGeneralAllocator.cpp">
+    <ClCompile Include="GeneralAllocator.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -55,7 +52,13 @@
     <ClInclude Include="CHeapAllocator.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CGeneralAllocator.h">
+    <ClInclude Include="GeneralAllocator.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Flag.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

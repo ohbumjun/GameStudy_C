@@ -1,3 +1,4 @@
+#include "Flag.h"
 #include "CHeapAllocator.h"
 
 CHeapAllocator::CHeapAllocator()

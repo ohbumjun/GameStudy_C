@@ -1,10 +1,7 @@
 #pragma once
 
+#include "Flag.h"
 #include "Allocable.h"
-
-class DefaultAllocator
-{
-};
 
 struct CHeapAllocator : AlignedAllocable
 {

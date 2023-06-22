@@ -1,4 +1,6 @@
-#include <malloc.h>
+#pragma once
+
+#include "Memory.h"
 
 void* pr_malloc(size_t size)
 {

@@ -1,3 +1,4 @@
+#include "Flag.h"
 #include "RedBlackTree.h"
 
 Node* RedBlackTree::getGrandNode(Node* cur)

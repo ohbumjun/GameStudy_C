@@ -1,5 +1,7 @@
+#include "Flag.h"
 #include <iostream>
 #include <cstdlib>
+
 #include <vector>
 
 class MyClass {
@@ -32,5 +34,17 @@ int main() {
     )
     */
 
+
+
+    unsigned short cal1 = 16;
+    unsigned short cal2 = 68;
+
+    std::cout << "cal1 : " << std::bitset<16>(cal1) << std::endl;
+    std::cout << "cal2 : " << std::bitset<16>(cal2) << std::endl;
+
+    unsigned short result = cal1 & cal2;
+    
+    std::cout << "rest : " <<  std::bitset<16>(result) << std::endl;
+    std::cout << "rest : " <<  result << std::endl;
     return 0;
 }

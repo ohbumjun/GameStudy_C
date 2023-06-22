@@ -105,6 +105,9 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>Flag.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)Flag.h</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,11 +131,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Allocable.cpp" />
-    <ClCompile Include="CGeneralAllocator.cpp" />
+    <ClCompile Include="GeneralAllocator.cpp" />
     <ClCompile Include="CHeapAllocator.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Memory.c" />
+    <ClCompile Include="Memory.cpp" />
     <ClCompile Include="RedBlackTree.cpp" />
     <ClCompile Include="UpgradeRedblackTree.cpp" />
   </ItemGroup>
@@ -141,8 +143,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Allocable.h" />
-    <ClInclude Include="CGeneralAllocator.h" />
+    <ClInclude Include="Flag.h" />
+    <ClInclude Include="GeneralAllocator.h" />
     <ClInclude Include="CHeapAllocator.h" />
+    <ClInclude Include="Memory.h" />
     <ClInclude Include="RedBlackTree.h" />
     <ClInclude Include="UpgradeRedblackTree.h" />
   </ItemGroup>
