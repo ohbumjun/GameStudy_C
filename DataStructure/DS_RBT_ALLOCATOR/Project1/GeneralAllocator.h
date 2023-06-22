@@ -101,7 +101,7 @@ public:
 	}
 };
 
-// Align 을 맞춰서 할당해주는 Allocator
+// Align 을 맞춰서 할당해주는 Allocator //
 template <typename T>
 struct AlignedAllocator final : public GeneralAllocator<T>
 {

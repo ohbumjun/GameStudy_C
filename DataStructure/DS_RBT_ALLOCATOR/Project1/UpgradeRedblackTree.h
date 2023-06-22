@@ -27,6 +27,7 @@ class PRRedBlackTree
 	static_assert(!std::is_pointer<TAllocator>::value, "TAllocator must not be pointer type, use ref type instead");
 	
 	// std::decay<TAllocator>::type> : remove reference, const, volatile from TAllocator type
+	// ex) if TAllocator is const SomeAllocator&, then std::decay<TAllocator>::type would be SomeAllocator
 	static_assert(std::is_base_of<Allocable, typename std::decay<TAllocator>::type>::value, "type parameter of this class must derive from BaseClass");
 
 };
