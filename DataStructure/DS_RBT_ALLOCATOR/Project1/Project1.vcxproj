@@ -128,14 +128,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Allocable.cpp" />
+    <ClCompile Include="CGeneralAllocator.cpp" />
+    <ClCompile Include="CHeapAllocator.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Memory.c" />
     <ClCompile Include="RedBlackTree.cpp" />
+    <ClCompile Include="UpgradeRedblackTree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="command.bat" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Allocable.h" />
+    <ClInclude Include="CGeneralAllocator.h" />
+    <ClInclude Include="CHeapAllocator.h" />
     <ClInclude Include="RedBlackTree.h" />
+    <ClInclude Include="UpgradeRedblackTree.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -69,16 +69,21 @@ void RedBlackTree::insertFix(Node* cur)
 	{
 		Node* grandNode(getGrandNode(cur));		// 조부모 노드
 		Node* uncleNode(getUncleNode(cur));		// 삼촌 노드
+
+		// 부모가 왼쪽 자식인 경우 (-> 삼촌은 오른쪽)
 		if (cur->parent == grandNode->left)
-		{	// [CASE 1]: 부모도 삼촌도 모두 빨간색인 경우
+		{	
+			// [CASE 1]: 부모도 삼촌도 모두 빨간색인 경우
 			if (uncleNode->color == Color::RED)
-			{	// 부모와 삼촌 그리고 조부모 노드의 색깔을 반전시켜준다.
+			{	
+				// (부모와 삼촌) 그리고 조부모 노드의 색깔을 반전시켜준다.
 				cur->parent->color = uncleNode->color = Color::BLACK;
 				grandNode->color = Color::RED;
 				cur = grandNode;	// cur을 조부모로 올려서 다음 loop를 준비한다.
 			}
 			else
-			{// [CASE 2]: 삼촌이 흑색이고, cur이 오른쪽 자식노드인 경우
+			{
+				// [CASE 2]: 삼촌이 흑색이고, cur이 오른쪽 자식노드인 경우
 				if (cur == cur->parent->right)
 				{
 					cur = cur->parent;	// cur을 한 칸 올리고,
@@ -90,6 +95,7 @@ void RedBlackTree::insertFix(Node* cur)
 				rightRotate(grandNode);	// 우회전 한다. (주의! grandNode로 우회전)
 			}
 		}
+		// 부모가 오른쪽 자식인 경우 (-> 삼촌은 왼쪽)
 		else
 		{
 			if (uncleNode->color == Color::RED)
@@ -100,6 +106,7 @@ void RedBlackTree::insertFix(Node* cur)
 			}
 			else
 			{
+				// 삼촌이 흑색이고, cur이 왼쪽 자식노드인 경우
 				if (cur == cur->parent->left)
 				{
 					cur = cur->parent;
@@ -120,6 +127,7 @@ void RedBlackTree::insertNode(Node* cur, const int& data)
 	Node* parent, * tail;
 	parent = nil;				// 일반적으로 parent가 nil을 가리킨다.
 	tail = nil->right;			// 일반적으로 tail이 root 노드를 가리킨다.
+
 	while (tail != nil)			// [과정 1]: 삽입할 위치를 찾는다.
 	{
 		parent = tail;			// parent를 tail로 한 칸 내려야 tail을 이동시킬 수 있다.
@@ -134,12 +142,17 @@ void RedBlackTree::insertNode(Node* cur, const int& data)
 		// 삽입할 값이 현재 노드의 key보다 크다면 오른쪽 자식노드로 내려간다.
 		else tail = tail->right;
 	}	// 반복문을 탈출함 = 삽입할 위치가 parent에 저장되었음을 의미한다.
-	tail = new Node(data, Color::RED, parent, nil, nil);	// new 함수를 이용해 새로운 노드를 만든다.
+
+	// new 함수를 이용해 새로운 노드를 만든다.
+	// 새로운 노드는 무조건 RED 로 세팅하고 시작한다.
+	tail = new Node(data, Color::RED, parent, nil, nil);	
+
 	if (parent == nil)	// root 노드를 삽입하는 경우,
 	{
 		parent->right = tail;	// nil->right = tail로 root노드로 만들어주고
 		tail->color = Color::BLACK;	// root 노드는 반드시 반드시 흑색이어야 한다.
 	}
+
 	// 삽입할 값이 삽입 위치의 노드의 key보다 작다면 왼쪽 자식노드에 삽입한다.
 	// 삽입할 값이 삽입 위치의 노드의 key보다 크다면 오른쪽 자식노드에 삽입한다.
 	else if (data < parent->key) parent->left = tail;
