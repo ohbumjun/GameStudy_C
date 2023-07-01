@@ -10,12 +10,12 @@ public :
 	JsonDomSerializer(const char* json);
 	virtual ~JsonDomSerializer();
 
-	std::string GetResult();
+	std::string GetFinalResult();
 
 private:
-	virtual void writeStartObject() ;
-	virtual void writeStartObject(TypeId type);
-	virtual void writeKey(const char* key) ;
+	virtual void wStartObject() ;
+	virtual void wStartObject(TypeId type);
+	virtual void wKey(const char* key) ;
 	virtual void write(const bool data) ;
 	virtual void write(const int8 data) ;
 	virtual void write(const uint8 data) ;
@@ -31,15 +31,15 @@ private:
 	virtual void write(const char* data) ;
 	virtual void write(const unsigned char* data) ;
 	// virtual void write(const LvDynamicObject& object) ;
-	virtual void writeBuffer(void* buffer, size_t size) ;
-	virtual void writeStartArray(uint64 arrayLength) ;
+	virtual void wBuffer(void* buffer, size_t size) ;
+	virtual void wStartArray(uint64 arrayLength) ;
 	// virtual void writeStartArray(LvType type, uint64 arrayLength) ;
-	virtual void writeEndArray() ;
-	virtual void writeEndObject() ;
+	virtual void wEndArray() ;
+	virtual void wEndObject() ;
 
 private:
-	virtual void readStartObject() ;
-	virtual void readStartObject(TypeId type) ;
+	virtual void rStartObject() ;
+	virtual void rStartObject(TypeId type) ;
 	virtual void useKey(const char* key) ;
 	virtual bool hasKey(const char* key);
 	virtual void readKey(char* key) ;
@@ -58,28 +58,28 @@ private:
 	virtual void read(char* data) ;
 	virtual void read(unsigned char* data) ;
 	// virtual void read(LvDynamicObject& object) ;
-	virtual void readBuffer(void* buffer, size_t size) ;
-	virtual size_t readStartArray() ;
+	virtual void rBuffer(void* buffer, size_t size) ;
+	virtual size_t rStartArray() ;
 	// size_t readStartArray(LvType type) ;
-	virtual void readEndArray() ;
-	virtual void readEndObject() ;
+	virtual void rEndArray() ;
+	virtual void rEndObject() ;
 
 
 private :
-	struct Context
+	struct History
 	{
 		void* value = nullptr;
-		size_t objNum = 0;   // ?
+		size_t elementNum = 0;   // ?
 
-		Context() = default;
-		Context(void* value) : value(){}
+		History() = default;
+		History(void* value) : value(){}
 	};
 
-	void* getNextValue(Context* context);
+	void* getNextValue(History* context);
 
 	void* m_Document;
-	std::stack<Context> _contextStack;
-	std::stack<const char*> _keyStack;
+	std::stack<History> m_ReadHistoryStack;
+	std::stack<const char*> m_KeyStack;
 
 	// JsonSerialize 는 Write 시에만 사용한다.
 	JsonSerializer m_JsonArchive;

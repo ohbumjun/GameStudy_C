@@ -38,23 +38,24 @@ JsonDomSerializer::~JsonDomSerializer()
 	}
 }
 
-std::string JsonDomSerializer::GetResult()
+std::string JsonDomSerializer::GetFinalResult()
 {
-	return m_JsonArchive.GetResult();
+	return m_JsonArchive.GetFinalResult();
 }
 
-void JsonDomSerializer::writeStartObject()
+void JsonDomSerializer::wStartObject()
 {
-	m_JsonArchive.writeStartObject();
+	m_JsonArchive.wStartObject();
 }
 
-void JsonDomSerializer::writeStartObject(TypeId type)
+void JsonDomSerializer::wStartObject(TypeId type)
 {
+	m_JsonArchive.wStartObject();
 }
 
-void JsonDomSerializer::writeKey(const char* key)
+void JsonDomSerializer::wKey(const char* key)
 {
-	m_JsonArchive.writeKey(key);
+	m_JsonArchive.wKey(key);
 }
 
 void JsonDomSerializer::write(const bool data)
@@ -127,36 +128,37 @@ void JsonDomSerializer::write(const unsigned char* data)
 	m_JsonArchive.write(data);
 }
 
-void JsonDomSerializer::writeBuffer(void* buffer, size_t size)
+void JsonDomSerializer::wBuffer(void* buffer, size_t size)
 {
-	m_JsonArchive.writeBuffer(buffer, size);
+	m_JsonArchive.wBuffer(buffer, size);
 }
 
-void JsonDomSerializer::writeStartArray(uint64 arrayLength)
+void JsonDomSerializer::wStartArray(uint64 arrayLength)
 {
-	m_JsonArchive.writeStartArray(arrayLength);
+	m_JsonArchive.wStartArray(arrayLength);
 }
 
-void JsonDomSerializer::writeEndArray()
+void JsonDomSerializer::wEndArray()
 {
-	m_JsonArchive.writeEndArray();
+	m_JsonArchive.wEndArray();
 }
 
-void JsonDomSerializer::writeEndObject()
+void JsonDomSerializer::wEndObject()
 {
-	m_JsonArchive.writeEndObject();
+	m_JsonArchive.wEndObject();
 }
 
-void JsonDomSerializer::readStartObject()
+void JsonDomSerializer::rStartObject()
 {
 	Value* v = nullptr;
-	if (_contextStack.size() > 0)
+
+	if (m_ReadHistoryStack.size() > 0)
 	{
 		//부모 얻음
-		Context* context = &_contextStack.top();
+		History* History = &m_ReadHistoryStack.top();
 
 		//get next value
-		Value* val = static_cast<Value*>(getNextValue(context));
+		Value* val = static_cast<Value*>(getNextValue(History));
 
 		if (nullptr != val && val->IsObject())
 		{
@@ -170,40 +172,42 @@ void JsonDomSerializer::readStartObject()
 		v = static_cast<Document*>(m_Document);
 	}
 
-	_contextStack.push(Context(v));
+	m_ReadHistoryStack.push(History(v));
 }
 
-void JsonDomSerializer::readStartObject(TypeId type)
+void JsonDomSerializer::rStartObject(TypeId type)
 {
+	rStartObject();
 }
 
 void JsonDomSerializer::useKey(const char* key)
 {
-	if (_contextStack.size() == 0) return;
+	if (m_ReadHistoryStack.size() == 0) return;
 
-	if (_contextStack.size() > 0)
+	if (m_ReadHistoryStack.size() > 0)
 	{
 		//부모의 Value가 nullptr라면 keyStack관련 처리를 다 무시
-		Context* context = &_contextStack.top();
-		if (nullptr != context->value)
+		History* History = &m_ReadHistoryStack.top();
+
+		if (nullptr != History->value)
 		{
-			_keyStack.push(key);
+			m_KeyStack.push(key);
 		}
 	}
 }
 
 bool JsonDomSerializer::hasKey(const char* key)
 {
-	if (_contextStack.size() == 0) return false;
+	if (m_ReadHistoryStack.size() == 0) return false;
 
-	if (_contextStack.size() > 0)
+	if (m_ReadHistoryStack.size() > 0)
 	{
 		//부모의 Value가 nullptr라면 keyStack관련 처리를 다 무시
-		Context* context = &_contextStack.top();
+		History* History = &m_ReadHistoryStack.top();
 
-		if (nullptr != context->value)
+		if (nullptr != History->value)
 		{
-			return static_cast<Value*>(context->value)->HasMember(key);
+			return static_cast<Value*>(History->value)->HasMember(key);
 		}
 	}
 
@@ -218,13 +222,13 @@ void JsonDomSerializer::readKey(char* key)
 void JsonDomSerializer::read(bool& data)
 {
 	rapidjson::Value* val = nullptr;
-	if (_contextStack.size() > 0)
+	if (m_ReadHistoryStack.size() > 0)
 	{
 		//부모 얻어옮
-		Context* context = &_contextStack.top();
+		History* History = &m_ReadHistoryStack.top();
 
 		//get next value
-		val = static_cast<rapidjson::Value*>(getNextValue(context));
+		val = static_cast<rapidjson::Value*>(getNextValue(History));
 
 	}
 	else
@@ -243,13 +247,13 @@ void JsonDomSerializer::read(int8& data)
 {
 	rapidjson::Value* val = nullptr;
 
-	if (_contextStack.size() > 0)
+	if (m_ReadHistoryStack.size() > 0)
 	{
 		//부모 얻어옮
-		Context* context = &_contextStack.top();
+		History* History = &m_ReadHistoryStack.top();
 
 		//get next value
-		val = static_cast<rapidjson::Value*>(getNextValue(context));
+		val = static_cast<rapidjson::Value*>(getNextValue(History));
 	}
 	else
 	{
@@ -266,14 +270,14 @@ void JsonDomSerializer::read(int8& data)
 void JsonDomSerializer::read(uint8& data)
 {
 	rapidjson::Value* val = nullptr;
-	if (_contextStack.size() > 0)
+	if (m_ReadHistoryStack.size() > 0)
 	{
 		//부모 얻어옮
-		Context* context = &_contextStack.top();
+		History* History = &m_ReadHistoryStack.top();
 		rapidjson::Value* v = nullptr;
 
 		//get next value
-		val = static_cast<rapidjson::Value*>(getNextValue(context));
+		val = static_cast<rapidjson::Value*>(getNextValue(History));
 
 	}
 	else
@@ -291,13 +295,13 @@ void JsonDomSerializer::read(uint8& data)
 void JsonDomSerializer::read(int16& data)
 {
 	rapidjson::Value* val = nullptr;
-	if (_contextStack.size() > 0)
+	if (m_ReadHistoryStack.size() > 0)
 	{
 		//부모 얻어옮
-		Context* context = &_contextStack.top();
+		History* History = &m_ReadHistoryStack.top();
 
 		//get next value
-		val = static_cast<rapidjson::Value*>(getNextValue(context));
+		val = static_cast<rapidjson::Value*>(getNextValue(History));
 
 	}
 	else
@@ -315,14 +319,14 @@ void JsonDomSerializer::read(int16& data)
 void JsonDomSerializer::read(uint16& data)
 {
 	rapidjson::Value* val = nullptr;
-	if (_contextStack.size() > 0)
+	if (m_ReadHistoryStack.size() > 0)
 	{
 		//부모 얻어옮
-		Context* context = &_contextStack.top();
+		History* History = &m_ReadHistoryStack.top();
 		rapidjson::Value* v = nullptr;
 
 		//get next value
-		val = static_cast<rapidjson::Value*>(getNextValue(context));
+		val = static_cast<rapidjson::Value*>(getNextValue(History));
 
 	}
 	else
@@ -340,13 +344,13 @@ void JsonDomSerializer::read(uint16& data)
 void JsonDomSerializer::read(int32& data)
 {
 	rapidjson::Value* val = nullptr;
-	if (_contextStack.size() > 0)
+	if (m_ReadHistoryStack.size() > 0)
 	{
 		//부모 얻어옮
-		Context* context = &_contextStack.top();
+		History* History = &m_ReadHistoryStack.top();
 
 		//get next value
-		val = static_cast<rapidjson::Value*>(getNextValue(context));
+		val = static_cast<rapidjson::Value*>(getNextValue(History));
 
 	}
 	else
@@ -364,14 +368,14 @@ void JsonDomSerializer::read(int32& data)
 void JsonDomSerializer::read(uint32& data)
 {
 	rapidjson::Value* val = nullptr;
-	if (_contextStack.size() > 0)
+	if (m_ReadHistoryStack.size() > 0)
 	{
 		//부모 얻어옮
-		Context* context = &_contextStack.top();
+		History* History = &m_ReadHistoryStack.top();
 		rapidjson::Value* v = nullptr;
 
 		//get next value
-		val = static_cast<rapidjson::Value*>(getNextValue(context));
+		val = static_cast<rapidjson::Value*>(getNextValue(History));
 
 	}
 	else
@@ -389,13 +393,13 @@ void JsonDomSerializer::read(uint32& data)
 void JsonDomSerializer::read(int64& data)
 {
 	rapidjson::Value* val = nullptr;
-	if (_contextStack.size() > 0)
+	if (m_ReadHistoryStack.size() > 0)
 	{
 		//부모 얻어옮
-		Context* context = &_contextStack.top();
+		History* History = &m_ReadHistoryStack.top();
 
 		//get next value
-		val = static_cast<rapidjson::Value*>(getNextValue(context));
+		val = static_cast<rapidjson::Value*>(getNextValue(History));
 
 	}
 	else
@@ -417,14 +421,14 @@ void JsonDomSerializer::read(uint64& data)
 void JsonDomSerializer::read(float& data)
 {
 	rapidjson::Value* val = nullptr;
-	if (_contextStack.size() > 0)
+	if (m_ReadHistoryStack.size() > 0)
 	{
 		//부모 얻어옮
-		Context* context = &_contextStack.top();
+		History* History = &m_ReadHistoryStack.top();
 		rapidjson::Value* v = nullptr;
 
 		//get next value
-		val = static_cast<rapidjson::Value*>(getNextValue(context));
+		val = static_cast<rapidjson::Value*>(getNextValue(History));
 
 	}
 	else
@@ -442,13 +446,13 @@ void JsonDomSerializer::read(float& data)
 void JsonDomSerializer::read(double& data)
 {
 	rapidjson::Value* val = nullptr;
-	if (_contextStack.size() > 0)
+	if (m_ReadHistoryStack.size() > 0)
 	{
 		//부모 얻어옮
-		Context* context = &_contextStack.top();
+		History* History = &m_ReadHistoryStack.top();
 
 		//get next value
-		val = static_cast<rapidjson::Value*>(getNextValue(context));
+		val = static_cast<rapidjson::Value*>(getNextValue(History));
 
 	}
 	else
@@ -466,13 +470,13 @@ void JsonDomSerializer::read(double& data)
 void JsonDomSerializer::read(std::string& data)
 {
 	rapidjson::Value* val = nullptr;
-	if (_contextStack.size() > 0)
+	if (m_ReadHistoryStack.size() > 0)
 	{
 		//부모 얻어옮
-		Context* context = &_contextStack.top();
+		History* History = &m_ReadHistoryStack.top();
 
 		//get next value
-		val = static_cast<rapidjson::Value*>(getNextValue(context));
+		val = static_cast<rapidjson::Value*>(getNextValue(History));
 
 	}
 	else
@@ -490,13 +494,13 @@ void JsonDomSerializer::read(std::string& data)
 void JsonDomSerializer::read(char* data)
 {
 	rapidjson::Value* val = nullptr;
-	if (_contextStack.size() > 0)
+	if (m_ReadHistoryStack.size() > 0)
 	{
 		//부모 얻어옮
-		Context* context = &_contextStack.top();
+		History* History = &m_ReadHistoryStack.top();
 
 		//get next value
-		val = static_cast<rapidjson::Value*>(getNextValue(context));
+		val = static_cast<rapidjson::Value*>(getNextValue(History));
 	}
 	else
 	{
@@ -516,7 +520,7 @@ void JsonDomSerializer::read(unsigned char* data)
 {
 }
 
-void JsonDomSerializer::readBuffer(void* buffer, size_t size)
+void JsonDomSerializer::rBuffer(void* buffer, size_t size)
 {
 	char* dest = static_cast<char*>(buffer);
 	int originSize = static_cast<int>(size);
@@ -536,17 +540,17 @@ void JsonDomSerializer::readBuffer(void* buffer, size_t size)
 	}
 }
 
-size_t JsonDomSerializer::readStartArray()
+size_t JsonDomSerializer::rStartArray()
 {
 	size_t size = 0;
 	rapidjson::Value* v = nullptr;
-	if (_contextStack.size() > 0)
+	if (m_ReadHistoryStack.size() > 0)
 	{
 		//부모 얻어옴
-		Context* context = &_contextStack.top();
+		History* History = &m_ReadHistoryStack.top();
 
 		//get next value
-		rapidjson::Value* val = static_cast<rapidjson::Value*>(getNextValue(context));
+		rapidjson::Value* val = static_cast<rapidjson::Value*>(getNextValue(History));
 
 		if (nullptr != val && val->IsArray())
 		{
@@ -561,60 +565,64 @@ size_t JsonDomSerializer::readStartArray()
 		v = static_cast<Document*>(m_Document);
 	}
 
-	_contextStack.push(Context(v));
+	m_ReadHistoryStack.push(History(v));
 	return size;
 }
 
-void JsonDomSerializer::readEndArray()
+void JsonDomSerializer::rEndArray()
 {
-	if (_contextStack.size() <= 0)
+	if (m_ReadHistoryStack.size() <= 0)
 	{
 		assert(false);
 		// LV_LOG(warning, "LvJsonDomArchive::readEndArray warnning : read container overflow");
 		return;
 	}
-	_contextStack.pop();
+	m_ReadHistoryStack.pop();
 }
 
-void JsonDomSerializer::readEndObject()
+void JsonDomSerializer::rEndObject()
 {
-	if (_contextStack.size() <= 0)
+	if (m_ReadHistoryStack.size() <= 0)
 	{
 		// LV_LOG(warning, "LvJsonDomArchive::readEndObject warnning : read container overflow");
 		assert(false);
 		return;
 	}
 
-	_contextStack.pop();
+	m_ReadHistoryStack.pop();
 }
 
-void* JsonDomSerializer::getNextValue(Context* context)
+void* JsonDomSerializer::getNextValue(History* History)
 {
 	Value* v = nullptr;
-	Value* contextValue = static_cast<Value*>(context->value);
-	//get rapidjson Value
-	if (nullptr != contextValue && contextValue->IsArray())
+	Value* HistoryValue = static_cast<Value*>(History->value);
+
+	// Array Type
+	if (nullptr != HistoryValue && HistoryValue->IsArray())
 	{
-		v = contextValue->Size() <= context->objNum ? nullptr : &contextValue->operator[](static_cast<SizeType>(context->objNum++));
+		// Array 상에서 특정 index 에 있는 값을 가져온다.
+		v = HistoryValue->Size() <= History->elementNum ? nullptr : &HistoryValue->operator[](
+			static_cast<SizeType>(History->elementNum++));
 
 		if (v == nullptr || (v != nullptr && v->IsNull()))
 		{
-			// LV_LOG(warning, "LvJsonDomArchive::getNextValue warnning : %zd array property is null", context->objNum);
 			assert(false);
 		}
 	}
-	else if (nullptr != context->value && contextValue->IsObject())
+
+	// Object Type
+	else if (nullptr != History->value && HistoryValue->IsObject())
 	{
-		const char* key = _keyStack.top();
-		_keyStack.pop();
-		if (contextValue->HasMember(key))
+		// Object 에 대응되는 Key 값을 가져온다.
+		const char* key = m_KeyStack.top();
+		m_KeyStack.pop();
+		if (HistoryValue->HasMember(key))
 		{
-			v = &contextValue->operator[](Value(key, static_cast<SizeType>(strlen(key))));
+			v = &HistoryValue->operator[](Value(key, static_cast<SizeType>(strlen(key))));
 		}
 
 		if (v == nullptr || (v != nullptr && v->IsNull()))
 		{
-			// LV_LOG(warning, "LvJsonDomArchive::getNextValue warnning : %s object property is null", key);
 			assert(false);
 		}
 	}
