@@ -14,7 +14,7 @@ public:
 
 	virtual ~JsonSerializer();
 
-	std::string GetResult();
+	std::string GetFinalResult();
 
 private:
 	void wStartObject() override;
@@ -38,9 +38,12 @@ private:
 	void wEndArray() override;
 	void wEndObject() override;
 
-	void* _sbWriter = nullptr;
-	void* _writer = nullptr;
-	int _keyCounter = 0;
+	// 해당 변수 안에 읽어 들인 byte 정보를 담는다.
+	void* m_StringBuffer = nullptr;
+	void* m_JWriter = nullptr;
+
+	// 몇개의 key 를 사용했는가
+	int m_KeyCounter = 0;
 
 private:
 
@@ -70,6 +73,6 @@ private:
 
 private:
 
-	ReadHandler* _readHandler = nullptr;
+	ReadHandler* m_JReader = nullptr;
 };
 
