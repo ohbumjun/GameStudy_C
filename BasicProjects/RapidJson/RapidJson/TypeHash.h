@@ -39,8 +39,8 @@ namespace Reflection
 
 		constexpr std::size_t wrapped_type_name_prefix_length()
 		{
-			std::cout << "TypeName<type_name_prober>() : " << TypeName<type_name_prober>() << std::endl;
-			std::cout << "wrapped_type_name<type_name_prober>() : " << wrapped_type_name<type_name_prober>() << std::endl;
+			// std::cout << "TypeName<type_name_prober>() : " << TypeName<type_name_prober>() << std::endl;
+			// std::cout << "wrapped_type_name<type_name_prober>() : " << wrapped_type_name<type_name_prober>() << std::endl;
 			
 			// 1) wrapped_type_name<type_name_prober>() ?
 			// -> wrapped_type_name<type_name_prober>() : class std::basic_string_view<char,struct std::char_traits<char> > __cdecl Reflection::detail::wrapped_type_name<void>(void)

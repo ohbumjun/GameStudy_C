@@ -6,14 +6,7 @@
 #include <cassert>
 #include <functional>
 
-enum TypeFlags
-{
-	TypeFlags_IsFundamental,
-	TypeFlags_IsIntegral,
-	TypeFlags_IsFloatingPoint,
-	TypeFlags_IsTriviallyCopyable,
-	TypeFlags_SIZE // MAX
-};
+
 
 class GameComponent
 {
@@ -27,6 +20,15 @@ public:
 	virtual void Render() {};
 	virtual void Copy() {};
 	virtual void Serialize() {};
+};
+
+enum TypeFlags
+{
+	TypeFlags_IsFundamental,
+	TypeFlags_IsIntegral,
+	TypeFlags_IsFloatingPoint,
+	TypeFlags_IsTriviallyCopyable,
+	TypeFlags_SIZE // MAX
 };
 
 // final : 더이상 상속하지 않는 마지막 class
@@ -225,8 +227,10 @@ inline constexpr TypeId TypeId::Create()
 	return TypeId(Reflection::TypeId<T>());
 }
 
+/*
 constexpr bool operator==(TypeId lhs, TypeId rhs)
 {
 	return lhs.GetId() == rhs.GetId();
 }
+*/
 

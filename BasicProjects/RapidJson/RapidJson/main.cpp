@@ -3,13 +3,17 @@
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
-#include <iostream>
+#include "JsonDomSerializer.h"
 
 using namespace rapidjson;
 
 int main() {
     // 1. Parse a JSON string into DOM.
     const char* json = "{\"project\":\"rapidjson\",\"stars\":10}";
+
+    JsonDomSerializer jds(json);
+
+#if one
     Document d;
     d.Parse(json);
 
@@ -24,5 +28,7 @@ int main() {
 
     // Output {"project":"rapidjson","stars":11}
     std::cout << buffer.GetString() << std::endl;
+#endif
+
     return 0;
 }

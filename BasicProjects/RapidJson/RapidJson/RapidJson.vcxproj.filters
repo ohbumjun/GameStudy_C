@@ -13,36 +13,66 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="1. Reflection">
+      <UniqueIdentifier>{8a3cd06a-04a9-405f-9f86-635e4e2bd864}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2. Serializer">
+      <UniqueIdentifier>{c39b3892-1743-4d6f-9ea4-28c15b9204d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3. Allocator">
+      <UniqueIdentifier>{f9a1335b-4a64-4bd1-a7e7-c47773d276a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Serializable.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Serializer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="JsonDomSerializer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="PrecompiledHeader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="JsonSerializer.cpp">
+      <Filter>2. Serializer</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonDomSerializer.cpp">
+      <Filter>2. Serializer</Filter>
+    </ClCompile>
+    <ClCompile Include="Serializable.cpp">
+      <Filter>2. Serializer</Filter>
+    </ClCompile>
+    <ClCompile Include="Serializer.cpp">
+      <Filter>2. Serializer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Serializable.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Serializer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="JsonDomSerializer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="PrecompiledHeader.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Encode.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="VariableId.h">
+      <Filter>1. Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeInfo.h">
+      <Filter>1. Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeHash.h">
+      <Filter>1. Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="MemberId.h">
+      <Filter>1. Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonDomSerializer.h">
+      <Filter>2. Serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonSerializer.h">
+      <Filter>2. Serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="Serializable.h">
+      <Filter>2. Serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="Serializer.h">
+      <Filter>2. Serializer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Serializer.h"
+#include "JsonSerializer.h"
 
 class JsonDomSerializer : public Serializer
 {
@@ -13,7 +14,7 @@ public :
 
 private:
 	virtual void writeStartObject() ;
-	// virtual void writeStartObject(LvType type) ;
+	virtual void writeStartObject(TypeId type);
 	virtual void writeKey(const char* key) ;
 	virtual void write(const bool data) ;
 	virtual void write(const int8 data) ;
@@ -38,9 +39,9 @@ private:
 
 private:
 	virtual void readStartObject() ;
-	// virtual void readStartObject(LvType type) ;
+	virtual void readStartObject(TypeId type) ;
 	virtual void useKey(const char* key) ;
-	bool hasKey(const char* key) { return false; };
+	virtual bool hasKey(const char* key);
 	virtual void readKey(char* key) ;
 	virtual void read(bool& data) ;
 	virtual void read(int8& data) ;
@@ -68,7 +69,7 @@ private :
 	struct Context
 	{
 		void* value = nullptr;
-		size_t objNum = 0;
+		size_t objNum = 0;   // ?
 
 		Context() = default;
 		Context(void* value) : value(){}
@@ -79,5 +80,8 @@ private :
 	void* m_Document;
 	std::stack<Context> _contextStack;
 	std::stack<const char*> _keyStack;
+
+	// JsonSerialize 는 Write 시에만 사용한다.
+	JsonSerializer m_JsonArchive;
 };
 

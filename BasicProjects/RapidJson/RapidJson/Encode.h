@@ -1,7 +1,7 @@
 #pragma once
 #include <stdlib.h>
 
-size_t calculateCharArraySize(char* array) {
+static size_t calculateCharArraySize(char* array) {
     size_t count = 0;
     while (array[count] != '\0') {
         count++;
@@ -50,12 +50,18 @@ static int DecodeMimeBase64[256] = {
 // text : 인코딩할 이진 데이터가 들어있는 문자열 포인터
 // numBytes : 데이터 크기
 // encodedText : 결과를 담을 변수 주소
-int base64_encode(unsigned char* text, int numBytes, char** encodedText)
+static int base64_encode_length(char* text, int numBytes)
 {
-    unsigned char input[3] = { 0,0,0 };
-    unsigned char output[4] = { 0,0,0,0 };
+    int   size;
+    size = (4 * (numBytes / 3)) + (numBytes % 3 ? 4 : 0) + 1;
+    return size;
+}
+static int base64_encode(char* text, int numBytes, char** encodedText)
+{
+    char input[3] = { 0,0,0 };
+    char output[4] = { 0,0,0,0 };
     int   index, i, j, size;
-    unsigned char* p, * plen;
+    char* p, * plen;
     plen = text + numBytes - 1;
     size = (4 * (numBytes / 3)) + (numBytes % 3 ? 4 : 0) + 1;
     (*encodedText) = (char*)malloc(size);
@@ -112,7 +118,7 @@ int base64_encode(unsigned char* text, int numBytes, char** encodedText)
 - 만약 '=' 로 패딩되었다면 제외
 - ASCII 를 다시 문자열로 읽어 출력
 */
-int base64_decode(char* encodedText, int numBytes, unsigned char* decodedText)
+static int base64_decode(char* encodedText, int numBytes, char* decodedText)
 {
     const char* cp;
     int space_idx = 0, phase;
