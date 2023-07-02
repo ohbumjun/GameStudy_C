@@ -138,11 +138,6 @@ void JsonDomSerializer::wStartArray(uint64 arrayLength)
 	m_JsonArchive.wStartArray(arrayLength);
 }
 
-void JsonDomSerializer::wStartArray(uint64 arrayLength)
-{
-	m_JsonArchive.WStartArray(arrayLength);
-}
-
 void JsonDomSerializer::wStartArray(Reflection::TypeId type, uint64 arrayLength)
 {
 	m_JsonArchive.WStartArray(type, arrayLength);
@@ -224,7 +219,7 @@ bool JsonDomSerializer::hasKey(const char* key)
 	return false;
 }
 
-void JsonDomSerializer::readKey(char* key)
+void JsonDomSerializer::rKey(char* key)
 {
 
 }
@@ -447,9 +442,9 @@ void JsonDomSerializer::read(float& data)
 	}
 
 	//set Data
-	if (nullptr != val && val->IsUint64())
+	if (nullptr != val && val->IsFloat())
 	{
-		data = val->GetUint64();
+		data = val->GetFloat();
 	}
 }
 
@@ -577,6 +572,11 @@ size_t JsonDomSerializer::rStartArray()
 
 	m_ReadHistoryStack.push(History(v));
 	return size;
+}
+
+size_t JsonDomSerializer::rStartArray(Reflection::TypeId type)
+{
+	return rStartArray();
 }
 
 void JsonDomSerializer::rEndArray()

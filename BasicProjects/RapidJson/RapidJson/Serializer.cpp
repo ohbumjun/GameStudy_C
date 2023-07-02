@@ -164,7 +164,7 @@ void Serializer::Write(const char* key, const std::string& data)
 {
 }
 
-void Serializer::Write(const char* key, Serializable& data)
+void Serializer::Write(const char* key, Serializable* data)
 {
 }
 

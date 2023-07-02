@@ -22,6 +22,14 @@ public:
 
 namespace Reflection
 {
+	/* VARNAME##TYPE 을 붙인 이름의 "변수"로 만든다. */
+#define _REGISTER_TYPE_INTERNAL(TYPE,VARNAME) RegisterType<TYPE> VARNAME##TYPE{};
+#define REGISTER_TYPE(TYPE) _REGISTER_TYPE_INTERNAL(TYPE, RegisterType_)
+
+	/* Declaration */
+	template<typename T>
+	class RegisterType;
+
 	enum TypeFlags
 	{
 		TypeFlags_IsFundamental,
@@ -103,7 +111,8 @@ namespace Reflection
 		return info;
 	}
 
-
+	/*Unique uint64_t hashcode for certain type*/
+	// TypeId class 내에서 모든 typeId ~ TypeInfo map 정보를 저장하는 것이 마음에 안든다
 	class TypeId final
 	{
 	public:
@@ -113,14 +122,17 @@ namespace Reflection
 		template<typename T>
 		static constexpr TypeId Create()
 		{
-			RegisterType<T> RegisterType;
+			RegisterType<T> registerType;
+
+			// strip_type_t<T>>() : 모든 pointer, & 등을 제거한 raw type
+			// TypeHash<> : 해당 T Type 에 대한 uint64_t hash 값 리턴
 			return TypeId(TypeHash<strip_type_t<T>>());
 		}
 
 	public:
 		constexpr void			SetTypeId(uint64_t typeId) { ID = typeId; }
 		constexpr uint64_t		GetId()	const { return ID; }
-		const TypeInfo& GetTypeInfo()	const { return GetTypeInformation(*this); }
+		const TypeInfo& GetTypeInfo() 	const { return getTypeInformation(*this); }
 
 		const std::string_view	GetTypeName()	const { return GetTypeInfo().Name; }
 		uint32_t				GetTypeSize()	const { return GetTypeInfo().Size; }
@@ -132,32 +144,27 @@ namespace Reflection
 		bool					IsTriviallyCopyable()	const { return GetTypeInfo().Flags[TypeFlags_IsTriviallyCopyable]; }
 
 	public:
-		static const TypeInfo& GetTypeInformation(TypeId typeID)
-		{
-			assert(GetStatics().TypeInfos.find(typeID.GetId()) != GetStatics().TypeInfos.end());
-			return GetStatics().TypeInfos[typeID.GetId()];
-		}
 
 		static const auto& GetAllTypeInformation()
 		{
-			return GetStatics().TypeInfos;
+			return getStatics().TypeInfos;
 		}
 
 		// RegisterType Class 의 생성자에서 호출
 		template<typename T>
 		static TypeInfo& RegisterTypeId()
 		{
-			auto& typeInfos = GetStatics().TypeInfos;
+			auto& typeInfos = TypeId::GetAllTypeInformation();
 			const uint64_t typeId = TypeId::Create<T>().GetId();
 
-			assert(GetAllTypeInformation().find(typeId) != GetAllTypeInformation().end());
+			assert(typeInfos.find(typeId) != typeInfos.end());
 
-			GetStatics().TypeInfos.emplace(
+			typeInfos.emplace(
 				typeId,
 				TypeInfo::Create<T>()
 			);
 
-			return
+			return GetTypeInformation(typeId);
 		}
 
 		bool operator==(const TypeId& other) const {
@@ -184,11 +191,25 @@ namespace Reflection
 			std::unordered_map<uint64_t, TypeInfo> TypeInfos{};
 		};
 
-		static StaticData& GetStatics()
+		static StaticData& getStatics()
 		{
 			static StaticData data{};
 			return data;
 		}
+
+		// TODO 중복 함수가 존재
+		// typeID 에서 StaticData 를 빼서, Reflection 측에서 관리하는 방식으로 관리하고자 한다.
+		static const TypeInfo& getTypeInformation(TypeId typeID)
+		{
+			const auto& typeInfos = TypeId::GetAllTypeInformation();
+
+			assert(typeInfos.find(typeID.GetId()) != typeInfos.end());
+
+			const auto& result = typeInfos.find(typeID.GetId());
+
+			return result->second;
+		}
+
 	private:
 		uint64_t ID{};
 	};
@@ -211,9 +232,26 @@ namespace Reflection
 		inline static RegisterTypeOnce Registerer{};
 	};
 
-	// VARNAME##TYPE 을 붙인 이름의 "변수"로 만든다.
-#define _REGISTER_TYPE_INTERNAL(TYPE,VARNAME) RegisterType<TYPE> VARNAME##TYPE{};
-#define REGISTER_TYPE(TYPE) _REGISTER_TYPE_INTERNAL(TYPE, RegisterType_)
+	/* external static functions */
+	static const TypeInfo& GetTypeInformation(TypeId typeID)
+	{
+		const auto& typeInfos = TypeId::GetAllTypeInformation();
+
+		assert(typeInfos.find(typeID.GetId()) != typeInfos.end());
+		
+		const auto& result = typeInfos.find(typeID.GetId());
+
+		return result->second;
+	}
+
+	static bool IsRegisted(TypeId type)
+	{
+		const auto& typeInfos = TypeId::GetAllTypeInformation();
+
+		return typeInfos.find(type.GetId()) != typeInfos.end();
+	}
+
+
 
 // REGISTER_TYPE(int) ==
 // RegisterType<int>RegisterType_int{}

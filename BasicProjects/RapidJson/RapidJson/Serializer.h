@@ -1,6 +1,5 @@
 #pragma once
 #include "TypeInfo.h"
-#include "Serializable.h"
 
 enum class SerializeType
 {
@@ -26,12 +25,12 @@ public :
 	void WStartObject();
 	void WStartObject(const Reflection::TypeId type, void* target = nullptr);
 	template<typename T>
-	void WStartObject(T* target) { WStartObject(Reflection::TypeId<T>(), target); }
+	void WStartObject(T* target) { WStartObject(Reflection::TypeId::Create<T>(), target); }
 	void WKey(const char* key);
 	void WStartArray(uint64 arrayLength);
 	void WStartArray(Reflection::TypeId type, uint64 arrayLength);
 	template<typename T>
-	void WStartArray(uint64 arrayLength) { WStartArray(Reflection::TypeId<T>()), arrayLength); }
+	void WStartArray(uint64 arrayLength) { WStartArray(Reflection::TypeId::Create<T>(), arrayLength); }
 	inline void WEndArray();
 
 	template<typename T, typename std::enable_if<!std::is_pointer<T>::value>::type* = nullptr>
@@ -64,10 +63,6 @@ public :
 	void Write(const char* key, const uint32 data);
 	void Write(const char* key, const int64 data);
 	void Write(const char* key, const uint64 data);
-#ifdef __MACOSX__
-	void Write(const char* key, const size_t& data/*uint64*/);
-	void Write(const char* key, const time_t& data/*int64*/);
-#endif
 	void Write(const char* key, const float data);
 	void Write(const char* key, const double data);
 	void Write(const char* key, const std::string& data);
@@ -79,7 +74,7 @@ public :
 	// void Write(const char* key, const LvMat4f& data);
 	// void Write(const char* key, const LvColor& data);
 	// void Write(const char* key, const LvEntity& data);
-	void Write(const char* key, Serializable& data);
+	void Write(const char* key, class Serializable* data);
 	void WBuffer(const char* key, void* buffer, size_t size);
 	void WBuffer(void* buffer, size_t size);
 	void WEndObject();
@@ -87,15 +82,15 @@ public :
 	template<typename T>
 	void Write(const char* key, std::list<T>& t)
 	{
-		static Reflection::TypeId type = Reflection::TypeId<T>();
-		static bool registed = Reflection::HasRegist(type);
-		if (false == registed) Reflection::Regist<T>();
+		static Reflection::TypeId type = Reflection::TypeId::Create<T>();
+		static bool registed = Reflection::TypeId::IsRegisted(type);
+		if (false == registed) Reflection::TypeId::RegisterTypeId<T>();
 
 		wKey(key);
-		wStartArray(type, t.Count());
-		if (0 < t.Count())
+		wStartArray(type, t.size());
+		if (0 < t.size())
 		{
-			for (size_t i = 0; i < t.Count(); ++i)
+			for (size_t i = 0; i < t.size(); ++i)
 			{
 				write((T&)t[i]);
 			}

@@ -11,20 +11,24 @@ namespace Reflection
 {
 	//https://stackoverflow.com/questions/35941045/can-i-obtain-c-type-names-in-a-constexpr-way
 
+	// declaration
+	constexpr std::size_t wrapped_type_name_prefix_length();
+	constexpr std::size_t wrapped_type_name_suffix_length();
+
 	// compile time 때 T Type 의 TypeName 을 리턴하는 함수
 	template <typename T>
 	constexpr std::string_view TypeName()
 	{
 		// T 가 int 일 경우 class std::basic_string_view<char,struct std::char_traits<char> > __cdecl Reflection::detail::wrapped_type_name<int>(void)
-		constexpr  auto wrapped_name = detail::wrapped_type_name<T>();
+		constexpr  auto wrapped_name = wrapped_type_name<T>();
 
 		// wrapped_type_name<type_name_prober>() ?
 		//  : wrapped_type_name<type_name_prober>() : class std::basic_string_view<char,struct std::char_traits<char> > __cdecl Reflection::detail::wrapped_type_name<void>(void)
 		// 결과 : 112
-		constexpr auto prefix_length = detail::wrapped_type_name_prefix_length();
+		constexpr auto prefix_length = wrapped_type_name_prefix_length();
 
 		// 결과 : 7
-		constexpr auto suffix_length = detail::wrapped_type_name_suffix_length();
+		constexpr auto suffix_length = wrapped_type_name_suffix_length();
 
 		// wrapped_name 에서 <> 안에 있는 "int" 만큼의 길이 == 3
 		constexpr auto type_name_length = wrapped_name.length() - prefix_length - suffix_length;
@@ -41,50 +45,44 @@ namespace Reflection
 	template <typename Type>
 	constexpr uint64_t TypeHash()
 	{
-		return hash(TypeName<Type>());
+		return Hash(TypeName<Type>());
 	}
 
-	namespace detail
+	template <typename T>
+	constexpr std::string_view wrapped_type_name()
 	{
-		using type_name_prober = void;
-
-		template <typename T>
-		constexpr std::string_view wrapped_type_name()
-		{
 #ifdef __clang__
-			return __PRETTY_FUNCTION__;
+		return __PRETTY_FUNCTION__;
 #elif defined(__GNUC__)
-			return __PRETTY_FUNCTION__;
+		return __PRETTY_FUNCTION__;
 #elif defined(_MSC_VER)
-			return __FUNCSIG__;
+		return __FUNCSIG__;
 #else
 #error "Unsupported compiler"
 #endif
-		}
-
-		constexpr std::size_t wrapped_type_name_prefix_length()
-		{
-			// std::cout << "TypeName<type_name_prober>() : " << TypeName<type_name_prober>() << std::endl;
-			// std::cout << "wrapped_type_name<type_name_prober>() : " << wrapped_type_name<type_name_prober>() << std::endl;
-			
-			// 1) wrapped_type_name<type_name_prober>() ?
-			// -> wrapped_type_name<type_name_prober>() : class std::basic_string_view<char,struct std::char_traits<char> > __cdecl Reflection::detail::wrapped_type_name<void>(void)
-			// 2) TypeName<type_name_prober>() == "void" : 위의 void template 특수화 함수를 호출한다.
-			// 해당 string 에서 TypeName<type_name_prober>() 의 첫번째 index 를 리턴한다
-			// 3) 결과값 : TypeName<type_name_prober>() 는 void 이므로, 맨 끝에서 2번째 void 의 시작 위치를 리턴하게 된다.
-			return wrapped_type_name<type_name_prober>().find(TypeName<type_name_prober>());
-		}
-
-		constexpr std::size_t wrapped_type_name_suffix_length()
-		{
-			// ex. 123 (총 길이) - 112(void 맨 처음 시작위치) - 4 (void 길이)
-			// "(void)" 만큼의 길이 
-			return wrapped_type_name<type_name_prober>().length()
-				- wrapped_type_name_prefix_length()
-				- TypeName<type_name_prober>().length();
-		}
 	}
 
+	constexpr std::size_t wrapped_type_name_prefix_length()
+	{
+		// std::cout << "TypeName<type_name_prober>() : " << TypeName<type_name_prober>() << std::endl;
+		// std::cout << "wrapped_type_name<type_name_prober>() : " << wrapped_type_name<type_name_prober>() << std::endl;
+			
+		// 1) wrapped_type_name<type_name_prober>() ?
+		// -> wrapped_type_name<type_name_prober>() : class std::basic_string_view<char,struct std::char_traits<char> > __cdecl Reflection::detail::wrapped_type_name<void>(void)
+		// 2) TypeName<type_name_prober>() == "void" : 위의 void template 특수화 함수를 호출한다.
+		// 해당 string 에서 TypeName<type_name_prober>() 의 첫번째 index 를 리턴한다
+		// 3) 결과값 : TypeName<type_name_prober>() 는 void 이므로, 맨 끝에서 2번째 void 의 시작 위치를 리턴하게 된다.
+		return wrapped_type_name<void>().find(TypeName<void>());
+	}
+
+	constexpr std::size_t wrapped_type_name_suffix_length()
+	{
+		// ex. 123 (총 길이) - 112(void 맨 처음 시작위치) - 4 (void 길이)
+		// "(void)" 만큼의 길이 
+		return wrapped_type_name<void>().length()
+			- wrapped_type_name_prefix_length()
+			- TypeName<void>().length();
+	}
 
 
 	/**

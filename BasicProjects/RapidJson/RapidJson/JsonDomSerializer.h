@@ -42,7 +42,7 @@ private:
 	virtual void rStartObject(Reflection::TypeId type) ;
 	virtual void useKey(const char* key) ;
 	virtual bool hasKey(const char* key);
-	virtual void readKey(char* key) ;
+	virtual void rKey(char* key) ;
 	virtual void read(bool& data) ;
 	virtual void read(int8& data) ;
 	virtual void read(uint8& data) ;
@@ -60,7 +60,7 @@ private:
 	// virtual void read(LvDynamicObject& object) ;
 	virtual void rBuffer(void* buffer, size_t size) ;
 	virtual size_t rStartArray() ;
-	// size_t readStartArray(LvType type) ;
+	virtual size_t rStartArray(Reflection::TypeId type) ;
 	virtual void rEndArray() ;
 	virtual void rEndObject() ;
 
