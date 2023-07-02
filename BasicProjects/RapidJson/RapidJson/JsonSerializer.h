@@ -18,7 +18,7 @@ public:
 
 private:
 	void wStartObject() override;
-	void wStartObject(TypeId type) override;
+	void wStartObject(Reflection::TypeId type) override;
 	void wKey(const char* key) override;
 	void write(const bool data) override;
 	void write(const int8 data) override;
@@ -34,7 +34,7 @@ private:
 	void write(const std::string& data) override;
 	void wBuffer(void* buffer, size_t size) override;
 	void wStartArray(uint64 arrayLength) override;
-	// void writeStartArray(LvTypeId type, uint64 arrayLength) override;
+	void wStartArray(Reflection::TypeId type, uint64 arrayLength) override;
 	void wEndArray() override;
 	void wEndObject() override;
 
@@ -48,7 +48,7 @@ private:
 private:
 
 	void rStartObject() override;
-	void rStartObject(TypeId type) override;
+	void rStartObject(Reflection::TypeId type) override;
 	void useKey(const char* key) override;
 	bool hasKey(const char* key) override;
 	void rKey(char* key) override;
@@ -67,7 +67,7 @@ private:
 	// void read(LvDocumentObject& object) override;
 	void rBuffer(void* buffer, size_t size) override;
 	size_t rStartArray() override;
-	// size_t readStartArray(LvTypeId type) override;
+	size_t rStartArray(Reflection::TypeId type) override;
 	void rEndArray() override;
 	void rEndObject() override;
 

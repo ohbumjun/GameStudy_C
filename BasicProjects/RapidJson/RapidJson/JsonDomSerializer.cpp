@@ -48,7 +48,7 @@ void JsonDomSerializer::wStartObject()
 	m_JsonArchive.wStartObject();
 }
 
-void JsonDomSerializer::wStartObject(TypeId type)
+void JsonDomSerializer::wStartObject(Reflection::TypeId type)
 {
 	m_JsonArchive.wStartObject();
 }
@@ -138,6 +138,16 @@ void JsonDomSerializer::wStartArray(uint64 arrayLength)
 	m_JsonArchive.wStartArray(arrayLength);
 }
 
+void JsonDomSerializer::wStartArray(uint64 arrayLength)
+{
+	m_JsonArchive.WStartArray(arrayLength);
+}
+
+void JsonDomSerializer::wStartArray(Reflection::TypeId type, uint64 arrayLength)
+{
+	m_JsonArchive.WStartArray(type, arrayLength);
+}
+
 void JsonDomSerializer::wEndArray()
 {
 	m_JsonArchive.wEndArray();
@@ -175,7 +185,7 @@ void JsonDomSerializer::rStartObject()
 	m_ReadHistoryStack.push(History(v));
 }
 
-void JsonDomSerializer::rStartObject(TypeId type)
+void JsonDomSerializer::rStartObject(Reflection::TypeId type)
 {
 	rStartObject();
 }

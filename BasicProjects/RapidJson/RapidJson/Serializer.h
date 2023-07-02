@@ -24,18 +24,15 @@ public :
 
 
 	void WStartObject();
-	void WStartObject(const TypeId type, void* target = nullptr);
+	void WStartObject(const Reflection::TypeId type, void* target = nullptr);
 	template<typename T>
-	void WStartObject(T* target) { WriteStartObject(Reflection::GetTypeId<T>(), target); }
+	void WStartObject(T* target) { WStartObject(Reflection::TypeId<T>(), target); }
 	void WKey(const char* key);
 	void WStartArray(uint64 arrayLength);
-	void WStartArray(TypeId type, uint64 arrayLength);
-	void WKey(const char* key);
+	void WStartArray(Reflection::TypeId type, uint64 arrayLength);
 	template<typename T>
-	void WStartArray(uint64 arrayLength) { WriteStartArray(Reflection::GetTypeId<T>(), arrayLength); }
-	void WStartArray(TypeId type, uint64 arrayLength);
+	void WStartArray(uint64 arrayLength) { WStartArray(Reflection::TypeId<T>()), arrayLength); }
 	inline void WEndArray();
-	void WEndArray();
 
 	template<typename T, typename std::enable_if<!std::is_pointer<T>::value>::type* = nullptr>
 	void Write(const T& data)
@@ -49,14 +46,14 @@ public :
 		write(data);
 	}
 
-	void Write(const TypeId type, void* data);
+	void Write(const Reflection::TypeId type, void* data);
 
 	/*
 	   @brief for Property property->GetValue<T>() Serialize compile error fix
 	 - TODO void* Serialize way fix
 	*/
 	void Write(const char* key, void* data) {}
-	void Write(const char* key, const TypeId type, void* data);
+	void Write(const char* key, const Reflection::TypeId type, void* data);
 
 	void Write(const char* key, const bool data);
 	void Write(const char* key, const int8 data);
@@ -90,12 +87,12 @@ public :
 	template<typename T>
 	void Write(const char* key, std::list<T>& t)
 	{
-		static LvTypeId type = LvReflection::GetTypeId<T>();
-		static bool registed = LvReflection::HasRegist(type);
-		if (false == registed) LvReflection::Regist<T>();
+		static Reflection::TypeId type = Reflection::TypeId<T>();
+		static bool registed = Reflection::HasRegist(type);
+		if (false == registed) Reflection::Regist<T>();
 
-		writeKey(key);
-		writeStartArray(type, t.Count());
+		wKey(key);
+		wStartArray(type, t.Count());
 		if (0 < t.Count())
 		{
 			for (size_t i = 0; i < t.Count(); ++i)
@@ -103,12 +100,12 @@ public :
 				write((T&)t[i]);
 			}
 		}
-		writeEndArray();
+		wEndArray();
 	}
 
 protected:
 	virtual void wStartObject() = 0;
-	virtual void wStartObject(TypeId type) = 0;
+	virtual void wStartObject(Reflection::TypeId type) = 0;
 	virtual void wKey(const char* key) = 0;
 	virtual void write(const bool data) = 0;
 	virtual void write(const int8 data) = 0;
@@ -127,15 +124,15 @@ protected:
 	// virtual void write(const LvDynamicObject& object) = 0;
 	virtual void wBuffer(void* buffer, size_t size) = 0;
 	virtual void wStartArray(uint64 arrayLength) = 0;
-	// virtual void writeStartArray(LvType type, uint64 arrayLength) = 0;
+	virtual void wStartArray(Reflection::TypeId type, uint64 arrayLength) = 0;
 	virtual void wEndArray() = 0;
 	virtual void wEndObject() = 0;
 
 	/*read*/
 	virtual void rStartObject() = 0;
-	virtual void rStartObject(TypeId type) = 0;
+	virtual void rStartObject(Reflection::TypeId type) = 0;
 	virtual void useKey(const char* key) = 0;
-	virtual bool hasKey(const char* key) { return false; };
+	virtual bool hasKey(const char* key) = 0;
 	virtual void rKey(char* key) = 0;
 	virtual void read(bool& data) = 0;
 	virtual void read(int8& data) = 0;
@@ -154,19 +151,20 @@ protected:
 	// virtual void read(LvDynamicObject& object) = 0;
 	virtual void rBuffer(void* buffer, size_t size) = 0;
 	virtual size_t rStartArray() = 0;
-	// size_t readStartArray(LvType type) = 0;
+	virtual size_t rStartArray(Reflection::TypeId type) = 0;
 	virtual void rEndArray() = 0;
 	virtual void rEndObject() = 0;
 
+	// 굳이 
 	struct Target
 	{
-		const TypeId type = 0;
+		const Reflection::TypeId m_Type = 0;
 
-		void* pointer = nullptr;
+		void* m_ValuePointer = nullptr;
 
 		Target();
 
-		Target(const TypeId typeId, void* target);
+		Target(const Reflection::TypeId typeId, void* target);
 	};
 
 	struct Access
@@ -180,13 +178,14 @@ protected:
 		Access(Target&& target, const char* property = nullptr, int32 index = -1);
 	};
 
-	struct Context
+	struct History
 	{
+		// write 시에 writekey 할 때, 해당 const char*가 여기로 ?
 		const char* property = nullptr;
 
 		std::list<Access> acceses;
 
-	} _context;
+	} m_History;
 
 	// virtual void readObject(LvDynamicObject& object, virtual void* value)= 0;
 	// virtual void readArray(LvDynamicObject& object, virtual void* value)= 0;
@@ -194,43 +193,44 @@ protected:
 	/**
 	* @brief type 을 serialize 하기 위한 writer 함수 등록
 	*/
-	static void RegistWriter(const TypeId type, std::function<void(Serializer&, const TypeId, void*)> writer);
+	static void RegistWriter(const Reflection::TypeId type, std::function<void(Serializer&, const Reflection::TypeId, void*)> writer);
 
 	/**
 	* @brief type 에 Writer 가 등록되어 있는지 확인
 	*/
-	static bool HasWriter(const TypeId type);
+	static bool HasWriter(const Reflection::TypeId type);
 
 	/**
 	* @brief type 에 Writer 를 제거
 	*/
-	static void UnregistWriter(const TypeId type);
+	static void UnregistWriter(const Reflection::TypeId type);
 
 	/**
 	* @brief type 을 deserialize 하기 위한 Reader 함수 등록
 	*/
-	static void RegistReader(const TypeId type, std::function<void(Serializer&, const TypeId, void*)> reader);
+	static void RegistReader(const Reflection::TypeId type, std::function<void(Serializer&, const Reflection::TypeId, void*)> reader);
 
 	/**
 	* @brief type 에 Reader 가 등록되어 있는지 확인
 	*/
-	static bool HasReader(const TypeId type);
+	static bool HasReader(const Reflection::TypeId type);
 
 	/**
 	* @brief type 에 Reader 를 제거
 	*/
-	static void UnregistReader(const TypeId type);
+	static void UnregistReader(const Reflection::TypeId type);
 
 protected:
-
+	// basic type 들을 등록하는 함수
 	static void registExtensionType();
 
 
 private :
 	SerializeType m_Type;
 
-	static std::set<TypeId> _defaultExtensionTypes;
-	static std::unordered_map<TypeId, std::function<void(Serializer&, const TypeId, void*)>> _writers;
-	static std::unordered_map<TypeId, std::function<void(Serializer&, const TypeId, void*)>> _readers;
+	// custom class type 이 아닌 int, bool 등의 기본 type 저장하는 변수
+	static std::set<Reflection::TypeId> m_DefaultTypes;
+	static std::unordered_map<Reflection::TypeId, std::function<void(Serializer&, const Reflection::TypeId, void*)>> m_Writers;
+	static std::unordered_map<Reflection::TypeId, std::function<void(Serializer&, const Reflection::TypeId, void*)>> m_Readers;
 };
 

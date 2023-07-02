@@ -1,14 +1,13 @@
 #include "PrecompiledHeader.h"
 #include "Serializer.h"
 
-
 Serializer::Target::Target()
 {
 }
 
-Serializer::Target::Target(const TypeId typeId, void* target) :
-	pointer(target)
-	, type(typeId)
+Serializer::Target::Target(const Reflection::TypeId typeId, void* target) :
+	m_ValuePointer(target)
+	, m_Type(typeId)
 {
 }
 
@@ -24,8 +23,8 @@ Serializer::Serializer(SerializeType type)
 	: m_Type(type)
 {
 	registExtensionType();
-	_context.property = nullptr;
-	_context.acceses.clear();
+	m_History.property = nullptr;
+	m_History.acceses.clear();
 }
 
 Serializer::~Serializer()
@@ -34,70 +33,86 @@ Serializer::~Serializer()
 
 void Serializer::WStartObject()
 {
-	_context.acceses.push_back(Access(Target(0, nullptr)));
+	m_History.acceses.push_back(Access(Target(0, nullptr)));
 	wStartObject();
 }
 
-void Serializer::WStartObject(const TypeId type, void* target)
+void Serializer::WStartObject(const Reflection::TypeId type, void* target)
 {
-	_context.acceses.push_back(Access(Target(type, target)));
+	m_History.acceses.push_back(Access(Target(type, target)));
 	wStartObject(type);
 }
 
-
-void Serializer::RegistWriter(const TypeId type, std::function<void(Serializer&, const TypeId, void*)> writer)
+void Serializer::WKey(const char* key)
 {
-	if (_writers.find(type) == _writers.end())
+	m_History.property = key;
+	wKey(key);
+}
+
+void Serializer::WStartArray(Reflection::TypeId type, uint64 arrayLength)
+{
+	wStartArray(type, arrayLength);
+}
+
+void Serializer::WStartArray(uint64 arrayLength)
+{
+	wStartArray(arrayLength);
+}
+
+void Serializer::RegistWriter(const Reflection::TypeId type, std::function<void(Serializer&, const Reflection::TypeId, void*)> writer)
+{
+	if (m_Writers.find(type) == m_Writers.end())
 	{
-		_writers.insert(std::make_pair(type, writer));
+		m_Writers.insert(std::make_pair(type, writer));
 	}
 }
 
-bool Serializer::HasWriter(const TypeId type)
+bool Serializer::HasWriter(const Reflection::TypeId type)
 {
-	return _writers.find(type) != _writers.end();
+	return m_Writers.find(type) != m_Writers.end();
 }
 
-void Serializer::UnregistWriter(const TypeId type)
+void Serializer::UnregistWriter(const Reflection::TypeId type)
 {
-	if (_writers.find(type) != _writers.end())
+	if (m_Writers.find(type) != m_Writers.end())
 	{
-		_writers.erase(type);
+		m_Writers.erase(type);
 	}
 }
 
-void Serializer::RegistReader(const TypeId type, std::function<void(Serializer&, const TypeId, void*)> reader)
+void Serializer::RegistReader(const Reflection::TypeId type, std::function<void(Serializer&, const Reflection::TypeId, void*)> reader)
 {
-	if (_readers.find(type) == _readers.end())
+	if (m_Readers.find(type) == m_Readers.end())
 	{
-		_readers.insert(std::make_pair(type, reader));
+		m_Readers.insert(std::make_pair(type, reader));
 	}
 }
 
-bool Serializer::HasReader(const TypeId type)
+bool Serializer::HasReader(const Reflection::TypeId type)
 {
-	return _readers.find(type) != _readers.end();
+	return m_Readers.find(type) != m_Readers.end();
 
 }
 
-void Serializer::UnregistReader(const TypeId type)
+void Serializer::UnregistReader(const Reflection::TypeId type)
 {
-	if (_readers.find(type) != _readers.end())
+	if (m_Readers.find(type) != m_Readers.end())
 	{
-		_readers.erase(type);
+		m_Readers.erase(type);
 	}
 }
 
 void Serializer::registExtensionType()
 {
-	TypeId::Create<Serializer>();
+	Reflection::TypeId::Create<Serializer>();
 }
 
-void Serializer::Write(const TypeId type, void* data)
+void Serializer::Write(const Reflection::TypeId type, void* data)
 {
+
 }
 
-void Serializer::Write(const char* key, const TypeId type, void* data)
+void Serializer::Write(const char* key, const Reflection::TypeId type, void* data)
 {
 }
 

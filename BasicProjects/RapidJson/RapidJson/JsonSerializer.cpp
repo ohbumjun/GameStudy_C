@@ -565,7 +565,7 @@ void JsonSerializer::wStartObject()
     writer->StartObject();
 }
 
-void JsonSerializer::wStartObject(TypeId type)
+void JsonSerializer::wStartObject(Reflection::TypeId type)
 {
     wStartObject();
 }
@@ -676,6 +676,11 @@ void JsonSerializer::wStartArray(uint64 arrayLength)
     writer->StartArray();
 }
 
+void JsonSerializer::wStartArray(Reflection::TypeId type, uint64 arrayLength)
+{
+    wStartArray(arrayLength);
+}
+
 void JsonSerializer::wEndArray()
 {
     JWriter* writer = (JWriter*)m_JWriter;
@@ -714,7 +719,7 @@ void JsonSerializer::rStartObject()
     readHandler->m_Reader.ReadStartObject();
 }
 
-void JsonSerializer::rStartObject(TypeId type)
+void JsonSerializer::rStartObject(Reflection::TypeId type)
 {
     rStartObject();
 }
@@ -836,6 +841,11 @@ size_t JsonSerializer::rStartArray()
 {
     ReadHandler* readHandler = (ReadHandler*)m_JReader;
     return readHandler->m_Reader.ReadStartArray();
+}
+
+size_t JsonSerializer::rStartArray(Reflection::TypeId type)
+{
+    return rStartArray();
 }
 
 void JsonSerializer::rEndArray()

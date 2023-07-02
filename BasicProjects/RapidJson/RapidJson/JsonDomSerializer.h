@@ -14,7 +14,7 @@ public :
 
 private:
 	virtual void wStartObject() ;
-	virtual void wStartObject(TypeId type);
+	virtual void wStartObject(Reflection::TypeId type);
 	virtual void wKey(const char* key) ;
 	virtual void write(const bool data) ;
 	virtual void write(const int8 data) ;
@@ -33,13 +33,13 @@ private:
 	// virtual void write(const LvDynamicObject& object) ;
 	virtual void wBuffer(void* buffer, size_t size) ;
 	virtual void wStartArray(uint64 arrayLength) ;
-	// virtual void writeStartArray(LvType type, uint64 arrayLength) ;
+	virtual void wStartArray(Reflection::TypeId type, uint64 arrayLength) ;
 	virtual void wEndArray() ;
 	virtual void wEndObject() ;
 
 private:
 	virtual void rStartObject() ;
-	virtual void rStartObject(TypeId type) ;
+	virtual void rStartObject(Reflection::TypeId type) ;
 	virtual void useKey(const char* key) ;
 	virtual bool hasKey(const char* key);
 	virtual void readKey(char* key) ;
@@ -79,6 +79,9 @@ private :
 
 	void* m_Document;
 	std::stack<History> m_ReadHistoryStack;
+
+	// ex) 하나의 History 내에 여러 Key 가 있을 수 있다.
+	// ex) {"a" : 1, "b" : 2}
 	std::stack<const char*> m_KeyStack;
 
 	// JsonSerialize 는 Write 시에만 사용한다.
