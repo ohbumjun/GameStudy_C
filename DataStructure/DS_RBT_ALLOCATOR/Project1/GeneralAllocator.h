@@ -48,6 +48,8 @@ public:
 
 	void* Allocate(size_t size, const char* file, size_t line) override
 	{
+		assert(size % sizeof(T) == 0);
+
 		if (m_CurPos >= sizeof(T) * Capacity)
 		{
 			errno = ENOMEM;
@@ -131,12 +133,12 @@ struct AlignedAllocator final : public GeneralAllocator<T>
 
 	void* Allocate(size_t size, const char* file = nullptr, size_t line = 0) override
 	{
-		return pr_aligned_alloc(size, align);
+		return pr_aligned_alloc(size, m_Align);
 	}
 
 	void* Realloc(void* ptr, size_t size, const char* file = nullptr, size_t line = 0) override
 	{
-		return pr_aligned_realloc(ptr, align, size);
+		return pr_aligned_realloc(ptr, m_Align, size);
 	}
 
 	void Free(void* ptr) override

@@ -35,7 +35,6 @@ struct LvPoolAllocator final : Allocable
 		bool m_IsAligned;
 
 		std::unordered_set<uintptr> m_FreeAddresses;
-
-	}
+	};
 };
 
