@@ -114,8 +114,8 @@ void print_object_rec(object_db_rec_t* obj_rec, int i)
 {
     if (!obj_rec) return;
     printf(ANSI_COLOR_MAGENTA"-----------------------------------------------------------------------------------|\n");
-    printf(ANSI_COLOR_YELLOW "%-3d ptr = %-10p | next = %-10p | units = %-4d | struct_name = %-10s |\n",
-        i, obj_rec->ptr, obj_rec->next, obj_rec->units, obj_rec->struct_rec->struct_name);
+    printf(ANSI_COLOR_YELLOW "%-3d ptr = %-10p | next = %-10p | units = %-4d | struct_name = %-10s | is_root = %s |\n",
+        i, obj_rec->ptr, obj_rec->next, obj_rec->units, obj_rec->struct_rec->struct_name, obj_rec->is_root ? "TRUE " : "FALSE");
     printf(ANSI_COLOR_MAGENTA "-----------------------------------------------------------------------------------|\n");
 }
 
@@ -147,7 +147,8 @@ void
 add_object_to_object_db(object_db_t* object_db,
     void* ptr,
     int units,
-    struct_db_rec_t* struct_rec) {
+    struct_db_rec_t* struct_rec,
+    mld_boolean_t is_root) {
 
     object_db_rec_t* obj_rec = object_db_look_up(object_db, ptr);
 
@@ -164,6 +165,8 @@ add_object_to_object_db(object_db_t* object_db,
     obj_rec->ptr = ptr;
     obj_rec->units = units;
     obj_rec->struct_rec = struct_rec;
+    obj_rec->is_visited = MLD_FALSE;
+    obj_rec->is_root = is_root;
 
     object_db_rec_t* head = object_db->head;
 
@@ -256,5 +259,203 @@ void xfree(void* ptr, object_db_t* object_db)
 
     free(cur_obj_db_rec->ptr);
     free(cur_obj_db_rec);
+}
+
+void mld_register_root_object(object_db_t* object_db, void* objptr, char* struct_name, unsigned int units)
+{
+    struct_db_rec_t* struct_rec = struct_db_look_up(object_db->struct_db, struct_name);
+    assert(struct_rec);
+
+    /*Create a new object record and add to object database + root 라고 표시하기*/
+    add_object_to_object_db(object_db, objptr, units, struct_rec, MLD_TRUE);
+}
+
+void set_mld_object_as_global_root(object_db_t* object_db, void* obj_ptr)
+{
+    object_db_rec_t* obj_rec = object_db_look_up(object_db, obj_ptr);
+
+    assert(obj_rec);
+
+    obj_rec->is_root = MLD_TRUE;
+}
+
+static object_db_rec_t*
+get_next_root_object(object_db_t* object_db,
+    object_db_rec_t* starting_from_here) {
+
+    object_db_rec_t* first = starting_from_here ? starting_from_here->next : object_db->head;
+    while (first) {
+        if (first->is_root)
+            return first;
+        first = first->next;
+    }
+    return nullptr;
+}
+
+
+/* Level 2 Pseudocode : This function explore the direct childs of obj_rec and mark
+ * them visited. Note that obj_rec must have already visted.*/
+static void
+mld_explore_objects_recursively(object_db_t* object_db,
+    object_db_rec_t* parent_obj_rec) {
+
+    unsigned int i, n_fields;
+    char* parent_obj_ptr = NULL,
+        * child_obj_offset = NULL;
+    void* child_object_address = NULL;
+    field_info_t* field_info = NULL;
+
+    object_db_rec_t* child_object_rec = NULL;
+    struct_db_rec_t* parent_struct_rec = parent_obj_rec->struct_rec;
+
+    /*Parent object must have already visited*/
+    assert(parent_obj_rec->is_visited);
+
+    // 연속적으로 할당된 모든 object 를 순횐한다.
+    for (i = 0; i < parent_obj_rec->units; i++) {
+
+        // 현재 조사중인 object 의 메모리 주소에 접근한다.
+        parent_obj_ptr = (char*)(parent_obj_rec->ptr) + (i * parent_struct_rec->ds_size);
+
+        // 해당 object type 의 모든 field 를 순회한다. 
+        for (n_fields = 0; n_fields < parent_struct_rec->n_fields; n_fields++) {
+
+            field_info = &parent_struct_rec->fields[n_fields];
+
+            /* 오직 포인터 field 에 대한 조사만 한다.
+             * We are only concerned with fields which are pointer to
+             * other objects*/
+            switch (field_info->dtype) {
+            case UINT8:
+            case UINT32:
+            case INT32:
+            case CHAR:
+            case FLOAT:
+            case DOUBLE:
+            case OBJ_STRUCT:
+                break;
+            case OBJ_PTR:
+            default:
+                ;
+
+                /* 현재 parent object 가 직접 가리키고 있는 pointer object 가 바로 child object 이다.
+                   ex) parent_obj_ptr = 0x1000 = parent object 의 메모리 주소 를 담기 위해 쓰인다.
+                       그리고 parent object 가 이와 같은 형태를 취했다고 해보자. {[float][int][char[30]][0x2000]}
+                    
+                       이때 [0x2000] 은, chlid object pointer 변수이다. 
+                       그리고 [0x2000] 이라는 데이터의 메모리 주소가 "0x1010" 이라고 해보자.
+
+                       child_obj_offset = 0x1010 이 될 것이다.
+                   
+                 * child_obj_offset is the memory location inside parent object
+                 * where address of next level object is stored*/
+                child_obj_offset = parent_obj_ptr + field_info->offset;
+
+                /*
+                   child_object_address 변수에 담는 값은 무엇이 될까 ?
+                
+                   child_obj_offset 는 자세히 살펴보면 "이중 포인터" 이다.
+                   *(child_obj_offset) == [0x2000] 이라는 데이터 == child object 를 가리키는 포인터
+                   **(child_obj_offset) == *([0x2000] 이라는 데이터) == *(child object 를 가리키는 포인터) == child 객체
+                
+                   &child_object_address 라는 것은, child_object_address = ??, 를 수행한다는 것.
+                   즉, 특정 값을 child_object_address 변수에 대입한다는 의미
+
+                   child_obj_offset ? 
+                   보통은 &child_obj_offset 형태로 쓰는데, 여기서는 & 를 빼고
+                   child_obj_offset 를 사용했다.
+                   child_obj_offset 는 이중포인터 라고 했다
+                   child_obj_offset = &[0x2000]
+
+                   memcpy(&child_object_address, &[0x2000], sizeof(void*)); 라는 의미는
+                   child_object_address = 0x2000 을 한다는 것이고
+
+                   이 말은 즉슨, child_object_address 에 chlid 객체의 메모리 주소. 값을 대입한다는 것이고
+                   *(child_object_address) = child object. 가 된다는 것이다.
+                */
+                memcpy(&child_object_address, child_obj_offset, sizeof(void*));
+
+                /*child_object_address now stores the address of the next object in the
+                 * graph. It could be NULL, Handle that as well*/
+                if (!child_object_address) continue;
+
+                child_object_rec = object_db_look_up(object_db, child_object_address);
+
+                assert(child_object_rec);
+
+                /* Since we are able to reach this child object "child_object_rec"
+                 * from parent object "parent_obj_ptr", mark this
+                 * child object as visited and explore its children recirsively.
+                 * If this child object is already visited, then do nothing - avoid infinite loops*/
+                if (!child_object_rec->is_visited) {
+                    child_object_rec->is_visited = MLD_TRUE;
+                    mld_explore_objects_recursively(object_db, child_object_rec);
+                }
+                else {
+                    continue; /*Do nothing, explore next child object*/
+                }
+            }
+        }
+    }
+}
+
+static void
+init_mld_algorithm(object_db_t* object_db) {
+
+    object_db_rec_t* obj_rec = object_db->head;
+    while (obj_rec) {
+        obj_rec->is_visited = MLD_FALSE;
+        obj_rec = obj_rec->next;
+    }
+}
+
+void run_mld_algorithm(object_db_t* object_db)
+{
+    /*Step 1 : Mark all objects in object databse as unvisited*/
+    init_mld_algorithm(object_db);
+
+    /* Step 2 : Get the "first root object" from the object db, it could be
+     * present anywhere in object db. If there are multiple roots in object db
+     * return the first one, we can start mld algorithm from any root object*/
+
+    object_db_rec_t* root_obj = get_next_root_object(object_db, NULL);
+
+    while (root_obj) {
+
+        // 이미 방문한 root node 재귀 방지
+        if (root_obj->is_visited) {
+            /* It means, all objects reachable from this root_obj has already been
+             * explored, no need to do it again, else you will end up in infinite loop.
+             * Remember, Application Data structures are cyclic graphs*/
+            root_obj = get_next_root_object(object_db, root_obj);
+            continue;
+        }
+
+        /* Mark as Visited !!
+         * root objects are always reachable since application holds the global
+         * variable to it*/
+        root_obj->is_visited = MLD_TRUE;
+
+        /*Explore all reachable objects from this root_obj recursively*/
+        mld_explore_objects_recursively(object_db, root_obj);
+
+        root_obj = get_next_root_object(object_db, root_obj);
+    }
+}
+
+void report_leaked_objects(object_db_t* object_db)
+{
+    int i = 0;
+    object_db_rec_t* head;
+
+    printf("Dumping Leaked Objects\n");
+
+    for (head = object_db->head; head; head = head->next) {
+        if (!head->is_visited) {
+            print_object_rec(head, i++);
+            mld_dump_object_rec_detail(head);
+            printf("\n\n");
+        }
+    }
 }
 

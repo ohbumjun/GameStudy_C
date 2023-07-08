@@ -56,6 +56,11 @@ typedef enum
 	OBJ_STRUCT
 } data_type_t;
 
+typedef enum {
+
+	MLD_FALSE,
+	MLD_TRUE
+} mld_boolean_t;
 
 #define C_OFFSETOF(struct_name, fld_name)     \
     (unsigned int)&(((struct_name *)0)->fld_name)
@@ -191,6 +196,9 @@ struct _object_db_rec_ {
 	// 해당 object 가 속한 structure_db_rec 객체를 가리키는 포인터
 	// xalloc 시 들어온 "string" 값을 이용하여 struct_db 에서 찾아내서 링크시켜주기
 	struct_db_rec_t* struct_rec;
+
+	mld_boolean_t is_visited; /*Used for Graph traversal*/
+	mld_boolean_t is_root;    /*Is this object is Root object*/
 };
 
 typedef struct _object_db_ {
@@ -214,11 +222,13 @@ void
 add_object_to_object_db(object_db_t* object_db,
 	void* ptr,
 	int units,
-	struct_db_rec_t* struct_rec);
+	struct_db_rec_t* struct_rec,
+	mld_boolean_t is_root);
 
 /*print the values of all supported fields by mld library for the object record passed as argument.*/
 void
 mld_dump_object_rec_detail(object_db_rec_t* obj_rec);
+
 /*
 xcalloc(object_db, "emp_t", 1) == calloc(1, sizeof(emp_t)) 와 동일
 즉, emp_t 타입의 object 를 1 개만큼 연속적인 메모리 공간에 할당.
@@ -316,6 +326,40 @@ Application 상의 object 들은, 서로 다양한 reference 정보를 지닌다.
 	왜냐하면 memory detection algorithm 은 root object 가
 	항상 reachable 하다고 가정하기 때문이다.
  */
+
+ /*APIs to register root objects*/
+void mld_register_root_object(object_db_t* object_db,
+	void* objptr,
+	char* struct_name,
+	unsigned int units);
+
+void
+set_mld_object_as_global_root(object_db_t* object_db, void* obj_ptr);
+
+
+/*
+- root object 에서 시작해야 한다. root object 중에서 어떤
+  root 에서 시작해도 상관없다.
+
+  이를 위해 object DB 뒤져서 root object 인 것을 찾자마자
+  해당 root object 에서 시작하도록 한다.
+	- child object ? : 특정 object 에서 "바로" rechable 한 object
+	- child object 를 재귀적으로 타고 들어가면서 탐색하는 방식을
+	  취한다. 특정 object 를 방문할 때마다 Is Visited 변수를 true 로
+	  세팅한다.
+	  - DFS 알고리즘을 적용할 것이다.
+    - 한번 방문된 object 를 다시 탐색하는 것을 방지하기 위해
+	   IsVisited 변수를 이용한다.
+- 해당 root object 에 대한 탐색을 마쳤다면,
+  그 다음 root object 를 찾아서 같은 과정을 반복한다.
+
+- 최종적으로 IsVisited 가 false 라면, Leak 된 object 가 된다.
+*/
+void
+run_mld_algorithm(object_db_t* object_db);
+
+void
+report_leaked_objects(object_db_t* object_db);
 
 #endif /* __MLD__ */
 
