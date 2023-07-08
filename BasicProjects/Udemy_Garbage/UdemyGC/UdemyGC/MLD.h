@@ -245,5 +245,77 @@ inline T* xcalloc(object_db_t* object_db, std::string_view struct_name, int unit
 void
 xfree(void* ptr, object_db_t* object_db);
 
+/*
+<Application Data Structure>
+Application 상의 object 들은, 서로 다양한 reference 정보를 지닌다.
+- 결과적으로 그러한 reference 를 graph 상의 edge 로 표현하고
+- 각각의 object 를 node 로 표현한다면
+  graph 가 형성될 텐데
+  사실상 Application 은 isolated graph 들의 모음이다.
+
+- 각각의 isolated graph 들은, root node 가 존재한다.
+  보통 root object 들은 global / static object 이다.
+
+- 하지만, isolated graph 가, directed cyclic graph 형태가 될 수도 있다.
+  예를 들어, A graph, B graph 가 있다. 각각의 graph 에 속한 노드
+  a, b 가 있다고 해보자.
+
+  a -> b
+  b -> a
+
+  이렇게 reference 가 걸리는 순간 A, B graph 는 더이상 isolated graph 가
+  아니게 된다.
+
+  오히려 A, B graph 는 하나의 graph 로 합쳐지고
+  이 graph 는 내부에 단방향 순환참조가 걸린
+
+  directed cyclic graph 가 된다.
+
+- global 변수는, application 상의 모든 file, 함수 등 에서 접근할 수 있는
+  변수이다. 
+  
+  application 은 적어도 하나의 global object를 지닌다.
+  따라서 application 상의 모든 object 를 순회하는, 시작점이 될 것이다.
+
+- 보통 global object 들은 global 변수들에 의해서 참조된다.
+  따라서 global object 들은 절대 leak 될 수 없다.
+*/
+
+/*
+<Root Object 관리>
+- Application 은 MLD 에게 모든 root object 를 알려줘야 한다.
+  MLD 는 application 이 root object 를 등록할 수 있는 API 를 제공한다.
+
+- root object 는 2가지 방식으로 만들어질 수 있다
+  1) global root object
+  ex) Object a = new Object;  int main(){}
+      이와 같이 main loop 밖에 생성된 object 는 root 가 된다.
+	  해당 object 는 xalloc 등 MLD DB 에 object 정보를 등록하는
+	  xalloc 등의 함수로 생성된 것이 아니므로 MLD 는 해당
+	  object 의 존재를 모른다.
+
+	  따라서 별도의 API를 통해 MDL DB 에 등록해줘야 한다.
+
+	  ex) mld_register_global_object_as_root()
+		  - new object db record 만들고 + root 로 표시
+
+  - 대부분의 경우 global object 는 root object 가 된다.
+
+  2) dynamic root object
+  ex) object* obj = xalloc();
+      이 경우 xalloc 을 통해 MLD DB 에 등록은 해주지만
+	  별도로 해당 obj 가 root 라는 것도 알려줘야 한다.
+
+	  mld_set_dynamic_object_as_root 라는 함수를 통해
+	  해당 정보를 세팅해줄 것이다.
+ 
+  - MLD 는 이러한 dynamic root object 가 절대 leak 될 수 없다.
+    라고 가정할 것이다. 만약 DRO 가 leak 이 되면 MLD 는
+	해당 사항을 report 하지 않는다.
+
+	왜냐하면 memory detection algorithm 은 root object 가
+	항상 reachable 하다고 가정하기 때문이다.
+ */
+
 #endif /* __MLD__ */
 
