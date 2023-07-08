@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Serializer.h"
+#include "JsonSerializer.h"
 
 class JsonDomSerializer : public Serializer
 {
@@ -9,12 +10,12 @@ public :
 	JsonDomSerializer(const char* json);
 	virtual ~JsonDomSerializer();
 
-	std::string GetResult();
+	std::string GetFinalResult();
 
 private:
-	virtual void writeStartObject() ;
-	// virtual void writeStartObject(LvType type) ;
-	virtual void writeKey(const char* key) ;
+	virtual void wStartObject() ;
+	virtual void wStartObject(Reflection::TypeId type);
+	virtual void wKey(const char* key) ;
 	virtual void write(const bool data) ;
 	virtual void write(const int8 data) ;
 	virtual void write(const uint8 data) ;
@@ -30,18 +31,18 @@ private:
 	virtual void write(const char* data) ;
 	virtual void write(const unsigned char* data) ;
 	// virtual void write(const LvDynamicObject& object) ;
-	virtual void writeBuffer(void* buffer, size_t size) ;
-	virtual void writeStartArray(uint64 arrayLength) ;
-	// virtual void writeStartArray(LvType type, uint64 arrayLength) ;
-	virtual void writeEndArray() ;
-	virtual void writeEndObject() ;
+	virtual void wBuffer(void* buffer, size_t size) ;
+	virtual void wStartArray(uint64 arrayLength) ;
+	virtual void wStartArray(Reflection::TypeId type, uint64 arrayLength) ;
+	virtual void wEndArray() ;
+	virtual void wEndObject() ;
 
 private:
-	virtual void readStartObject() ;
-	// virtual void readStartObject(LvType type) ;
+	virtual void rStartObject() ;
+	virtual void rStartObject(Reflection::TypeId type) ;
 	virtual void useKey(const char* key) ;
-	bool hasKey(const char* key) { return false; };
-	virtual void readKey(char* key) ;
+	virtual bool hasKey(const char* key);
+	virtual void rKey(char* key) ;
 	virtual void read(bool& data) ;
 	virtual void read(int8& data) ;
 	virtual void read(uint8& data) ;
@@ -57,27 +58,33 @@ private:
 	virtual void read(char* data) ;
 	virtual void read(unsigned char* data) ;
 	// virtual void read(LvDynamicObject& object) ;
-	virtual void readBuffer(void* buffer, size_t size) ;
-	virtual size_t readStartArray() ;
-	// size_t readStartArray(LvType type) ;
-	virtual void readEndArray() ;
-	virtual void readEndObject() ;
+	virtual void rBuffer(void* buffer, size_t size) ;
+	virtual size_t rStartArray() ;
+	virtual size_t rStartArray(Reflection::TypeId type) ;
+	virtual void rEndArray() ;
+	virtual void rEndObject() ;
 
 
 private :
-	struct Context
+	struct History
 	{
 		void* value = nullptr;
-		size_t objNum = 0;
+		size_t elementNum = 0;   // ?
 
-		Context() = default;
-		Context(void* value) : value(){}
+		History() = default;
+		History(void* value) : value(){}
 	};
 
-	void* getNextValue(Context* context);
+	void* getNextValue(History* context);
 
 	void* m_Document;
-	std::stack<Context> _contextStack;
-	std::stack<const char*> _keyStack;
+	std::stack<History> m_ReadHistoryStack;
+
+	// ex) 하나의 History 내에 여러 Key 가 있을 수 있다.
+	// ex) {"a" : 1, "b" : 2}
+	std::stack<const char*> m_KeyStack;
+
+	// JsonSerialize 는 Write 시에만 사용한다.
+	JsonSerializer m_JsonArchive;
 };
 

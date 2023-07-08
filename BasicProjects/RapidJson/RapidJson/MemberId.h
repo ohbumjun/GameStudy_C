@@ -11,7 +11,7 @@ public:
 	struct MemberInfo
 	{
 		std::string Name{ };
-		VariableId	VariableId{ };
+		Reflection::VariableId	VariableId{ };
 		uint32_t	Offset{ };
 		uint32_t	Size{ };
 		uint32_t	Align{ };
@@ -24,7 +24,7 @@ public:
 
 public:
 
-	constexpr MemberId(TypeId id, uint32_t Offset) : Id{ id }, Offset{ Offset } { };
+	constexpr MemberId(Reflection::TypeId id, uint32_t Offset) : Id{ id }, Offset{ Offset } { };
 
 	constexpr MemberId() = default;
 	// constexpr ~MemberId() = default;
@@ -36,12 +36,12 @@ public:
 
 public:
 
-	constexpr TypeId	GetTypeId()	const { return Id; }
+	constexpr Reflection::TypeId	GetTypeId()	const { return Id; }
 	constexpr uint32_t	GetOffset()	const { return Offset; }
 
 	const MemberInfo& GetMemberInfo()	const;
 	const std::string& GetName()	const { return GetMemberInfo().Name; }
-	VariableId			GetVariableId()	const { return GetMemberInfo().VariableId; }
+	Reflection::VariableId			GetVariableId()	const { return GetMemberInfo().VariableId; }
 	uint32_t			GetSize()	const { return GetMemberInfo().Size; }
 	uint32_t			GetAlignment()	const { return GetMemberInfo().Align; }
 
@@ -51,27 +51,27 @@ public:
 	static MemberId RegisterField(const std::string& fieldName, uint32_t Offset);
 
 	template <typename Field>
-	static MemberId RegisterField(TypeId classId, const std::string& fieldName, uint32_t Offset);
+	static MemberId RegisterField(Reflection::TypeId classId, const std::string& fieldName, uint32_t Offset);
 
-	static MemberId RegisterField(TypeId classId, VariableId MemberId, const std::string& fieldName, uint32_t Offset, uint32_t Size, uint32_t Align);
+	static MemberId RegisterField(Reflection::TypeId classId, Reflection::VariableId MemberId, const std::string& fieldName, uint32_t Offset, uint32_t Size, uint32_t Align);
 
-	static const std::set<MemberInfo>& GetMemberInfos(TypeId id) { return GetStatics().MemberInfos[id]; }
+	static const std::set<MemberInfo>& GetMemberInfos(Reflection::TypeId id) { return GetStatics().MemberInfos[id]; }
 
-	static const MemberInfo& GetMemberInfo(TypeId id, const std::string& FieldName);
+	static const MemberInfo& GetMemberInfo(Reflection::TypeId id, const std::string& FieldName);
 
 	static const auto& GetAllMemberInfos() { return GetStatics().MemberInfos; }
 
-	static bool Exists(TypeId classId) { return GetStatics().MemberInfos.find(classId) != GetStatics().MemberInfos.end(); }
+	static bool Exists(Reflection::TypeId classId) { return GetStatics().MemberInfos.find(classId) != GetStatics().MemberInfos.end(); }
 
 private:
 
 	struct StaticData
 	{
 		// std::set -> offset 에 따라 sort 될 것이다.
-		std::unordered_map<TypeId, std::set<MemberInfo>> MemberInfos{};
+		std::unordered_map<Reflection::TypeId, std::set<MemberInfo>> MemberInfos{};
 
 		// Type -> (field 이름, offset)
-		std::unordered_map<TypeId, std::unordered_map<std::string, uint32_t>> MemberInfoNameMap{};
+		std::unordered_map<Reflection::TypeId, std::unordered_map<std::string, uint32_t>> MemberInfoNameMap{};
 	};
 
 	static StaticData& GetStatics()
@@ -83,14 +83,14 @@ private:
 
 private:
 
-	TypeId		Id{ };
+	Reflection::TypeId		Id{ };
 	uint32_t	Offset{ };
 };
 
 
 struct RegisterMember final
 {
-	RegisterMember(TypeId classId, VariableId MemberId, const std::string& fieldName, uint32_t Offset, uint32_t Size, uint32_t Align)
+	RegisterMember(Reflection::TypeId classId, Reflection::VariableId MemberId, const std::string& fieldName, uint32_t Offset, uint32_t Size, uint32_t Align)
 	{
 		MemberId::RegisterField(classId, MemberId, fieldName, Offset, Size, Align);
 	}
@@ -115,7 +115,7 @@ inline const MemberId::MemberInfo& MemberId::GetMemberInfo() const
 	return *it;
 }
 
-inline const MemberId::MemberInfo& MemberId::GetMemberInfo(TypeId id, const std::string& FieldName)
+inline const MemberId::MemberInfo& MemberId::GetMemberInfo(Reflection::TypeId id, const std::string& FieldName)
 {
 	// 현재 Type 의 모든 (Field, Offset) 정보를 리턴
 	auto& MemberInfoNames = GetStatics().MemberInfoNameMap[id];
@@ -129,7 +129,7 @@ inline const MemberId::MemberInfo& MemberId::GetMemberInfo(TypeId id, const std:
 }
 
 
-inline MemberId MemberId::RegisterField(TypeId classId, VariableId VariableID, const std::string& fieldName, uint32_t Offset, uint32_t Size, uint32_t Align)
+inline MemberId MemberId::RegisterField(Reflection::TypeId classId, Reflection::VariableId VariableID, const std::string& fieldName, uint32_t Offset, uint32_t Size, uint32_t Align)
 {
 	MemberInfo info{};
 	info.Name = fieldName;
@@ -161,7 +161,7 @@ inline MemberId MemberId::RegisterField(const std::string& fieldName, uint32_t O
 }
 
 template<typename Field>
-inline MemberId MemberId::RegisterField(TypeId classId, const std::string& fieldName, uint32_t Offset)
+inline MemberId MemberId::RegisterField(Reflection::TypeId classId, const std::string& fieldName, uint32_t Offset)
 {
 	auto registerField = RegisterType<Field>();
 
