@@ -39,12 +39,23 @@
 typedef struct emp_ {
 
     char emp_name[30];
+    
+    // emp_id 의 offset 이 30 이 아니라, 32 인 이유
+    // OS 단에서 4byte 혹은 8byte 배수 단위로 offset 을 맞추기 때문이다
     unsigned int emp_id;
     unsigned int age;
     struct emp_* mgr;
     float salary;
 } emp_t;
 
+typedef struct student_ {
+
+    char stud_name[32];
+    unsigned int roolno;
+    unsigned int age;
+    float aggregate;
+    struct student_* best_colleage;
+} student_t;
 
 int
 main(int argc, char** argv) {
@@ -61,17 +72,32 @@ main(int argc, char** argv) {
         CPP_FIELD_INFO(emp_t, mgr,      OBJ_PTR, emp_t),
         CPP_FIELD_INFO(emp_t, salary,   FLOAT, 0)
     };
-    static field_info_t emp_fields2[] = {
-        CPP_FIELD_INFO(emp_t, emp_name, CHAR,    0),
-        CPP_FIELD_INFO(emp_t, emp_id,   UINT32,  0),
-        CPP_FIELD_INFO(emp_t, age,      UINT32,  0),
-        CPP_FIELD_INFO(emp_t, mgr,      OBJ_PTR, emp_t),
-        CPP_FIELD_INFO(emp_t, salary,   FLOAT, 0)
+    static field_info_t stud_fields[] = {
+        CPP_FIELD_INFO(student_t, stud_name, CHAR,    0),
+        CPP_FIELD_INFO(student_t, roolno,   UINT32,  0),
+        CPP_FIELD_INFO(student_t, age,      UINT32,  0),
+        CPP_FIELD_INFO(student_t, aggregate,   FLOAT, 0),
+        CPP_FIELD_INFO(student_t, best_colleage, OBJ_PTR, student_t),
     };
 
     CPP_REG_STRUCT(struct_db, emp_t, emp_fields);
-    CPP_REG_STRUCT(struct_db, emp_t, emp_fields2);
+    CPP_REG_STRUCT(struct_db, student_t, stud_fields);
 
     print_structure_db(struct_db);
+
+    /*Working with object database*/
+    /*Step 1 : Initialize a new Object database */
+    object_db_t* object_db = reinterpret_cast<object_db_t*>(calloc(1, sizeof(object_db_t)));
+    object_db->struct_db = struct_db;
+
+    /*Step 2 : Create some sample objects, equivalent to standard
+     * calloc(1, sizeof(student_t))*/
+    student_t* abhishek = xcalloc<student_t>(object_db, "student_t", 1);
+    student_t* shivani = xcalloc<student_t>(object_db, "student_t", 1);
+    emp_t* joseph = xcalloc<emp_t>(object_db, "emp_t", 2);
+
+    print_object_db(object_db);
+
     return 0;
 }
+

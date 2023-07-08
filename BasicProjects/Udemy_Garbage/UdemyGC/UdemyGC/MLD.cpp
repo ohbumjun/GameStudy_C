@@ -31,9 +31,6 @@
  */
 
 #include "MLD.h"
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "css.h"
 
 const char* DATA_TYPE[] = { "UINT8", "UINT32", "INT32",
@@ -88,11 +85,176 @@ add_structure_to_struct_db(struct_db_t* struct_db,
     }
     else
     {
-        struct_rec->next = NULL;
-        struct_db->head->next = struct_rec;
+        struct_rec->next = struct_db->head;
+        struct_db->head = struct_rec;
         struct_db->count++;
     }
 
     /*Rest of the cases, Implement yourself*/
     return 0;
 }
+
+struct_db_rec_t* struct_db_look_up(struct_db_t* struct_db, std::string_view struct_name)
+{
+    struct_db_rec_t* cur_struct_rec = nullptr;
+    cur_struct_rec = struct_db->head;
+
+    while (cur_struct_rec)
+    {
+        if (strncmp(cur_struct_rec->struct_name, struct_name.data(), MAX_STRUCTURE_NAME_SIZE) == 0)
+        {
+            return cur_struct_rec;
+        }
+        cur_struct_rec = cur_struct_rec->next;
+    }
+    return nullptr;
+}
+
+void print_object_rec(object_db_rec_t* obj_rec, int i)
+{
+    if (!obj_rec) return;
+    printf(ANSI_COLOR_MAGENTA"-----------------------------------------------------------------------------------|\n");
+    printf(ANSI_COLOR_YELLOW "%-3d ptr = %-10p | next = %-10p | units = %-4d | struct_name = %-10s |\n",
+        i, obj_rec->ptr, obj_rec->next, obj_rec->units, obj_rec->struct_rec->struct_name);
+    printf(ANSI_COLOR_MAGENTA "-----------------------------------------------------------------------------------|\n");
+}
+
+void print_object_db(object_db_t* object_db)
+{
+    object_db_rec_t* head = object_db->head;
+    unsigned int i = 0;
+    printf(ANSI_COLOR_CYAN "Printing OBJECT DATABASE\n");
+    for (; head; head = head->next) {
+        print_object_rec(head, i++);
+    }
+}
+
+object_db_rec_t*
+object_db_look_up(object_db_t* object_db, void* ptr) {
+
+    object_db_rec_t* head = object_db->head;
+    if (!head) return nullptr;
+
+    for (; head; head = head->next) {
+        if (head->ptr == ptr)
+            return head;
+    }
+    return nullptr;
+}
+
+/*Working with objects*/
+void
+add_object_to_object_db(object_db_t* object_db,
+    void* ptr,
+    int units,
+    struct_db_rec_t* struct_rec) {
+
+    object_db_rec_t* obj_rec = object_db_look_up(object_db, ptr);
+
+    /*Dont add same object twice*/
+    // assert(!obj_rec);
+    if (obj_rec != nullptr)
+    {
+        return;
+    }
+
+    obj_rec = reinterpret_cast<object_db_rec_t*>(calloc(1, sizeof(object_db_rec_t)));
+
+    obj_rec->next = nullptr;
+    obj_rec->ptr = ptr;
+    obj_rec->units = units;
+    obj_rec->struct_rec = struct_rec;
+
+    object_db_rec_t* head = object_db->head;
+
+    if (!head) {
+        object_db->head = obj_rec;
+        obj_rec->next = nullptr;
+        object_db->count++;
+        return;
+    }
+
+    // 새로 추가한 obj_rec 를 head 로 세팅한다.
+    obj_rec->next = head;
+    object_db->head = obj_rec;
+    object_db->count++;
+}
+
+void mld_dump_object_rec_detail(object_db_rec_t* obj_rec)
+{
+    int n_fields = obj_rec->struct_rec->n_fields;
+    field_info_t* field = nullptr;  
+
+    int units = obj_rec->units, obj_index = 0, field_index = 0;
+
+    for (; obj_index < units; obj_index++) {
+
+        // n번째 unit. 즉, n번째 object 메모리 주소에 접근한다.
+        char* current_object_ptr = (char*)(obj_rec->ptr) + \
+            (obj_index * obj_rec->struct_rec->ds_size);
+
+        for (field_index = 0; field_index < n_fields; field_index++) {
+
+            // 현재 조사하고자 하는 필드
+            field = &obj_rec->struct_rec->fields[field_index];
+
+            // offset 만으로도, 내가 원하는 value 에 바로 접근가능하다
+            // 반드시 struct_t 라는 runtime type 을 사용할 필요가 없다. 
+            switch (field->dtype) {
+            case UINT8:
+            case INT32:
+            case UINT32:
+                printf("%s[%d]->%s = %d\n", obj_rec->struct_rec->struct_name, obj_index, field->fname, *(int*)(current_object_ptr + field->offset));
+                break;
+            case CHAR:
+                // char 의 경우, 해당 메모리 주소 그대로 출력한다.
+                printf("%s[%d]->%s = %s\n", obj_rec->struct_rec->struct_name, obj_index, field->fname, (char*)(current_object_ptr + field->offset));
+                break;
+            case FLOAT:
+                printf("%s[%d]->%s = %f\n", obj_rec->struct_rec->struct_name, obj_index, field->fname, *(float*)(current_object_ptr + field->offset));
+                break;
+            case DOUBLE:
+                printf("%s[%d]->%s = %f\n", obj_rec->struct_rec->struct_name, obj_index, field->fname, *(double*)(current_object_ptr + field->offset));
+                break;
+            case OBJ_PTR:
+                printf("%s[%d]->%s = %p\n", obj_rec->struct_rec->struct_name, obj_index, field->fname, (void*)*(int*)(current_object_ptr + field->offset));
+                break;
+            case OBJ_STRUCT:
+                /*Later*/
+                break;
+            default:
+
+                break;
+            }
+        }
+    }
+}
+
+void xfree(void* ptr, object_db_t* object_db)
+{
+    object_db_rec_t* target_obj = object_db_look_up(object_db, ptr);
+
+    assert(target_obj);
+
+    bool target_found = false;
+    object_db_rec_t* cur_obj_db_rec = object_db->head;
+    object_db_rec_t* past_obj_db_rec = nullptr;
+
+    while (cur_obj_db_rec)
+    {
+        if (cur_obj_db_rec->ptr == ptr)
+        {
+            target_found = true;
+            past_obj_db_rec->next = cur_obj_db_rec->next;
+            break;
+        }
+        past_obj_db_rec = cur_obj_db_rec;
+        cur_obj_db_rec = cur_obj_db_rec->next;
+    }
+
+    assert(target_found);
+
+    free(cur_obj_db_rec->ptr);
+    free(cur_obj_db_rec);
+}
+
