@@ -64,6 +64,8 @@ main(int argc, char** argv) {
     // calloc : dynamically allocate memory for an array of elements (배열 동적 할당 함수)
     struct_db_t* struct_db = reinterpret_cast<struct_db_t*>(calloc(1, sizeof(struct_db_t)));
 
+    mld_init_primitive_data_types_support(struct_db);
+
     /*Create structure record for structure emp_t*/
     static field_info_t emp_fields[] = {
         CPP_FIELD_INFO(emp_t, emp_name, CHAR,    0),

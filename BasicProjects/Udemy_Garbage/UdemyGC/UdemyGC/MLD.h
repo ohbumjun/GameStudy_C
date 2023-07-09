@@ -167,8 +167,8 @@ struct_db_look_up(struct_db_t* struct_db, std::string_view struct_name);
     do{                                                               \
         struct_db_rec_t *rec = reinterpret_cast<struct_db_rec_t*>(calloc(1, sizeof(struct_db_rec_t)));    \
         strncpy(rec->struct_name, #st_name, MAX_STRUCTURE_NAME_SIZE); \
-        rec->ds_size = sizeof(st_name);                              \
-        rec->n_fields = sizeof(fields_arr)/sizeof(field_info_t);     \
+        rec->ds_size = sizeof(st_name);													\
+        rec->n_fields = fields_arr ? sizeof(fields_arr)/sizeof(field_info_t) : 0;     \
         rec->fields = fields_arr;                                    \
         if(add_structure_to_struct_db(struct_db, rec)){              \
             assert(0);                                               \
@@ -248,7 +248,7 @@ inline T* xcalloc(object_db_t* object_db, std::string_view struct_name, int unit
 	struct_db_rec_t* struct_rec = struct_db_look_up(object_db->struct_db, struct_name);
 	assert(struct_rec);
 	T* ptr = reinterpret_cast<T*>(calloc(units, struct_rec->ds_size));
-	add_object_to_object_db(object_db, ptr, units, struct_rec);
+	add_object_to_object_db(object_db, ptr, units, struct_rec, MLD_FALSE);
 	return ptr;
 }
 
@@ -338,6 +338,7 @@ set_mld_object_as_global_root(object_db_t* object_db, void* obj_ptr);
 
 
 /*
+<How to Traverse Graphs>
 - root object 에서 시작해야 한다. root object 중에서 어떤
   root 에서 시작해도 상관없다.
 
@@ -357,6 +358,39 @@ set_mld_object_as_global_root(object_db_t* object_db, void* obj_ptr);
 */
 void
 run_mld_algorithm(object_db_t* object_db);
+
+/*
+<Primitive Data type 에 대한 pointer 를 다루는 방법>
+
+---- 문제 상황 ----
+
+typedef emp_t
+{
+	unsigned int* _last6;  // unsigned int 배열에 대한 포인터 [uint][uint][uint][uint][uint][uint]
+}
+
+해당 emp_t 에 대한 데이터를 할당할 때, 우리는 아래와 같은 형태를 취하게된다.
+empt_t* emp = xalloc(object_db, "emp_t", 1);
+emp->_last6 = xalloc(object_db, "?", 6);
+
+이때 "?" 는 뭐라고 해야할까 ? 그냥 UINT32 라고 하면 되나 ?
+UINT32 는 data_type_t 라는 enum 변수로만 사용되었을 뿐.
+UINT32 에 대한 struct_db_rec_t 가 별도로 필요하다.
+
+즉, MLD 는 이와 같은 "Primitive Data Type" 에 대한 정보 및 구조를 
+알고 있어야 한다는 것이다.
+
+다시 말해, OJB_PTR 과 달리 field 가 존재하지 않는 primitive object type 에 대한
+pointer 를 MLD 가 다룰 수 있기 위해서는, 
+primitive type 에 대한 type 정보가 structure database 에 존재해야 한다.
+
+따라서 아래 함수를 통해 structure database 에 primitive data type 에 대한 정보를 넘겨줄 것이다.
+
+---- 사용 방향 ----
+1) struct_db 만들자 마자 호출
+2) 이후 xcalloc(object_db, "int", 6) 와 같은 방식으로 할당 가능
+*/
+void mld_init_primitive_data_types_support(struct_db_t* struct_db);
 
 void
 report_leaked_objects(object_db_t* object_db);

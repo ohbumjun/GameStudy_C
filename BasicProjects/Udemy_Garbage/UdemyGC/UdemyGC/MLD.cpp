@@ -311,6 +311,11 @@ mld_explore_objects_recursively(object_db_t* object_db,
     /*Parent object must have already visited*/
     assert(parent_obj_rec->is_visited);
 
+    if (parent_struct_rec->n_fields == 0)
+    {
+        return;
+    }
+
     // 연속적으로 할당된 모든 object 를 순횐한다.
     for (i = 0; i < parent_obj_rec->units; i++) {
 
@@ -441,6 +446,13 @@ void run_mld_algorithm(object_db_t* object_db)
 
         root_obj = get_next_root_object(object_db, root_obj);
     }
+}
+
+void mld_init_primitive_data_types_support(struct_db_t* struct_db)
+{
+    CPP_REG_STRUCT(struct_db, int, 0);
+    CPP_REG_STRUCT(struct_db, float, 0);
+    CPP_REG_STRUCT(struct_db, double, 0);
 }
 
 void report_leaked_objects(object_db_t* object_db)
