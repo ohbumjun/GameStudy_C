@@ -44,8 +44,9 @@ typedef struct emp_ {
     // OS 단에서 4byte 혹은 8byte 배수 단위로 offset 을 맞추기 때문이다
     unsigned int emp_id;
     unsigned int age;
-    struct emp_* mgr;
+    struct emp_* mgr = nullptr;
     float salary;
+    int* p = nullptr;
 } emp_t;
 
 typedef struct student_ {
@@ -54,7 +55,7 @@ typedef struct student_ {
     unsigned int roolno;
     unsigned int age;
     float aggregate;
-    struct student_* best_colleage;
+    struct student_* best_colleage = nullptr;
 } student_t;
 
 int
@@ -72,7 +73,8 @@ main(int argc, char** argv) {
         CPP_FIELD_INFO(emp_t, emp_id,   UINT32,  0),
         CPP_FIELD_INFO(emp_t, age,      UINT32,  0),
         CPP_FIELD_INFO(emp_t, mgr,      OBJ_PTR, emp_t),
-        CPP_FIELD_INFO(emp_t, salary,   FLOAT, 0)
+        CPP_FIELD_INFO(emp_t, salary,   FLOAT, 0),
+        CPP_FIELD_INFO(emp_t, p,        OBJ_PTR, 0)
     };
     static field_info_t stud_fields[] = {
         CPP_FIELD_INFO(student_t, stud_name, CHAR,    0),
@@ -95,10 +97,35 @@ main(int argc, char** argv) {
     /*Step 2 : Create some sample objects, equivalent to standard
      * calloc(1, sizeof(student_t))*/
     student_t* abhishek = xcalloc<student_t>(object_db, "student_t", 1);
+    mld_set_dynamic_object_as_root(object_db, abhishek);
+
     student_t* shivani = xcalloc<student_t>(object_db, "student_t", 1);
+    strncpy(shivani->stud_name, "shivani", strlen("shivani"));
+
+    // bind reference
+    // abhishek->best_colleage = shivani;
+
     emp_t* joseph = xcalloc<emp_t>(object_db, "emp_t", 2);
+    mld_set_dynamic_object_as_root(object_db, joseph);
+
+    // joseph->p = xcalloc<int>(object_db, "int", 1);
+    // joseph->p = nullptr;
+
+    joseph->p = xcalloc<int>(object_db, "int", 1);
 
     print_object_db(object_db);
+
+    run_mld_algorithm(object_db);
+
+    printf("Leaked Objects : \n");
+
+    report_leaked_objects(object_db);
+
+    // joseph->p 에 할당된 object_rec 의 제거
+    object_db_rec_t* delete_obj_rec = object_db_look_up(object_db, joseph->p);
+    delete_object_record_from_object_db(object_db, delete_obj_rec);
+   
+    report_dangling_field_pointers(object_db);
 
     return 0;
 }

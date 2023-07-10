@@ -233,35 +233,59 @@ void mld_dump_object_rec_detail(object_db_rec_t* obj_rec)
     }
 }
 
-void xfree(void* ptr, object_db_t* object_db)
-{
-    object_db_rec_t* target_obj = object_db_look_up(object_db, ptr);
+// User 에게 노출 X ? => static 으로 변경하기 
+void
+delete_object_record_from_object_db(object_db_t* object_db,
+    object_db_rec_t* object_rec) {
 
-    assert(target_obj);
+    assert(object_rec);
 
-    bool target_found = false;
-    object_db_rec_t* cur_obj_db_rec = object_db->head;
-    object_db_rec_t* past_obj_db_rec = nullptr;
-
-    while (cur_obj_db_rec)
-    {
-        if (cur_obj_db_rec->ptr == ptr)
-        {
-            target_found = true;
-            past_obj_db_rec->next = cur_obj_db_rec->next;
-            break;
-        }
-        past_obj_db_rec = cur_obj_db_rec;
-        cur_obj_db_rec = cur_obj_db_rec->next;
+    object_db_rec_t* head = object_db->head;
+    if (head == object_rec) {
+        object_db->head = object_rec->next;
+        free(object_rec);
+        return;
     }
 
-    assert(target_found);
+    object_db_rec_t* prev = head;
+    head = head->next;
 
-    free(cur_obj_db_rec->ptr);
-    free(cur_obj_db_rec);
+    while (head) {
+        if (head != object_rec) {
+            prev = head;
+            head = head->next;
+            continue;
+        }
+
+        // 해당 node 를 연결리스트에서 분리시킨다.
+        prev->next = head->next;
+        head->next = NULL;
+
+        // 해당 object_rec 메모리 해제 한다.
+        free(head);
+        return;
+    }
 }
 
-void mld_register_root_object(object_db_t* object_db, void* objptr, char* struct_name, unsigned int units)
+void xfree(void* ptr, object_db_t* object_db)
+{
+    if (ptr == nullptr)
+    {
+        return;
+    }
+
+    object_db_rec_t* object_rec = object_db_look_up(object_db, ptr);
+
+    assert(object_rec);
+    assert(object_rec->ptr);
+
+    free(object_rec->ptr);
+    object_rec->ptr = nullptr;
+
+    delete_object_record_from_object_db(object_db, object_rec);
+}
+
+void mld_register_global_object_as_root(object_db_t* object_db, void* objptr, char* struct_name, unsigned int units)
 {
     struct_db_rec_t* struct_rec = struct_db_look_up(object_db->struct_db, struct_name);
     assert(struct_rec);
@@ -269,11 +293,9 @@ void mld_register_root_object(object_db_t* object_db, void* objptr, char* struct
     /*Create a new object record and add to object database + root 라고 표시하기*/
     add_object_to_object_db(object_db, objptr, units, struct_rec, MLD_TRUE);
 }
-
-void set_mld_object_as_global_root(object_db_t* object_db, void* obj_ptr)
+void mld_set_dynamic_object_as_root(object_db_t* object_db, void* obj_ptr)
 {
     object_db_rec_t* obj_rec = object_db_look_up(object_db, obj_ptr);
-
     assert(obj_rec);
 
     obj_rec->is_root = MLD_TRUE;
@@ -435,6 +457,12 @@ void run_mld_algorithm(object_db_t* object_db)
             root_obj = get_next_root_object(object_db, root_obj);
             continue;
         }
+        // dangling pointer handling
+        else if (root_obj->ptr == nullptr)
+        {
+            root_obj = get_next_root_object(object_db, root_obj);
+            continue;
+        }
 
         /* Mark as Visited !!
          * root objects are always reachable since application holds the global
@@ -453,6 +481,7 @@ void mld_init_primitive_data_types_support(struct_db_t* struct_db)
     CPP_REG_STRUCT(struct_db, int, 0);
     CPP_REG_STRUCT(struct_db, float, 0);
     CPP_REG_STRUCT(struct_db, double, 0);
+    // CPP_REG_STRUCT(struct_db, void, 0);
 }
 
 void report_leaked_objects(object_db_t* object_db)
@@ -469,5 +498,65 @@ void report_leaked_objects(object_db_t* object_db)
             printf("\n\n");
         }
     }
+}
+
+void report_dangling_field_pointers(object_db_t* object_db)
+{
+    // 모든 obj_rec 의 OBJ_PTR 을 조사한다.
+    object_db_rec_t* obj_rec;
+
+    for (obj_rec = object_db->head; obj_rec; obj_rec = obj_rec->next)
+    {
+        int n_fields = obj_rec->struct_rec->n_fields;
+        field_info_t* field = nullptr;
+
+        int units = obj_rec->units, obj_index = 0, field_index = 0;
+
+        // 해당 obj_rec 의 모든 object 를 조사한다.
+        for (; obj_index < units; obj_index++) {
+
+            // n번째 unit. 즉, n번째 object 메모리 주소에 접근한다.
+            char* current_object_ptr = (char*)(obj_rec->ptr) + \
+                (obj_index * obj_rec->struct_rec->ds_size);
+
+            for (field_index = 0; field_index < n_fields; field_index++) {
+
+                // 현재 조사하고자 하는 필드
+                field = &obj_rec->struct_rec->fields[field_index];
+
+                if (field->dtype == OBJ_PTR || field->dtype == OBJ_STRUCT)
+                {
+                    // ex) object->ptr = xcalloc() 
+                    //     이때 object->ptr 을 디버깅하면 나오는 값   == pointer_target_address
+                    //     그러한 "값"을 담고 있는 "메모리" 의 "주소" == pointer_field_value
+                    void* pointer_field_value = current_object_ptr + field->offset;
+
+                    void* pointer_target_address = nullptr;
+
+                    memcpy(&pointer_target_address, pointer_field_value, sizeof(void*));
+
+                    // 애초에 nullptr 로 세팅된 값이었다.
+                    if (pointer_target_address == nullptr)
+                    {
+                        continue;
+                    }
+
+                    //pointer_target_address 에는 메모리에 할당된 객체의 주소가 들어있을 것이다.
+                    if (object_db_look_up(object_db, pointer_target_address) == nullptr)
+                    {
+                        // 현재 여기로 들어오는 케이스
+                        // int 라는 object 가 아닌, int 라는 object ptr 이 담긴 object_rec 를 삭제해버린 case
+                        
+                        // 그런데 object_rec 는 그대로 있고, object 만 사라진 경우도 있지 않을까 ?
+                        // - 그런 경우는 현재 프로젝트가 고려하지 못하는 것으로 보인다.
+                        // - 그냥 object 를 free 시킨 경우에는 어떻게 해야 하지 ?
+                        //   결과적으로 object_rec 도 그냥 ptr 이라는 메모리 주소만 가지고 있을 뿐.
+                        //   그게 유효한 주소인지 아닌지는 모르는게 아닐까 ?
+                    }
+                }
+            }
+        }
+    }
+
 }
 

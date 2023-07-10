@@ -229,6 +229,10 @@ add_object_to_object_db(object_db_t* object_db,
 void
 mld_dump_object_rec_detail(object_db_rec_t* obj_rec);
 
+void
+delete_object_record_from_object_db(object_db_t* object_db,
+	object_db_rec_t* object_rec);
+
 /*
 xcalloc(object_db, "emp_t", 1) == calloc(1, sizeof(emp_t)) 와 동일
 즉, emp_t 타입의 object 를 1 개만큼 연속적인 메모리 공간에 할당.
@@ -328,14 +332,16 @@ Application 상의 object 들은, 서로 다양한 reference 정보를 지닌다.
  */
 
  /*APIs to register root objects*/
-void mld_register_root_object(object_db_t* object_db,
+void mld_register_global_object_as_root(object_db_t* object_db,
 	void* objptr,
 	char* struct_name,
 	unsigned int units);
 
+/* Application might create an object using xcalloc , but at the same time the object
+ * can be root object. Use this API to override the object flags for the object already
+ * preent in object db*/
 void
-set_mld_object_as_global_root(object_db_t* object_db, void* obj_ptr);
-
+mld_set_dynamic_object_as_root(object_db_t* object_db, void* obj_ptr);
 
 /*
 <How to Traverse Graphs>
@@ -394,6 +400,9 @@ void mld_init_primitive_data_types_support(struct_db_t* struct_db);
 
 void
 report_leaked_objects(object_db_t* object_db);
+
+void
+report_dangling_field_pointers(object_db_t* object_db);
 
 #endif /* __MLD__ */
 
