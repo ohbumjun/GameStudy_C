@@ -48,8 +48,12 @@ ThreadTest::ThreadTest(ThreadTest&& obj)
 ThreadTest& ThreadTest::operator=(ThreadTest&& obj)
 {
     cout << " move assignment operator " << endl;
+
     if (m_threadObj.joinable())
+    {
         m_threadObj.join();
+    }
+
     m_threadObj = std::move(obj.m_threadObj);
     return *this;
 }
@@ -58,7 +62,9 @@ ThreadTest& ThreadTest::operator=(ThreadTest&& obj)
 ThreadTest::~ThreadTest()
 {
     if (m_threadObj.joinable())
+    {
         m_threadObj.join();
+    }
 }
 
 int main()

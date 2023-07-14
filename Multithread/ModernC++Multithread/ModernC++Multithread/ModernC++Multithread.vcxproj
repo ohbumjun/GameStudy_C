@@ -135,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PackagedTask.h" />
+    <ClInclude Include="StopThread.h" />
     <ClInclude Include="ThreadAsMemberVariable.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
