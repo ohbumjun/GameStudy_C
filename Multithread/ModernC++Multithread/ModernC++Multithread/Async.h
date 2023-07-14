@@ -125,7 +125,8 @@ class Async
         cout << "multithreading std::async " << endl;
         system_clock::time_point start = system_clock::now();
 
-        std::future<int> futureObj = std::async(std::launch::async, addition, 10, 5);
+        // std::future<int> futureObj = std::async(std::launch::async, addition, 10, 5);
+        std::future<int> futureObj = std::async(std::launch::async, [&](int, int) -> int{}, 10, 5);
         int res2 = subtraction(10, 5);
 
         //Note get function as shown
