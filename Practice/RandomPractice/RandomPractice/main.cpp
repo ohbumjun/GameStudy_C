@@ -62,20 +62,24 @@ int main()
 		threadVec.at(i).join();
 	}
 */
-    int cnt;
-	for(int i=0; i<1; i++)
-    {
-        //int tomatoCnt = multiThreadTomatoCount();
+    // int cnt;
+	// for(int i=0; i<1; i++)
+    // {
+    //     //int tomatoCnt = multiThreadTomatoCount();
+    // 
+    //     if((cnt = multiThreadTomatoCount()) != 200000)
+    //     {
+    //         cout<<"error occurred and tomatoCnt is "<<cnt<<endl;
+    //     }
+    //     else
+    //     {
+    //         // cout<<"tomatoCnt is "<<cnt<<endl;
+    //    }
+    // }
 
-        if((cnt = multiThreadTomatoCount()) != 200000)
-        {
-            cout<<"error occurred and tomatoCnt is "<<cnt<<endl;
-        }
-        else
-        {
-            // cout<<"tomatoCnt is "<<cnt<<endl;
-       }
-    }
+    uint64_t value = 9472753409530929250;
+    std::cout << value << std::endl;
+    return 0;
 
     return 0;
 }
