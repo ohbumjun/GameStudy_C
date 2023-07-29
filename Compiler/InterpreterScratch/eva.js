@@ -7,7 +7,15 @@ const assert = require('assert');
 */
 class Eva
 {
-    eval(exp)
+    /*
+    Create Eva instance with global environment
+    */
+    constructor(global = new Environment())
+    {
+        this.global = global;
+    }
+
+    eval(exp, env = this.global)
     {
 
         if (isNumber(exp))
@@ -43,6 +51,25 @@ class Eva
         {
             return this.eval(exp[1]) / this.eval(exp[2]);
         }
+
+        /*
+        Variable 은 Environment 정보까지 같이 가지고 있어야 한다.
+        ex) x 라는 변수 -> 지역변수 ? global 변수 ?
+
+        Enviroment 구조
+        1) Environment Record
+        - 변수 이름 ~ 변수 에 대한 table
+        2) Parent Environment 에 대한 reference
+        - 자식 Environment 는 Parent 에 있는 variable 에 접근 가능
+        - 그 반대는 불가능하다.
+        */
+        // Variables
+        if (exp[0] === 'var')
+        {
+            const [_, name, value] = exp;
+            return env.define(name, value);
+        }
+
         throw 'unimplemented : ${JSON.stringfy(exp)}';
     }
 }
