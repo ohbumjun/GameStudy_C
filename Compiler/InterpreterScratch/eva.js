@@ -65,7 +65,7 @@ class Eva
 
         if (isVariableName(exp))
         {
-            return env.lookup(exp);
+            return env.lookup(exp, env);
         }
 
         // Block
@@ -122,7 +122,10 @@ const eva = new Eva(new Environment(
         VERSION : 0.1
     }
 ));
+
 assert.strictEqual(eva.eval(1), 1);
+// '""' 형태로 사용하게 되면, string 형태가 된다.
+// 반면 그저 '' 형태만 변수를 의미한다.
 assert.strictEqual(eva.eval('"hello"'), 'hello'); 
 assert.strictEqual(eva.eval(['+', ['+', 3, 2], 5]), 10);
 assert.strictEqual(eva.eval(['*', ['+', 3, 2], 5]), 25);
@@ -158,4 +161,18 @@ assert.strictEqual(eva.eval(
     ]
 ), 10)
 
+
+assert.strictEqual(eva.eval(
+    ['begin',
+        ['var', 'val', 10],
+        // 밖 environment 로의 접근
+        ['var', 'result', 
+            ['begin',
+                ['var', 'x', ['+', 'val', 10]],
+                'x'
+            ],
+        ],
+        'result'
+    ]
+), 20)
 console.log("all assertions passed")
