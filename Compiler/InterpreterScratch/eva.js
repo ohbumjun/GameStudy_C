@@ -1,4 +1,5 @@
 const assert = require('assert');
+const Environment = require('./environment');
 
 /*
 * eva interpreter
@@ -67,10 +68,34 @@ class Eva
         if (exp[0] === 'var')
         {
             const [_, name, value] = exp;
-            return env.define(name, value);
+            return env.define(name, this.eval(value));
+        }
+
+        if (isVariableName(exp))
+        {
+            return env.lookup(exp);
+        }
+
+        // Block
+        if (exp[0] === 'begin')
+        {
+            return this._evalBlock(exp, env);
         }
 
         throw 'unimplemented : ${JSON.stringfy(exp)}';
+    }
+
+    _evalBlock(block, env)
+    {
+        let result;
+
+        const [_tag, ...expressions] = block;
+
+        expressions.forEach(exp=>{
+            result = this.eval(exp, env)
+        })
+
+        return result;
     }
 }
 
@@ -85,14 +110,54 @@ function isString(exp)
     return typeof exp === 'string' && exp[0] === '"' && exp.slice(-1) === '"';
 }
 
+function isVariableName(exp)
+{
+    // 변수는 알파벳으로 시작, 끝나는 것도 알파벳 혹은 숫자 
+    return typeof exp === 'string' && /^[a-zA-Z][a-zA-Z0-9_]*$/.test(exp);
+}
+
+
 // test : Math
-const eva = new Eva();
+const eva = new Eva(new Environment(
+    {
+        // 기본 global variable 정의해두기
+        null : null,
+        true : true,
+        false : false,
+        VERSION : 0.1
+    }
+));
 assert.strictEqual(eva.eval(1), 1);
 assert.strictEqual(eva.eval('"hello"'), 'hello'); 
 assert.strictEqual(eva.eval(['+', ['+', 3, 2], 5]), 10);
 assert.strictEqual(eva.eval(['*', ['+', 3, 2], 5]), 25);
 
 // variables
+assert.strictEqual(eva.eval(['var', 'x', 10]), 10)
+assert.strictEqual(eva.eval('x'), 10)
+// assert.strictEqual(eva.eval('y'), 10)
+assert.strictEqual(eva.eval('VERSION'), 0.1)
 
+// var isUser = true
+assert.strictEqual(eva.eval(['var', 'isUser', 'true']), true)
+assert.strictEqual(eva.eval(['var', 'z', ['*', 2, 2]]), 4)
+assert.strictEqual(eva.eval('z'), 4)
+
+// Blocks
+assert.strictEqual(eva.eval(
+    ['begin',
+        ['var', 'x', 10],
+        ['var', 'y', 20],
+        ['+', ['*', 'x', 'y'], 30],
+    ]
+), 230)
+
+assert.strictEqual(eva.eval(
+    ['begin',
+        ['var', 'x', 10],
+        ['var', 'y', 20],
+        ['+', ['*', 'x', 'y'], 30],
+    ]
+), 230)
 
 console.log("all assertions passed")
