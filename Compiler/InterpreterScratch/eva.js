@@ -44,6 +44,22 @@ class Eva
         {
             return this.eval(exp[1], env) / this.eval(exp[2], env);
         }
+        if (exp[0] === '>')
+        {
+            return this.eval(exp[1], env) > this.eval(exp[2], env);
+        }
+        if (exp[0] === '<')
+        {
+            return this.eval(exp[1], env) < this.eval(exp[2], env);
+        }
+        if (exp[0] === '>=')
+        {
+            return this.eval(exp[1], env) >= this.eval(exp[2], env);
+        }
+        if (exp[0] === '<=')
+        {
+            return this.eval(exp[1], env) <= this.eval(exp[2], env);
+        }
 
         /*
         Variable 은 Environment 정보까지 같이 가지고 있어야 한다.
@@ -84,7 +100,30 @@ class Eva
             return env.assign(name, this.eval(value, env));
         }
 
-        throw 'unimplemented : ${JSON.stringfy(exp)}';
+        // if
+        if (exp[0] == 'if')
+        {
+            const [_tag, condition, consequent, alternate] = exp;
+            if (this.eval(condition, env))
+            {
+                return this.eval(consequent, env);
+            }
+            return this.eval(alternate, env);
+        }
+
+        // while
+        if (exp[0] == 'while')
+        {
+            const [_tag, condition, body] = exp;
+            let result;
+            while (this.eval(condition, env))
+            {
+                result = this.eval(body, env);
+            }
+            return result;
+        }
+
+        throw `Unimplemented: ${JSON.stringify(exp)}`;
     }
 
     _evalBlock(block, blockEnv)

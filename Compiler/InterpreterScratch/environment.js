@@ -26,7 +26,6 @@ class Environment
    lookup(name)
    {
     let env = this.resolve(name);
-    console.log("%s", name)
     return env.record[name];
    }
 
@@ -45,6 +44,7 @@ class Environment
     {
         // global scope 에 있다는 것.
         // 즉, scope chain 에서 마지막 영역에서도 못찾았다는 것이다.
+        console.log("You have reached Global Environment")
         return new ReferenceError(`Variable "${name}" is not defined`);
     }
 

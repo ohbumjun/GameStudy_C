@@ -7,7 +7,9 @@ const tests = [
     require('./assign.js'),
     require('./block.js'),
     require('./variable.js'),
-    require('./basic_operation.js')
+    require('./basic_operation.js'),
+    require('./if_test.js'),
+    require('./while.js'),
 ];
 
 const evaInterpreter = new Eva(new Environment(
