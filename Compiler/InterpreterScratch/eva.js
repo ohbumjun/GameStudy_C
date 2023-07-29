@@ -77,6 +77,13 @@ class Eva
             return this._evalBlock(exp, blockEnv);
         }
 
+        // assign
+        if (exp[0] === 'set')
+        {
+            const [_, name, value] = exp;
+            return env.assign(name, this.eval(value, env));
+        }
+
         throw 'unimplemented : ${JSON.stringfy(exp)}';
     }
 
@@ -111,68 +118,4 @@ function isVariableName(exp)
     return typeof exp === 'string' && /^[a-zA-Z][a-zA-Z0-9_]*$/.test(exp);
 }
 
-
-// test : Math
-const eva = new Eva(new Environment(
-    {
-        // 기본 global variable 정의해두기
-        null : null,
-        true : true,
-        false : false,
-        VERSION : 0.1
-    }
-));
-
-assert.strictEqual(eva.eval(1), 1);
-// '""' 형태로 사용하게 되면, string 형태가 된다.
-// 반면 그저 '' 형태만 변수를 의미한다.
-assert.strictEqual(eva.eval('"hello"'), 'hello'); 
-assert.strictEqual(eva.eval(['+', ['+', 3, 2], 5]), 10);
-assert.strictEqual(eva.eval(['*', ['+', 3, 2], 5]), 25);
-
-// variables
-assert.strictEqual(eva.eval(['var', 'x', 10]), 10)
-assert.strictEqual(eva.eval('x'), 10)
-// assert.strictEqual(eva.eval('y'), 10)
-assert.strictEqual(eva.eval('VERSION'), 0.1)
-
-// var isUser = true
-assert.strictEqual(eva.eval(['var', 'isUser', 'true']), true)
-assert.strictEqual(eva.eval(['var', 'z', ['*', 2, 2]]), 4)
-assert.strictEqual(eva.eval('z'), 4)
-
-// Blocks
-assert.strictEqual(eva.eval(
-    ['begin',
-        ['var', 'x', 10],
-        ['var', 'y', 20],
-        ['+', ['*', 'x', 'y'], 30],
-    ]
-), 230)
-
-assert.strictEqual(eva.eval(
-    ['begin',
-        ['var', 'x', 10],
-        ['begin',
-            ['var', 'x', 20],
-            'x'
-        ],
-        'x'
-    ]
-), 10)
-
-
-assert.strictEqual(eva.eval(
-    ['begin',
-        ['var', 'val', 10],
-        // 밖 environment 로의 접근
-        ['var', 'result', 
-            ['begin',
-                ['var', 'x', ['+', 'val', 10]],
-                'x'
-            ],
-        ],
-        'result'
-    ]
-), 20)
-console.log("all assertions passed")
+module.exports = Eva;

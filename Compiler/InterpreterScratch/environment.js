@@ -17,6 +17,11 @@ class Environment
     this.record[name] = value;
     return value;
    }
+   assign (name, value)
+   {
+    this.resolve(name).record[name] = value;
+    return value;
+   }
 
    lookup(name)
    {
