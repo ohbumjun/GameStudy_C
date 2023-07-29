@@ -30,27 +30,19 @@ class Eva
         // Math operator
         if (exp[0] === '+')
         {
-            return this.eval(exp[1]) + this.eval(exp[2]);
+            return this.eval(exp[1], env) + this.eval(exp[2], env);
         }
         if (exp[0] === '*')
         {
-            return this.eval(exp[1]) * this.eval(exp[2]);
-        }
-        if (exp[0] === '+')
-        {
-            return this.eval(exp[1]) + this.eval(exp[2]);
-        }
-        if (exp[0] === '*')
-        {
-            return this.eval(exp[1]) * this.eval(exp[2]);
+            return this.eval(exp[1], env) * this.eval(exp[2], env);
         }
         if (exp[0] === '-')
         {
-            return this.eval(exp[1]) - this.eval(exp[2]);
+            return this.eval(exp[1], env) - this.eval(exp[2], env);
         }
         if (exp[0] === '/')
         {
-            return this.eval(exp[1]) / this.eval(exp[2]);
+            return this.eval(exp[1], env) / this.eval(exp[2], env);
         }
 
         /*
@@ -68,7 +60,7 @@ class Eva
         if (exp[0] === 'var')
         {
             const [_, name, value] = exp;
-            return env.define(name, this.eval(value));
+            return env.define(name, this.eval(value, env));
         }
 
         if (isVariableName(exp))
@@ -79,20 +71,23 @@ class Eva
         // Block
         if (exp[0] === 'begin')
         {
-            return this._evalBlock(exp, env);
+            // new block -> new environment
+            const blockEnv = new Environment({}, env);
+
+            return this._evalBlock(exp, blockEnv);
         }
 
         throw 'unimplemented : ${JSON.stringfy(exp)}';
     }
 
-    _evalBlock(block, env)
+    _evalBlock(block, blockEnv)
     {
         let result;
 
         const [_tag, ...expressions] = block;
 
         expressions.forEach(exp=>{
-            result = this.eval(exp, env)
+            result = this.eval(exp, blockEnv)
         })
 
         return result;
@@ -155,9 +150,12 @@ assert.strictEqual(eva.eval(
 assert.strictEqual(eva.eval(
     ['begin',
         ['var', 'x', 10],
-        ['var', 'y', 20],
-        ['+', ['*', 'x', 'y'], 30],
+        ['begin',
+            ['var', 'x', 20],
+            'x'
+        ],
+        'x'
     ]
-), 230)
+), 10)
 
 console.log("all assertions passed")
