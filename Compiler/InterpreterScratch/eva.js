@@ -1,5 +1,6 @@
 const assert = require('assert');
 const Environment = require('./environment');
+const Transformer = require('./transform/transformer')
 
 /*
 * eva interpreter
@@ -14,6 +15,7 @@ class Eva
     constructor(global = GlobalEnvironement)
     {
         this.global = global;
+        this._transformer = new Transformer();
     }
 
     eval(exp, env = this.global)
@@ -49,10 +51,6 @@ class Eva
 
         if (this._isVariableName(exp))
         {
-            if (exp == "callback")
-            {
-                console.log("cllabak variable");
-            }
             return env.lookup(exp, env);
         }
 
@@ -111,33 +109,33 @@ class Eva
             };
         }
 
+        // switch -----------------------------
+        // Syntatic sugar for nested if-expression
+        if (exp[0] == 'switch')
+        {
+            const ifExp = this._transformer.transformSwithToIf(exp);
+
+            return this.eval(ifExp, env);
+        }
 
         // function declaration ----------------
-        // ex) 
-        // (begin
-        //     (def square (x)
-        //         (* x x))
-        //     (square 2)
-        // )
         if (exp[0] == 'def')
         {
-            const [_tag, name, params, body] = exp;
-
-            // console.log(`inserted func name : ${name}`)
-            // body.forEach((b) => {console.log(`inserted body : ${b}`)})
-
+            // JIT-transpile to variable declaration : create variable expression node directly at runtime
+            // 즉, JIT 의 경우, 함수 선언을 만나면, 런타임 동안에 lambda 함수를 만들어내는 역할을 하는 것이다.
+            const varExp = this._transformer.transformDefToLambda(exp);
+            return this.eval(varExp, env);
+            /*
             const fn = {
                 params,
                 body,
-                /*
-                Closure 개념을 적용할 것이다.
-                즉, 해당 함수가 존재하는 Environment 도 같이 인자로 받아서
-                외부 Environment 에 존재하는 function 및 변수의 존재도 인지할 수 있게 한다는 것이다.
-                */
+                // Closure 개념을 적용할 것이다.
+                // 즉, 해당 함수가 존재하는 Environment 도 같이 인자로 받아서
+                // 외부 Environment 에 존재하는 function 및 변수의 존재도 인지할 수 있게 한다는 것이다.
                 env
             };
-
             return env.define(name, fn);
+            */
         }
 
         // function call ----------------
@@ -146,13 +144,11 @@ class Eva
         //     (> foo bar)
         if (Array.isArray(exp))
         {
-            // console.log(`array exp : ${exp}`)
+            console.log(`array exp : ${exp}`)
 
             // [ '*', 'x', 'y' ] 에서 '*' 에 해당하는 function 을 리턴할 것이다.
             // 그리고 해당 function 은 GlobalEnvironment 를 초기화 할 때, 변수 형태로 세팅했었다.
             const fn = this.eval(exp[0], env);
-
-            // exp.slice(1).forEach((b) => {console.log(`func args : ${b}`)})
 
             // exp 에서 argument 를 뽑아내서, 각각의 argument 를 evaluate 할 것이다.
             // 즉, fn 를 실제 실행하기 전에 argument 각각에 대해서 평가할 것이라는 의미이다.
@@ -170,9 +166,10 @@ class Eva
 
             fn.params.forEach((param, index) => {
                 // console.log(`param : ${param}`)
-                // console.log(args[index]); 
+                // console.log(`param body : ${args[index]}`); 
                 activationRecord[param] = args[index];
             })
+            //console.log(`func body : ${fn.body}`)
 
             // closure 개념을 위해 parent environment 를 세팅
             // https://www.notion.so/7-23-2c387e4c038842f79d1df2c6df6d8d85
@@ -204,7 +201,6 @@ class Eva
     _evalBlock(block, blockEnv)
     {
         // block.forEach((b) => {console.log(`execute block : ${b}`)})
-
         let result;
 
         const [_tag, ...expressions] = block;
@@ -280,7 +276,7 @@ const GlobalEnvironement = new Environment(
         },
 
         // Comparison
-        '==' (op1, op2) {
+        '=' (op1, op2) {
             return op1 === op2;
         },
         '!=' (op1, op2) {

@@ -5,6 +5,7 @@ class Environment
     */
    constructor(record ={}, parent = null)
    {
+      console.log("Env created");
         this.record = record;
         this.parent = parent;
    }
