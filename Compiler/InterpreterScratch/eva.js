@@ -18,6 +18,8 @@ class Eva
 
     eval(exp, env = this.global)
     {
+        // console.log(`exp : ${exp}`)
+
         if (this._isNumber(exp))
         {
             return exp;
@@ -47,6 +49,10 @@ class Eva
 
         if (this._isVariableName(exp))
         {
+            if (exp == "callback")
+            {
+                console.log("cllabak variable");
+            }
             return env.lookup(exp, env);
         }
 
@@ -89,6 +95,23 @@ class Eva
             return result;
         }
 
+        // lambda function -----------------
+        // (lambda (x) (* x x))
+        if (exp[0] == 'lambda')
+        {
+            const [_tag, params, body] = exp;
+
+            // body.forEach((b) => {console.log(`lambda body : ${b}`)})
+
+            // return function
+            return {
+                params,
+                body,
+                env,   // Closure
+            };
+        }
+
+
         // function declaration ----------------
         // ex) 
         // (begin
@@ -100,6 +123,7 @@ class Eva
         {
             const [_tag, name, params, body] = exp;
 
+            // console.log(`inserted func name : ${name}`)
             // body.forEach((b) => {console.log(`inserted body : ${b}`)})
 
             const fn = {
@@ -128,6 +152,8 @@ class Eva
             // 그리고 해당 function 은 GlobalEnvironment 를 초기화 할 때, 변수 형태로 세팅했었다.
             const fn = this.eval(exp[0], env);
 
+            // exp.slice(1).forEach((b) => {console.log(`func args : ${b}`)})
+
             // exp 에서 argument 를 뽑아내서, 각각의 argument 를 evaluate 할 것이다.
             // 즉, fn 를 실제 실행하기 전에 argument 각각에 대해서 평가할 것이라는 의미이다.
             const args = exp.slice(1).map(arg => this.eval(arg, env));
@@ -141,7 +167,12 @@ class Eva
             /*2. User - Defined*/
             // actual storage for local variable and parameter
             const activationRecord = {};
-            fn.params.forEach((param, index) => {activationRecord[param] = args[index];})
+
+            fn.params.forEach((param, index) => {
+                // console.log(`param : ${param}`)
+                // console.log(args[index]); 
+                activationRecord[param] = args[index];
+            })
 
             // closure 개념을 위해 parent environment 를 세팅
             // https://www.notion.so/7-23-2c387e4c038842f79d1df2c6df6d8d85
