@@ -1,7 +1,6 @@
 const Eva = require('../eva');
 const Environment = require('../environment');
 
-
 // test 내용을 한꺼번에 모아서 실행한다.
 const tests = [
     require('./assign.js'),
@@ -10,18 +9,12 @@ const tests = [
     require('./basic_operation.js'),
     require('./if_test.js'),
     require('./while.js'),
+    require('./built-in-function-test.js'),
+    require('./user-defined-function-test.js'),
 ];
 
-const evaInterpreter = new Eva(new Environment(
-    {
-        // 기본 global variable 정의해두기
-        null : null,
-        true : true,
-        false : false,
-        VERSION : 0.1
-    }
-));
+const evaInterpreter = new Eva();
 
-tests.forEach(test=>test(evaInterpreter))
+tests.forEach(test=>test(evaInterpreter));
 
-console.log("all assertions passed")
+console.log("all assertions passed");
