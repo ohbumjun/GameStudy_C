@@ -49,6 +49,38 @@ class Transformer
 
         return ifExp;
     }
+
+    /**
+   * Transforms `++ foo` to (set foo (+ foo 1))
+   */
+    transformIncToSet(incExp) {
+        const [_tag, exp] = incExp;
+        return ['set', exp, ['+', exp, 1]];
+    }
+
+    /**
+     * Transforms `-- foo` to (set foo (- foo 1))
+     */
+    transformDecToSet(incExp) {
+        const [_tag, exp] = incExp;
+        return ['set', exp, ['-', exp, 1]];
+    }
+
+    /**
+     * Transforms `+= foo val` to (set foo (+ foo val))
+     */
+    transformIncValToSet(incExp) {
+        const [_tag, exp, val] = incExp;
+        return ['set', exp, ['+', exp, val]];
+    }
+
+    /**
+     * Transforms `+= foo val` to (set foo (+ foo val))
+     */
+    transformDecValToSet(incExp) {
+        const [_tag, exp, val] = incExp;
+        return ['set', exp, ['-', exp, val]];
+    }
 }
 
 module.exports = Transformer;

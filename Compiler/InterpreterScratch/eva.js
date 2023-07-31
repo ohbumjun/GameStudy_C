@@ -46,6 +46,9 @@ class Eva
         if (exp[0] === 'var')
         {
             const [_, name, value] = exp;
+
+            console.log(`var => name, value : ${name}, ${value}`)
+
             return env.define(name, this.eval(value, env));
         }
 
@@ -66,8 +69,34 @@ class Eva
         // assign ----------------
         if (exp[0] === 'set')
         {
-            const [_, name, value] = exp;
-            return env.assign(name, this.eval(value, env));
+            // ref : 변수 이름 혹은 instance property
+            const [_, ref, value] = exp;
+
+            if (ref[0] == 'prop')
+            {
+                // ex) (set (prop this x) x)
+                //     _ref     : (prop this x)
+                //     _tag     : prop
+                //     instance : this
+                //     propName : x
+                //     value    : x
+                const [_tage, instance, propName] = ref;
+
+                // eX) (prop this x) => this 라는 이름의 "변수" 형태로 등록된 environment 를 가져온다.
+                const instanceEnv = this.eval(instance, env);
+
+                console.log(`prop ref : ${ref}`)
+                console.log(`prop instance : ${instance}`)
+                console.log(`propName, value : ${propName}, ${value}`)
+
+                // instance 만의 environment 에 'x' 라는 변수에 대해 인자 x 를 정의한다. 
+                return instanceEnv.define(
+                    propName,
+                    this.eval(value, env)
+                );
+            }
+
+            return env.assign(ref, this.eval(value, env));
         }
 
         // if ----------------
@@ -99,6 +128,7 @@ class Eva
         {
             const [_tag, params, body] = exp;
 
+            // params.forEach((b) => {console.log(`lambda param : ${b}`)})
             // body.forEach((b) => {console.log(`lambda body : ${b}`)})
 
             // return function
@@ -118,6 +148,62 @@ class Eva
             return this.eval(ifExp, env);
         }
 
+        // class declaration ex) class <Name> <Parent> <Body>
+        if (exp[0] == 'class')
+        {
+            console.log("class made")
+
+            const [_tag, name, parent, body] = exp;
+
+            // ex) class Point null : parentEnv 와 env (=global) 는 같게 된다. (base class 를 생성할 경우)
+            const parentEnv = this.eval(parent, env) || env;
+
+            const classEnv = new Environment({}, parentEnv);
+
+            this._evalBody(body, classEnv);
+
+            // environement 에 변수 형태로 저장한다.
+            // ex) key == Point : val == Pointe Env
+            return env.define(name, classEnv);
+        }
+
+        // class instantiation
+        if (exp[0] === 'new')
+        {
+            // ex) new Point 20 10 : Point Class 에 해당하는 "Environment" 가 "변수" 형태로
+            //     저장되어 있으므로, 해당 class Environment 를 가져온다.
+            //     해당 class envrionment 안에는  constructor, calc 등의 멤버 함수 및
+            //     멤버 변수들이 또, record 에 변수 형태로 저장되어 있다.
+            const classEnv = this.eval(exp[1], env)
+
+            // parent component of instance environment is set to its class
+            // 즉, class Env 를 부모 env 로 하여, 새로운 env 를 만들어낸다.
+            const instanceEnv = new Environment({}, classEnv)
+
+            // ex) new Point 20 10 => 생성자 인자 20,10 을 가져온다.
+            const args = exp.slice(2).map(arg => this.eval(arg,env))
+
+            // call constructor
+            // ex) constructor (this x y) 에서 this 는 instance 의 Environment 에 대응될 것이다. 
+            this._callUserDefinedFunction(
+                classEnv.lookup('constructor'),
+                [instanceEnv, ...args]
+            );
+
+            return instanceEnv;
+        }
+
+        // Property access : instance -> class 에 있는 멤버함수 및 멤버 변수 등 정보 접근
+        // - prop <instsance> <name>
+        if (exp[0] == 'prop')
+        {
+            const [_tage, instance, name] = exp;
+
+            const instanceEnv = this.eval(instance, env);
+
+            return instanceEnv.lookup(name);
+        }
+ 
         // function declaration ----------------
         if (exp[0] == 'def')
         {
@@ -161,39 +247,44 @@ class Eva
             }
 
             /*2. User - Defined*/
-            // actual storage for local variable and parameter
-            const activationRecord = {};
-
-            fn.params.forEach((param, index) => {
-                // console.log(`param : ${param}`)
-                // console.log(`param body : ${args[index]}`); 
-                activationRecord[param] = args[index];
-            })
-            //console.log(`func body : ${fn.body}`)
-
-            // closure 개념을 위해 parent environment 를 세팅
-            // https://www.notion.so/7-23-2c387e4c038842f79d1df2c6df6d8d85
-            // env    : dynamic scope == environment which we are called
-            // fn.env : static scope  == captured environment
-            const activationEnv = new Environment(activationRecord, fn.env);
-
-            // fn.body.forEach((b) => {console.log(`found body : ${b}`)})
-
-            return this._evalBody(fn.body, activationEnv);
+            return this._callUserDefinedFunction(fn, args)
         }
 
         throw `Unimplemented: ${JSON.stringify(exp)}`;
     }
 
+    _callUserDefinedFunction(fn, args)
+    {
+        // actual storage for local variable and parameter
+        const activationRecord = {};
+
+        fn.params.forEach((param, index) => {
+            console.log(`param : ${param}`)
+            console.log(`param body : ${args[index]}`); 
+            activationRecord[param] = args[index];
+        })
+        // console.log(`func body : ${fn.body}`)
+
+        // 함수 == 또 다른 Envrironment 를 가진다. 
+        // closure 개념을 위해 parent environment 를 세팅
+        // https://www.notion.so/7-23-2c387e4c038842f79d1df2c6df6d8d85
+        // env    : dynamic scope == environment which we are called
+        // fn.env : static scope  == captured environment
+        const activationEnv = new Environment(activationRecord, fn.env);
+
+        // fn.body.forEach((b) => {console.log(`found body : ${b}`)})
+
+        return this._evalBody(fn.body, activationEnv);
+    }
+
     _evalBody(body, env)
     {
-        // body.forEach((b) => {console.log(`execute body : ${b}`)})
+        body.forEach((b) => {console.log(`execute body : ${b}`)})
 
         if (body[0] == 'begin')
         {
             return this._evalBlock(body, env);
         }
-
         
         return this.eval(body, env);
     }
