@@ -32,14 +32,14 @@ module.exports = eva => {
   */
   test(eva,
       `
-      (begin
         (class Point null
           (begin
             (def constructor (this x y)
               (begin
                 (set (prop this x) x)
-                (set (prop this y) y))
+                (set (prop this y) y)
               )
+            )
             (def calc (this)
               (+ (prop this x) (prop this y))
             )
@@ -49,30 +49,52 @@ module.exports = eva => {
         (var p (new Point 10 20))
     
         ((prop p calc) p)
-      )
-    
       `,
   30);
 
-  // test(eva,
-  // `
-  //   (class Point3D Point
-  //     (begin
-// 
-  //       (def constructor (this x y z)
-  //         (begin
-  //           ((prop (super Point3D) constructor) this x y)
-  //           (set (prop this z) z)))
-// 
-  //       (def calc (this)
-  //         (+ ((prop (super Point3D) calc) this)
-  //            (prop this z)))))
-// 
-  //   (var p (new Point3D 10 20 30))
-// 
-  //   ((prop p calc) p)
-// 
-  // `,
-  // 60);
+
+  /* --- 순서 --- 
+  - class Point3D Point : Point 라는 Class Environment 를 parent 로 하는 Point 3D Environment 생성
+    - {constructor} ~ {func} , {calc} ~ {func} 등록
+  - (var p (new Point3D 10 20 30)) : 'p' 라는 이름으로 'Point3D' environment 등록 , 부모 environment는 'Point'
+    - 'Point' Environment 에서 'constructor' 라는 변수를 찾아서 실행
+      - 'constructor' 라는 함수에 해당하는 새로운 Environment 생성
+        - this : Point3D Instance Envrionment , x : 10 , y : 20, z : 30
+            - ((prop (super Point3D) constructor) this x y)
+                - Point3D 의 부모 environment 인 Point Environment 에서, 'constructor' 라는 변수 찾아서 실행
+                - 이때 this 는, 현재 Envrionment 에서의 변수 == Point3D Env
+  */
+  test(eva,
+  `
+  (class Point null
+    (begin
+      (def constructor (this x y)
+        (begin
+          (set (prop this x) x)
+          (set (prop this y) y)
+        )
+      )
+      (def calc (this)
+        (+ (prop this x) (prop this y))
+      )
+    )
+  )
+
+  (var p (new Point 10 20))
+
+  ((prop p calc) p)
+    (class Point3D Point
+      (begin 
+        (def constructor (this x y z)
+          (begin
+            ((prop (super Point3D) constructor) this x y)
+            (set (prop this z) z)))
+        (def calc (this)
+          (+ ((prop (super Point3D) calc) this)
+             (prop this z)))))
+    (var p (new Point3D 10 20 30))
+    ((prop p calc) p)
+  `,
+  60);
 
 };

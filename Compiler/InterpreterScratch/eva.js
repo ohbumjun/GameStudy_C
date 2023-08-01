@@ -18,6 +18,16 @@ class Eva
         this._transformer = new Transformer();
     }
 
+    /*
+    begin 형태로 자동으로 감싸준다.
+    */
+    evalGlobal(expression)
+    {
+        return this._evalBlock(
+            ['block', expression],
+            this.global
+        );
+    }
     eval(exp, env = this.global)
     {
         // console.log(`exp : ${exp}`)
@@ -167,6 +177,13 @@ class Eva
             return env.define(name, classEnv);
         }
 
+        // super expression : (super <className>)
+        if (exp[0] == 'super')
+        {
+            const [_tag, className] = exp;
+            return this.eval(className, env).parent;
+        }
+
         // class instantiation
         if (exp[0] === 'new')
         {
@@ -200,8 +217,6 @@ class Eva
             const [_tage, instance, name] = exp;
 
             const instanceEnv = this.eval(instance, env);
-
-            console.log(`prop Name : ${name}`)
 
             return instanceEnv.lookup(name);
         }
@@ -261,8 +276,8 @@ class Eva
         const activationRecord = {};
 
         fn.params.forEach((param, index) => {
-            console.log(`param : ${param}`)
-            console.log(`param body : ${args[index]}`); 
+            // console.log(`param : ${param}`)
+            // console.log(`param body : ${args[index]}`); 
             activationRecord[param] = args[index];
         })
         // console.log(`func body : ${fn.body}`)

@@ -40,8 +40,8 @@ const evaParser = require('../parser/evaParser')
 function test(eva, code, expected)
 {
     // 우선 string 을 실제 parse 한다.
-    const exp = evaParser.parse(code);
-    assert.strictEqual(eva.eval(exp), expected);
+    const exp = evaParser.parse(`(begin ${code})`);
+    assert.strictEqual(eva.evalGlobal(exp), expected);
 }
 
 module.exports = {
