@@ -47,7 +47,7 @@ class Eva
         {
             const [_, name, value] = exp;
 
-            console.log(`var => name, value : ${name}, ${value}`)
+            // console.log(`var => name, value : ${name}, ${value}`)
 
             return env.define(name, this.eval(value, env));
         }
@@ -80,14 +80,14 @@ class Eva
                 //     instance : this
                 //     propName : x
                 //     value    : x
-                const [_tage, instance, propName] = ref;
+                const [_tag, instance, propName] = ref;
 
                 // eX) (prop this x) => this 라는 이름의 "변수" 형태로 등록된 environment 를 가져온다.
                 const instanceEnv = this.eval(instance, env);
 
-                console.log(`prop ref : ${ref}`)
-                console.log(`prop instance : ${instance}`)
-                console.log(`propName, value : ${propName}, ${value}`)
+                // console.log(`prop ref : ${ref}`)
+                // console.log(`prop instance Env: ${instanceEnv}`)
+                // console.log(`propName, value : ${propName}, ${value}`)
 
                 // instance 만의 environment 에 'x' 라는 변수에 대해 인자 x 를 정의한다. 
                 return instanceEnv.define(
@@ -201,6 +201,8 @@ class Eva
 
             const instanceEnv = this.eval(instance, env);
 
+            console.log(`prop Name : ${name}`)
+
             return instanceEnv.lookup(name);
         }
  
@@ -279,7 +281,7 @@ class Eva
 
     _evalBody(body, env)
     {
-        body.forEach((b) => {console.log(`execute body : ${b}`)})
+        // body.forEach((b) => {console.log(`execute body : ${b}`)})
 
         if (body[0] == 'begin')
         {
