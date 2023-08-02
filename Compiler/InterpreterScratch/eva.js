@@ -23,10 +23,8 @@ class Eva
     */
     evalGlobal(expression)
     {
-        return this._evalBlock(
-            ['block', expression],
-            this.global
-        );
+        // return this._evalBlock(['block', expression], this.global);
+        return this._evalBody(expression, this.global);
     }
     eval(exp, env = this.global)
     {
@@ -220,6 +218,19 @@ class Eva
 
             return instanceEnv.lookup(name);
         }
+
+        // module declaration --- : (module <body>)
+        if (exp[0] == 'module')
+        {
+            const [_tag, name, body] = exp;
+
+            // module 의 env 는 module 이 만들어진 context 상의 env 로 세팅해준다.
+            const moduleEnv = new Environment({},env);
+
+            this._evalBody(body, moduleEnv);
+
+            return env.define(name, moduleEnv);
+        }
  
         // function declaration ----------------
         if (exp[0] == 'def')
@@ -227,6 +238,7 @@ class Eva
             // JIT-transpile to variable declaration : create variable expression node directly at runtime
             // 즉, JIT 의 경우, 함수 선언을 만나면, 런타임 동안에 lambda 함수를 만들어내는 역할을 하는 것이다.
             const varExp = this._transformer.transformDefToLambda(exp);
+
             return this.eval(varExp, env);
             /*
             const fn = {
@@ -276,8 +288,8 @@ class Eva
         const activationRecord = {};
 
         fn.params.forEach((param, index) => {
-            // console.log(`param : ${param}`)
-            // console.log(`param body : ${args[index]}`); 
+            console.log(`param : ${param}`)
+            console.log(`param body : ${args[index]}`); 
             activationRecord[param] = args[index];
         })
         // console.log(`func body : ${fn.body}`)

@@ -13,7 +13,8 @@ const tests = [
     // require('./user-defined-function-test.js'),
     // require('./lambda-function-test.js'),
     // require('./switch-test.js'),
-    require('./class-test.js'),
+    // require('./class-test.js'),
+    require('./module-test.js'),
 ];
 
 const evaInterpreter = new Eva();
