@@ -14,7 +14,8 @@ const tests = [
     // require('./lambda-function-test.js'),
     // require('./switch-test.js'),
     // require('./class-test.js'),
-    require('./module-test.js'),
+    // require('./module-test.js'),
+    require('./import-test.js'),
 ];
 
 const evaInterpreter = new Eva();

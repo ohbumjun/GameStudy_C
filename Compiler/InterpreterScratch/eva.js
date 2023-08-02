@@ -1,6 +1,8 @@
 const assert = require('assert');
 const Environment = require('./environment');
 const Transformer = require('./transform/transformer')
+const evaParser = require('./parser/evaParser')
+const fs = require('fs')
 
 /*
 * eva interpreter
@@ -219,6 +221,29 @@ class Eva
             return instanceEnv.lookup(name);
         }
 
+        // import module ---- : import <name>
+        if (exp[0] == 'import')
+        {
+            // module source code 를 import 해야 한다.
+            // 이를 위해서는 source code 를 parse 해야 한다.
+            const [_tag, name] = exp;
+
+            const moduleSrc = fs.readFileSync(
+                `${__dirname}/modules/${name}.eva`,
+                'utf-8'
+            );
+
+            const body = evaParser.parse(`(begin ${moduleSrc})`);
+
+            const moduleExp = ['module', name, body];
+
+            // 참고 : 이미 module 이 import 된 적이 있다면, cache 과정을 적용한다.
+            // 이렇게 다시 parse 하는 과정을 거치는 것이 아니라, 이미 cache 에 존재하는
+            // module 을 바로 리턴해주는 것이다.
+
+            return this.eval(moduleExp, this.global);
+        }
+
         // module declaration --- : (module <body>)
         if (exp[0] == 'module')
         {
@@ -288,8 +313,8 @@ class Eva
         const activationRecord = {};
 
         fn.params.forEach((param, index) => {
-            console.log(`param : ${param}`)
-            console.log(`param body : ${args[index]}`); 
+            // console.log(`param : ${param}`)
+            // console.log(`param body : ${args[index]}`); 
             activationRecord[param] = args[index];
         })
         // console.log(`func body : ${fn.body}`)
