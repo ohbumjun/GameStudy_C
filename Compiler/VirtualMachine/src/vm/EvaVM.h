@@ -35,6 +35,10 @@ public :
     for (;;)
     {
         switch(READ_BYTE())
+        {
+            case OP_HALT :
+                return;
+        }
     }
    }
 
