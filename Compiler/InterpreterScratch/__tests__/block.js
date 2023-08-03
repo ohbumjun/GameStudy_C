@@ -1,4 +1,5 @@
 const assert = require('assert')
+const testUtil = require('./test-util.js')
 
 module.exports = eva =>
 {
@@ -40,4 +41,12 @@ module.exports = eva =>
         ]
     ), 20)
     
+    // s-expression 형태의 string 을 인자로 받을 것이다.
+    testUtil.test(eva, `
+        (begin
+            (var x 10)
+            (var y 20)
+            (+ (* x 10) y)
+        )
+    `, 120);
 }

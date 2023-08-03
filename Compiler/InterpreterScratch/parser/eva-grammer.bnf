@@ -1,0 +1,71 @@
+/**
+S- expression Parser
+
+Atom : 42, foo, bar, "Hello World"
+List : (), (+ 5 x), (print "helo")
+
+Explanation :
+s-expression 은 숫자, symbol, 변수 등의 atom 
+혹은 괄호로 구분되어 있는 list 로 이루어진
+표현식이다.
+
+즉, (sort '(3 2 1) #'<) ;=> (1 2 3)
+(mapcar #'(lambda (x) (1+ x)) '(1 2 3)) ;=> (2 3 4)
+이와 같이 괄호와 Atom 을 사용하여 표기하는 방법을
+Lisp 에서 S-Expression (Symbolic Expression) 이라고 하는 것이다.
+**/
+
+// ---------------
+// Lexical Grammer (tokens) : Tokenizing 의 단계
+
+%lex
+
+%%
+
+\s+  /*skip white space*/
+
+\"[^\"]*\"      return 'STRING'
+
+\d+             return 'NUMBER'
+
+[\w\-+*=<>/]+   return 'SYMBOL'
+
+/lex
+
+//  --------------
+// Syntatic Grammer (BNF) : Parser 의 단계
+%% 
+
+Exp
+    : Atom
+    | List
+    ;
+
+Atom   
+    : NUMBER {$$ = Number($1)}
+    | STRING
+    | SYMBOL
+    ;
+
+/**
+'(' ListEntries ')'로 시작한다. 
+$$ : 리턴값은 actual list entries 가 될 것이다.
+
+(참고 : BNF 문법에서 리턴값을 $$ 이다.)
+(예제 : '(' ListEntries ')' {$$ = $2} 에서 '(' 가 $1, ListEntires 가 $2, ')' 가 $3)
+
+**/
+List 
+    : '(' ListEntries ')' {$$ = $2}
+    ;
+
+
+/**
+보통 ListEntries 는 (Exp, Exp ...) 와 같이 여러 개의 Exp 를 담고 있게 될 것이다.
+그리고 ListEntries 는 자신이 담고 있는 Exp 로 대체하게 할 것이다.
+예를 들어 ListEntries Exp {$1.push($2); $$ = $1;}
+**/
+ListEntries
+    : ListEntries Exp {$1.push($2); $$ = $1;}
+    | /*empty*/ {$$ = []}
+    ;

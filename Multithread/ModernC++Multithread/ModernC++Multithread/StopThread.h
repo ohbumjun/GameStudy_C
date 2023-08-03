@@ -42,8 +42,11 @@ public :
         std::future<void> futureObj = promiseObj.get_future();
         std::thread threadObj(func, std::move(futureObj));
         std::this_thread::sleep_for(std::chrono::seconds(10));
+
         cout << " asking thread to exit " << endl;
         promiseObj.set_value();
+
+        // thread 가 자기 일을 할 때까지 기다리게 한다.
         threadObj.join();
         cout << "in main thread exit " << endl;
     }
