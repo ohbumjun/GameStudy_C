@@ -7,8 +7,15 @@
 #include <vector>
 #include <string>
 
+/*
+*  Read Byte from instruction Pointer 
+    & increase instruction Pointer to indicate next byte
+*/
+
 class EvaVM
 {
+#define READ_BYTE() *ip++
+
 public :
     EvaVM(){};
 
@@ -34,10 +41,13 @@ public :
    {
     for (;;)
     {
-        switch(READ_BYTE())
+        auto opcode = READ_BYTE();
+        switch(opcode)
         {
             case OP_HALT :
                 return;
+            default :
+                DIE << "Unknown opcode : " << std::hex << opcode;
         }
     }
    }
