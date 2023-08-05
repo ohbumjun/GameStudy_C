@@ -4,11 +4,14 @@
 
 #include "../bytecode/OpCode.h"
 #include "../utils/Logger.h"
+#include "../parser/EvaParser.h"
 #include "./EvaValue.h"
 
 #include <vector>
 #include <string>
 #include <array>
+
+using syntax::EvaParser;
 
 /*
 Stack Overflow (after excedding)
@@ -34,7 +37,7 @@ class EvaVM
 #define READ_BYTE() *ip++
 
 public :
-    EvaVM()
+    EvaVM() : parser(std::make_unique<EvaParser>())
     {
         sp = stack.data();
     };
@@ -42,16 +45,16 @@ public :
     EvaValue exec(const std::string& program)
     {
         // 1. parse program to ast
-        // auto ast = parser->parse(program)
+        auto ast = parser->parse("10");
 
         // 2. compile program to Eva bytecode
         // code = compiler->compile(ast)
+        // ex) (+ "Hello", "World") => code = {OP_CONST, 0,OP_CONST,1,OP_ADD,OP_HALT}
         constants.push_back(ALLOC_STRING("Hello"));
         constants.push_back(ALLOC_STRING(" World!"));
-        // byte code 에는 42 라는 number 가 아니라
-        // 해당 number 를 담은 constant 의, constant pool 상의 idx 를 넣는다.
+        
         code = {OP_CONST, 
-        0, 
+        0, // constant pool index
         OP_CONST,
         1,
         OP_ADD,
@@ -158,6 +161,11 @@ private :
         size_t constantIndex = READ_BYTE();
         return constants[constantIndex];
     }
+
+    /*
+    * Parser Instance
+    */
+    std::unique_ptr<EvaParser> parser;
 
     /*
     Intruction Pointer / Program Counter
