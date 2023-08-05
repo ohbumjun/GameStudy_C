@@ -5,6 +5,7 @@
 #include "../bytecode/OpCode.h"
 #include "../utils/Logger.h"
 #include "../parser/EvaParser.h"
+#include "../compiler/EvaCompiler.h"
 #include "./EvaValue.h"
 
 #include <vector>
@@ -37,7 +38,9 @@ class EvaVM
 #define READ_BYTE() *ip++
 
 public :
-    EvaVM() : parser(std::make_unique<EvaParser>())
+    EvaVM() : 
+    parser(std::make_unique<EvaParser>()),
+    compiler(std::make_unique<EvaCompiler>())
     {
         sp = stack.data();
     };
@@ -45,23 +48,19 @@ public :
     EvaValue exec(const std::string& program)
     {
         // 1. parse program to ast
-        auto ast = parser->parse("10");
+        auto ast = parser->parse(program);
 
         // 2. compile program to Eva bytecode
-        // code = compiler->compile(ast)
-        // ex) (+ "Hello", "World") => code = {OP_CONST, 0,OP_CONST,1,OP_ADD,OP_HALT}
-        constants.push_back(ALLOC_STRING("Hello"));
-        constants.push_back(ALLOC_STRING(" World!"));
+        // compiler : accepts ast => produce bytecode & associated data structure (ex. constant pool)
+        co = compiler->compile(ast);
         
-        code = {OP_CONST, 
-        0, // constant pool index
-        OP_CONST,
-        1,
-        OP_ADD,
-        OP_HALT};
+        // ex) (+ "Hello", "World") => code = {OP_CONST, 0,OP_CONST,1,OP_ADD,OP_HALT}
+        // constants.push_back(ALLOC_STRING("Hello"));
+        // constants.push_back(ALLOC_STRING(" World!"));
+        // code = {OP_CONST, 0, // constant pool indexOP_CONST,1,OP_ADD,OP_HALT};
 
         // Set instruction pointer to first byte of bytecode (혹은 program counter 라고도 불린다.)
-        ip = &code[0];
+        ip = &co->code[0];
 
         return eval();
     }
@@ -103,7 +102,6 @@ public :
                     }
                     else if (IS_STRING(op1) && IS_STRING(op2))
                     {
-                        std::cout << "string add" << std::endl;
                         auto s1 = AS_CPPSTRING(op1);
                         auto s2 = AS_CPPSTRING(op2);
                         push(ALLOC_STRING(s1 + s2));
@@ -159,13 +157,18 @@ private :
     EvaValue get_const()
     {
         size_t constantIndex = READ_BYTE();
-        return constants[constantIndex];
+        return co->constants[constantIndex];
     }
 
     /*
     * Parser Instance
     */
     std::unique_ptr<EvaParser> parser;
+
+    /*
+    * Compiler Insatnce
+    */
+   std::unique_ptr<EvaCompiler> compiler;
 
     /*
     Intruction Pointer / Program Counter
@@ -183,14 +186,9 @@ private :
     std::array<EvaValue, STACK_LIMIT> stack;
 
     /*
-    ByteCode == array of bytes
+    *  Code Objects
     */
-    std::vector<uint8_t> code;
-
-    /*
-    Constant Pool
-    */
-   std::vector<EvaValue> constants;
+   CodeObject* co;
 };
 
 #endif

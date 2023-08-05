@@ -3,27 +3,14 @@
 
 #include <string>
 
+class Object;
+
 enum class EvaValueType
 {
     NUMBER,
     OBJECT
 };
 
-enum class ObjectType
-{
-   STRING
-};
-
-struct Object
-{
-    Object(ObjectType type) : type(type){}
-    ObjectType type;
-};
-
-struct StringObject:public Object{
-    StringObject(const std::string& str) : Object(ObjectType::STRING), string(str){}
-    std::string string;
-};
 
 /*
 Eva value {tagged union}
@@ -39,9 +26,39 @@ struct EvaValue
     {
         double number;
         
-        // ex. string
+        // ex. string , code
         Object* object;
     };
+};
+
+
+enum class ObjectType
+{
+   STRING,
+   CODE   // EvaCompiler 가 만들어내는 Code
+};
+
+struct Object
+{
+    Object(ObjectType type) : type(type){}
+    ObjectType type;
+};
+
+struct StringObject:public Object{
+    StringObject(const std::string& str) : Object(ObjectType::STRING), string(str){}
+    std::string string;
+};
+
+struct CodeObject:public Object{
+    CodeObject(const std::string& str) : Object(ObjectType::CODE), name(str){}
+    
+    std::string name;
+
+    // constant pool
+    std::vector<EvaValue> constants;
+
+    // byte code
+    std::vector<uint8_t> code;
 };
 
 /*
@@ -52,10 +69,12 @@ Constructors
 #define NUMBER(value) ((EvaValue){EvaValueType::NUMBER, .number = value})
 
 #define ALLOC_STRING(value) ((EvaValue){EvaValueType::OBJECT, .object = (Object*)new StringObject(value)})
+#define ALLOC_CODE(name) ((EvaValue){EvaValueType::OBJECT, .object = (Object*)new CodeObject(name)})
 
 // Address EvaValue as plain number
 #define AS_NUMBER(evaValue) ((double)(evaValue).number)
 #define AS_STRING(evaValue) ((StringObject*)(evaValue).object)
+#define AS_CODE(evaValue) ((CodeObject*)(evaValue).object)
 #define AS_CPPSTRING(evaValue) (AS_STRING(evaValue)->string)
 #define AS_OBJECT(evaValue) ((evaValue).object)
 
@@ -65,5 +84,5 @@ Constructors
 #define IS_OBJECT_TYPE(evaValue, objectType) \
     (IS_OBJECT(evaValue) && AS_OBJECT(evaValue)->type == objectType)
 #define IS_STRING(evaValue) IS_OBJECT_TYPE(evaValue, ObjectType::STRING)
-
+#define IS_CODE(evaValue) IS_OBJECT_TYPE(evaValue, ObjectType::CODE)
 #endif
