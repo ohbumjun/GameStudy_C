@@ -20,4 +20,9 @@ Push a const onto stack
 */
 #define OP_CONST 0x01
 
+/*
+Math operation
+*/
+#define OP_ADD 0x02
+
 #endif

@@ -37,12 +37,17 @@ public :
 
         // 2. compile program to Eva bytecode
         // code = compiler->compile(ast)
-        EvaValue value = NUMBER(42);
-        constants.push_back(value);
+        constants.push_back(NUMBER(2));
+        constants.push_back(NUMBER(3));
 
         // byte code 에는 42 라는 number 가 아니라
         // 해당 number 를 담은 constant 의, constant pool 상의 idx 를 넣는다.
-        code = {OP_CONST, 0, OP_HALT};
+        code = {OP_CONST, 
+        0, 
+        OP_CONST, 
+        1,
+        OP_ADD,
+        OP_HALT};
 
         // Set instruction pointer to first byte of bytecode (혹은 program counter 라고도 불린다.)
         ip = &code[0];
@@ -58,10 +63,13 @@ public :
    {
         for (;;)
         {
+            // 
             auto opcode = READ_BYTE();
             
-            std::cout << "opcode : " << (unsigned int)opcode << std::endl;
-
+            // Print the byte value in hexadecimal format
+            uint8_t byteValue = static_cast<uint8_t>(opcode);
+            std::cout << "opcode: " << std::hex << std::setw(2) << std::setfill('0') << +byteValue << "\n";
+            
             switch(opcode)
             {
                 case OP_HALT :
@@ -71,6 +79,14 @@ public :
                 case OP_CONST :
                     push(get_const());
                     break;
+                case OP_ADD :
+                    {
+                    auto op1 = AS_NUMBER(pop());
+                    auto op2 = AS_NUMBER(pop());
+                    auto result = op1 + op2;
+                    push(NUMBER(result));
+                    break;
+                    }
                 default :
                     DIE << "Unknown opcode : " << std::hex << opcode;
             }

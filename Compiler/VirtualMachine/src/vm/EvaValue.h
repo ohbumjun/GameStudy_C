@@ -29,5 +29,7 @@ Constructors
 // EvaValue
 #define NUMBER(value) ((EvaValue){EvaValueType::NUMBER, .number = value})
 
+// Address EvaValue as plain number
+#define AS_NUMBER(evaValue) ((double)(evaValue).number)
 
 #endif

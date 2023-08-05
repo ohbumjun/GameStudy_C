@@ -3,6 +3,8 @@
 
 #include <sstream>
 #include <iostream>
+#include <iomanip>
+#include <cstdint>
 
 class ErrorLogMeesage : public std::basic_ostringstream<char>{
     public :
