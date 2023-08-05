@@ -6,11 +6,11 @@ int main(int argc, char const *argv[])
 {
     EvaVM vm;
 
-    vm.exec(R"(
+    auto result = vm.exec(R"(
       42
     )");
 
-    std::cout << "all done" << std::endl;
+    log(result.number);
 
     return 0;
 }

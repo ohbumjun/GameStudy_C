@@ -2,6 +2,7 @@
 #define Logger_h
 
 #include <sstream>
+#include <iostream>
 
 class ErrorLogMeesage : public std::basic_ostringstream<char>{
     public :
@@ -11,5 +12,9 @@ class ErrorLogMeesage : public std::basic_ostringstream<char>{
         exit(EXIT_FAILURE);
     }
 };
+
+#define DIE ErrorLogMeesage()
+
+#define log(value) std::cout << #value << " = " << (unsigned int)(value) << "\n";
 
 #endif

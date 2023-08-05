@@ -15,4 +15,9 @@ Stop Program
 */
 #define OP_HALT 0x00
 
+/*
+Push a const onto stack
+*/
+#define OP_CONST 0x01
+
 #endif
