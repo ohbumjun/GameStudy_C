@@ -6,6 +6,9 @@
 #include "../bytecode/OpCode.h"
 #include "../utils/Logger.h"
 
+#include <string>
+#include <map>
+
 /*
 Emits bytecde & records constant pool, vars, etc
 */
@@ -97,17 +100,27 @@ public :
                     {
                         gen_binary_op(exp, OP_ADD);
                     }
-                    if (op == "*")
+                    else if (op == "*")
                     {
                         gen_binary_op(exp, OP_MUL);
                     }
-                    if (op == "/")
+                    else if (op == "/")
                     {
                         gen_binary_op(exp, OP_DIV);
                     }
-                    if (op == "-")
+                    else if (op == "-")
                     {
                         gen_binary_op(exp, OP_SUB);
+                    }
+                    // compare operations
+                    // compareOps_.count(op) : op key 에 대한 value 개수
+                    // ex. (> 5 10)                    0 아니면 1 (중복 key 허용 안하므로)
+                    else if (compareOps_.count(op) != 0)
+                    {
+                        gen(exp.list[1]);
+                        gen(exp.list[2]);
+                        emit(OP_COMPARE);
+                        emit(compareOps_[op]);
                     }
                 }
 
@@ -163,6 +176,13 @@ private :
     * Compile code object
     */
     CodeObject* co;
+
+    /*
+    * Compare ops -> encode to number
+    */
+   std::map<std::string, uint8_t> compareOps_ = {
+    {"<", 0}, {">", 1}, {"==", 2}, {"<=", 4}, {">=", 5}
+   };
 };
 
 #endif

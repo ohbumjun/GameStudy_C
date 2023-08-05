@@ -7,7 +7,7 @@ int main(int argc, char const *argv[])
     EvaVM vm;
 
     EvaValue result = vm.exec(R"(
-      true
+      (> 5 10)
     )");
 
     // log(result.number);

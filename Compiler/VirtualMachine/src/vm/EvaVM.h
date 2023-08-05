@@ -29,6 +29,7 @@ Binary Operation
         push(NUMBER(op1 op op2)); \
     }while(false)
 
+
 /*
 *  Read Byte from instruction Pointer 
     & increase instruction Pointer to indicate next byte
@@ -123,6 +124,28 @@ public :
                     BINARY_OP(/);
                     break;
                     }
+                case OP_COMPARE :
+                    {
+                    auto op = READ_BYTE();
+
+                    auto op2 = pop();
+                    auto op1 = pop();
+
+                    if (IS_NUMBER(op1) && IS_NUMBER(op2))
+                    {
+                        auto v1 = AS_NUMBER(op1);
+                        auto v2 = AS_NUMBER(op2);
+                        compare_values<int>(op, v1, v2);
+                    }
+                    else if (IS_STRING(op1) && IS_STRING(op2))
+                    {
+                        auto v1 = AS_CPPSTRING(op1);
+                        auto v2 = AS_CPPSTRING(op2);
+                        compare_values<std::string>(op, v1, v2);
+                    }
+
+                    break;   
+                    }
                 default :
                     DIE << "Unknown opcode : " << std::hex << opcode;
             }
@@ -158,6 +181,50 @@ private :
     {
         size_t constantIndex = READ_BYTE();
         return co->constants[constantIndex];
+    }
+
+    template<typename T>
+    bool compare_values(size_t op, const T& v1, const T& v2)
+    {
+        do                                        
+        {                               
+            bool res;                   
+            switch(op)                  
+            {                           
+                case 0 :                
+                {                       
+                    res = v1 < v2;        
+                    break;              
+                }                       
+                case 1 :                
+                {                       
+                    res = v1 > v2;      
+                    break;              
+                }                       
+                case 2 :                
+                {                       
+                    res = v1 == v2;     
+                    break;              
+                }                       
+                case 3 :                
+                {                       
+                    res = v1 >= v2;     
+                    break;              
+                }                       
+                case 4 :                
+                {                       
+                    res = v1 <= v2;     
+                    break;              
+                }                       
+                case 5 :                
+                {                       
+                    res = v1 == v2;     
+                    break;              
+                }                       
+            }                           
+            push(BOOLEAN(res));         
+            return res;   
+        }while(false);        
     }
 
     /*
