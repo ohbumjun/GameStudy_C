@@ -16,10 +16,19 @@ Stack Overflow (after excedding)
 #define STACK_LIMIT 512
 
 /*
+Binary Operation
+*/
+#define BINARY_OP(op) \
+    do{ \
+        auto op1 = AS_NUMBER(pop()); \
+        auto op2 = AS_NUMBER(pop()); \
+        push(NUMBER(op1 op op2)); \
+    }while(false)
+
+/*
 *  Read Byte from instruction Pointer 
     & increase instruction Pointer to indicate next byte
 */
-
 class EvaVM
 {
 #define READ_BYTE() *ip++
@@ -46,7 +55,7 @@ public :
         0, 
         OP_CONST, 
         1,
-        OP_ADD,
+        OP_MUL,
         OP_HALT};
 
         // Set instruction pointer to first byte of bytecode (혹은 program counter 라고도 불린다.)
@@ -81,10 +90,22 @@ public :
                     break;
                 case OP_ADD :
                     {
-                    auto op1 = AS_NUMBER(pop());
-                    auto op2 = AS_NUMBER(pop());
-                    auto result = op1 + op2;
-                    push(NUMBER(result));
+                    BINARY_OP(+);
+                    break;
+                    }
+                case OP_SUB :
+                    {
+                    BINARY_OP(-);
+                    break;
+                    }
+                case OP_MUL :
+                    {
+                    BINARY_OP(*);
+                    break;
+                    }
+                case OP_DIV :
+                    {
+                    BINARY_OP(/);
                     break;
                     }
                 default :
