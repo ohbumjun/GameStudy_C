@@ -20,8 +20,8 @@ Binary Operation
 */
 #define BINARY_OP(op) \
     do{ \
-        auto op1 = AS_NUMBER(pop()); \
         auto op2 = AS_NUMBER(pop()); \
+        auto op1 = AS_NUMBER(pop()); \
         push(NUMBER(op1 op op2)); \
     }while(false)
 
@@ -46,16 +46,15 @@ public :
 
         // 2. compile program to Eva bytecode
         // code = compiler->compile(ast)
-        constants.push_back(NUMBER(2));
-        constants.push_back(NUMBER(3));
-
+        constants.push_back(ALLOC_STRING("Hello"));
+        constants.push_back(ALLOC_STRING(" World!"));
         // byte code 에는 42 라는 number 가 아니라
         // 해당 number 를 담은 constant 의, constant pool 상의 idx 를 넣는다.
         code = {OP_CONST, 
         0, 
-        OP_CONST, 
+        OP_CONST,
         1,
-        OP_MUL,
+        OP_ADD,
         OP_HALT};
 
         // Set instruction pointer to first byte of bytecode (혹은 program counter 라고도 불린다.)
@@ -90,7 +89,22 @@ public :
                     break;
                 case OP_ADD :
                     {
-                    BINARY_OP(+);
+                    auto op2 = pop();
+                    auto op1 = pop();
+
+                    if (IS_NUMBER(op1) && IS_NUMBER(op2))
+                    {
+                        auto v1 = AS_NUMBER(op1);
+                        auto v2 = AS_NUMBER(op2);
+                        push(NUMBER(v1 + v2));
+                    }
+                    else if (IS_STRING(op1) && IS_STRING(op2))
+                    {
+                        std::cout << "string add" << std::endl;
+                        auto s1 = AS_CPPSTRING(op1);
+                        auto s2 = AS_CPPSTRING(op2);
+                        push(ALLOC_STRING(s1 + s2));
+                    }
                     break;
                     }
                 case OP_SUB :

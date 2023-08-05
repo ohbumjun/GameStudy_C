@@ -6,11 +6,22 @@ int main(int argc, char const *argv[])
 {
     EvaVM vm;
 
-    auto result = vm.exec(R"(
+    EvaValue result = vm.exec(R"(
       42
     )");
 
-    log(result.number);
+    // log(result.number);
+    // log(AS_CPPSTRING(result));
+
+    if (result.type == EvaValueType::NUMBER)
+    {
+      log(result.number);
+    }
+    else
+    {
+      const std::string& resultStr = AS_CPPSTRING(result);
+      std::cout << "resultStr : " << resultStr << std::endl;
+    }
 
     return 0;
 }

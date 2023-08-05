@@ -17,6 +17,7 @@ class ErrorLogMeesage : public std::basic_ostringstream<char>{
 
 #define DIE ErrorLogMeesage()
 
-#define log(value) std::cout << #value << " = " << (unsigned int)(value) << "\n";
+
+#define log(value) std::cout << #value << " = " << value << "\n";
 
 #endif
