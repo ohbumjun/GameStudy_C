@@ -2,13 +2,16 @@
 #define EvaValue_h
 
 #include <string>
+#include <iostream>
+#include <sstream>
 
 class Object;
 
 enum class EvaValueType
 {
     NUMBER,
-    OBJECT
+    OBJECT,
+    BOOLEAN,
 };
 
 
@@ -25,6 +28,8 @@ struct EvaValue
     union 
     {
         double number;
+
+        bool boolean;
         
         // ex. string , code
         Object* object;
@@ -67,12 +72,15 @@ Constructors
 
 // EvaValue
 #define NUMBER(value) ((EvaValue){EvaValueType::NUMBER, .number = value})
+#define BOOLEAN(value) ((EvaValue){EvaValueType::BOOLEAN, .boolean = value})
+
 
 #define ALLOC_STRING(value) ((EvaValue){EvaValueType::OBJECT, .object = (Object*)new StringObject(value)})
 #define ALLOC_CODE(name) ((EvaValue){EvaValueType::OBJECT, .object = (Object*)new CodeObject(name)})
 
 // Address EvaValue as plain number
 #define AS_NUMBER(evaValue) ((double)(evaValue).number)
+#define AS_BOOLEAN(evaValue) ((bool)(evaValue).boolean)
 #define AS_STRING(evaValue) ((StringObject*)(evaValue).object)
 #define AS_CODE(evaValue) ((CodeObject*)(evaValue).object)
 #define AS_CPPSTRING(evaValue) (AS_STRING(evaValue)->string)
@@ -80,9 +88,54 @@ Constructors
 
 // Testers
 #define IS_NUMBER(evaValue) ((evaValue).type == EvaValueType::NUMBER)
+#define IS_BOOLEAN(evaValue) ((evaValue).type == EvaValueType::BOOLEAN)
 #define IS_OBJECT(evaValue) ((evaValue).type == EvaValueType::OBJECT)
 #define IS_OBJECT_TYPE(evaValue, objectType) \
     (IS_OBJECT(evaValue) && AS_OBJECT(evaValue)->type == objectType)
 #define IS_STRING(evaValue) IS_OBJECT_TYPE(evaValue, ObjectType::STRING)
 #define IS_CODE(evaValue) IS_OBJECT_TYPE(evaValue, ObjectType::CODE)
+
+std::string evaValueToTypeString(const EvaValue& evaValue)
+{
+    if (IS_NUMBER(evaValue))return "NUMBER";
+    if (IS_BOOLEAN(evaValue))return "BOOL";
+    else if (IS_STRING(evaValue))return "STRING";
+    else if (IS_CODE(evaValue))return "CODE";
+    else 
+    {
+        DIE << "evaValueToTypeString : unknown type " << (int)evaValue.type ;
+    }
+    return ""; // unreachable
+}
+
+std::string evaValueToConstantString(const EvaValue& evaValue)
+{
+    std::stringstream ss;
+
+    if (IS_NUMBER(evaValue))
+        ss << evaValue.number;
+    if (IS_BOOLEAN(evaValue))
+        ss << (evaValue.boolean ? "true" : "false");
+    else if (IS_STRING(evaValue))
+        ss << '"' <<  AS_CPPSTRING(evaValue) << '"';
+    else if (IS_CODE(evaValue))
+    {
+        auto code = AS_CODE(evaValue);
+        ss << "code" << code << ": " << code->name;
+    }
+    else 
+    {
+        DIE << "evaValueToConstantString : unknown type " << (int)evaValue.type ;
+    }
+
+    return ss.str();
+}
+
+// log(string type) 이 동작하도록 하기 위함
+std::ostream &operator << (std::ostream& os, const EvaValue& evaValue)
+{
+    return os << "EvaValue (" << evaValueToTypeString(evaValue)
+            << ") " << evaValueToConstantString(evaValue);
+}
+
 #endif

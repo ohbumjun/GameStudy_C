@@ -7,21 +7,13 @@ int main(int argc, char const *argv[])
     EvaVM vm;
 
     EvaValue result = vm.exec(R"(
-      "Hello"
+      true
     )");
 
     // log(result.number);
     // log(AS_CPPSTRING(result));
 
-    if (result.type == EvaValueType::NUMBER)
-    {
-      log(result.number);
-    }
-    else
-    {
-      const std::string& resultStr = AS_CPPSTRING(result);
-      std::cout << "resultStr : " << resultStr << std::endl;
-    }
+    log(result);
 
     return 0;
 }

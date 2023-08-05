@@ -6,9 +6,6 @@
 #include "../bytecode/OpCode.h"
 #include "../utils/Logger.h"
 
-
-        
-
 /*
 Emits bytecde & records constant pool, vars, etc
 */
@@ -28,7 +25,9 @@ class EvaCompiler
             }                                           \
         }                                               \
         co->constants.push_back(allocator(value));      \
-    }while(false);                                      \
+    }while(false);      
+    
+
 
 public :
     EvaCompiler(){};
@@ -72,12 +71,46 @@ public :
             }
             case ExpType::SYMBOL :
             {
-                DIE << "Symbol : Unimplemented";
+                // ex. true
+                if (exp.string == "true" || exp.string == "false")
+                {
+                    emit(OP_CONST);
+                    emit(booleanConstIdx(exp.string == "true" ? true : false));
+                }
+                else 
+                {
+                    // variables
+                }
                 break;
             }
             case ExpType::LIST :
             {
-                DIE << "List : Unimplemented";
+                // ex. (- (+ 15 0) 5)
+                auto tag = exp.list[0];
+
+                if (tag.type == ExpType::SYMBOL)
+                {
+                    // .bnf 파일에서 +,-,*,/ 등 사칙연산은 string 으로 분류하게 세팅
+                    auto op = tag.string;
+
+                    if (op == "+")
+                    {
+                        gen_binary_op(exp, OP_ADD);
+                    }
+                    if (op == "*")
+                    {
+                        gen_binary_op(exp, OP_MUL);
+                    }
+                    if (op == "/")
+                    {
+                        gen_binary_op(exp, OP_DIV);
+                    }
+                    if (op == "-")
+                    {
+                        gen_binary_op(exp, OP_SUB);
+                    }
+                }
+
                 break;
             }
         }
@@ -107,6 +140,23 @@ private :
     {
         ALLOC_CONST(IS_STRING, AS_CPPSTRING, ALLOC_STRING, value);
         return co->constants.size() - 1;
+    }
+
+    size_t booleanConstIdx(bool value)
+    {
+        ALLOC_CONST(IS_BOOLEAN, AS_BOOLEAN, BOOLEAN, value);
+        return co->constants.size() - 1;
+    }
+
+    // Generate Binary Opertion as bytecode format
+    // ex. (+ 1 2) OP_CONST, OP_CONST, OP_ADD
+    void gen_binary_op(const Exp& exp, uint8_t op)
+    {
+        do{
+            gen(exp.list[1]);
+            gen(exp.list[2]);
+            emit(op);
+        }while(false);   
     }
 
     /*
