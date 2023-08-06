@@ -37,7 +37,8 @@ class EvaCompiler
 public :
     EvaCompiler(std::shared_ptr<Global> global) : 
         global(global),
-        disassembler(std::make_unique<EvaDisassembler>(global)){};
+        disassembler(std::make_unique<EvaDisassembler>(global))
+        {};
 
     /*
     * Main compile API
@@ -228,6 +229,24 @@ public :
 
                         patchJumpAddress(elseBranchEndTempAddrOffset, endBranchEndAddrOffset);
                    }
+
+                   // Variable Declaration
+                   else if (op == "var")
+                    {
+                        // 1. Global vars
+                        // ex. (var x (+ y 10))
+                        global->define(exp.list[1].string);
+
+                        // Initialize
+                        gen(exp.list[2]);
+
+                        emit(OP_SET_GLOBAL);
+                        emit(global->getGlobalIndex(exp.list[1].string));
+
+                        
+
+                        // 2. Local vars
+                    }
                 }
 
                 break;

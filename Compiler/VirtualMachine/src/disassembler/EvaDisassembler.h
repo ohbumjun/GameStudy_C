@@ -14,7 +14,9 @@ class EvaDisassembler
 public :
 
     EvaDisassembler(std::shared_ptr<Global> global) :
-        global(global){}
+        global(global)
+        {
+        }
 
     /*
     * ByteCode to Textural Expression

@@ -46,7 +46,6 @@ public :
     global(std::make_shared<Global>()),
     compiler(std::make_unique<EvaCompiler>(global))
     {
-        std::cout << "evaVM constructor" << std::endl;
         sp = stack.data();
         setGlobalVariables();
     };
@@ -58,6 +57,7 @@ public :
 
         // 2. compile program to Eva bytecode
         // compiler : accepts ast => produce bytecode & associated data structure (ex. constant pool)
+        std::cout << "--- Compile ---" << std::endl;
         co = compiler->compile(ast);
 
         // Set instruction pointer to first byte of bytecode (혹은 program counter 라고도 불린다.)
@@ -66,6 +66,7 @@ public :
         // Debug disassembly
         compiler->disassembleBytecode();
 
+        std::cout << "--- VM eval ---" << std::endl;
         return eval();
     }
 
@@ -175,11 +176,51 @@ public :
                         ip = to_address(read_short());
                         break;
                     }
+                
+                case OP_GET_GLOBAL : 
+                {
+                    auto globalIndex = READ_BYTE();
+
+                    // push global value on to the stack
+                    push(global->get(globalIndex).value);
+
+                    break;
+                }
+
+                case OP_SET_GLOBAL :
+                {
+                    auto globalIndex = READ_BYTE();
+                    
+                    // global->variables[globalIndex] 에 해당하는
+                    // 변수의 값을 조회한다.
+                    // 컴파일러 : value -> OP_SET_GLOBAL -> index
+                    //           여기서 value 에 해당하는 값을 가져온다.
+                    auto value = peek(0);
+                    
+                    global->set(globalIndex, value);
+
+                    break;
+                }
+
                 default :
-                    DIE << "Unknown opcode : " << std::hex << opcode;
+                    DIE << "Unknown opcode in VM : " << std::hex << opcode;
             }
         }
    }
+
+   /*
+   * peek element from stack
+   */
+  EvaValue peek(size_t offset = 0)
+  {
+    if (stack.size() == 0)
+    {
+        DIE << "peek() : empty stack.\n";
+    }
+
+    // sp - 1 : value on top of stack
+    return *(sp - 1 - offset);
+  }
 
    /*
    * push value on top of stack
@@ -274,10 +315,12 @@ private :
     {
         global->addConst("x", 10);
         global->addConst("y", 20);
-
-        std::cout << "set globals" << std::endl;
     }
-
+    /*
+    * Global object
+        - shared ptr : shared among compiler & vm
+    */
+    std::shared_ptr<Global> global;
     
     /*
     * Parser Instance
@@ -287,14 +330,8 @@ private :
     /*
     * Compiler Insatnce
     */
-   std::unique_ptr<EvaCompiler> compiler;
-
-   /*
-   * Global object
-    - shared ptr : shared among compiler & vm
-   */
-  std::shared_ptr<Global> global;
-
+    std::unique_ptr<EvaCompiler> compiler;
+   
     /*
     Intruction Pointer / Program Counter
     */

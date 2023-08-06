@@ -4,14 +4,10 @@
 
 int main(int argc, char const *argv[])
 {
-    std::cout << "start" << std::endl;
-    
     EvaVM vm;
 
-    std::cout << "before Execute" << std::endl;
-
     EvaValue result = vm.exec(R"(
-      x
+      (var z 100)
     )");
 
     // log(result.number);
