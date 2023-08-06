@@ -7,7 +7,7 @@ int main(int argc, char const *argv[])
     EvaVM vm;
 
     EvaValue result = vm.exec(R"(
-      (var z 100)
+      (set x (+ x 30))
     )");
 
     // log(result.number);

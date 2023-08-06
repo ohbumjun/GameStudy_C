@@ -233,9 +233,11 @@ public :
                    // Variable Declaration
                    else if (op == "var")
                     {
+                        auto varName = exp.list[1].string;
+
                         // 1. Global vars
                         // ex. (var x (+ y 10))
-                        global->define(exp.list[1].string);
+                        global->define(varName);
 
                         // Initialize
                         gen(exp.list[2]);
@@ -243,7 +245,25 @@ public :
                         emit(OP_SET_GLOBAL);
                         emit(global->getGlobalIndex(exp.list[1].string));
 
-                        
+                        // 2. Local vars
+                    }
+
+                    // Variable Set
+                   else if (op == "set")
+                    {
+                        // 1. Global vars
+                        // ex. (var x (+ y 10))
+                        auto varName = exp.list[1].string;
+
+                        auto globalIndex = global->getGlobalIndex(varName);
+
+                        if (globalIndex == -1)
+                        {
+                            DIE << "Reference error : " << varName << " is not defined";
+                        }
+                        gen(exp.list[2]);
+                        emit(OP_SET_GLOBAL);
+                        emit(globalIndex);
 
                         // 2. Local vars
                     }
