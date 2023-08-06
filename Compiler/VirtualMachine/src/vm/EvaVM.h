@@ -36,7 +36,8 @@ Binary Operation
 */
 class EvaVM
 {
-#define READ_BYTE() *ip++
+#define READ_BYTE()  *ip++
+
 
 public :
     EvaVM() : 
@@ -146,6 +147,30 @@ public :
 
                     break;   
                     }
+                case OP_JMP_IF_FALSE :
+                    {
+                    // condition 조사 결과가 stack top 에 있을 것
+                    auto cond = AS_BOOLEAN(pop());
+
+                    // condition 이 false 라면, else 쪽으로 넘어가야 한다.
+                    // 이때, compiler 에서 bytecode 를 만들어줄 때, else 분기 시작점에 대한
+                    // address 를 2byte 로 구성했기 때문에 2byte 를 읽는다.
+                    auto elseAddressOffset = read_short();
+
+                    if (!cond)
+                    {
+                        std::cout << "jump to elseAddres : " << elseAddressOffset << std::endl;
+
+                        // else 시작점으로 이동하기 
+                        ip = to_address(elseAddressOffset);
+                    }
+                    break;
+                    }
+                case OP_JMP :
+                    {
+                        ip = to_address(read_short());
+                        break;
+                    }
                 default :
                     DIE << "Unknown opcode : " << std::hex << opcode;
             }
@@ -176,11 +201,22 @@ public :
     }
 
 private :
+    uint16_t read_short()
+    {
+        // ip[-2] : 상위 8byte, ip[-1] : 하위 8byte 정보 저장
+        ip += 2;
+        return (uint16_t)((ip[-2] << 8) | ip[-1]);
+    }
 
     EvaValue get_const()
     {
         size_t constantIndex = READ_BYTE();
         return co->constants[constantIndex];
+    }
+
+    uint8_t* to_address(size_t offset)
+    {
+        return &(co->code[offset]);
     }
 
     template<typename T>

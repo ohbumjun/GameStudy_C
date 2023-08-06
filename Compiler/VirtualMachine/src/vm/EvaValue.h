@@ -98,7 +98,7 @@ Constructors
 std::string evaValueToTypeString(const EvaValue& evaValue)
 {
     if (IS_NUMBER(evaValue))return "NUMBER";
-    if (IS_BOOLEAN(evaValue))return "BOOL";
+    else if (IS_BOOLEAN(evaValue))return "BOOL";
     else if (IS_STRING(evaValue))return "STRING";
     else if (IS_CODE(evaValue))return "CODE";
     else 
@@ -111,10 +111,9 @@ std::string evaValueToTypeString(const EvaValue& evaValue)
 std::string evaValueToConstantString(const EvaValue& evaValue)
 {
     std::stringstream ss;
-
     if (IS_NUMBER(evaValue))
         ss << evaValue.number;
-    if (IS_BOOLEAN(evaValue))
+    else if (IS_BOOLEAN(evaValue))
         ss << (evaValue.boolean ? "true" : "false");
     else if (IS_STRING(evaValue))
         ss << '"' <<  AS_CPPSTRING(evaValue) << '"';

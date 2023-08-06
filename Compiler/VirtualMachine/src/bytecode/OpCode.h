@@ -33,4 +33,12 @@ Compoare operation
 */
 #define OP_COMPARE 0x06
 
+/*
+Control Flows
+*/
+// jump to alternate if condition is false
+#define OP_JMP_IF_FALSE 0x07
+
+#define OP_JMP 0x08
+
 #endif
