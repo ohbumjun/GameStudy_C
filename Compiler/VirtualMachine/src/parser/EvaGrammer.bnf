@@ -1,0 +1,103 @@
+/*
+* .bnf -> 특정 언어에 대한 parser 생성
+* Eva Grammer (S-expression)
+
+ex. Atom 42, foo ..
+ex. List : () , (+ 4 x)
+*/
+
+// --- Lexical grammer : tokens
+%lex 
+
+%%
+
+\/\/.*           %empty 
+
+\/\*[\s\S]*?\*\/ %empty
+
+\s+              %empty
+
+// string : anything in ""
+\"[^\"]*\"     STRING 
+
+\d+            NUMBER
+
+[\w\-+*=!<>/]+ SYMBOL
+
+/lex
+
+
+// --- Syntatic grammer (BNF)
+
+%{
+
+#include <string>
+#include <vector>
+
+/*
+* Expression Type
+*/
+enum class ExpType{
+    NUMBER,
+    STRING,
+    SYMBOL,
+    LIST,
+};
+
+/*
+* Expressions.
+*/
+struct Exp
+{
+    ExpType type;
+    int number;
+    std::string string;
+    std::vector<Exp> list;
+
+    // Numbers 
+    Exp(int number) : type(ExpType::NUMBER), number(number){}
+
+    // Strings, Symbols
+    Exp(std::string& strVal)
+    {
+        if (strVal[0] == '"')
+        {
+            type = ExpType::STRING;
+            string = strVal.substr(1, strVal.size() - 2);
+        }
+        else 
+        {
+            // ex. variable name
+            type = ExpType::SYMBOL;
+            string = strVal;
+        }
+    }
+
+    // List
+    Exp(std::vector<Exp> list) : type(ExpType::LIST), list(list){}
+};
+
+using Value = Exp;
+
+%}
+
+%%
+Exp 
+    : Atom 
+    | List 
+    ;
+
+Atom 
+    : NUMBER{$$ = Exp(std::stoi($1))}
+    | STRING {$$ = Exp($1)}
+    | SYMBOL {$$ = Exp($1)}
+    ;
+
+List 
+    : '(' ListEntries ')' {$$ = $2}
+    ;
+
+ListEntries 
+    : %empty            {$$ = Exp(std::vector<Exp>{})}
+    | ListEntries   Exp {$1.list.push_back($2); $$ = $1}
+    ;

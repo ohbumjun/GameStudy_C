@@ -6,11 +6,14 @@ int main(int argc, char const *argv[])
 {
     EvaVM vm;
 
-    vm.exec(R"(
-      42
+    EvaValue result = vm.exec(R"(
+      (set x (+ x 30))
     )");
 
-    std::cout << "all done" << std::endl;
+    // log(result.number);
+    // log(AS_CPPSTRING(result));
+
+    log(result);
 
     return 0;
 }
