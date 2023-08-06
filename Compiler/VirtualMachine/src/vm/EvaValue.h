@@ -37,6 +37,11 @@ struct EvaValue
     };
 };
 
+struct LocalVar
+{
+    std::string name;
+    size_t scopeLevel;
+};
 
 enum class ObjectType
 {
@@ -65,6 +70,34 @@ struct CodeObject:public Object{
 
     // byte code
     std::vector<uint8_t> code;
+
+    // current scope level -> nested block 이 생길 때마다, scopeLevel 1 증가
+    size_t scopeLevel = 0;
+
+    // local variables and functions
+    // - Local Block 에서 Local variable 은 stack 에 쌓인다. vector 를 stack 형태로 사용하고자 getLocalIndex 는 맨 뒤에 있는 요소 부터 찾고자 하는 것이다.
+    std::vector<LocalVar> locals;
+
+    void addLocal(const std::string& name)
+    {
+        locals.push_back({name, scopeLevel});
+    }
+
+    // get global index
+    int getLocalIndex(const std::string& name)
+    {
+        if (locals.size() == 0) return -1;
+
+        for (auto i = (int)locals.size() - 1; i >= 0; --i)
+        {
+            if (locals[i].name == name)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 };
 
 /*

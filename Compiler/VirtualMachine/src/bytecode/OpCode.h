@@ -52,6 +52,23 @@ Return global variable
 
 #define OP_SET_GLOBAL 0x10
 
+/*
+Pop value from stack
+*/
+#define OP_POP 0x11
+
+/*
+Return local variable
+*/
+#define OP_GET_LOCAL 0x12
+
+#define OP_SET_LOCAL 0x13
+
+/*
+Exit Scope
+*/
+#define OP_SCOPE_EXIT 0x14
+
 #define OP_STR(op)  \
     case OP_##op :  \
         return #op; \
@@ -71,9 +88,13 @@ std::string opcodeToString(uint8_t opcode)
         OP_STR(JMP);
         OP_STR(GET_GLOBAL);
         OP_STR(SET_GLOBAL);
+        OP_STR(POP);
+        OP_STR(GET_LOCAL);
+        OP_STR(SET_LOCAL);
+        OP_STR(SCOPE_EXIT);
         default :
         {
-            DIE << "opcodeToString : unknown opcode : " << (int)opcode; 
+            DIE << "opcodeToString : unknown opcode : " << std::hex << (int)opcode; 
         }
 
         return "Unknown";

@@ -7,11 +7,16 @@ int main(int argc, char const *argv[])
     EvaVM vm;
 
     EvaValue result = vm.exec(R"(
-      (set x (+ x 30))
-    )");
+      x
+      (begin
+        (var x 100)
+        (begin
+          (var x 200)
+        x)            // level 2
+      x)              // level 1
 
-    // log(result.number);
-    // log(AS_CPPSTRING(result));
+      x               // level 0      
+    )");
 
     log(result);
 

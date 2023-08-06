@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 #ifndef __EvaVM_h
 
 #define __EvaVM_h
@@ -48,14 +46,14 @@ public :
     global(std::make_shared<Global>()),
     compiler(std::make_unique<EvaCompiler>(global))
     {
-        sp = stack.data();
         setGlobalVariables();
     };
 
     EvaValue exec(const std::string& program)
     {
         // 1. parse program to ast
-        auto ast = parser->parse(program);
+        std::cout << "exec !" << std::endl;
+        auto ast = parser->parse("(begin " + program + ")");
 
         // 2. compile program to Eva bytecode
         // compiler : accepts ast => produce bytecode & associated data structure (ex. constant pool)
@@ -65,10 +63,15 @@ public :
         // Set instruction pointer to first byte of bytecode (혹은 program counter 라고도 불린다.)
         ip = &co->code[0];
 
+        sp = stack.data();
+
+        bp = sp;
+
         // Debug disassembly
         compiler->disassembleBytecode();
 
         std::cout << "--- VM eval ---" << std::endl;
+
         return eval();
     }
 
@@ -204,10 +207,79 @@ public :
                     break;
                 }
 
+                case OP_GET_LOCAL : 
+                {
+                    auto localIndex = READ_BYTE();
+
+                    if (localIndex < 0 || localIndex >= stack.size())
+                    {
+                        DIE << "OP_GET_LOCAL : invalid variable index " << (int)localIndex;
+                    }
+
+                    // bp : base pointer (fp - frame pointer)
+                    push(bp[localIndex]);
+
+                    break;
+                }
+
+                case OP_SET_LOCAL :
+                {
+                    auto localIndex = READ_BYTE();
+
+                    if (localIndex < 0 || localIndex >= stack.size())
+                    {
+                        DIE << "OP_GET_LOCAL : invalid variable index " << (int)localIndex;
+                    }
+                    auto value = peek(0);
+
+                    bp[localIndex] = value;
+
+                    break;
+                }
+
+                case OP_SCOPE_EXIT :
+                {
+                    /*
+                    Clean up variables
+                    - result of block : on top of stack
+                    - variables sit right below the result of a block
+                      so we move the result below, which will be the new top after popping the variables
+                    */
+
+                    // how many vars to pop
+                    auto count = READ_BYTE();
+
+                    // 과정 : pop result of blocks -> pop local vars -> pop local vars
+                    // result of block 을, local variable 첫번째 위치로 이동시키기
+                    *(sp - 1 - count) = peek(0);
+
+                    // pop local vars
+                    popN(count);
+
+                    break;
+                }
+
+                case OP_POP :
+                {
+                    pop();
+                    break;
+                }
+
                 default :
+                {
                     DIE << "Unknown opcode in VM : " << std::hex << opcode;
+                }
             }
         }
+   }
+
+   void popN(size_t count)
+   {
+    if (stack.size() == 0)
+    {
+        DIE << "popN() : empty stack.\n";
+    }
+    sp -= count;
    }
 
    /*
@@ -315,7 +387,7 @@ private :
     */
     void setGlobalVariables()
     {
-        global->addConst("x", 10);
+        global->addConst("VERSION", 1);
         global->addConst("y", 20);
     }
     /*
@@ -337,12 +409,18 @@ private :
     /*
     Intruction Pointer / Program Counter
     */
-   uint8_t* ip;
+    uint8_t* ip;
 
-   /*
-   * stack Pointer : stack 내 EvaValue 를 가리킨다.
-   */
+    /*
+    * stack Pointer : stack 내 EvaValue 를 가리킨다.
+    */
     EvaValue* sp;
+
+    /*
+    * Base Pointer (or Frame Pointer)
+    - 각각 stack 내 시작점을 가라키는 pointer 
+    */
+    EvaValue* bp;
 
     /*
     Operand stack
@@ -356,4 +434,3 @@ private :
 };
 
 #endif
->>>>>>> 4679352424279ce7aca40b30e46392b1d0be4a8a

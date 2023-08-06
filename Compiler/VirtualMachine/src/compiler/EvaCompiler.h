@@ -95,14 +95,27 @@ public :
                 else 
                 {
                     // variables
-                    // 1. Global vars
-                    if (global->exist(exp.string) == false)
-                    {
-                        DIE << "[EvaCompiler] : refernce error " << exp.string;
-                    }
+                    auto varName = exp.string;
 
-                    emit(OP_GET_GLOBAL);
-                    emit(global->getGlobalIndex(exp.string));
+                    // 1. Local vars
+                    auto localIndex = co->getLocalIndex(varName);
+
+                    if (localIndex != -1)
+                    {
+                        emit(OP_GET_LOCAL);
+                        emit(localIndex);
+                    }
+                    else 
+                    {
+                        // 2. Global vars
+                        if (global->exist(varName) == false)
+                        {
+                            DIE << "[EvaCompiler] : refernce error " << varName;
+                        }
+
+                        emit(OP_GET_GLOBAL);
+                        emit(global->getGlobalIndex(varName));
+                    }
                 }
                 break;
             }
@@ -235,37 +248,84 @@ public :
                     {
                         auto varName = exp.list[1].string;
 
-                        // 1. Global vars
-                        // ex. (var x (+ y 10))
-                        global->define(varName);
-
                         // Initialize
                         gen(exp.list[2]);
 
-                        emit(OP_SET_GLOBAL);
-                        emit(global->getGlobalIndex(exp.list[1].string));
+                        // 1. Global vars
+                        // ex. (var x (+ y 10))
+                        if (isGlobalScope())
+                        {
+                            global->define(varName);
 
+                            emit(OP_SET_GLOBAL);
+                            emit(global->getGlobalIndex(exp.list[1].string));
+                        }
+                        
                         // 2. Local vars
+                        else 
+                        {
+                            co->addLocal(varName);
+                            emit(OP_SET_LOCAL);
+                            emit(co->getLocalIndex(varName));
+                        }
                     }
 
                     // Variable Set
                    else if (op == "set")
                     {
-                        // 1. Global vars
-                        // ex. (var x (+ y 10))
+
                         auto varName = exp.list[1].string;
 
-                        auto globalIndex = global->getGlobalIndex(varName);
-
-                        if (globalIndex == -1)
-                        {
-                            DIE << "Reference error : " << varName << " is not defined";
-                        }
                         gen(exp.list[2]);
-                        emit(OP_SET_GLOBAL);
-                        emit(globalIndex);
 
                         // 2. Local vars
+                        auto localIndex  = co->getLocalIndex(varName);
+                        
+                        if (localIndex != -1)
+                        {
+                            emit(OP_SET_LOCAL);
+                            emit(localIndex);
+                        }
+                        else
+                        {
+                            // 2. Global vars
+                            // ex. (var x (+ y 10))
+                            auto globalIndex = global->getGlobalIndex(varName);
+
+                            if (globalIndex == -1)
+                            {
+                                DIE << "Reference error : " << varName << " is not defined";
+                            }
+                            emit(OP_SET_GLOBAL);
+                            emit(globalIndex);
+                        }
+                    }
+
+                    // Blocks
+                    else if (op == "begin")
+                    {
+                        std::cout << "hello begin" << std::endl;
+                        scopeEnter();
+                        for (auto i = 1; i < exp.list.size(); ++i)
+                        {
+                            // value of the last expression is kept on the stack as final result
+                            bool isLast = i == exp.list.size() - 1;
+
+                            // Local variable or function (should not be popped)
+                            // - popped from stack when scope ends
+                            auto isLocalDeclaration = isDeclaration(exp.list[i]) && !isGlobalScope();
+
+                            // generate expression code
+                            gen(exp.list[i]);
+
+                            if (!isLast && !isLocalDeclaration)
+                            {
+                                // 계속해서 OP_POP 을 넣어주는 이유 ?
+                                // - ex. (set x (+ x 10)) : 각각의 명령어를 실행하고 나서, 그 다음 명령어를 stack 에서 찾아서 실행할 수 있게 하기 위함이다.
+                                emit(OP_POP);
+                            }
+                        }
+                        scopeExit();
                     }
                 }
 
@@ -275,7 +335,47 @@ public :
     }
 
 private :
-    
+    bool isDeclaration(const Exp& exp) {return isVarDeclaration(exp);}
+    // (var <name> <value>)
+    bool isVarDeclaration(const Exp& exp) {return isTaggedList(exp, "var");}
+    bool isTaggedList(const Exp& exp, const std::string& tag)
+    {
+        return exp.type == ExpType::LIST && exp.list[0].type == ExpType::SYMBOL &&
+                exp.list[0].string == tag;
+    }
+    // Num of local vars in this scope
+    size_t getVarsCountAndPopLocalsOnScopeExit()
+    {
+        auto varsCount = 0;
+
+        if (co->locals.size() > 0)
+        {
+            while (co->locals.back().scopeLevel == co->scopeLevel)
+            {
+                co->locals.pop_back();
+                varsCount++;
+            }
+        }
+
+        return varsCount;
+    }
+
+    void scopeEnter() {co->scopeLevel++;}
+    void scopeExit()  
+    {
+        // pop vars from stack if they were declared
+        // within this specific scope
+        // - 즉, scope 를 나가는 순간 해당 scope 에서 선언된 모든 지역변수 및 function 들도 pop 할 것이다.
+        auto varsCount = getVarsCountAndPopLocalsOnScopeExit();
+
+        if (varsCount > 0)
+        {
+            emit(OP_SCOPE_EXIT);
+            emit(varsCount);
+        }
+
+        co->scopeLevel--;
+    }
 
     /*
     * Emit data to bytecode
@@ -343,6 +443,8 @@ private :
             emit(op);
         }while(false);   
     }
+
+    bool isGlobalScope() {return co->name == "main" && co->scopeLevel == 1;}
     
     /*
     * Global object
