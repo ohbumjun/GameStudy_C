@@ -7,6 +7,7 @@
 #include "../parser/EvaParser.h"
 #include "../compiler/EvaCompiler.h"
 #include "./EvaValue.h"
+#include "./Global.h"
 
 #include <vector>
 #include <string>
@@ -42,9 +43,12 @@ class EvaVM
 public :
     EvaVM() : 
     parser(std::make_unique<EvaParser>()),
-    compiler(std::make_unique<EvaCompiler>())
+    global(std::make_shared<Global>()),
+    compiler(std::make_unique<EvaCompiler>(global))
     {
+        std::cout << "evaVM constructor" << std::endl;
         sp = stack.data();
+        setGlobalVariables();
     };
 
     EvaValue exec(const std::string& program)
@@ -262,6 +266,19 @@ private :
             return res;   
         }while(false);        
     }
+
+    /*
+    * BuiltIn variables & functions preinstalled
+    */
+    void setGlobalVariables()
+    {
+        global->addConst("x", 10);
+        global->addConst("y", 20);
+
+        std::cout << "set globals" << std::endl;
+    }
+
+    
     /*
     * Parser Instance
     */
@@ -271,6 +288,12 @@ private :
     * Compiler Insatnce
     */
    std::unique_ptr<EvaCompiler> compiler;
+
+   /*
+   * Global object
+    - shared ptr : shared among compiler & vm
+   */
+  std::shared_ptr<Global> global;
 
     /*
     Intruction Pointer / Program Counter

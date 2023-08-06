@@ -4,6 +4,7 @@
 #include "../vm/EvaValue.h"
 #include "../bytecode/OpCode.h"
 #include "../utils/Logger.h"
+#include "../vm/Global.h"
 
 /*
 Eva disassembler
@@ -11,6 +12,9 @@ Eva disassembler
 class EvaDisassembler
 {
 public :
+
+    EvaDisassembler(std::shared_ptr<Global> global) :
+        global(global){}
 
     /*
     * ByteCode to Textural Expression
@@ -64,6 +68,11 @@ private :
             case OP_JMP :
             {
                 return disassembleJump(co, opcode, offset);
+            }
+            case OP_GET_GLOBAL :
+            case OP_SET_GLOBAL :
+            {
+                return dissassebleGlobal(co, opcode, offset);
             }
             default :
             {
@@ -125,6 +134,19 @@ private :
         return offset + 2;
     }
 
+    size_t dissassebleGlobal(CodeObject* co, uint8_t opcode, uint8_t offset)
+    {
+        // 2byte : opcode , global variable index
+        dumpBytesToStringStream(co, offset, 2);
+        printOpcode(opcode);
+
+        auto globalIndex = co->code[offset + 1];
+        
+        std::cout << (int)globalIndex << " (" << global->get(globalIndex).name << ")";
+    
+        return offset + 2;
+    }
+
     size_t disassembleConst(CodeObject* co, uint8_t opcode, uint8_t offset)
     {
         // ex. Offset : 0000, Bytes : 01 00, Opcode : CONST, Arg 0 (15)
@@ -177,6 +199,8 @@ private :
 
         std::cout.flags(f);
    }
+
+   std::shared_ptr<Global> global;
 
    std::array<std::string, 6> inverseCompareOps_ =
    {

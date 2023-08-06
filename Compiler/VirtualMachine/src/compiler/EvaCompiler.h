@@ -6,6 +6,7 @@
 #include "../bytecode/OpCode.h"
 #include "../utils/Logger.h"
 #include "../disassembler/EvaDisassembler.h"
+#include "../vm/Global.h"
 
 #include <string>
 #include <map>
@@ -34,7 +35,9 @@ class EvaCompiler
 
 
 public :
-    EvaCompiler() : disassembler(std::make_unique<EvaDisassembler>()){};
+    EvaCompiler(std::shared_ptr<Global> global) : 
+        global(global),
+        disassembler(std::make_unique<EvaDisassembler>(global)){};
 
     /*
     * Main compile API
@@ -91,6 +94,14 @@ public :
                 else 
                 {
                     // variables
+                    // 1. Global vars
+                    if (global->exist(exp.string) == false)
+                    {
+                        DIE << "[EvaCompiler] : refernce error " << exp.string;
+                    }
+
+                    emit(OP_GET_GLOBAL);
+                    emit(global->getGlobalIndex(exp.string));
                 }
                 break;
             }
@@ -293,18 +304,22 @@ private :
             emit(op);
         }while(false);   
     }
+    
+    /*
+    * Global object
+        - shared ptr : shared among compiler & vm
+    */
+    std::shared_ptr<Global> global;
 
     /*
     * Compile code object
     */
     CodeObject* co;
-
     
     /*
     * Disassembler
     */
     std::unique_ptr<EvaDisassembler> disassembler;
-
 
     /*
     * Compare ops -> encode to number

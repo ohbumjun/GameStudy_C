@@ -4,10 +4,14 @@
 
 int main(int argc, char const *argv[])
 {
+    std::cout << "start" << std::endl;
+    
     EvaVM vm;
 
+    std::cout << "before Execute" << std::endl;
+
     EvaValue result = vm.exec(R"(
-      (if (== 5 10) 1 2)
+      x
     )");
 
     // log(result.number);
