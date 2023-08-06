@@ -9,6 +9,9 @@ Instruction set for eva VM
 
 #define __OpCode_h
 
+#include <string>
+#include <cstdint>
+
 /*
 Stop Program
 - Prograrm 을 중지하라는 의미의 bytecode 는 0 이다.
@@ -40,5 +43,27 @@ Control Flows
 #define OP_JMP_IF_FALSE 0x07
 
 #define OP_JMP 0x08
+
+#define OP_STR(op)  \
+    case OP_##op :  \
+        return #op; \
+
+std::string opcodeToString(uint8_t opcode)
+{
+    switch (opcode)
+    {
+        OP_STR(HALT);
+        OP_STR(CONST);
+        OP_STR(ADD);
+        OP_STR(SUB);
+        OP_STR(MUL);
+        OP_STR(DIV);
+        OP_STR(COMPARE);
+        OP_STR(JMP_IF_FALSE);
+        OP_STR(JMP);
+    };
+
+    return "";
+};
 
 #endif

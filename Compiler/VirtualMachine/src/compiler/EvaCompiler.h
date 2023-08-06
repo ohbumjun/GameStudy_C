@@ -5,6 +5,7 @@
 #include "../vm/EvaValue.h"
 #include "../bytecode/OpCode.h"
 #include "../utils/Logger.h"
+#include "../disassembler/EvaDisassembler.h"
 
 #include <string>
 #include <map>
@@ -33,7 +34,7 @@ class EvaCompiler
 
 
 public :
-    EvaCompiler(){};
+    EvaCompiler() : disassembler(std::make_unique<EvaDisassembler>()){};
 
     /*
     * Main compile API
@@ -52,6 +53,11 @@ public :
 
         return co;
    }
+   
+    void disassembleBytecode()
+    {
+        disassembler->disassemble(co);
+    }
 
     // recursively travel ast 
     void gen(const Exp& exp)
@@ -219,6 +225,7 @@ public :
     }
 
 private :
+    
 
     /*
     * Emit data to bytecode
@@ -291,6 +298,13 @@ private :
     * Compile code object
     */
     CodeObject* co;
+
+    
+    /*
+    * Disassembler
+    */
+    std::unique_ptr<EvaDisassembler> disassembler;
+
 
     /*
     * Compare ops -> encode to number

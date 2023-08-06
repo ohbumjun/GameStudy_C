@@ -55,14 +55,12 @@ public :
         // 2. compile program to Eva bytecode
         // compiler : accepts ast => produce bytecode & associated data structure (ex. constant pool)
         co = compiler->compile(ast);
-        
-        // ex) (+ "Hello", "World") => code = {OP_CONST, 0,OP_CONST,1,OP_ADD,OP_HALT}
-        // constants.push_back(ALLOC_STRING("Hello"));
-        // constants.push_back(ALLOC_STRING(" World!"));
-        // code = {OP_CONST, 0, // constant pool indexOP_CONST,1,OP_ADD,OP_HALT};
 
         // Set instruction pointer to first byte of bytecode (혹은 program counter 라고도 불린다.)
         ip = &co->code[0];
+
+        // Debug disassembly
+        compiler->disassembleBytecode();
 
         return eval();
     }
@@ -168,6 +166,8 @@ public :
                     }
                 case OP_JMP :
                     {
+                        // ex. (if (> 5 1) 2 3) 이라고 하면, '2' 로 간 다음, 그 이후에 byte code 로 만들어진
+                        //     3 부분에 대한 것을 건너뛰는 것이다. 그래서 if 가 true 일때에 대한 경우만 처리하는 것이다.
                         ip = to_address(read_short());
                         break;
                     }
@@ -262,7 +262,6 @@ private :
             return res;   
         }while(false);        
     }
-
     /*
     * Parser Instance
     */
