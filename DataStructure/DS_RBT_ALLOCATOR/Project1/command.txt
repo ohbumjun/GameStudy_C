@@ -1,0 +1,4 @@
+@echo off
+echo C:\Users\user\AppData\Roaming\Com2uS\Lv1Engine\Projects
+echo dir
+dir
