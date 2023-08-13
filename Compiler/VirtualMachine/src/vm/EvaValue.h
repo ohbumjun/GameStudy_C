@@ -45,7 +45,8 @@ struct EvaValue
 enum class ObjectType
 {
    STRING,
-   CODE   // EvaCompiler 가 만들어내는 Code
+   CODE,   // EvaCompiler 가 만들어내는 Code
+   NATIVE  // function
 };
 
 struct Object
@@ -58,6 +59,26 @@ struct StringObject:public Object{
     StringObject(const std::string& str) : Object(ObjectType::STRING), string(str){}
     std::string string;
 };
+
+// Function ---
+
+using NativeFn = std::function<void()>;
+
+struct NativeObject : public Object
+{
+    NativeFn func;
+
+    std::string name;
+
+    // 해당 함수가 끝나고 stack 으로부터 pop 해야할 지역변수 및 매개변수 개수
+    size_t arity;
+
+    NativeObject(NativeFn fn, const std::string& name, size_t arity) :Object(ObjectType::NATIVE),
+        func(fn),
+        name(name),
+        arity(arity){}
+};
+// -----------
 
 struct CodeObject:public Object{
     CodeObject(const std::string& str) : Object(ObjectType::CODE), name(str){}
@@ -110,12 +131,16 @@ Constructors
 
 #define ALLOC_STRING(value) ((EvaValue){EvaValueType::OBJECT, .object = (Object*)new StringObject(value)})
 #define ALLOC_CODE(name) ((EvaValue){EvaValueType::OBJECT, .object = (Object*)new CodeObject(name)})
+#define ALLOC_NATIVE(fn, name, arity)   \
+ ((EvaValue){EvaValueType::OBJECT,     \
+ .object = (Object*)new NativeObject(fn, name, arity)})
 
 // Address EvaValue as plain number
 #define AS_NUMBER(evaValue) ((double)(evaValue).number)
 #define AS_BOOLEAN(evaValue) ((bool)(evaValue).boolean)
 #define AS_STRING(evaValue) ((StringObject*)(evaValue).object)
 #define AS_CODE(evaValue) ((CodeObject*)(evaValue).object)
+#define AS_NATIVE(evaValue) ((NativeObject*)(evaValue).object)
 #define AS_CPPSTRING(evaValue) (AS_STRING(evaValue)->string)
 #define AS_OBJECT(evaValue) ((evaValue).object)
 
@@ -127,6 +152,7 @@ Constructors
     (IS_OBJECT(evaValue) && AS_OBJECT(evaValue)->type == objectType)
 #define IS_STRING(evaValue) IS_OBJECT_TYPE(evaValue, ObjectType::STRING)
 #define IS_CODE(evaValue) IS_OBJECT_TYPE(evaValue, ObjectType::CODE)
+#define IS_NATIVE(evaValue) IS_OBJECT_TYPE(evaValue, ObjectType::NATIVE)
 
 std::string evaValueToTypeString(const EvaValue& evaValue)
 {
@@ -134,6 +160,7 @@ std::string evaValueToTypeString(const EvaValue& evaValue)
     else if (IS_BOOLEAN(evaValue))return "BOOL";
     else if (IS_STRING(evaValue))return "STRING";
     else if (IS_CODE(evaValue))return "CODE";
+    else if (IS_NATIVE(evaValue))return "NATIVE";
     else 
     {
         DIE << "evaValueToTypeString : unknown type " << (int)evaValue.type ;
@@ -154,6 +181,11 @@ std::string evaValueToConstantString(const EvaValue& evaValue)
     {
         auto code = AS_CODE(evaValue);
         ss << "code" << code << ": " << code->name;
+    }
+    else if (IS_NATIVE(evaValue))
+    {
+        auto fnObj = AS_NATIVE(evaValue);
+        ss << "code " << fnObj->name << " / arity : " << fnObj->arity;
     }
     else 
     {

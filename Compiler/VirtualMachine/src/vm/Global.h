@@ -4,6 +4,7 @@
 #include <string>
 #include "../utils/Logger.h"
 #include "EvaValue.h"
+#include <functional>
 
 struct GlobalVar
 {
@@ -85,6 +86,19 @@ struct Global
         }
 
         globals.push_back({name, NUMBER(value)});
+    }
+
+    /*
+    * Add Native functions.
+    */
+    void addNativeFunction(const std::string& name, std::function<void()> fn, size_t arity)
+    {
+        if (exist(name))
+        {
+            return;
+        }
+
+        globals.push_back({name, ALLOC_NATIVE(fn, name, arity)});
     }
 
     bool exist(const std::string& name) {return getGlobalIndex(name) != -1;}

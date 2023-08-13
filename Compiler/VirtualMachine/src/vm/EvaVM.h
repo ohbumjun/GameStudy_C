@@ -84,12 +84,9 @@ public :
    {
         for (;;)
         {
-            // 
+            dumpStack();
+
             auto opcode = READ_BYTE();
-            
-            // Print the byte value in hexadecimal format
-            uint8_t byteValue = static_cast<uint8_t>(opcode);
-            std::cout << "opcode: " << std::hex << std::setw(2) << std::setfill('0') << +byteValue << "\n";
             
             switch(opcode)
             {
@@ -201,6 +198,7 @@ public :
                     // 변수의 값을 조회한다.
                     // 컴파일러 : value -> OP_SET_GLOBAL -> index
                     //           여기서 value 에 해당하는 값을 가져온다.
+                    // ex) var x 3 : 3 stack 에 push -> x 변수 정의 -> x 변수의 idx stack push 
                     auto value = peek(0);
                     
                     global->set(globalIndex, value);
@@ -264,6 +262,37 @@ public :
                 {
                     pop();
                     break;
+                }
+
+                case OP_CALL :
+                {
+                    // how many arg
+                    auto argCount = READ_BYTE();
+
+                    // stack : fn, param1, param2, param3... 이렇게 param 목록 바로 아래에 존재
+                    auto fnValue = peek(argCount);
+
+                    // 1. Native fn
+                    if (IS_NATIVE(fnValue))
+                    {
+                        AS_NATIVE(fnValue)->func();   
+
+                        // after call, result is on top of stack
+                        // below result, fn args are located
+                        // below param , fn is located
+                        // 1. pop result
+                        // 2. pop param + fn
+                        // 3. push result
+                        auto result = pop();
+
+                        popN(argCount + 1);
+
+                        push(result);
+
+                        break;
+                    }
+
+                    // 2. User Defined
                 }
 
                 default :
@@ -389,8 +418,37 @@ private :
     void setGlobalVariables()
     {
         global->addConst("VERSION", 1);
-        global->addConst("y", 20);
+        
+        /*Native square function*/
+        global->addNativeFunction(
+            "square",
+            [&](){
+                auto x = AS_NUMBER(peek(0));    // stack 에서 함수 인자를 peek 한다.
+                                                // pop 하지 않는 이유는, fn body 내부에서도 사용해야 하기 때문이다. 
+                push(NUMBER(x*x));
+            },
+            1                                   // fn 이 끝나고, pop 해야할 지역 및 매개 변수 개수
+        );
     }
+
+    /*
+    * Dump current stack
+    */
+    void dumpStack()
+    {
+        std::cout << "--- Stack ---" << std::endl;
+        if (sp == &(*(stack.begin())))
+        {
+            std::cout << "(empty)" << std::endl;
+        }
+        EvaValue* csp = sp - 1;
+        while (csp >= &(*(stack.begin())))
+        {
+            std::cout << *csp-- << "\n";
+        }
+        std::cout << "\n";
+    }
+
     /*
     * Global object
         - shared ptr : shared among compiler & vm

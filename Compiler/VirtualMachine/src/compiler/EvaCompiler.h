@@ -366,6 +366,26 @@ public :
                         }
                         scopeExit();
                     }
+                    else
+                    {
+                        // 그외 모든 format 은 모두 function 으로 취급
+                        // ex) square 2
+
+                        // push fn on to stack
+                        gen(exp.list[0]);
+                        
+                        // push params
+                        for (auto i = 1; i < exp.list.size(); ++i)
+                        {
+                            gen(exp.list[i]);
+                        }
+
+                        // call fn
+                        emit(OP_CALL);
+
+                        // how many params
+                        emit(exp.list.size() - 1);
+                    }
                 }
 
                 break;

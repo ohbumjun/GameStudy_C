@@ -16,10 +16,7 @@ public :
     EvaDisassembler(std::shared_ptr<Global> global) :
         global(global)
         {
-<<<<<<< HEAD
             std::cout << "Disassembler constructor" << std::endl;
-=======
->>>>>>> bbed56bb334f286d5b375cda7e377fa4d660a11e
         }
 
     /*
@@ -64,6 +61,7 @@ private :
                 return disassembleSimple(co, opcode, offset);
             }
             case OP_SCOPE_EXIT :
+            case OP_CALL :
             {
                 return disassembleWord(co, opcode, offset);
             }
@@ -115,6 +113,7 @@ private :
         dumpBytesToStringStream(co, offset, 2);
         printOpcode(opcode);
         // ex. ON_SCOPE_EXIT : num of local vars to pop from stack
+        // ex. ON_CALL       : num of fn argumnets
         std::cout << (int)co->code[offset + 1];
         return offset + 2;
     }
