@@ -421,7 +421,7 @@ private :
         
         /*Native square function*/
         global->addNativeFunction(
-            "square",
+            "native-square",
             [&](){
                 auto x = AS_NUMBER(peek(0));    // stack 에서 함수 인자를 peek 한다.
                                                 // pop 하지 않는 이유는, fn body 내부에서도 사용해야 하기 때문이다. 

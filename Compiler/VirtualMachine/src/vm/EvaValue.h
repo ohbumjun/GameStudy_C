@@ -15,6 +15,7 @@ enum class EvaValueType
     BOOLEAN,
 };
 
+// 지역 변수 혹은 해당 지역에서 정의된 user-defined fn 도 LocalVar 이 될 수 있다.
 struct LocalVar
 {
     std::string name;
@@ -45,8 +46,9 @@ struct EvaValue
 enum class ObjectType
 {
    STRING,
-   CODE,   // EvaCompiler 가 만들어내는 Code
-   NATIVE  // function
+   CODE,    // EvaCompiler 가 만들어내는 Code
+   NATIVE,  // native function
+   FUNCTION
 };
 
 struct Object
@@ -60,7 +62,7 @@ struct StringObject:public Object{
     std::string string;
 };
 
-// Function ---
+// Native Function ---
 
 using NativeFn = std::function<void()>;
 
@@ -78,10 +80,10 @@ struct NativeObject : public Object
         name(name),
         arity(arity){}
 };
-// -----------
+
 
 struct CodeObject:public Object{
-    CodeObject(const std::string& str) : Object(ObjectType::CODE), name(str){}
+    CodeObject(const std::string& str, size_t arity) : Object(ObjectType::CODE), name(str), arity(arity){}
     
     std::string name;
 
@@ -98,10 +100,16 @@ struct CodeObject:public Object{
     // - Local Block 에서 Local variable 은 stack 에 쌓인다. vector 를 stack 형태로 사용하고자 getLocalIndex 는 맨 뒤에 있는 요소 부터 찾고자 하는 것이다.
     std::vector<LocalVar> locals;
 
+    // num of params
+    // - code object can represent function
+    size_t arity;
+
     void addLocal(const std::string& name)
     {
         locals.push_back({name, scopeLevel});
     }
+
+    void addConst(const EvaValue& value){constants.push_back(value);}
 
     // get global index
     int getLocalIndex(const std::string& name)
@@ -120,20 +128,34 @@ struct CodeObject:public Object{
     }
 };
 
+// User Defined Function Object
+struct FunctionObject : public Object {
+    /*
+    Refererence to code object
+    - contains function code, locals, etc
+    */
+   FunctionObject(CodeObject* co) : Object(ObjectType::FUNCTION), co(co){}
+
+   CodeObject* co;
+};
+
 /*
 Constructors
 */
 
-// EvaValue
 #define NUMBER(value) ((EvaValue){EvaValueType::NUMBER, .number = value})
 #define BOOLEAN(value) ((EvaValue){EvaValueType::BOOLEAN, .boolean = value})
 
-
 #define ALLOC_STRING(value) ((EvaValue){EvaValueType::OBJECT, .object = (Object*)new StringObject(value)})
-#define ALLOC_CODE(name) ((EvaValue){EvaValueType::OBJECT, .object = (Object*)new CodeObject(name)})
+#define ALLOC_CODE(name, arity) ((EvaValue){EvaValueType::OBJECT, .object = (Object*)new CodeObject(name, arity)})
+
 #define ALLOC_NATIVE(fn, name, arity)   \
  ((EvaValue){EvaValueType::OBJECT,     \
  .object = (Object*)new NativeObject(fn, name, arity)})
+
+#define ALLOC_FUNCTION(co)             \
+ ((EvaValue){EvaValueType::OBJECT,      \
+ .object = (Object*)new FunctionObject(co)})
 
 // Address EvaValue as plain number
 #define AS_NUMBER(evaValue) ((double)(evaValue).number)
@@ -141,6 +163,7 @@ Constructors
 #define AS_STRING(evaValue) ((StringObject*)(evaValue).object)
 #define AS_CODE(evaValue) ((CodeObject*)(evaValue).object)
 #define AS_NATIVE(evaValue) ((NativeObject*)(evaValue).object)
+#define AS_FUNCTION(evaValue) ((FunctionObject*)(evaValue).object)
 #define AS_CPPSTRING(evaValue) (AS_STRING(evaValue)->string)
 #define AS_OBJECT(evaValue) ((evaValue).object)
 
@@ -153,6 +176,7 @@ Constructors
 #define IS_STRING(evaValue) IS_OBJECT_TYPE(evaValue, ObjectType::STRING)
 #define IS_CODE(evaValue) IS_OBJECT_TYPE(evaValue, ObjectType::CODE)
 #define IS_NATIVE(evaValue) IS_OBJECT_TYPE(evaValue, ObjectType::NATIVE)
+#define IS_FUNCTION(evaValue) IS_OBJECT_TYPE(evaValue, ObjectType::FUNCTION)
 
 std::string evaValueToTypeString(const EvaValue& evaValue)
 {
@@ -161,6 +185,7 @@ std::string evaValueToTypeString(const EvaValue& evaValue)
     else if (IS_STRING(evaValue))return "STRING";
     else if (IS_CODE(evaValue))return "CODE";
     else if (IS_NATIVE(evaValue))return "NATIVE";
+    else if (IS_FUNCTION(evaValue))return "FUNCTION";
     else 
     {
         DIE << "evaValueToTypeString : unknown type " << (int)evaValue.type ;
@@ -186,6 +211,11 @@ std::string evaValueToConstantString(const EvaValue& evaValue)
     {
         auto fnObj = AS_NATIVE(evaValue);
         ss << "code " << fnObj->name << " / arity : " << fnObj->arity;
+    }
+    else if (IS_FUNCTION(evaValue))
+    {
+        auto fnObj = AS_FUNCTION(evaValue);
+        ss << "code " << fnObj->co->name << " / arity : " << fnObj->co->arity;
     }
     else 
     {

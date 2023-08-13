@@ -24,8 +24,7 @@ public :
     */
     void disassemble(CodeObject* co)
     {
-        std::cout << "--- Disassembly ---" << std::endl;
-        std::cout << "Code Name : " << co->name << std::endl;
+        std::cout << "--- Disassembly : " << co->name << " ---" << std::endl;
 
         size_t offset = 0;
 
@@ -56,6 +55,7 @@ private :
             case OP_DIV  :
             case OP_SUB  :
             case OP_POP  :
+            case OP_RETURN :
             {
                 // OP_HALT 는 1byte 에 해당하는 명령어 -> disassembleSimple 함수로 처리.
                 return disassembleSimple(co, opcode, offset);
@@ -114,7 +114,7 @@ private :
         printOpcode(opcode);
         // ex. ON_SCOPE_EXIT : num of local vars to pop from stack
         // ex. ON_CALL       : num of fn argumnets
-        std::cout << (int)co->code[offset + 1];
+        std::cout << "Pooped local var / params " << (int)co->code[offset + 1];
         return offset + 2;
     }
 
@@ -166,7 +166,7 @@ private :
 
         auto localIndex = co->code[offset + 1];
         
-        std::cout << (int)localIndex << " (" << co->locals[localIndex].name << ")";
+        std::cout << "Local Idx " << (int)localIndex << " (" << co->locals[localIndex].name << ")";
     
         return offset + 2;
     }
@@ -179,7 +179,7 @@ private :
 
         auto globalIndex = co->code[offset + 1];
         
-        std::cout << (int)globalIndex << " (" << global->get(globalIndex).name << ")";
+        std::cout << "Global Idx " << (int)globalIndex << " (" << global->get(globalIndex).name << ")";
     
         return offset + 2;
     }
