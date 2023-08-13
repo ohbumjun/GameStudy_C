@@ -16,7 +16,10 @@ public :
     EvaDisassembler(std::shared_ptr<Global> global) :
         global(global)
         {
+<<<<<<< HEAD
             std::cout << "Disassembler constructor" << std::endl;
+=======
+>>>>>>> bbed56bb334f286d5b375cda7e377fa4d660a11e
         }
 
     /*
