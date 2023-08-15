@@ -47,18 +47,22 @@ public :
       - receives AST
       - make bytecode & related data structures
     */
-   CodeObject* compile(const Exp& exp)
-   {
-        crrentCo = AS_CODE(createCodeObjectValue("main"));
+    void compile(const Exp& exp)
+    {
+            crrentCo = AS_CODE(createCodeObjectValue("main"));
 
-        // Generate recursively from top-level (functions ?)
-        gen(exp); 
+            main = AS_FUNCTION(ALLOC_FUNCTION(crrentCo));
 
-        // explicit vm-stop marker
-        emit(OP_HALT);
+            // Generate recursively from top-level (functions ?)
+            gen(exp); 
 
-        return crrentCo;
-   }
+            // explicit vm-stop marker
+            emit(OP_HALT);
+            
+            std::cout << "compile end" << std::endl;
+    }
+
+    FunctionObject* getMainFunction() {return main;}
    
     void disassembleBytecode()
     {
@@ -91,6 +95,8 @@ public :
             }
             case ExpType::SYMBOL :
             {
+                // std::cout << "symbol in gen : " << exp.string << std::endl;
+
                 // ex. true
                 if (exp.string == "true" || exp.string == "false")
                 {
@@ -115,7 +121,7 @@ public :
                         // 2. Global vars
                         if (global->exist(varName) == false)
                         {
-                            DIE << "[EvaCompiler] : refernce error " << varName;
+                            DIE << "[EvaCompiler] : reference error " << varName;
                         }
 
                         emit(OP_GET_GLOBAL);
@@ -140,6 +146,8 @@ public :
                     }
                     else if (op == "*")
                     {
+                        // std::cout << "* op" << std::endl;
+
                         gen_binary_op(exp, OP_MUL);
                     }
                     else if (op == "/")
@@ -348,9 +356,12 @@ public :
                         // define fn in currentCO
                         if (isGlobalScope())
                         {
+                            std::cout << "add " << fnName << " to global" << std::endl;
                             global->define(fnName);
                             emit(OP_SET_GLOBAL);
                             emit(global->getGlobalIndex(fnName));
+                            std::string stream = global->exist(fnName) ? "fn defined in global" : "not defined" ;
+                            std::cout << stream << std::endl;
                         }
                         else 
                         {
@@ -458,6 +469,7 @@ public :
                     {
                         // 그외 모든 format 은 모두 function 으로 취급
                         // ex) square 2
+                        std::cout << "call user defined func : " << exp.list[0].string << std::endl;
 
                         // push fn on to stack
                         gen(exp.list[0]);
@@ -619,6 +631,12 @@ private :
     */
     bool isDefinedFunctionBody() {return crrentCo->name != "main" && crrentCo->scopeLevel == 1;}
     
+    /*
+    * Main Entry Point (function)
+        - 컴파일러로 하여금, main function 에 대한 reference 를 들고 있게 한다.
+    */
+   FunctionObject* main;
+
     /*
     * Global object
         - shared ptr : shared among compiler & vm

@@ -10,6 +10,7 @@
 #include "./Global.h"
 
 #include <vector>
+#include <stack>
 #include <string>
 #include <array>
 
@@ -30,6 +31,24 @@ Binary Operation
         push(NUMBER(op1 op op2)); \
     }while(false)
 
+/*
+Stack Frame for functino calls
+- EvaVM 이 가지고 있는 evaValue stack 과 별개로
+- 여러개의 stack frame 으로 구성되어 있는 Call Stack 을 따로 구성할 것이다.
+*/
+struct Frame
+{
+    // return addr of caller 
+    // 즉, 특정 함수를 호출하고 나서, 다시 돌아올 address 를 keep 해둔다.
+    uint8_t* ra;
+
+    // base pointer of prev caller
+    // 이전 함수의 local variable 들에 접근할 수 있게 된다.
+    EvaValue* bp;
+
+    // 이전 Function Object 
+    FunctionObject* fn;
+};
 
 /*
 *  Read Byte from instruction Pointer 
@@ -59,10 +78,13 @@ public :
         // 2. compile program to Eva bytecode
         // compiler : accepts ast => produce bytecode & associated data structure (ex. constant pool)
         std::cout << "--- Compile ---" << std::endl;
-        co = compiler->compile(ast);
+
+        compiler->compile(ast);
+
+        fn = compiler->getMainFunction();
 
         // Set instruction pointer to first byte of bytecode (혹은 program counter 라고도 불린다.)
-        ip = &co->code[0];
+        ip = &fn->co->code[0];
 
         sp = stack.data();
 
@@ -293,6 +315,48 @@ public :
                     }
 
                     // 2. User Defined
+                    auto callee = AS_FUNCTION(fnValue);
+
+                    // 자. user defined fn 을 호출하고 나서, 다시 user defined fn 호출 전의 명령어 위치로
+                    // 되돌아가야 한다. 
+                    // 다시 말해 ip(return addr) , bp, fn 정보를 keep 해두었다가 fn 호출이 끝나면 복구시켜야 한다.
+                    // 관련 값들을 저장하기 위해서 evaValue stack 외에 call stack 도 만들 것이다.
+                    // 그리고 해당 call stack 은 stack frame 들로 구성되어 있게 된다.
+                    // 해당 callStack 에서 Frame 을 다시 pop 하여, user defined fn 이전 call stack 으로 돌아가는
+                    // bytecode 는 OP_RETURN 이 된다.
+                    callStack.push(Frame{ip, bp, fn});
+
+                    // To access local vars , etc in user defined function
+                    fn = callee;
+
+                    // set base (frame) pointer for callee
+                    // -1           : function 그 자체
+                    // argCount     : function result
+                    // 즉, bp 가 stack 상에서 fn 의 위치를 가리키게 한다.
+                    bp = sp - argCount - 1;
+
+                    // user defined function 을 호출하는 방법은 main function 을 실행하는 방법과 동일하다.
+                    // ip 를 bytecode 의 시작점으로 둔다.
+                    // 즉, function 을 호출한다는 것은 결국, 그 function 의 bytecode 로 jump 하는 것과 같다.
+                    ip = &callee->co->code[0];
+
+
+                    break;
+                }
+
+                /*Return from function*/
+                case OP_RETURN :
+                {
+                    // Restore prev function before returned user defined fn
+                    auto callerFrame = callStack.top();
+
+                    ip = callerFrame.ra;
+                    bp = callerFrame.bp;
+                    fn = callerFrame.fn;
+
+                    callStack.pop();
+
+                    break;
                 }
 
                 default :
@@ -360,12 +424,12 @@ private :
     EvaValue get_const()
     {
         size_t constantIndex = READ_BYTE();
-        return co->constants[constantIndex];
+        return fn->co->constants[constantIndex];
     }
 
     uint8_t* to_address(size_t offset)
     {
-        return &(co->code[offset]);
+        return &(fn->co->code[offset]);
     }
 
     template<typename T>
@@ -487,9 +551,15 @@ private :
     std::array<EvaValue, STACK_LIMIT> stack;
 
     /*
-    *  Code Objects
+    Seperate stack for calls. keep return address
+    - 참고 : 실제 vm 들은 EvaValue, Frame 에 해당하는 stack 을 동시에 사용할 수도 있다.
     */
-   CodeObject* co;
+    std::stack<Frame> callStack;
+
+    /*
+    *  Current executing function
+    */
+   FunctionObject* fn;
 };
 
 #endif
