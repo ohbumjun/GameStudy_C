@@ -291,6 +291,8 @@ public :
                     // how many arg
                     auto argCount = READ_BYTE();
 
+                    std::cout << "ArgCount : " << (size_t)(argCount) << std::endl;
+
                     // stack : fn, param1, param2, param3... 이렇게 param 목록 바로 아래에 존재
                     auto fnValue = peek(argCount);
 
@@ -339,7 +341,6 @@ public :
                     // ip 를 bytecode 의 시작점으로 둔다.
                     // 즉, function 을 호출한다는 것은 결국, 그 function 의 bytecode 로 jump 하는 것과 같다.
                     ip = &callee->co->code[0];
-
 
                     break;
                 }

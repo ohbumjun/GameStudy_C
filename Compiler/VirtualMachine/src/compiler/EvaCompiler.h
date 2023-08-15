@@ -343,7 +343,8 @@ public :
                         //   모든 함수는 컴파일 타임 때 만들어진다.
                         auto fn = ALLOC_FUNCTION(crrentCo);
 
-                        // restore the code object
+                        // restore the code object (이제부터의 emit 은 user defined code object 가 아니라
+                        // 기존 codeObject 로 들어가게 된다.)
                         crrentCo = prevCo;
                         
                         // add fn object as constants
@@ -356,12 +357,9 @@ public :
                         // define fn in currentCO
                         if (isGlobalScope())
                         {
-                            std::cout << "add " << fnName << " to global" << std::endl;
                             global->define(fnName);
                             emit(OP_SET_GLOBAL);
                             emit(global->getGlobalIndex(fnName));
-                            std::string stream = global->exist(fnName) ? "fn defined in global" : "not defined" ;
-                            std::cout << stream << std::endl;
                         }
                         else 
                         {
@@ -469,8 +467,7 @@ public :
                     {
                         // 그외 모든 format 은 모두 function 으로 취급
                         // ex) square 2
-                        std::cout << "call user defined func : " << exp.list[0].string << std::endl;
-
+                    
                         // push fn on to stack
                         gen(exp.list[0]);
                         
@@ -516,6 +513,8 @@ private :
                 varsCount++;
             }
         }
+
+        std::cout << "varCount  in getVarsCountAndPopLocalsOnScopeExit : " << varsCount << std::endl;
 
         return varsCount;
     }
