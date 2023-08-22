@@ -31,7 +31,7 @@ class EvaCompiler
         }                                               \
         crrentCo->constants.push_back(allocator(value));      \
     }while(false);      
-    
+
 
 
 public :
@@ -259,13 +259,27 @@ public :
                    // Variable Declaration
                    else if (op == "var")
                     {
+                        // ex. (var x (+ y 10))
                         auto varName = exp.list[1].string;
 
-                        // Initialize
-                        gen(exp.list[2]);
+                        // special treatment of (var foo (lambda ...))
+                        // to capture function name from variables
+                        if (isLambda(exp.list[2]))
+                        {
+                            compileFunction(
+                            /*exp*/     exp.list[2],
+                            /*name*/    varName,
+                            /*params*/  exp.list[2].list[1],
+                            /*body*/    exp.list[2].list[2]
+                        );
+                        }
+                        else 
+                        {
+                            // Initialize
+                            gen(exp.list[2]);
+                        }
 
                         // 1. Global vars
-                        // ex. (var x (+ y 10))
                         if (isGlobalScope())
                         {
                             global->define(varName);
@@ -420,26 +434,20 @@ public :
                         }
                         scopeExit();
                     }
+                    // Function Calls
+                    // ex. (square 2)
                     else
                     {
-                        // 그외 모든 format 은 모두 function 으로 취급
-                        // ex) square 2
-                    
-                        // push fn on to stack
-                        gen(exp.list[0]);
-                        
-                        // push params
-                        for (auto i = 1; i < exp.list.size(); ++i)
-                        {
-                            gen(exp.list[i]);
-                        }
-
-                        // call fn
-                        emit(OP_CALL);
-
-                        // how many params
-                        emit(exp.list.size() - 1);
+                        function_call(exp);
                     }
+                }
+                // Lambda Function Calls
+                // ex. ((lambda (x) (* x x)) 2)
+                else 
+                {
+                    // ExpType::LIST 이지만, tag.type 이 symbol 은 아닌 경우
+                    std::cout << "lambda call : " << std::endl; 
+                    function_call(exp);
                 }
 
                 break;
@@ -577,6 +585,18 @@ private :
         }while(false);   
     }
 
+    void function_call(const Exp& exp)
+    {
+        do {                                            
+            gen(exp.list[0]);                           
+            for(auto i = 1; i < exp.list.size(); i++)   
+            {                                           
+                gen(exp.list[i]);                      
+            }                                          
+            emit(OP_CALL);                             
+            emit(exp.list.size() - 1);                  
+        } while(false);    
+    }
     void compileFunction(const Exp& exp, const std::string& fnName, const Exp& params, const Exp& body)
     {
         auto arity  = params.list.size();
@@ -641,6 +661,7 @@ private :
 
         // And emit code for new constant
         emit(OP_CONST);
+
         emit(crrentCo->constants.size() - 1);
     }
 
@@ -653,6 +674,11 @@ private :
     )
     */
     bool isDefinedFunctionBody() {return crrentCo->name != "main" && crrentCo->scopeLevel == 1;}
+
+    /*
+    * (labmda..)
+    */
+   bool isLambda(const Exp& exp) {return isTaggedList(exp, "lambda");}
     
     /*
     * Main Entry Point (function)
