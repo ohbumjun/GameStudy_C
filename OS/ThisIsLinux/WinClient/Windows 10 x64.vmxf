@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<Foundry>
-<VM>
-<VMId type="string">52 8e ab 8b 9a 44 b0 89-8f bf 02 9a 9b 31 7a b7</VMId>
-<ClientMetaData>
-<clientMetaDataAttributes/>
-<HistoryEventList/></ClientMetaData>
-<vmxPathName type="string">Windows 10 x64.vmx</vmxPathName></VM></Foundry>
