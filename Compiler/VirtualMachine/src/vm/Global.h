@@ -4,6 +4,7 @@
 #include <string>
 #include "../utils/Logger.h"
 #include "EvaValue.h"
+#include <functional>
 
 struct GlobalVar
 {
@@ -13,6 +14,10 @@ struct GlobalVar
 
 struct Global
 {
+    Global()
+    {
+        std::cout << "Global Constructor" << std::endl;
+    }
     void define(const std::string& name)
     {
         auto index = getGlobalIndex(name);
@@ -51,11 +56,14 @@ struct Global
         globals[index].value = value;
     }
 
+    // Global Variable 들도, 프로그램 전체로 보면, 거대한 block 안에 선언된 대상들이다.
+    // - 하나의 Block 안에서 variable 들은 stack 형태로 쌓인다.
+    // - vector 를 stack 자료 구조 형태로 사용하고자 하는 것이다. 따라서 , 맨 뒤에 있는 요소부터 search 를 하는 것이다. 
     int getGlobalIndex(const std::string& name)
     {
         if (globals.size() > 0)
         {
-            for (auto i = 0; i < globals.size(); ++i)
+            for (size_t i = 0; i < globals.size(); ++i)
             {
                 if (globals[i].name == name)
                 {
@@ -78,6 +86,19 @@ struct Global
         }
 
         globals.push_back({name, NUMBER(value)});
+    }
+
+    /*
+    * Add Native functions.
+    */
+    void addNativeFunction(const std::string& name, std::function<void()> fn, size_t arity)
+    {
+        if (exist(name))
+        {
+            return;
+        }
+
+        globals.push_back({name, ALLOC_NATIVE(fn, name, arity)});
     }
 
     bool exist(const std::string& name) {return getGlobalIndex(name) != -1;}

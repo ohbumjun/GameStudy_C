@@ -16,6 +16,7 @@ public :
     EvaDisassembler(std::shared_ptr<Global> global) :
         global(global)
         {
+            std::cout << "Disassembler constructor" << std::endl;
         }
 
     /*
@@ -23,8 +24,7 @@ public :
     */
     void disassemble(CodeObject* co)
     {
-        std::cout << "--- Disassembly ---" << std::endl;
-        std::cout << "Code Name : " << co->name << std::endl;
+        std::cout << "--- Disassembly : " << co->name << " ---" << std::endl;
 
         size_t offset = 0;
 
@@ -54,9 +54,16 @@ private :
             case OP_MUL  :
             case OP_DIV  :
             case OP_SUB  :
+            case OP_POP  :
+            case OP_RETURN :
             {
                 // OP_HALT 는 1byte 에 해당하는 명령어 -> disassembleSimple 함수로 처리.
                 return disassembleSimple(co, opcode, offset);
+            }
+            case OP_SCOPE_EXIT :
+            case OP_CALL :
+            {
+                return disassembleWord(co, opcode, offset);
             }
             case OP_CONST :
             {
@@ -76,6 +83,11 @@ private :
             {
                 return dissassebleGlobal(co, opcode, offset);
             }
+            case OP_GET_LOCAL :
+            case OP_SET_LOCAL :
+            {
+                return dissassebleLocal(co, opcode, offset);
+            }
             default :
             {
                 DIE << "no assembly in disassebleInstruction for " << opcodeToString(opcode) << std::endl;
@@ -94,6 +106,16 @@ private :
         dumpBytesToStringStream(co, offset, 1);
         printOpcode(opcode);
         return offset + 1;
+    }
+    
+    size_t disassembleWord(CodeObject* co, uint8_t opcode, size_t offset)
+    {   
+        dumpBytesToStringStream(co, offset, 2);
+        printOpcode(opcode);
+        // ex. ON_SCOPE_EXIT : num of local vars to pop from stack
+        // ex. ON_CALL       : num of fn argumnets
+        std::cout << "Pooped local var / params " << (int)co->code[offset + 1];
+        return offset + 2;
     }
 
     size_t disassembleJump(CodeObject* co, uint8_t opcode, size_t offset)
@@ -136,6 +158,19 @@ private :
         return offset + 2;
     }
 
+    size_t dissassebleLocal(CodeObject* co, uint8_t opcode, uint8_t offset)
+    {
+        // 2byte : opcode , global variable index
+        dumpBytesToStringStream(co, offset, 2);
+        printOpcode(opcode);
+
+        auto localIndex = co->code[offset + 1];
+        
+        std::cout << "Local Idx " << (int)localIndex << " (" << co->locals[localIndex].name << ")";
+    
+        return offset + 2;
+    }
+
     size_t dissassebleGlobal(CodeObject* co, uint8_t opcode, uint8_t offset)
     {
         // 2byte : opcode , global variable index
@@ -144,7 +179,7 @@ private :
 
         auto globalIndex = co->code[offset + 1];
         
-        std::cout << (int)globalIndex << " (" << global->get(globalIndex).name << ")";
+        std::cout << "Global Idx " << (int)globalIndex << " (" << global->get(globalIndex).name << ")";
     
         return offset + 2;
     }

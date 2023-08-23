@@ -23,6 +23,7 @@ public:
     void Create() { cout << "XPWindow Create" << endl; }
     void SetColor(string color) { cout << color << "로 변경" << endl; }
 };
+
 class LinuxWindow : public IWindow
 {
 public:
