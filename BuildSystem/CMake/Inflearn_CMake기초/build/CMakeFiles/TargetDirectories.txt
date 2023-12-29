@@ -1,0 +1,4 @@
+C:/Users/user/AppData/Roaming/Com2uS/PersonalGameStudy/BuildSystem/CMake/Inflearn_CMake기초/build/CMakeFiles/READABLE_CODE_MAIN.dir
+C:/Users/user/AppData/Roaming/Com2uS/PersonalGameStudy/BuildSystem/CMake/Inflearn_CMake기초/build/CMakeFiles/PACKAGE.dir
+C:/Users/user/AppData/Roaming/Com2uS/PersonalGameStudy/BuildSystem/CMake/Inflearn_CMake기초/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/user/AppData/Roaming/Com2uS/PersonalGameStudy/BuildSystem/CMake/Inflearn_CMake기초/build/CMakeFiles/ZERO_CHECK.dir

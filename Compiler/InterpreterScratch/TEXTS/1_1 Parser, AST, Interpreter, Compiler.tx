@@ -1,0 +1,62 @@
+<파싱 pipeline>
+print "hello"
+
+-> 1) Tokenizer : lexical 분석
+token 을 얻게 된다.
+여기서는 validation 검사를 하지 않는다
+
+Token {id : "print", String : "hello"}
+
+-> 2) Parser (Syntatic analysis)
+- validation
+- AST 생성
+ex) <Call name = "print" args = ["hello"]>
+
+-- 여기까지는 static time. 아직 프로그램 실행 이전이다.
+-- 그저 우리의 코드를 다른 형태로 번역했을 뿐이다.
+
+<runtime semantic>
+- 변수 ,함수를 정의한다는 것은 무엇인가
+- 함수 인자를 넘기는 방식은 어떤 식인가
+- 함수를 호출한다는 것은 어떤 식으로 일어나는가 등등
+
+<Closure>
+- 현재, 부모 environment 에 있는 모든 변수 및 함수에 접근하는 과정 및 프로세스
+- JS 는 Clousre 가 있고, PHP 는 없다.
+
+<Compiler, Interpreter>
+- Compiler 는 do it all it once ? 아니다. 컴파일러는 애초에 실행을 안한다.
+그것은 Interpreter 만 한다.
+
+- Interpreter 는 execute line by line ?
+
+둘의 차이는 Semantic 를 직접 구현하느냐 마냐이다.
+Interpreter 는 Semantic 을 직접 구현한다.
+반면 Compiler 는 그 작업을 언어단에 위임한다.
+물론 Interpreter 가 그 언어에 있다는 가정하에 진행한다.
+
+< 프로그램 -> 결과 얻는 과정>
+P 라는 프로그램에서 결과를 얻으려면 Interpreter가 필요하다
+그런데 P 가 Interpreter 가 없다면, Compiler 를 통해 P2 라는 프로그램으로 변경해서
+그 P2 라는 프로그램 안의 Interpreter 로 실행해서 결과를 얻는 것이다.
+
+사실 CPU 가 Interpreter 이기도 하다
+코드를 치면, 그것을 기계어로 바꿔주고 cpu 가 그것을 실행한다.
+
+< Interpreter 의 2가지 종류 >
+1. AST - based
+- tree 구조
+
+2. Bytecode (VM)
+- plain array of byte 
+
+< Compiler >
+1. AOT (Ahead of Time)
+- 실행 전에 모든 코드가 다른 언어로 바뀌는 것
+- C++ 컴파일러
+
+2. JIT 컴파일러 (Just in Time)
+
+
+3. AST Transformer
+- AST level 에서의 transformation

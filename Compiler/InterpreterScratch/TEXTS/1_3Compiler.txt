@@ -1,0 +1,4 @@
+1. AOT
+
+Static Time 에서 Parser 가 만들어낸 AST 를 
+Code Generator 로 넘기고

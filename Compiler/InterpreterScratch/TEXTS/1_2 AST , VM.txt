@@ -1,0 +1,51 @@
+Interpreter 의 2가지 종류
+
+1) AST Interpreter
+- High level 에서 동작
+ex) 메모리나 어셈블리 등의 low level 에서 동작하지 않는다.
+- AST Level 에서만 동작한다.
+
+컴파일러 파이프라인에서
+Parser 가 AST 를 만들어내고
+그 다음 AST 는 바로 Interpreter 로 넘어가게 된다.
+이렇게 Interpreter 로 넘어가는 순간 부터는 Run time 이다.
+
+ex) 
+x = 15
+x + 10 - 5;
+
+위의 소스코드는 아래와 같은 형태의 AST 로 변경된다.
+물론 개발자가 자기가 원하는 형태릐 AST 를 선택할 수도 있다.
+
+[program, [
+    [assign, x, 15],
+    [sub,
+    [add, x, 10],
+    5]
+]]
+
+그리고 위 AST 를 Interpreter 에 넘기는 것이다.
+
+2) VM (ByteCode Interpreter)
+- AST Interpreter 는 tree 형태라면, byte code 의 배열 형태로 되어 있다.
+
+컴파일러 파이프라인에서, static time 에서 추가적인 레벨이 요구된다.
+Parser 가 만들어낸 AST 를 바로 Interpreter 로 넘기는 것이 아니라
+Static time 내에서, ByteCode Emitter 로 보내고, 이 Emitter 가 Byte Code 를 만들어낸다
+
+ex) print "hello" --> [push "hello" call print]
+
+그 다음 이 ByteCode 를 VM 으로 넘기는 데 이때부터 runtime 이다.
+
+
+-------------------------------------------------------------
+VM 2가지 종류
+
+1) Stack Based
+
+- Stack Top 에 결과물이 있다
+- Instruction pointer 라는 pointer 가 stack top 을 가리킨다.
+
+2) Register Based
+- register 를 사용한다 정도
+- instruction pointer 는 그에 대응되는 register 가 있어서 register 를 사용한다 등등

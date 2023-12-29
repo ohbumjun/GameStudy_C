@@ -1,39 +1,40 @@
+#include <initializer_list>
 #include <iostream>
+#include <string>
 
-class Base {
+class A
+{
 public:
-    virtual ~Base() {}
+	A() { std::cout << "C" << std::endl; }
+	A(A& a) { std::cout << "&" << std::endl; }
+	A(A&& a) noexcept { std::cout << "&&" << std::endl; }
+	~A() { std::cout << "D" << std::endl; }
 
-    void callVirtualFunction() const {
-        // Call the protected virtual function from a public function
-        virtualFunction();
-    }
-
-private:
-    virtual void virtualFunction() const {
-        std::cout << "Base::virtualFunction()" << std::endl;
-    }
+	void hello(){}
 };
 
-class Derived1 : public Base {
+class childA : public A
+{
 public :
-    int a = 1;
-private:
-    void virtualFunction() const override {
-        std::cout << "Derived1::virtualFunction()" << std::endl;
-    }
+	void hello() {}
 };
-int main() {
-    Derived1 *d1 = new Derived1;
-    Derived1 *d2 = new Derived1;
-    // d2->a = 4;
 
-    if (memcmp(d1, d2, sizeof(Derived1)) == 0) {
-        std::cout << "equal." << std::endl;
-    }
-    else {
-        std::cout << "not equal." << std::endl;
-    }
+A F1(A a) {
+	return a;
+};
 
-    return 0;
+A F2(A& a) { return a; }
+
+int main()
+{
+	A a;
+	std::cout << "-------" << std::endl;
+	A b = a;
+	std::cout << "-------" << std::endl;
+	A c = F1(b);
+	std::cout << "-------" << std::endl;
+	A d = F2(c);
+
+	return 0;
 }
+// 컴파일 결과 ?
