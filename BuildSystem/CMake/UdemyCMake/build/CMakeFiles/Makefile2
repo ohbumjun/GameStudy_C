@@ -63,18 +63,21 @@ CMAKE_BINARY_DIR = /mnt/d/Coding/CodingStudyStuff/gameStudy/Codes/BuildSystem/CM
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
+all: external/json/all
 all: src/all
 all: configured/all
 all: app/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
+preinstall: external/json/preinstall
 preinstall: src/preinstall
 preinstall: configured/preinstall
 preinstall: app/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
+clean: external/json/clean
 clean: src/clean
 clean: configured/clean
 clean: app/clean
@@ -109,6 +112,21 @@ configured/preinstall:
 # Recursive "clean" directory target.
 configured/clean:
 .PHONY : configured/clean
+
+#=============================================================================
+# Directory level rules for directory external/json
+
+# Recursive "all" directory target.
+external/json/all:
+.PHONY : external/json/all
+
+# Recursive "preinstall" directory target.
+external/json/preinstall:
+.PHONY : external/json/preinstall
+
+# Recursive "clean" directory target.
+external/json/clean:
+.PHONY : external/json/clean
 
 #=============================================================================
 # Directory level rules for directory src

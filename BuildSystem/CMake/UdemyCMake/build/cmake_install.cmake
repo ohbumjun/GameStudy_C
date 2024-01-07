@@ -44,6 +44,11 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
+  include("/mnt/d/Coding/CodingStudyStuff/gameStudy/Codes/BuildSystem/CMake/UdemyCMake/build/external/json/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
   include("/mnt/d/Coding/CodingStudyStuff/gameStudy/Codes/BuildSystem/CMake/UdemyCMake/build/src/cmake_install.cmake")
 endif()
 
