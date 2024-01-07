@@ -1,0 +1,12 @@
+[
+{
+  "directory": "D:/Coding/CodingStudyStuff/gameStudy/Codes/BuildSystem/CMake/UdemyCMake/build/src/my_lib",
+  "command": "C:\\mingw64\\bin\\x86_64-w64-mingw32-g++.exe  @CMakeFiles/Library.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\Library.dir\\my_lib.cc.obj -c D:\\Coding\\CodingStudyStuff\\gameStudy\\Codes\\BuildSystem\\CMake\\UdemyCMake\\src\\my_lib\\my_lib.cc",
+  "file": "D:/Coding/CodingStudyStuff/gameStudy/Codes/BuildSystem/CMake/UdemyCMake/src/my_lib/my_lib.cc"
+},
+{
+  "directory": "D:/Coding/CodingStudyStuff/gameStudy/Codes/BuildSystem/CMake/UdemyCMake/build/app",
+  "command": "C:\\mingw64\\bin\\x86_64-w64-mingw32-g++.exe  @CMakeFiles/Executable.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\Executable.dir\\main.cc.obj -c D:\\Coding\\CodingStudyStuff\\gameStudy\\Codes\\BuildSystem\\CMake\\UdemyCMake\\app\\main.cc",
+  "file": "D:/Coding/CodingStudyStuff/gameStudy/Codes/BuildSystem/CMake/UdemyCMake/app/main.cc"
+}
+]
