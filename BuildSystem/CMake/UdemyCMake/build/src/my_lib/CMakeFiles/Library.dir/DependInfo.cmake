@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "D:/Coding/CodingStudyStuff/gameStudy/Codes/BuildSystem/CMake/UdemyCMake/src/my_lib/my_lib.cc" "src/my_lib/CMakeFiles/Library.dir/my_lib.cc.obj" "gcc" "src/my_lib/CMakeFiles/Library.dir/my_lib.cc.obj.d"
+  "/mnt/d/Coding/CodingStudyStuff/gameStudy/Codes/BuildSystem/CMake/UdemyCMake/src/my_lib/my_lib.cc" "src/my_lib/CMakeFiles/Library.dir/my_lib.cc.o" "gcc" "src/my_lib/CMakeFiles/Library.dir/my_lib.cc.o.d"
   )
 
 # Targets to which this target links.

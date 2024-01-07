@@ -28,6 +28,14 @@ option(COMPILE_EXECUTABLE "Whether to compile the executable" ON)
 # define variable. all used in subdirectories cmakefiles
 set(LIBRARY_NAME "Library")
 set(EXECUTABLE_NAME "Executable")
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+
+# include cmake module files 
+# reference : already predefined cmake modules exist in my cmake version
+include(AddGitSubmodule) 
+
+# call function in cmake module file
+add_git_submodule(external/json)
 
 # search for other CMakeLists.txt files in subdirectories
 add_subdirectory(src) # library

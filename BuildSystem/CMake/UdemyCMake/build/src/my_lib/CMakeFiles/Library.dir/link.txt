@@ -1,2 +1,2 @@
-C:\mingw64\bin\ar.exe qc libLibrary.a CMakeFiles/Library.dir/my_lib.cc.obj
-C:\mingw64\bin\ranlib.exe libLibrary.a
+/usr/bin/ar qc libLibrary.a CMakeFiles/Library.dir/my_lib.cc.o
+/usr/bin/ranlib libLibrary.a
