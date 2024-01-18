@@ -8,6 +8,7 @@ main(int argc, char *argv[])
 {
     long nlines;
 
+    fprintf(stdout, "argc=%d\n", argc);
     if (argc < 2) {
         fprintf(stderr, "Usage: %s n [file file...]\n", argv[0]);
         exit(1);
@@ -38,6 +39,8 @@ static void
 do_head(FILE *f, long nlines)
 {
     int c;
+
+    fprintf(stdout, "nlines=%ld\n", nlines);    
 
     if (nlines <= 0) return;
     while ((c = getc(f)) != EOF) {
