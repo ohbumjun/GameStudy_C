@@ -1,5 +1,5 @@
 #include "Variant.h"
-#include "memory"
+#include "memory.h"
 
 void Variant::reference(const Variant& p_variant)
 {
@@ -10,7 +10,7 @@ void Variant::reference(const Variant& p_variant)
 		if (!ref_counted->reference()) {
 			_get_obj().obj = nullptr;
 			_get_obj().id = ObjectID();
-			break;
+			// break;
 		}
 	}
 

@@ -49,7 +49,9 @@ public :
 		return dynamic_cast<const T*>(p_object);
 	}
 
+	inline bool is_ref_counted() const { return type_is_reference; }
 	void detach_from_objectdb();
+	inline void _construct_object(bool p_reference);
 	inline ObjectID get_instance_id() const { return _instance_id; }
 private :
 	Object(bool p_reference);
@@ -85,6 +87,7 @@ class ObjectDB {
 	static ObjectSlot* object_slots;
 	static uint64_t validator_counter;
 
+	int get_object_count();
 	friend class Object;
 	friend void unregister_core_types();
 	static void cleanup();
