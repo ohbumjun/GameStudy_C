@@ -129,11 +129,31 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="memory.cpp" />
     <ClCompile Include="MLD.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="ObjectID.cpp" />
+    <ClCompile Include="ref_counted.cpp" />
+    <ClCompile Include="safe_refcount.cpp" />
+    <ClCompile Include="ScriptInstance.cpp" />
+    <ClCompile Include="Variant.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="css.h" />
+    <ClInclude Include="memory.h" />
     <ClInclude Include="MLD.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="ObjectID.h" />
+    <ClInclude Include="ref_counted.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="safe_refcount.h" />
+    <ClInclude Include="ScriptInstance.h" />
+    <ClInclude Include="SpinLock.h" />
+    <ClInclude Include="typedefs.h" />
+    <ClInclude Include="Variant.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="UdemyGC.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

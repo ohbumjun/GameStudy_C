@@ -1,3 +1,5 @@
+
+#ifdef 0
 /*
  * =====================================================================================
  *
@@ -34,12 +36,14 @@
 #include <memory.h>
 #include <stdlib.h>
 
+#define SHADOW 0
+
  /*Application Structures*/
 
 typedef struct emp_ {
 
     char emp_name[30];
-    
+
     // emp_id 의 offset 이 30 이 아니라, 32 인 이유
     // OS 단에서 4byte 혹은 8byte 배수 단위로 offset 을 맞추기 때문이다
     unsigned int emp_id;
@@ -130,3 +134,13 @@ main(int argc, char** argv) {
     return 0;
 }
 
+#endif
+
+
+#include "ref_counted.h"
+#include "memory"
+int
+main(int argc, char** argv)
+{
+    Ref<WeakRef> wref = memnew(WeakRef);
+}
