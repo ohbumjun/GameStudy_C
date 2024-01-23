@@ -85,3 +85,12 @@ Variant::Variant(const Object* p_object)
 void Variant::operator=(const Variant& p_variant)
 {
 }
+
+Object* Variant::get_validated_object() const {
+	if (type == OBJECT) {
+		return ObjectDB::get_instance(_get_obj().id);
+	}
+	else {
+		return nullptr;
+	}
+}

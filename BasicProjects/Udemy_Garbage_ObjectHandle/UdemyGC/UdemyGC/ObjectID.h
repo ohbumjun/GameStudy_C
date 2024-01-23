@@ -2,7 +2,18 @@
 
 #include "typedefs.h"
 
+/*
+// This needs to add up to 63, 1 bit is for reference.
+#define OBJECTDB_VALIDATOR_BITS 39
+#define OBJECTDB_VALIDATOR_MASK ((uint64_t(1) << OBJECTDB_VALIDATOR_BITS) - 1)
+#define OBJECTDB_SLOT_MAX_COUNT_BITS 24
+#define OBJECTDB_SLOT_MAX_COUNT_MASK ((uint64_t(1) << OBJECTDB_SLOT_MAX_COUNT_BITS) - 1)
+#define OBJECTDB_REFERENCE_BIT (uint64_t(1) << (OBJECTDB_SLOT_MAX_COUNT_BITS + OBJECTDB_VALIDATOR_BITS))
+
+*/
+
 class ObjectID {
+	// [][39 == validator mask][24 = slot max count bit = slot Á¤º¸]
 	uint64_t id = 0;
 
 public:

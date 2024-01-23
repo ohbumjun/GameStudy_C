@@ -1,4 +1,5 @@
 #include "Object.h"
+#include "memory.h"
 
 void postinitialize_handler(Object* p_object) {
 	p_object->_postinitialize();
