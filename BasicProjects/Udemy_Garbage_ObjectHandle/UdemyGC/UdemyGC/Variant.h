@@ -52,12 +52,14 @@ public:
 	inline ~Variant() {
 		clear();
 	}
+	Object* get_validated_object() const;
 	void clear();
 	void _clear_internal();
 	Variant(const ObjectID& p_id);
 	Variant(const Variant& p_variant); 
 	Variant(const Object* p_object);
 	void operator=(const Variant& p_variant); // only this is enough for all the other types
+
 
 };
 

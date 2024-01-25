@@ -31,7 +31,12 @@ main(int argc, char *argv[])
     (3) 
     옵션 파싱 루프.
 
-
+    옵션을 파싱한다.
+    3번째 인자가 hn: 이 아니고 n: 이다.
+    
+    n : linux 의 옵션 중 하나로 lines 와 동일한 녀석이다
+    ':' 라는 것은, 해당 n 이라는 옵션에 인자가 필요하다는 것을 의미한다.
+    즉, -n 10 과 같이 인자를 받아야 한다는 것이다.
     */
     while ((opt = getopt_long(argc, argv, "n:", longopts, NULL)) != -1) {
         switch (opt) {

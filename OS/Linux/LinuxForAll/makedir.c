@@ -32,7 +32,9 @@ make_path(const char *path)
 {
     // mkdir 의 2번째 인자에는 권한을 지정한다.
     // 여기서 지정한 권한과 umask 라는 값 사이의 비트 연산이 이루어진다.
-    if (mkdir(path, 0777) == 0) {
+    // if (mkdir(path, 0777) == 0)
+    if (mkdir(path) == 0) {
+        fprintf(stderr, "path: %s\n", path);
         // Successfully created.  OK
         return;
     }
@@ -82,6 +84,8 @@ make_path(const char *path)
         else if (sep == parent_path) {
             // e.g. "/component"
             // parent_path 중에서 가장 앞에 있는 글자가 '/' 였다면
+            // 즉, 애초에 /component/ 이런 식으로 인자를 넘긴 것
+            // 부모 path 아래에 어떤 파일을 만들지 넘겨주지도 못한 것이다.
             fprintf(stderr, "error: root directory is not a directory???\n");
             exit(1);
         }
@@ -92,7 +96,8 @@ make_path(const char *path)
         // 실제 코드가 어떻게 실행되는지 test 해봐야 할 것 같다.
         make_path(parent_path);
 
-        if (mkdir(path, 0777) < 0) die(path);
+        // if (mkdir(path, 0777) < 0) die(path);
+        if (mkdir(path) < 0) die(path);
 
         return;
     }

@@ -31,6 +31,7 @@
 
 #include "SpinLock.h"
 #include "ObjectID.h"
+#include "memory"
 
 void postinitialize_handler(Object* p_object);
 
