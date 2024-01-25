@@ -35,6 +35,10 @@ int main()
 	std::cout << "-------" << std::endl;
 	A d = F2(c);
 
+
+	int stackArray[10];
+	int* s = stackArray;
+
 	return 0;
 }
 // 컴파일 결과 ?
