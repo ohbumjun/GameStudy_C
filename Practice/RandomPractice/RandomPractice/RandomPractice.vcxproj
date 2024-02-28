@@ -142,12 +142,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CPP.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="A.h" />
     <ClInclude Include="Allocator.h" />
     <ClInclude Include="B.h" />
+    <ClInclude Include="HEADER.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="헤더.h" />
   </ItemGroup>
