@@ -13,10 +13,19 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="헤더 파일\DDHeader">
+      <UniqueIdentifier>{a14f17a6-2076-4b2d-9a65-f3f7aa0196d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\DDCPP">
+      <UniqueIdentifier>{17c6df1c-9376-45a4-99c9-09def5924c07}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CPP.cpp">
+      <Filter>헤더 파일\DDCPP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -34,6 +43,9 @@
     </ClInclude>
     <ClInclude Include="헤더.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="HEADER.h">
+      <Filter>헤더 파일\DDHeader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

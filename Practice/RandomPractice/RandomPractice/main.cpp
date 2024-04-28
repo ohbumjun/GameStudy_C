@@ -1,40 +1,86 @@
-#include <initializer_list>
 #include <iostream>
-#include <string>
 
-class A
+enum class EntityBasicType 
 {
-public:
-	A() { std::cout << "C" << std::endl; }
-	A(A& a) { std::cout << "&" << std::endl; }
-	A(A&& a) noexcept { std::cout << "&&" << std::endl; }
-	~A() { std::cout << "D" << std::endl; }
-
-	void hello(){}
+	NONE,
+	ANIMATION,
+	ARMATURE,
+	CAMERA,
+	//NODE,
+	DIRECTIONAL_LIGHT, // LIGHt
+	POINT_LIGHT,
+	SPOT_LIGHT,
+	RENDEROBJECT,
+	PARTICLE,
+	CONE,
+	CUBE,
+	CYLINDER,
+	QUAD,
+	PLANE,
+	SPHERE,
+	TORUS,
+	UI_IMAGE,
+	UI_CANVAS,
+	UI_EVENT_SYSTEM,
+	UI_SPRITE,
+	UI_BUTTON,
+	UI_RECTMASK,
+	UI_TEXT,
+	UI_SCROLL_RECT,
+	UI_SCROLLBAR,
+	UI_SCROLL_VIEW,
+	UI_TEXTFIELD,
+	UI_TOGGLE,
+	UI_SLIDER,
+	UI_DROPDOWN,
+	TRAIL
 };
+int main() {
+    int i = 0;
 
-class childA : public A
-{
-public :
-	void hello() {}
-};
+loop:
+    std::cout << i << " ";
+    i++;
 
-A F1(A a) {
-	return a;
-};
+    if (i < 10) {
+        goto loop;
+    }
 
-A F2(A& a) { return a; }
-
-int main()
-{
-	A a;
-	std::cout << "-------" << std::endl;
-	A b = a;
-	std::cout << "-------" << std::endl;
-	A c = F1(b);
-	std::cout << "-------" << std::endl;
-	A d = F2(c);
-
-	return 0;
+    std::cout << "Done!" << std::endl;
+	enum class EntityBasicType
+	{
+		NONE,
+		ANIMATION,
+		ARMATURE,
+		CAMERA,
+		//NODE,
+		DIRECTIONAL_LIGHT, // LIGHt
+		POINT_LIGHT,
+		SPOT_LIGHT,
+		RENDEROBJECT,
+		PARTICLE,
+		CONE,
+		CUBE,
+		CYLINDER,
+		QUAD,
+		PLANE,
+		SPHERE,
+		TORUS,
+		UI_IMAGE,
+		UI_CANVAS,
+		UI_EVENT_SYSTEM,
+		UI_SPRITE,
+		UI_BUTTON,
+		UI_RECTMASK,
+		UI_TEXT,
+		UI_SCROLL_RECT,
+		UI_SCROLLBAR,
+		UI_SCROLL_VIEW,
+		UI_TEXTFIELD,
+		UI_TOGGLE,
+		UI_SLIDER,
+		UI_DROPDOWN,
+		TRAIL
+	};
+    return 0;
 }
-// 컴파일 결과 ?
