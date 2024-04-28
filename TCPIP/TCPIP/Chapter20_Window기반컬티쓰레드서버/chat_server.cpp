@@ -95,11 +95,13 @@ unsigned WINAPI HandleClnt(void* arg)
 	// 각각의 클라이언트로부터 데이터를 수신하는 것이다.
 	// 그리도 다른 클라이언트들에게 데이터를 전송하는 것이다.
 	while ((strLen = recv(hClntSock, msg, sizeof(msg), 0)) != 0)
+	{
 		SendMsg(msg, strLen);
+	}
 
 	fputs("Client Disconnected", stdout);
 
-	WaitForSingleObject(hMutex, INFINITE);
+	WaitForSingleObject(hMutex, INFINITE); // 뮤텍스 획득
 
 	// remove disconnected client (즉, 자기 자신을 제거하는 것이다)
 	for (int i = 0; i < clntCnt; ++i)
@@ -114,7 +116,7 @@ unsigned WINAPI HandleClnt(void* arg)
 
 	clntCnt--;
 
-	ReleaseMutex(hMutex);
+	ReleaseMutex(hMutex); // 뮤텍스 반납
 
 	closesocket(hClntSock);
 

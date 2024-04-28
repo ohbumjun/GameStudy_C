@@ -49,7 +49,13 @@ int main(int argc, char* argv[])
 	mulAdr.sin_port = htons(atoi(argv[2]));
 
 	// 멀티캐스트 옵션 세팅 (TTP 정보 세팅)
-	setsockopt(hSendSock, IPPROTO_IP, IP_MULTICAST_TTL, (const char*)(void*)&timeLive, sizeof(timeLive));
+	setsockopt(hSendSock, 
+		IPPROTO_IP,
+		// The TTL determines the maximum number of routers a packet 
+		// can pass through before being discarded
+		IP_MULTICAST_TTL, 
+		(const char*)(void*)&timeLive, 
+		sizeof(timeLive));
 
 	if ((fp = fopen("news.txt", "r")) == NULL)
 		ErrorHandling("fopen() Error");
@@ -63,7 +69,10 @@ int main(int argc, char* argv[])
 		fputs(buf, stdout);
 		
 		// UDP 소켓 기반 데이터 전송이므로 sendto 함수 사용
-		sendto(hSendSock, buf, strlen(buf), 0, (SOCKADDR*)&mulAdr, sizeof(mulAdr));
+		sendto(hSendSock, buf, 
+			strlen(buf), 0, 
+			(SOCKADDR*)&mulAdr, 
+			sizeof(mulAdr));
 
 		// 데이터 전송에 약간의 시간간격을 두기 위한 것
 		Sleep(2000);

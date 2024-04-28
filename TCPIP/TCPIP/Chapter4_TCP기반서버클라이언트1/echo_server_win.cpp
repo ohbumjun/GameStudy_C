@@ -65,7 +65,8 @@ int main(int argc, char* argv[])
 
 	for (int i = 0; i < 5; ++i)
 	{
-		hClntSock = accept(hServSock, (SOCKADDR*)&clntAddr, &clntAdrSize);
+		hClntSock = accept(hServSock, (SOCKADDR*)&clntAddr,
+			&clntAdrSize);
 
 		if (hClntSock == -1)
 			ErrorHandling("accept() error");

@@ -54,8 +54,12 @@ int main(int argc, char* argv[])
 	{
 		// recvFrom, sendTo 함수 -> unconnected 소켓을 이용한 전송, 수신 함수
 		clntAdrSize = sizeof(clntAddr);
-		strLen = recvfrom(hServSock, message, BUF_SIZE, 0, (SOCKADDR*)&clntAddr, &clntAdrSize);
-		sendto(hServSock, message, strLen, 0, (SOCKADDR*)&clntAddr, sizeof(clntAddr));
+		strLen = recvfrom(hServSock, 
+			message, BUF_SIZE, 0, 
+			(SOCKADDR*)&clntAddr, &clntAdrSize);
+
+		sendto(hServSock, message, 
+			strLen, 0, (SOCKADDR*)&clntAddr, sizeof(clntAddr));
 	}
 
 	// 연결된 클라리언트에 데이터 전송
