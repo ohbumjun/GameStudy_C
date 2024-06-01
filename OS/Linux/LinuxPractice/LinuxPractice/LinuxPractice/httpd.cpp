@@ -57,8 +57,8 @@ main(int argc, char* argv[])
         fprintf(stderr, "Usage: %s <docroot>\n", argv[0]);
         exit(1);
     }
-    // 프로그램 인자 1개 : 문서 루트의 경로
 
+    // 프로그램 인자 1개 : 문서 루트의 경로
     install_signal_handlers();
 
     // 표준 입력과 표준 출력을 지정
@@ -82,7 +82,6 @@ service(FILE* in, FILE* out, char* docroot)
     // service 를 한번만 호출. 즉, 현재 http 서버는 하나의 요청을 받아서 처리하고 종료
     free_request(req);
 }
-
 
 static struct HTTPRequest* read_request(FILE* in)
 {
@@ -143,7 +142,6 @@ static struct HTTPRequest* read_request(FILE* in)
 
     return req;
 }
-
 
 // HTTP 요청의 첫번째 줄에 해당하는 "요청 라인" 을 읽는다.
 // ex) GET /path/to/file HTTP/1.0
@@ -339,6 +337,255 @@ lookup_header_field_value(struct HTTPRequest* req, char* name)
         }
     }
     return NULL;
+}
+
+// HTTP 요청 req 에 대한 응답을 out 에 출력한다.
+static void
+respond_to(struct HTTPRequest* req, FILE* out, char* docroot)
+{
+    if (strcmp(req->method, "GET") == 0)
+        do_file_response(req, out, docroot);
+    else if (strcmp(req->method, "HEAD") == 0)
+        do_file_response(req, out, docroot);
+    else if (strcmp(req->method, "POST") == 0)  // 405 Method Not Allowed
+        method_not_allowed(req, out);
+    else
+        not_implemented(req, out);                      // 501 Not Implemented
+}
+
+static void
+do_file_response(struct HTTPRequest* req, FILE* out, char* docroot)
+{
+    struct FileInfo* info;
+
+    // 파일 정보를 취득한다.
+    info = get_fileinfo(docroot, req->path);
+
+    if (!info->ok) {
+        free_fileinfo(info);
+        not_found(req, out);
+        return;
+    }
+    
+    // 파일 정보에 따라 응답 헤더와 응답 본문을 출력한다.
+    output_common_header_fields(req, out, "200 OK");
+
+    fprintf(out, "Content-Length: %ld\r\n", info->size);                    // 응답 본문 길이
+
+    fprintf(out, "Content-Type: %s\r\n", guess_content_type(info)); // 응답 본문 데이터 종류 ex) text/html, text/plain
+
+    fprintf(out, "\r\n");
+
+    if (strcmp(req->method, "HEAD") != 0) 
+    {
+        int fd;
+        char buf[BLOCK_BUF_SIZE];
+        ssize_t n;
+
+        fd = open(info->path, O_RDONLY);
+
+        if (fd < 0)
+        {
+            log_exit("failed to open %s: %s", info->path, strerror(errno));
+        }
+
+        for (;;) 
+        {
+            n = read(fd, buf, BLOCK_BUF_SIZE);
+
+            if (n < 0)
+            {
+                log_exit("failed to read %s: %s", info->path, strerror(errno));
+            }
+
+            if (n == 0)
+            {
+                break;
+            }
+
+            if (fwrite(buf, 1, n, out) < n)
+            {
+                log_exit("failed to write to socket");
+            }
+        }
+
+        close(fd);
+    }
+
+    fflush(out);
+
+    free_fileinfo(info);
+}
+
+static void
+method_not_allowed(struct HTTPRequest* req, FILE* out)
+{
+    output_common_header_fields(req, out, "405 Method Not Allowed");
+    fprintf(out, "Content-Type: text/html\r\n");
+    fprintf(out, "\r\n");
+    fprintf(out, "<html>\r\n");
+    fprintf(out, "<header>\r\n");
+    fprintf(out, "<title>405 Method Not Allowed</title>\r\n");
+    fprintf(out, "<header>\r\n");
+    fprintf(out, "<body>\r\n");
+    fprintf(out, "<p>The request method %s is not allowed</p>\r\n", req->method);
+    fprintf(out, "</body>\r\n");
+    fprintf(out, "</html>\r\n");
+    fflush(out);
+}
+
+static void
+not_implemented(struct HTTPRequest* req, FILE* out)
+{
+    output_common_header_fields(req, out, "501 Not Implemented");
+    fprintf(out, "Content-Type: text/html\r\n");
+    fprintf(out, "\r\n");
+    fprintf(out, "<html>\r\n");
+    fprintf(out, "<header>\r\n");
+    fprintf(out, "<title>501 Not Implemented</title>\r\n");
+    fprintf(out, "<header>\r\n");
+    fprintf(out, "<body>\r\n");
+    fprintf(out, "<p>The request method %s is not implemented</p>\r\n", req->method);
+    fprintf(out, "</body>\r\n");
+    fprintf(out, "</html>\r\n");
+    fflush(out);
+}
+
+static void
+not_found(struct HTTPRequest* req, FILE* out)
+{
+    output_common_header_fields(req, out, "404 Not Found");
+    fprintf(out, "Content-Type: text/html\r\n");
+    fprintf(out, "\r\n");
+    if (strcmp(req->method, "HEAD") != 0) {
+        fprintf(out, "<html>\r\n");
+        fprintf(out, "<header><title>Not Found</title><header>\r\n");
+        fprintf(out, "<body><p>File not found</p></body>\r\n");
+        fprintf(out, "</html>\r\n");
+    }
+    fflush(out);
+}
+
+#define TIME_BUF_SIZE 64
+
+static void
+output_common_header_fields(struct HTTPRequest* req, FILE* out, char* status)
+{
+    time_t t;
+    struct tm* tm;
+    char buf[TIME_BUF_SIZE];
+
+    // 시간 관련 API
+    t = time(NULL);
+    tm = gmtime(&t);
+
+    if (!tm)
+    {
+        log_exit("gmtime() failed: %s", strerror(errno));
+    }
+
+    /*
+    - 시간을 문자열로 출력
+    
+    (참고) 로케일이 적용될 경우, strftime 는 문제가 될 수 있다.
+    로케일에 관계없이 특정 포켓으로 시간을 출력해야 하는데
+    setlocale 한 상태에서 strftime 을 사용하면 라이브러리가 로케일에 맞춰서 출력한다.
+    지금은 setlocal 을 안했기 때문에 문제가 안된다.
+    하지만 locale 을 사용해야 한다면, 직접 struct tm 멤버를 출력해야 한다.
+    */
+    strftime(buf, TIME_BUF_SIZE, "%a, %d %b %Y %H:%M:%S GMT", tm);
+
+    fprintf(out, "HTTP/1.%d %s\r\n", HTTP_MINOR_VERSION, status);
+    fprintf(out, "Date: %s\r\n", buf);                                                              // 응답 반환한 날짜와 시각
+    fprintf(out, "Server: %s/%s\r\n", SERVER_NAME, SERVER_VERSION);        // HTTP 서버명과 버전
+    fprintf(out, "Connection: close\r\n");														 // 응답 송신 후, 스트림을 끊을지 여부
+}
+
+/*
+FileInfo
+- char* path;   // 파일 시스템 파일의 절대 경로
+- long size;      // 파일 크기(바이트)
+- int ok;           // 파일 존재하면 0이 아닌값
+*/
+static struct FileInfo*
+get_fileinfo(char* docroot, char* urlpath)
+{
+    // docroot : 문서 루트
+    // urlpath : URL 경로
+    /*
+    HTTP 구조와 파일 시스템은 유사하다
+    URL 이 파일 시스템에서의 경로.
+
+    http://www.example.com/foo/bar.html 에 엑세스하면
+    www.example.com 서버의 /foo/bar.html 파일에 엑세스하는 것과 같다.
+    */
+    struct FileInfo* info;
+    struct stat st;
+
+    info = xmalloc(sizeof(struct FileInfo));
+
+    // build_fspath 을 통해 URL 요청에 대한 파일 시스템의 경로를 생성
+    info->path = build_fspath(docroot, urlpath);
+    info->ok = 0;
+
+    /*
+    >> stat 과 lstat 은 파일 혹은 경로에 대한 정보를 조회하는 함수이다.
+
+    >> lstat 을 통해 다음 사항 확인
+    - 엔트리 존재하는가
+    - 그것은 보통 파일인가 
+    하나라도 충족하지 않으면 fileInfo 의 ok 멤버를 0 으로 한다.
+
+    >> lstat 을 사용하는 이유는 보안.
+    stat 함수는, 문서 트리의 외부를 가리키는 심볼릭 링크가 있으면 문제가 발생한다.
+    일단 여기서는 모든 심볼릭 링크를 베재할 것이다.
+    */
+
+    if (lstat(info->path, &st) < 0) return info;
+
+    /*
+    Unix System 에서는 file 의 type 이 st_mode 라는 변수를 통해 표현된다.
+    서로 다른 type 과 권한 ? 을 의미하는 bit 들의 조합으로 되어 있다.
+
+    S_ISREG : 은 bitwise operation 을 수행한다.
+    - 만약 일반 파일이라면 true 를 리턴
+    - 일반 파일이 아니라면 ex) directory, symbolic link 등등
+    */
+    if (!S_ISREG(st.st_mode)) return info;
+
+    info->ok = 1;
+    info->size = st.st_size;
+
+    return info;
+}
+
+static char*
+build_fspath(char* docroot, char* urlpath)
+{
+    char* path;
+
+    // 절대 경로를 만들어준다.
+    // +1 을 2번 해주는 것은.  docroot 와 urlpath 사이의  '/' 와
+    // 마지막에 '0' 을 추가하기 위함
+    path = xmalloc(strlen(docroot) + 1 + strlen(urlpath) + 1);
+
+    // sprintf : 문자열 조립함수
+    sprintf(path, "%s/%s", docroot, urlpath);
+
+    return path;
+}
+
+static void
+free_fileinfo(struct FileInfo* info)
+{
+    free(info->path);
+    free(info);
+}
+
+static char*
+guess_content_type(struct FileInfo* info)
+{
+    return "text/plain";   /* FIXME */
 }
 
 /*

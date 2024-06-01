@@ -37,6 +37,8 @@ main(int argc, char* argv[])
 
     fclose(f);
 
+    // 현재 시간을 리턴해준다.
+    // ex) 
     fputs(buf, stdout);
 
     exit(0);
