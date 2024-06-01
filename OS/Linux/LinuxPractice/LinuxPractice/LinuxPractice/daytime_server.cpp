@@ -1,4 +1,4 @@
-ï»¿#include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -6,9 +6,9 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
-// tcp ì ‘ì† ë‹´ë‹¹ 
-// host     : host ëª…-> localhost (í”„ë¡œì„¸ìŠ¤ê°€ ë™ìž‘í•˜ê³  ìžˆëŠ” í˜¸ìŠ¤íŠ¸) ì‚¬ìš©
-// service : í¬íŠ¸ ë²ˆí˜¸. í¬íŠ¸ë²ˆí˜¸ë¥¼ ë¬¸ìžì—´ë¡œ ì „ë‹¬í•˜ëŠ” ê²ƒë„ ê°€ëŠ¥í•˜ë‹¤.
+// tcp Á¢¼Ó ´ã´ç 
+// host     : host ¸í-> localhost (ÇÁ·Î¼¼½º°¡ µ¿ÀÛÇÏ°í ÀÖ´Â È£½ºÆ®) »ç¿ë
+// service : Æ÷Æ® ¹øÈ£. Æ÷Æ®¹øÈ£¸¦ ¹®ÀÚ¿­·Î Àü´ÞÇÏ´Â °Íµµ °¡´ÉÇÏ´Ù.
 //              well port ex) 13
 static int open_connection(const char* host, char* service);
 
@@ -19,9 +19,7 @@ main(int argc, char* argv[])
     FILE* f;
     char buf[1024];
 
-    // í•´ë‹¹ í•¨ìˆ˜ë¥¼ í†µí•´ ìŠ¤íŠ¸ë¦¼ì„ ì–»ì„ ìˆ˜ ìžˆë‹¤.
-    // ì°¸ê³  : daytime ì´ëž€ ì‹œí—˜ìš©ìœ¼ë¡œ ì¤€ë¹„ëœ í”„ë¡œí† ì½œì´ë‹¤. (í¬íŠ¸ë²ˆí˜¸ 13)
-    //         í•´ë‹¹ í¬íŠ¸ë²ˆí˜¸ë¡œ ì†Œì¼“ì´ ì ‘ì†í•˜ë©´, ì„œë²„ê°€ í˜„ìž¬ ì‹œê°ì„ ë°˜í™˜í•´ì¤€ë‹¤.
+    // ÇØ´ç ÇÔ¼ö¸¦ ÅëÇØ ½ºÆ®¸²À» ¾òÀ» ¼ö ÀÖ´Ù.
     sock = open_connection(argc > 1 ? argv[1] : "localhost", "daytime");
 
     f = fdopen(sock, "r");
@@ -32,7 +30,7 @@ main(int argc, char* argv[])
         exit(1);
     }
 
-    // fgets í•¨ìˆ˜ë¥¼ í†µí•´ í•œì¤„ì”© ì½ëŠ”ë‹¤.
+    // fgets ÇÔ¼ö¸¦ ÅëÇØ ÇÑÁÙ¾¿ ÀÐ´Â´Ù.
     fgets(buf, sizeof buf, f);
 
     fclose(f);
@@ -51,31 +49,37 @@ open_connection(const char* host, char* service)
 
     memset(&hints, 0, sizeof(struct addrinfo));
 
-    // AF_UNSPEC : ì–´ë“œë ˆìŠ¤ íŒ¨ë°€ë¦¬ë¥¼ ì§€ì •í•˜ì§€ ì•ŠëŠ” ê²ƒ.
-    // IPv4, IPv6 ì–´ëŠ ê²ƒì¤‘ í•˜ë‚˜ë¥¼ ì‚¬ìš©í•´ë„ ëœë‹¤ëŠ” ì˜ë¯¸.
+    // AF_UNSPEC : ¾îµå·¹½º ÆÐ¹Ð¸®¸¦ ÁöÁ¤ÇÏÁö ¾Ê´Â °Í.
+    // IPv4, IPv6 ¾î´À °ÍÁß ÇÏ³ª¸¦ »ç¿ëÇØµµ µÈ´Ù´Â ÀÇ¹Ì.
     hints.ai_family = AF_UNSPEC;
 
     // TCP
-    // íŒ¨í‚·ì´ ì•„ë‹ˆë¼, ìŠ¤íŠ¸ë¦¼ì˜ ì ‘ì†ì„ ì‚¬ìš©í•œë‹¤ëŠ” ì˜ë¯¸.
+    // ÆÐÅ¶ÀÌ ¾Æ´Ï¶ó, ½ºÆ®¸²ÀÇ Á¢¼ÓÀ» »ç¿ëÇÑ´Ù´Â ÀÇ¹Ì.
     hints.ai_socktype = SOCK_STREAM;
 
-    // hints ëŠ” ë°˜í™˜í•˜ëŠ” ip ì£¼ì†Œì˜ í›„ë³´ë¥¼ ì¤„ì´ê¸° ìœ„í•´ ì§€ì •í•œë‹¤.
+    // hints ´Â ¹ÝÈ¯ÇÏ´Â ip ÁÖ¼ÒÀÇ ÈÄº¸¸¦ ÁÙÀÌ±â À§ÇØ ÁöÁ¤ÇÑ´Ù.
     if ((err = getaddrinfo(host, service, &hints, &res)) != 0) {
         fprintf(stderr, "getaddrinfo(3): %s\n", gai_strerror(err));
         exit(1);
     }
 
-    // getaddrinfo ì„ í†µí•´ ì–»ì€ ê°’ì´ ë°˜í™˜ê°’ì´ ì—°ê²°ë¦¬ìŠ¤íŠ¸
-    // ë”°ë¼ì„œ ì—°ê²°ë¦¬ìŠ¤íŠ¸ë¥¼ ìˆœíšŒí•œë‹¤.
-    // ìˆœíšŒí•˜ë©´ì„œ ì²˜ìŒìœ¼ë¡œ ì ‘ì†ì´ ë˜ëŠ” ì£¼ì†Œë¥¼ ì‚¬ìš©í•˜ë„ë¡ í•œë‹¤.
+    // getaddrinfo À» ÅëÇØ ¾òÀº °ªÀÌ ¹ÝÈ¯°ªÀÌ ¿¬°á¸®½ºÆ®
+    // µû¶ó¼­ ¿¬°á¸®½ºÆ®¸¦ ¼øÈ¸ÇÑ´Ù.
+    // ¼øÈ¸ÇÏ¸é¼­ Ã³À½À¸·Î Á¢¼ÓÀÌ µÇ´Â ÁÖ¼Ò¸¦ »ç¿ëÇÏµµ·Ï ÇÑ´Ù.
     for (ai = res; ai; ai = ai->ai_next) {
 
+        // ¼ÒÄÏÀ» ¸¸µé°í. ÀÌ¿¡ ´ëÀÀµÇ´Â ÆÄÀÏ µð½ºÅ©¸³ÅÍ¸¦ ¹ÝÈ¯ÇÑ´Ù.
+        // 1st : domain /2nd : socket type/ 3rd : protocol 
+        // ÀÌ 3°¡Áö¸¦ ¸ðµÎ ÇÕÃÄ¼­ ¼ÒÄÏ¿¡ ¹«¾ùÀ» ¿¬°áÇÒÁö ÁöÁ¤ÇÑ´Ù.
+        // ex) IPv4 TCP : PF_INET, SOCK_STREAM, 0
         sock = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
 
+        // ¼º°ø½Ã 0ÀÌ»óÀÇ Á¤¼ö¸¦ ¹ÝÈ¯. ½ÇÆÐ½Ã -1À» ¹ÝÈ¯
         if (sock < 0) {
             continue;
         }
 
+        // ¼ÒÄÏ¿¡¼­ ½ºÆ®¸²À» ²¨³»¼­, addr ·Î ÁöÁ¤ÇÑ ÁÖ¼ÒÀÇ ¼­¹ö¿¡ "½ºÆ®¸²" À» ¿¬°áÇÑ´Ù.
         if (connect(sock, ai->ai_addr, ai->ai_addrlen) < 0) {
             close(sock);
             continue;
