@@ -124,7 +124,7 @@ static struct option longopts[] = {
     {"port",   required_argument, NULL, 'p'},
 
     // 도움 메세지 내놓는 옵션
-    {"help",   no_argument,       NULL, 'h'},  
+    {"help",   no_argument,       NULL, 'h'},
 
     {0, 0, 0, 0}
 };
@@ -183,7 +183,7 @@ main(int argc, char* argv[])
     server_fd = listen_socket(port);
 
     if (!debug_mode) {
-    
+
         /*
         * ex)  syslog 만 사용해도 로깅을 할 수 있으나, 로그의 이름등을 지정해부려면 openlog 를 호출한다.
         * 1번째 인자 : 로그에 출력되는 프로그램 이름
@@ -193,7 +193,7 @@ main(int argc, char* argv[])
         * ex) LOG_DAEMON : 로그 메세지를 데몬 로그에 출력
         */
         openlog(SERVER_NAME, LOG_PID | LOG_NDELAY, LOG_DAEMON);
-        
+
         become_daemon();
     }
 
@@ -255,11 +255,11 @@ setup_environment(char* root, char* user, char* groupParam)
     * HTTP URL 에서 파일 시스템의 파일을 얻는 처리 과정에서
     * 문서 트리 밖의 파일에 접근하는 것을 막기 위해 chroot 을 사용한다.
     * 프로세스가 볼 수있는 파일 시스템 자체를 좁히는 것이다.
-    * 
+    *
     * >> chroot : 현재 프로세스의 루트 디렉터리를 path 로 변경한다.
     * 즉 chroot 을 호출한 이후 '/' 에 access 하면 새로운 루트
     * 디렉터리에 접근하게 된다.
-    * 
+    *
     * >> chroot 을 하고나서 setgid, initgroups 를 호출하면 안될까 ?
     * 곤란하다. chroot 환경 속에서는 /etc 가 없기 때문이다.
     * /etc 가 없다는 것은 /etc/passwd 도 /etc/group 도 없다는 의미가 된다.
@@ -267,12 +267,12 @@ setup_environment(char* root, char* user, char* groupParam)
     * /etc 가 필요한 함수들은 chroot 이전에 호출한다.
     */
     chroot(root);
-    
+
     /*
     * chroot 은 슈퍼 사용자만 실행할 수 있다.
     * 따라서 먼서 슈퍼 사용자로 실행 된 후 프로그램 내에서
     * 다른 자격 증명서로 변경한다.
-    * 
+    *
     * 그러므로 chroot 이전에 setuid 를 설정해서는 안된다.
     */
 
@@ -281,15 +281,15 @@ setup_environment(char* root, char* user, char* groupParam)
     * 특정 프로그램에 대해서 set-uid 비트를 설정해두면
     * 실행한 사용자와 관계없이 프로그램 파일의 소유자 권한으로
     * 실행된다.
-    * 
-    * setuid 프로그램으로부터 동작한 프로세스에는 
+    *
+    * setuid 프로그램으로부터 동작한 프로세스에는
     * 2가지 종류의 인증이 존재한다.
     * 1) 실제 사용자 : 프로세스를 시작한 사용자
     * 2) 실효 사용자 : set-uid 프로그램 소유자 id
-    * 
-    * (참고) 그룹에 대해서도 비슷한 구조가 있다. 
+    *
+    * (참고) 그룹에 대해서도 비슷한 구조가 있다.
     * set-gid 비트 라는 것이 존재한다.
-    * 
+    *
     * 1) 실제 그룹 id : 프로그램을 시작한 사용자 그룹 id
     * 2) 프로그램 소유 그룹 id : 실효 그룹 id
     */
@@ -297,18 +297,18 @@ setup_environment(char* root, char* user, char* groupParam)
     /*
     * (참고) 현재 권한을 버리고, 새로운 자격 증명으로 변경하려면
     * setuid, setgid, initgroups 를 사용한다.
-    * 
+    *
     * >> setuid : 현재 프로세스의 실제 사용자 id, 실효 사용자 id 를
     * id 로 변경
-    * 
+    *
     * >> setgid : 현재 프로세스의 실제 그룹 id, 실효 그룹 id 를 id 로 변경
-    * 
+    *
     * >> initgroups : /etc/group 등의 데이터베이스를 보고
     * user 가 속한 보조 그룹을 현재 프로세스의 보조 그룹으로 설정.
-    * 
+    *
     * 2번째 인자  group : 사용자 그룹(primary group) 을
     * 보조 그룹에도 추가하기 위해 사용
-    * 
+    *
     * initgroups 는 슈퍼 사용자가 아니면 성공할 수 없다.
     */
 
@@ -340,26 +340,26 @@ become_daemon(void)
     * - 프로세스가 current_directory 로 사용하고 있는 파일 시스템은
     *    마운트 해제할 수 없다. 장시간 실행되는 데몬은 가급적 루트 디렉터리로 이동
     * - (참고) 마운트 해제 ?
-    * 리눅스에서 파일 시스템 마운트 해제는 마치 특정 드라이브나 장치를 컴퓨터에서 분리하는 것과 같습니다. 
-    * 마운트된 파일 시스템은 마치 외장 하드 드라이브나 USB 드라이브처럼 컴퓨터 시스템의 일부로 작동하며, 
+    * 리눅스에서 파일 시스템 마운트 해제는 마치 특정 드라이브나 장치를 컴퓨터에서 분리하는 것과 같습니다.
+    * 마운트된 파일 시스템은 마치 외장 하드 드라이브나 USB 드라이브처럼 컴퓨터 시스템의 일부로 작동하며,
     * 사용자는 마치 로컬 디렉토리와 마찬가지로 해당 파일 시스템에 있는 파일에 액세스하고 작업할 수 있습니다.
     * 파일 시스템 마운트 해제를 하면 다음과 같은 일이 발생합니다.
     * 파일 시스템과 컴퓨터 시스템의 연결이 끊어집니다. 마치 USB 드라이브를 컴퓨터에서 뽑아내는 것과 같습니다.
     * 사용자는 더 이상 마운트된 파일 시스템에 있는 파일에 액세스할 수 없습니다. 마치 USB 드라이브가 없는 것과 같습니다.
     * 마운트된 파일 시스템에 대한 모든 프로세스가 종료됩니다. 해당 파일 시스템에 액세스하는 프로그램이나 서비스가 모두 종료됩니다.
-    * 
+    *
     * 2) 표준 입출력을 /dev/null 에 연결
     * - 리눅스에서 표준 입출력을 /dev/null에 연결한다는 것은 프로그램의 출력을 버리고 아무것도 표시하지 않도록 설정하는 것을 의미합니다.
-    * /dev/null은 특수 장치 파일로, 모든 데이터가 입력되면 
-    * 소멸되는 "블랙홀" 역할을 합니다. 
-    * 프로그램의 표준 입출력을 /dev/null에 연결하면 
+    * /dev/null은 특수 장치 파일로, 모든 데이터가 입력되면
+    * 소멸되는 "블랙홀" 역할을 합니다.
+    * 프로그램의 표준 입출력을 /dev/null에 연결하면
     * 마치 프로그램이 아무것도 출력하지 않는 것처럼 동작하게 됩니다.
-    * 
+    *
     * - 프로그램이 무심코 표준 입출력을 사용할 때, 에러가 발생하지 않도록 하기 위함
-    * 
+    *
     * ex) freopen("/dev/null", "r", stdin);
-    * 
-    * 3) 제어 단말을 잘라낸다. 
+    *
+    * 3) 제어 단말을 잘라낸다.
     * ex) setsid
     */
     int n;
@@ -374,10 +374,10 @@ become_daemon(void)
     * "/dev/null": This argument specifies the path to a special device file called /dev/null.
     * "r": This argument specifies the mode in which the file is opened. Here, "r" stands for "read" mode.
     * In essence, this line attempts to reopen the standard input stream (stdin) and associates it with the /dev/null device.
-    * 
+    *
     * What is /dev/null?
     * /dev/null is a special file in Unix-based systems (including Linux) that acts like a black hole. Any data written to /dev/null is discarded and disappears.
-    * 
+    *
     * Why redirect stdin to /dev/null?
     * Redirecting stdin to /dev/null essentially disables any user input for the program. Any attempt to read from stdin will receive no data (like an empty void). This might be useful in situations where the program doesn't require user interaction or relies solely on pre-defined data or configuration files.
     */
@@ -430,21 +430,21 @@ detach_children(void)
     * fork 한 자식 프로세스는 wait 하지 않으면 좀비 프로세스가 될 수 있따.
     * 하지만 wait 만 하면, 자식 프로세스가 종료될 때까지 메인 프로세스에서
     * 아무것도 못하고 대기한다.
-    * 
+    *
     * 이를 해결하는 2가지 방법이 있다.
     * 1) 시그널 SIGCHILD 를 수신할 때 wait 호출
     * 2) wait 를 하지 않게 한다.
-    * 
-    * 
+    *
+    *
     * 1) 자식 프로세스 종료되면 커널이 SIGCHILD 를 송신한다.
     * 해당 시그널 핸들로로 wait 하면, 즉시 성공한다.
     * 따라서 쓸데없이 wait 로 기다릴 필요가 없다.
-    * 
+    *
     * 2) sigaction 을 사용해서 wait 을 안할 것이라고 커널에 선언
     * SA_NOCLDWAIT 플래그를 시그널 SIGCHILD 와 함께 sigaction 에
     * 전달하면, 커널은 "이 프로세느는 이제 더 wait() 하는 일이 없다." 라고 판단.
     * 자식 프로세스를 좀비로 만들지 않는다.
-    * 
+    *
     * 그 이후 wait 은 에러가 되므로 주의해야 한다.
     */
     struct sigaction act;
@@ -581,7 +581,7 @@ read_request(FILE* in)
     struct HTTPRequest* req;
     struct HTTPHeaderField* h;
 
-    req = xmalloc(sizeof(struct HTTPRequest));
+    req = reinterpret_cast<HTTPRequest*>(xmalloc(sizeof(struct HTTPRequest)));
     read_request_line(req, in);
     req->header = NULL;
     while (h = read_header_field(in)) {
@@ -592,7 +592,7 @@ read_request(FILE* in)
     if (req->length != 0) {
         if (req->length > MAX_REQUEST_BODY_LENGTH)
             log_exit("request body too long");
-        req->body = xmalloc(req->length);
+        req->body = reinterpret_cast<char*>(xmalloc(req->length));
         if (fread(req->body, req->length, 1, in) < 1)
             log_exit("failed to read request body");
     }
@@ -613,7 +613,7 @@ read_request_line(struct HTTPRequest* req, FILE* in)
     p = strchr(buf, ' ');       /* p (1) */
     if (!p) log_exit("parse error on request line (1): %s", buf);
     *p++ = '\0';
-    req->method = xmalloc(p - buf);
+    req->method = reinterpret_cast<char*>(xmalloc(p - buf));
     strcpy(req->method, buf);
     upcase(req->method);
 
@@ -621,7 +621,7 @@ read_request_line(struct HTTPRequest* req, FILE* in)
     p = strchr(path, ' ');      /* p (2) */
     if (!p) log_exit("parse error on request line (2): %s", buf);
     *p++ = '\0';
-    req->path = xmalloc(p - path);
+    req->path = reinterpret_cast<char*>(xmalloc(p - path));
     strcpy(req->path, path);
 
     if (strncasecmp(p, "HTTP/1.", strlen("HTTP/1.")) != 0)
@@ -645,12 +645,12 @@ read_header_field(FILE* in)
     p = strchr(buf, ':');
     if (!p) log_exit("parse error on request header field: %s", buf);
     *p++ = '\0';
-    h = xmalloc(sizeof(struct HTTPHeaderField));
-    h->name = xmalloc(p - buf);
+    h = reinterpret_cast<HTTPHeaderField*>(xmalloc(sizeof(struct HTTPHeaderField)));
+    h->name = reinterpret_cast<char*>(xmalloc(p - buf));
     strcpy(h->name, buf);
 
     p += strspn(p, " \t");
-    h->value = xmalloc(strlen(p) + 1);
+    h->value = reinterpret_cast<char*>(xmalloc(strlen(p) + 1));
     strcpy(h->value, p);
 
     return h;
@@ -835,7 +835,7 @@ get_fileinfo(char* docroot, char* urlpath)
     struct FileInfo* info;
     struct stat st;
 
-    info = xmalloc(sizeof(struct FileInfo));
+    info = reinterpret_cast<FileInfo*>(xmalloc(sizeof(struct FileInfo)));
     info->path = build_fspath(docroot, urlpath);
     info->ok = 0;
     if (lstat(info->path, &st) < 0) return info;
@@ -850,7 +850,7 @@ build_fspath(char* docroot, char* urlpath)
 {
     char* path;
 
-    path = xmalloc(strlen(docroot) + 1 + strlen(urlpath) + 1);
+    path = reinterpret_cast<char*>(xmalloc(strlen(docroot) + 1 + strlen(urlpath) + 1));
     sprintf(path, "%s/%s", docroot, urlpath);
     return path;
 }
@@ -897,7 +897,7 @@ log_exit(const char* fmt, ...)
         *  Q. 데몬이 되었을 때, 에러 메세지는 어디에 출력하는가 ?
         * 데몬은 단말로부터 완전히 분리하여 작동해야 하므로
         * 표준 입출력을 사용할 수 없다.
-        * 
+        *
         * 통상적으로는 특정 파일에 메세지를 넣는 것이고
         * 이런 종류의 파일을 "로그파일" 이라고 한다.
         */
