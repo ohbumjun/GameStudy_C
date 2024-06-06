@@ -1,4 +1,4 @@
-﻿#include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -10,6 +10,9 @@ void error_handling(char* message);
 
 int main(int argc, char* argv[])
 {
+
+	printf("Usage : Hello\n");
+
 	int serv_sock, clnt_sock;
 	char message[BUF_SIZE];
 	int str_len, i;
@@ -17,14 +20,6 @@ int main(int argc, char* argv[])
 	struct sockaddr_in serv_adr;
 	struct sockaddr_in clnt_adr;
 	socklen_t clnt_adr_sz;
-
-	char* newArgs[2];
-	newArgs[0] = argv[0];
-	*newArgs[1] = '9010';
-	argv = newArgs;
-	argc = 2;
-
-	auto a = argv[1];
 
 	if (argc != 2) {
 		printf("Usage : %s <port>\n", argv[0]);
@@ -47,6 +42,8 @@ int main(int argc, char* argv[])
 		error_handling("listen() error");
 
 	clnt_adr_sz = sizeof(clnt_adr);
+
+	printf("Usage : Hello");
 
 	for (i = 0; i < 5; i++)
 	{
