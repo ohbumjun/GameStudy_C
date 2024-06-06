@@ -1,0 +1,76 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "LinuxTCPIP",
+					"jsonFile" : "directory-LinuxTCPIP-Debug-2793eb2ff2ff0a5ecab7.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "LinuxTCPIP",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "LinuxTCPIP",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "LinuxTCPIP::@ea84bbea70c732666c59",
+					"jsonFile" : "target-LinuxTCPIP-Debug-6bb359d8385ecc353803.json",
+					"name" : "LinuxTCPIP",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "D:/Coding/CodingStudyStuff/gameStudy/Codes/TCPIP/LinuxTCPIP/LinuxTCPIP/out/build/x64-debug",
+		"source" : "D:/Coding/CodingStudyStuff/gameStudy/Codes/TCPIP/LinuxTCPIP/LinuxTCPIP"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}
