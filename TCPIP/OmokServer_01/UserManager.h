@@ -30,6 +30,7 @@ private:
 	User* FindUser(const char* pszID);
 				
 private:
+	// UserObjPool 과 ClientSession 은 아예 다른 것인가 ?
 	std::vector<User> m_UserObjPool;
 	std::deque<int> m_UserObjPoolIndex;
 

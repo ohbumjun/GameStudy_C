@@ -45,6 +45,7 @@ namespace NServerNetLib
 			return bindListenRet;
 		}
 
+		// 파일 디스크립터 모든 비트값 0으로 초기화
 		FD_ZERO(&m_Readfds);
 		FD_SET(m_ServerSockfd, &m_Readfds);
 		
@@ -84,7 +85,12 @@ namespace NServerNetLib
 
 	void TcpNetwork::Run()
 	{
+		// 원본을 보존하기 위해 read_set 변수를 사용한다.
+		// select 함수를 호출하면 변화가 생긴 fd를 제외한 나머지 위치의
+		// 비트들은 전부 0으로 초기화 된다.
+		// 따라서 원본을 보존해야 한다.
 		auto read_set = m_Readfds;
+
 		//연결된 모든 세션을 write 이벤트를 조사하고 있는데 사실 다 할 필요는 없다. 이전에 send 버퍼가 다 찼던 세션만 조사해도 된다.
 		auto write_set = m_Readfds;
 		
@@ -99,6 +105,10 @@ namespace NServerNetLib
 		}
 
 		// Accept
+		// FD_ISSET : 변화 여부 확인
+		// -> server socket 이 수신할 데이터가 있다는 의미
+		//    == 새로운 접속 요청이 있었다는 의미.
+		//		 따라서 이 경우 연결을 수락해야 한다.
 		if (FD_ISSET(m_ServerSockfd, &read_set))
 		{
 			NewSession();
@@ -292,6 +302,8 @@ namespace NServerNetLib
             struct sockaddr_in client_adr;
 
 			auto client_len = static_cast<int>(sizeof(client_adr));
+
+			// 연결요청 대기큐에 있는 클라이언트 연결에 대해 새로운 소켓을 만든다.
 			auto client_sockfd = accept(m_ServerSockfd, (struct sockaddr*)&client_adr, &client_len);
 
 			//m_pRefLogger->Write(LOG_TYPE::L_DEBUG, "%s | client_sockfd(%I64u)", __FUNCTION__, client_sockfd);
@@ -299,6 +311,7 @@ namespace NServerNetLib
 			{
 				if (WSAGetLastError() == WSAEWOULDBLOCK)
 				{
+					// non-blocking socket 이 사용되고 있을 수 있다는 것을 알려주는 것.
 					return NET_ERROR_CODE::ACCEPT_API_WSAEWOULDBLOCK;
 				}
 				m_pRefLogger->Write(LOG_TYPE::L_ERROR, "%s | Wrong socket cannot accept", __FUNCTION__);
@@ -371,6 +384,7 @@ namespace NServerNetLib
 		if (closeCase == SOCKET_CLOSE_CASE::SESSION_POOL_EMPTY)
 		{
 			closesocket(sockFD);
+			// FD_CLR : 현재 연결을 해제하는 소켓을 관찰대상에서 제외한다.
 			FD_CLR(sockFD, &m_Readfds);
 			return;
 		}
