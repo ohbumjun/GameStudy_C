@@ -7,6 +7,9 @@
 
 static const int BUF_SIZE = 1024;
 
+// #define HELLO 1
+
+#ifdef HELLO
 void ErrorHandling(const char* message);
 
 int main(int argc, char* argv[])
@@ -121,3 +124,4 @@ void ErrorHandling(const char* message)
 	exit(1);
 }
 
+#endif // HELLO

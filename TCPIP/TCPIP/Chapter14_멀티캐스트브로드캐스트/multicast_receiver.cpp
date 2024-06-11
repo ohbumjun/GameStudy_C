@@ -55,7 +55,8 @@ int main(int argc, char* argv[])
 	joinAdr.imr_interface.s_addr = htonl(INADDR_ANY);
 
 	// 그룹 가입
-	if (setsockopt(hRecvSock, IPPROTO_IP, IP_ADD_MEMBERSHIP, (const char*)&joinAdr, sizeof(joinAdr)) == SOCKET_ERROR)
+	if (setsockopt(hRecvSock, IPPROTO_IP, 
+	IP_ADD_MEMBERSHIP, (const char*)&joinAdr, sizeof(joinAdr)) == SOCKET_ERROR)
 		ErrorHandling("setsockopt Error");
 
 	// UDP 소켓이므로 listen 함수가 별도로 필요하지 않다.

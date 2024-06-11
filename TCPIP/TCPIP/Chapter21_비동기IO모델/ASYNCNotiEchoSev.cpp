@@ -63,6 +63,10 @@ int main(int argc, char* argv[])
 
 	// 소켓과 이벤트 오브젝트 연결
 	// 즉, 소켓에 대해서 연결요청이 있을 경우, newEvent 가 Signaled 상태로 바뀌게 된다.
+	// hServSock 소켓에서 3번째 인자로 전달된 이벤트 중 하나라도 발생하면, newEvent 의 커널오브젝트를 signaled 상태로 바꾼다.
+	// 3번째 인자로 전달가능한 이벤트 종류
+	// FD_ACCEPT, FD_READ, FD_WRITE, FD_OOB, FD_CONNECT, FD_CLOSE, FD_QOS 등등
+	// 소켓 하나당, 한번의 함수 호출이 진행된다. selec 함수와 달리 매 함수 호출때마다 재등록을 할 필요가 없다.
 	if (WSAEventSelect(hServSock, newEvent, FD_ACCEPT) == SOCKET_ERROR)
 		ErrorHandling("WSAEventSelect() Error");
 
@@ -75,6 +79,7 @@ int main(int argc, char* argv[])
 	{
 		// 여러 이벤트 중에서 하나라도 Signaled 상태가 되면 반환
 		// 그리고 하나라도 Signaled 상태가 되지 않는다면, 반환하지 않는다.
+		// event 들이 manual reset 이어야만, 해당 함수를 호출한다고 하더라도 다시 non-signaled 로 만들어지지 않는다.
 		posInfo = WSAWaitForMultipleEvents(
 			numOfClntSock, hEventArr, FALSE, WSA_INFINITE, FALSE
 		);
@@ -87,6 +92,7 @@ int main(int argc, char* argv[])
 		{
 			// 각각의 이벤트를 돌면서 어떤 이벤트가 Signaled 상태인지 확인한다.
 			// 단, 0을 넘겨주었으므로 호출하자마자 반환하게 된다.
+			// 해당 event 와 연결된 소켓에 발생한 이벤트 정보를 확인하기
 			int sigEventIdx = WSAWaitForMultipleEvents(1, &hEventArr[i], TRUE, 0, FALSE);
 
 			// 여기에 걸린다는 것은, 해당 이벤트 오브젝트는 sinaled상태가된 오브젝트가 아니라는 의미이다.

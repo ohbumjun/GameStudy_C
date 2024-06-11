@@ -1,0 +1,76 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "LinuxPractice",
+					"jsonFile" : "directory-LinuxPractice-Debug-3d1e9a343b0f705c6bd4.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "LinuxPractice",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "LinuxPractice",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "LinuxPractice::@a0e44a73ea6092461c57",
+					"jsonFile" : "target-LinuxPractice-Debug-376aa3610e891270a2b7.json",
+					"name" : "LinuxPractice",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "D:/Coding/CodingStudyStuff/gameStudy/Codes/OS/Linux/LinuxPractice/LinuxPractice/out/build/x64-debug",
+		"source" : "D:/Coding/CodingStudyStuff/gameStudy/Codes/OS/Linux/LinuxPractice/LinuxPractice"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

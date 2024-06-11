@@ -1,0 +1,3 @@
+D:/Coding/CodingStudyStuff/gameStudy/Codes/OS/Linux/LinuxPractice/LinuxPractice/LinuxPractice/build/CMakeFiles/LinuxPractice.dir
+D:/Coding/CodingStudyStuff/gameStudy/Codes/OS/Linux/LinuxPractice/LinuxPractice/LinuxPractice/build/CMakeFiles/edit_cache.dir
+D:/Coding/CodingStudyStuff/gameStudy/Codes/OS/Linux/LinuxPractice/LinuxPractice/LinuxPractice/build/CMakeFiles/rebuild_cache.dir

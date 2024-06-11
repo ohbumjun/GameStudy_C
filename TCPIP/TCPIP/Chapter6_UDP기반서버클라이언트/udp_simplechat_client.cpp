@@ -45,7 +45,8 @@ int main(int argc, char* argv[])
 	servAddr.sin_port = htons(atoi(argv[2]));
 
 	// UDP 소켓에 대해 connect 함수 호출 --> connected 소켓으로 만들기
-	connect(hSocket, (SOCKADDR*)&servAddr, sizeof(servAddr));
+	connect(hSocket, 
+		(SOCKADDR*)&servAddr, sizeof(servAddr));
 
 	while (1)
 	{

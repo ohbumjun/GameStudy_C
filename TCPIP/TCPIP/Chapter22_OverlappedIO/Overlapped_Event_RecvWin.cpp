@@ -70,7 +70,8 @@ int main(int argc, char* argv[])
 	dataBuf.buf = buf;
 
 	// 해당 함수 호출 이후에도, 데이터의 수신이 계속된다면
-	if (WSARecv(hRecvSock, &dataBuf, 1, (LPDWORD)&recvBytes, (LPDWORD)&flags, &overlapped, NULL) == SOCKET_ERROR)
+	if (WSARecv(hRecvSock, &dataBuf, 1, 
+		(LPDWORD)&recvBytes, (LPDWORD)&flags, &overlapped, NULL) == SOCKET_ERROR)
 	{
 		// 해당 함수 호출 이후에도, 데이터의 수신이 계속된다면
 		if (WSAGetLastError() == WSA_IO_PENDING)
@@ -78,11 +79,12 @@ int main(int argc, char* argv[])
 			puts("Background data receive");
 
 			// 해당 IO가 끝나면 overlapped.hEvent, 즉 evObj 이벤트 커널 오브젝트가 signaled 상태가 된다
-			// signaled 상태가 될 때까지 기다린다.
+			// signaled 상태가 될 때까지 기다린다. (WSA_INFINITE)
 			WSAWaitForMultipleEvents(1, &evObj, TRUE, WSA_INFINITE, FALSE);
 
 			// 실제 전송된 데이터의 크기를 확인
-			WSAGetOverlappedResult(hRecvSock, &overlapped, (LPDWORD)&recvBytes, FALSE, NULL);
+			WSAGetOverlappedResult(hRecvSock, 
+				&overlapped, (LPDWORD)&recvBytes, FALSE, NULL);
 		}
 		else
 		{

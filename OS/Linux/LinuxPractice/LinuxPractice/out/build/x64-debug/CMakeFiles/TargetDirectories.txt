@@ -1,0 +1,5 @@
+D:/Coding/CodingStudyStuff/gameStudy/Codes/OS/Linux/LinuxPractice/LinuxPractice/out/build/x64-debug/CMakeFiles/edit_cache.dir
+D:/Coding/CodingStudyStuff/gameStudy/Codes/OS/Linux/LinuxPractice/LinuxPractice/out/build/x64-debug/CMakeFiles/rebuild_cache.dir
+D:/Coding/CodingStudyStuff/gameStudy/Codes/OS/Linux/LinuxPractice/LinuxPractice/out/build/x64-debug/LinuxPractice/CMakeFiles/LinuxPractice.dir
+D:/Coding/CodingStudyStuff/gameStudy/Codes/OS/Linux/LinuxPractice/LinuxPractice/out/build/x64-debug/LinuxPractice/CMakeFiles/edit_cache.dir
+D:/Coding/CodingStudyStuff/gameStudy/Codes/OS/Linux/LinuxPractice/LinuxPractice/out/build/x64-debug/LinuxPractice/CMakeFiles/rebuild_cache.dir
