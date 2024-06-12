@@ -158,11 +158,15 @@ namespace NServerNetLib
 
 	bool TcpNetwork::RunProcessReceive(const int sessionIndex, const SOCKET fd, fd_set& read_set)
 	{
+		// 자. 인자로 들어오는 fd 는 서버 소켓 X
+		// 무조건 클라이언트 소켓이 된다.
+		// 클라이언트 소켓이 수신한 데이터가 있는지 확인한다.
 		if (!FD_ISSET(fd, &read_set))
 		{
 			return true;
 		}
 
+		// 클라이언트 소켓 입장에서 데이터를 수신하게 한다.
 		auto ret = RecvSocket(sessionIndex);
 		if (ret != NET_ERROR_CODE::NONE)
 		{
@@ -328,7 +332,7 @@ namespace NServerNetLib
 				return NET_ERROR_CODE::ACCEPT_MAX_SESSION_COUNT;
 			}
 
-
+			// IPv4 와 IPv6 주소를 binary 형태에서 사람이 알아보기 쉬운 텍스트(human-readable text)형태로 전환
 			char clientIP[MAX_IP_LEN] = { 0, };
 			inet_ntop(AF_INET, &(client_adr.sin_addr), clientIP, MAX_IP_LEN - 1);
 
@@ -336,7 +340,9 @@ namespace NServerNetLib
 
 			SetNonBlockSocket(client_sockfd);
 			
+			// 클라이언트 연결 소켓도 관찰대상으로 삼는다.
 			FD_SET(client_sockfd, &m_Readfds);
+
 			//m_pRefLogger->Write(LOG_TYPE::L_DEBUG, "%s | client_sockfd(%I64u)", __FUNCTION__, client_sockfd);
 			ConnectedSession(newSessionIndex, client_sockfd, clientIP);
 
@@ -349,11 +355,23 @@ namespace NServerNetLib
 	{
 	    if(m_MaxSockFD < fd)
         {
+			/*
+			This line checks if the current file descriptor fd 
+			(representing the new client socket) 
+			is greater than the m_MaxSockFD value. 
+			
+			m_MaxSockFD likely keeps track of the highest file descriptor value used so far.
+			If fd is greater, the following line updates m_MaxSockFD. 
+			
+			This might be useful for managing resources or 
+			keeping track of the highest socket descriptor used.
+			*/
             m_MaxSockFD = fd;
         }
 
 		++m_ConnectSeq;
 
+		// 현재 여결된 클라이언트 소켓에 대한 세션 정보를 세팅한다.
 		auto& session = m_ClientSessionPool[sessionIndex];
 		session.Seq = m_ConnectSeq;
 		session.SocketFD = fd;
@@ -371,10 +389,21 @@ namespace NServerNetLib
 		linger ling;
 		ling.l_onoff = 0;
 		ling.l_linger = 0;
+		/*
+		https://velog.io/@jyongk/TCP-%EC%86%8C%EC%BC%93-%EC%98%B5%EC%85%98-SOLINGER
+		SO_LINGER : 소켓 close 시 전송되지 않은 데이터를 어떻게 할 것인가.
+		TCP 는 보통 연결이 끊긴 후에도 바로 소켓을 닫지 않는다.
+		TIME_OUT 시간 동안 대기를 하는데, 이 TIME_OUT 상태의 시간을
+		SO_LINGER 옵션을 통해 조절할 수 있다. (ex) 바로 닫게 할 수 있다)
+
+		l_onoff == 0 :  이것은 Linger를 비활성화 하겠다는 것으로 소켓의 default 값이다. 
+		*/
 		setsockopt(fd, SOL_SOCKET, SO_LINGER, (char*)&ling, sizeof(ling));
 
 		int size1 = m_Config.MaxClientSockOptRecvBufferSize;
 		int size2 = m_Config.MaxClientSockOptSendBufferSize;
+		
+		// 출력 버퍼, 입력 버퍼 크기 수정
 		setsockopt(fd, SOL_SOCKET, SO_RCVBUF, (char*)&size1, sizeof(size1));
 		setsockopt(fd, SOL_SOCKET, SO_SNDBUF, (char*)&size2, sizeof(size2));
 	}
@@ -568,6 +597,18 @@ namespace NServerNetLib
 	{
 		unsigned long mode = 1;
 
+		// sock 핸들이 참조하는 소켓의 입출력 모드를 넌블로킹 모드로 하겠다.
+		/*
+		https://woo-dev.tistory.com/194
+		- 넌블로킹 모드 : 소켓 입출력 함수가 블로킹 되지 않고 바로 리턴되도록 하는 모드
+		ex) accept, recv, send 함수는 원래 블로킹 함수.
+		그런데 이러한 옵션을 사용하고 나면, accept 의 경우 해당 함수를 호출한 시점에
+		클라이언트 연결 요청이 없다면 INVALID_SOCKET 을 리턴한다.
+
+		- send , recv : 패킷 수신 여부와 관계없이 논블로킹 모드시 해당 함수들을 사용해도
+		바로 리턴해버린다. 따라서 논블로킹 모드로 소켓을 사용할 때는 해당 소켓이
+		read,write 할 수 있는 상태인지를 판별해주는 select 함수가 필요하다.
+		*/
 		if (ioctlsocket(sock, FIONBIO, &mode) == SOCKET_ERROR)
 		{
 			return NET_ERROR_CODE::SERVER_SOCKET_FIONBIO_FAIL;

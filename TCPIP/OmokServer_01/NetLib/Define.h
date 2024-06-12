@@ -40,7 +40,11 @@ namespace NServerNetLib
 		}
 
 		int Index = 0;
+
+		// 연결된 순서..? TcpNetwork 의 m_ConnectSeq 값이 세팅된다.
 		long long Seq = 0;
+
+		// SOCKET 핸들 값
 		unsigned long long	SocketFD = 0;
 		char    IP[MAX_IP_LEN] = { 0, };
 
@@ -54,7 +58,9 @@ namespace NServerNetLib
 
 	struct RecvPacketInfo
 	{
-		int SessionIndex = 0;
+		//  TcpNetwork 에서 ClientSession 의 index 값이다.
+		//  특정 Client 와 통신 과정에서 Packet 정보를 담는 struct ?
+		int SessionIndex = 0;		
 		short PacketId = 0;
 		short PacketBodySize = 0;
 		char* pRefData = 0;
