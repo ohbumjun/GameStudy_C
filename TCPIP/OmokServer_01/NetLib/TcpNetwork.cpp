@@ -167,14 +167,22 @@ namespace NServerNetLib
 		}
 
 		// 클라이언트 소켓 입장에서 데이터를 수신하게 한다.
-		auto ret = RecvSocket(sessionIndex);
+		// 참고 : TCP 는 데이터 경계가 존재한다.
+		// 따라서 상대방이 100을 보냈어도, 여러 개의 패킷으로 나뉘어져 전송될 수 있고
+		// 이로 인해 recv 를 여러번 호출해야 할 수도 있다.
+		// 즉, recv 를 호출해도 그 size 가 100이 아니라 10 이렇게 적은 data size 만을
+		// 읽어들일 수 있다는 것이다.
+		NET_ERROR_CODE ret = RecvSocket(sessionIndex);
+
 		if (ret != NET_ERROR_CODE::NONE)
 		{
 			CloseSession(SOCKET_CLOSE_CASE::SOCKET_RECV_ERROR, fd, sessionIndex);
 			return false;
 		}
 
+		// RecvSocket 을 통해 수신버퍼에 저장한 데이터를 읽어들이는 함수이다.
 		ret = RecvBufferProcess(sessionIndex);
+
 		if (ret != NET_ERROR_CODE::NONE)
 		{
 			CloseSession(SOCKET_CLOSE_CASE::SOCKET_RECV_BUFFER_PROCESS_ERROR, fd, sessionIndex);
@@ -445,9 +453,15 @@ namespace NServerNetLib
 
 		int recvPos = 0;
 				
+		// 해당 클라이언트가 수신할 데이터가 남아있다면
 		if (session.RemainingDataSize > 0)
 		{
+			// session.pRecvBuffer 쪽으로 남은 데이터들을 복사
+			// : make space for new data at the end of buffer
 			memcpy(session.pRecvBuffer, &session.pRecvBuffer[session.PrevReadPosInRecvBuffer], session.RemainingDataSize);
+			
+			// recvPos : 새로운 데이터 ? 가 들어갈 공간의 시작 위치
+			// recvPos 부터 새로운 데이터를 recv 를 통해 받아들일 것이다.
 			recvPos += session.RemainingDataSize;
 		}
 
@@ -472,7 +486,9 @@ namespace NServerNetLib
 			}
 		}
 
+		// (확실 X) 수신 버퍼에 남아있는 total size ? 를 반영하는 변수로 보인다.
 		session.RemainingDataSize += recvSize;
+
 		return NET_ERROR_CODE::NONE;
 	}
 
@@ -484,16 +500,21 @@ namespace NServerNetLib
 		const auto dataSize = session.RemainingDataSize;
 		PacketHeader* pPktHeader;
 		
+		// Packet Data 부분을 모두 읽을 때까지 반복한다.
 		while ((dataSize - readPos) >= PACKET_HEADER_SIZE)
 		{
 			pPktHeader = (PacketHeader*)&session.pRecvBuffer[readPos];
+
 			readPos += PACKET_HEADER_SIZE;
-			auto bodySize = (int16_t)(pPktHeader->TotalSize - PACKET_HEADER_SIZE);
+
+			int16_t bodySize = (int16_t)(pPktHeader->TotalSize - PACKET_HEADER_SIZE);
 
 			if (bodySize > 0)
 			{
+				// bodySize > 0 라는 것은 valid packet 이라는 의미이다. valid packet 은 body size > 0 
 				if (bodySize > (dataSize - readPos))
 				{
+					// data bodySize 가 remaining data 크기보다 크다면
 					readPos -= PACKET_HEADER_SIZE;
 					break;
 				}

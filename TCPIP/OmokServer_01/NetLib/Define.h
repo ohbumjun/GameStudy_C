@@ -48,6 +48,8 @@ namespace NServerNetLib
 		unsigned long long	SocketFD = 0;
 		char    IP[MAX_IP_LEN] = { 0, };
 
+		// TcpNetwork::CreateSessionPool 참고
+		// new char[m_Config.MaxClientRecvBufferSize] 가 할당된다.
 		char*   pRecvBuffer = nullptr; 
 		int     RemainingDataSize = 0;
 		int     PrevReadPosInRecvBuffer = 0;
