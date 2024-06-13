@@ -145,13 +145,15 @@ namespace NServerNetLib
 			SOCKET fd = session.SocketFD;
 			auto sessionIndex = session.Index;
 
-			// check read
+			// 정보를 수신한 클라이언트 소켓이 있는지 체크하고
+			// 해당 클라이언트 소켓이 수신한 데이터를 별도의 PacketQueue 에 저장한다.
 			auto retReceive = RunProcessReceive(sessionIndex, fd, read_set);
+
 			if (retReceive == false) {
 				continue;
 			}
 
-			// check write
+			// 반대로 데이터를 전송할 준비가 되어 있는 클라이언트 소켓이 있는지 확인한다.
 			RunProcessWrite(sessionIndex, fd, write_set);
 		}
 	}
@@ -472,6 +474,8 @@ namespace NServerNetLib
 			return NET_ERROR_CODE::RECV_REMOTE_CLOSE;
 		}
 
+		// 논블로킹 소켓이기 때문에 recv 함수를 호출한 시점에
+		// 아직 아무 데이터도 입력 버퍼로 부터 읽어들이지 못했을 수 있다.
 		if (recvSize < 0)
 		{
 			auto netError = WSAGetLastError();
@@ -499,6 +503,62 @@ namespace NServerNetLib
 		auto readPos = 0;
 		const auto dataSize = session.RemainingDataSize;
 		PacketHeader* pPktHeader;
+
+		/*
+		case 1)
+		- packet_header_size : 2
+		- readPos			 : 2
+		- pPktHeader->TotalSize : 22
+		- bodySize			 : 20
+		- datasize			 : 6
+		- datasize - readPos : 4
+		- readPos			 : 0
+		- break; -> PacketQueue 에 데이터를 추가하지 않는다.
+
+		아직, 해당 패킷의 모든 정보가 수신되지 않은 상황이다.
+		body 는 20 이 들어와야 하는데, 아직 6 바이트만 들어온 것이다. ?
+
+		session.RemainingDataSize -= readPos(0);
+		session.PrevReadPosInRecvBuffer = readPos(0);
+
+		return return NET_ERROR_CODE::NONE;
+		*/
+
+
+		/*
+		case 2)
+		>> 1st loop 
+		- packet_header_size : 2
+		- pPktHeader->TotalSize : 22
+		- readPos : 2
+		- datasize : 35
+		- datasize - readPos : 33
+		- bodySize : 20
+		=> Packet 에 새로운 값 추가
+		   즉, 해당 Packet 에 대응되는 모든 정보가 들어왔다고 가정하고. 패킷 정보를
+		   PacketQueue 에 추가한다.
+
+		- readPos = 2 - 2 = 0
+		- Packet : recvBuffer[0]
+		- readPos += bodySize --> readPos : 22
+		- 즉, 하나의 버퍼에서 그 다음 패킷 정보로 stream 을 이동시키는 것이다.
+
+		>> 2nd loop ( 그 다음 패킷 정보로 넘어온 것이다)
+		- packet_header_size : 2
+		- pPktHeader->TotalSize : 20
+		- readPos  : 22
+		- datasize : 35
+		- datasize - readPos : 13
+		- bodySize : 18
+		=> if (bodySize > (dataSize - readPos)) 조건 성립
+		   readPos -= 2 --> readPos : 20
+		   break; -> PacketQueue 에 데이터를 추가하지 않는다.
+
+		session.RemainingDataSize -= readPos; -> session.RemainingDataSize : 35 - 22 = 13
+		session.PrevReadPosInRecvBuffer = readPos; -> 22
+
+		즉, 아직 해당 패킷에 대한 모든 정보가 수신되지 않았다고 판단하고 빠져나오는 것이다.
+		*/
 		
 		// Packet Data 부분을 모두 읽을 때까지 반복한다.
 		while ((dataSize - readPos) >= PACKET_HEADER_SIZE)
@@ -555,8 +615,12 @@ namespace NServerNetLib
 		}
 
 		auto retsend = FlushSendBuff(sessionIndex);
+
 		if (retsend.Error != NET_ERROR_CODE::NONE)
 		{
+			// 음... FlushSendBuffer 함수에서 send 함수 호출 결과 0 또는 음수를 반환하면
+			// SOCKET_CLOSE_CASE::SOCKET_SEND_ERROR 가 된다.
+			// 0 혹은 음수. 를 리턴한다는 것은 무조건 에러라는 것인가..?
 			CloseSession(SOCKET_CLOSE_CASE::SOCKET_SEND_ERROR, fd, sessionIndex);
 		}
 	}
@@ -573,13 +637,21 @@ namespace NServerNetLib
 
 		auto result = SendSocket(fd, session.pSendBuffer, session.SendSize);
 
-		if (result.Error != NET_ERROR_CODE::NONE) {
+		if (result.Error != NET_ERROR_CODE::NONE) 
+		{
+			// ex) SendSocket 함수 내부에서 NET_ERROR_CODE::SEND_SIZE_ZERO 을 리턴할 경우
+			// 즉, 아무 데이터도 send 함수를 통해 전송하지 못한 경우에 해당한다.
 			return result;
 		}
 
+		// 여기에 오는 경우는 result가 NET_ERROR_CODE::NONE 일 때이다.
+		// ? session.SendSize 가 0 일 때도 일단 여기로 들어오는건가..?
 		auto sendSize = result.Vlaue;
+
 		if (sendSize < session.SendSize)
 		{
+			// 실제 전송하고자 한 데이터보다 적게 전송했다면
+			// 나머지 남은 부분들을 session.pSendBuffer 앞쪽으로 당겨온다.
 			memmove(&session.pSendBuffer[0],
 				&session.pSendBuffer[sendSize],
 				session.SendSize - sendSize);
@@ -588,6 +660,7 @@ namespace NServerNetLib
 		}
 		else
 		{
+			// 그게 아니라면 모두 전송했다고 판단한다.
 			session.SendSize = 0;
 		}
 		return result;
@@ -596,14 +669,20 @@ namespace NServerNetLib
 	NetError TcpNetwork::SendSocket(const SOCKET fd, const char* pMsg, const int size)
 	{
 		NetError result(NET_ERROR_CODE::NONE);
+
 		auto rfds = m_Readfds;
 
 		// 접속 되어 있는지 또는 보낼 데이터가 있는지
 		if (size <= 0)
 		{
+			// 보낼 데이터가 없다면 그대로 리턴
 			return result;
 		}
 
+		// 일부 데이터를 보낸다.
+		// 단, 논블로킹 소켓 옵션을 사용하고 있기 때문에 
+		// send 함수를 호출한 시점에 모든 데이터가 전송되지 않을 수 있다.
+		// 리턴값 : 전송된 총 바이트수 (ex) size 에 명시한 숫자보다 작은 숫자 리턴 가능)
 		result.Vlaue = send(fd, pMsg, size, 0);
 
 		if (result.Vlaue <= 0)
@@ -629,6 +708,8 @@ namespace NServerNetLib
 		- send , recv : 패킷 수신 여부와 관계없이 논블로킹 모드시 해당 함수들을 사용해도
 		바로 리턴해버린다. 따라서 논블로킹 모드로 소켓을 사용할 때는 해당 소켓이
 		read,write 할 수 있는 상태인지를 판별해주는 select 함수가 필요하다.
+		
+		- 음...send,recv 는 무조건 블로킹 함수가 아닌가..?
 		*/
 		if (ioctlsocket(sock, FIONBIO, &mode) == SOCKET_ERROR)
 		{

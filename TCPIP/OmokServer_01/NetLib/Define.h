@@ -45,15 +45,19 @@ namespace NServerNetLib
 		long long Seq = 0;
 
 		// SOCKET 핸들 값
+		// 참고 : 현재 TCP Network 상의 모든 소켓은 "넌블로킹 모드" 로 동작한다.
 		unsigned long long	SocketFD = 0;
 		char    IP[MAX_IP_LEN] = { 0, };
 
 		// TcpNetwork::CreateSessionPool 참고
-		// new char[m_Config.MaxClientRecvBufferSize] 가 할당된다.
+		// new char[m_Config.MaxClientRecvBufferSize] 를 가리키는 포인터
+		// 수신한 바이트 정보를 담는 char 배열을 가리키는 포인터
+		// 즉, 수신 버퍼 같은 역할을 한다고 생각하면 된다.
 		char*   pRecvBuffer = nullptr; 
 		int     RemainingDataSize = 0;
 		int     PrevReadPosInRecvBuffer = 0;
 
+		// 송신 버퍼 같은 역할을 한다고 생각하면 된다.
 		char*   pSendBuffer = nullptr; 
 		int     SendSize = 0;
 	};
@@ -65,6 +69,8 @@ namespace NServerNetLib
 		int SessionIndex = 0;		
 		short PacketId = 0;
 		short PacketBodySize = 0;
+
+		// 해당 Packet 이 가리키는 데이터의 시작 위치
 		char* pRefData = 0;
 	};
 	

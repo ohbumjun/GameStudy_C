@@ -71,6 +71,8 @@ namespace NServerNetLib
 		NetError SendSocket(const SOCKET fd, const char* pMsg, const int size);
 
 		bool RunCheckSelectResult(const int result);
+
+		// 각 클라이언트 소켓들을 돌면서 전송할 데이터는 전송하고, 수신할 데이터는 수신한다.
 		void RunCheckSelectClients(fd_set& read_set, fd_set& write_set);
 		bool RunProcessReceive(const int sessionIndex, const SOCKET fd, fd_set& read_set);
 
@@ -90,6 +92,8 @@ namespace NServerNetLib
 		std::vector<ClientSession> m_ClientSessionPool;
 		std::deque<int> m_ClientSessionPoolIndex;
 		
+		// AddPacketQueue 참고 
+		// - 수신한 모든 패킷 정보? 를 넣는 것 같다.
 		std::deque<RecvPacketInfo> m_PacketQueue;
 
 		ILog* m_pRefLogger;

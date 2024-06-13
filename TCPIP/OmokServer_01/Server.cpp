@@ -74,8 +74,10 @@ void Server::Run()
 
 		while (true)
 		{				
+			// PacketQueue 에 있는 Packet 맨 앞에 있는 정보를 가져온다.
 			auto packetInfo = m_pNetwork->GetPacketInfo();
 
+			// 유의미하지 않은 PacketInfo 라면 break;
 			if (packetInfo.PacketId == 0)
 			{
 				break;

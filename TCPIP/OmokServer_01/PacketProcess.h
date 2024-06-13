@@ -35,9 +35,9 @@ public:
 
 	
 private:
+	// 아래의 대상들 모두 TcpNetwork class 에 정의된 객체들을 가리키는 포인터
 	ILog* m_pRefLogger;
 	TcpNet* m_pRefNetwork;
-				
 	UserManager* m_pRefUserMgr;
 	RoomManager* m_pRefRoomMgr;
 						
