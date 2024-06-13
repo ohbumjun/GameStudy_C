@@ -77,7 +77,15 @@ namespace NServerNetLib
 		// ex) [packet header][packet body]
 		char* pRefData = 0;
 	};
-	
+
+	struct RecvPacketInfo2
+	{
+		int SessionIndex = 0;
+		short PacketId = 0;
+		short PacketBodySize = 0;
+		char* pRefData = 0;
+	};
+
 
 	enum class SOCKET_CLOSE_CASE : short
 	{

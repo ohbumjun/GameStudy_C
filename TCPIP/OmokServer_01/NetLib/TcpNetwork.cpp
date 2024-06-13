@@ -2,6 +2,15 @@
 #include <vector>
 #include <deque>
 
+#ifndef _WIN32
+#include <unistd.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <sys/select.h>
+#include <sys/time.h>
+#include <sys/ioctl.h>
+#endif
+
 #include "ILog.h"
 #include "TcpNetwork.h"
 
@@ -58,7 +67,9 @@ namespace NServerNetLib
 
 	void TcpNetwork::Release()
 	{
+#ifdef _WIN32
 		WSACleanup();
+#endif
 	}
 
 	RecvPacketInfo TcpNetwork::GetPacketInfo()
@@ -96,7 +107,11 @@ namespace NServerNetLib
 		
 		timeval timeout{ 0, 1000 }; //tv_sec, tv_usec
 
-        auto selectResult = select(0, &read_set, &write_set, 0, &timeout);
+#ifdef _WIN32
+		auto selectResult = select(0, &read_set, &write_set, 0, &timeout);
+#else
+		auto selectResult = select(m_MaxSockFD + 1, &read_set, &write_set, 0, &timeout);
+#endif
 
 		auto isFDSetChanged = RunCheckSelectResult(selectResult);
 		if (isFDSetChanged == false)
@@ -259,6 +274,7 @@ namespace NServerNetLib
 
 	NET_ERROR_CODE TcpNetwork::InitServerSocket()
 	{
+#ifdef _WIN32
 		WORD wVersionRequested = MAKEWORD(2, 2);
 		WSADATA wsaData;
 		WSAStartup(wVersionRequested, &wsaData);
@@ -274,6 +290,19 @@ namespace NServerNetLib
 		{
 			return NET_ERROR_CODE::SERVER_SOCKET_SO_REUSEADDR_FAIL;
 		}
+#else
+		m_ServerSockfd = socket(PF_INET, SOCK_STREAM, 0);
+		if (m_ServerSockfd < 0)
+		{
+			return NET_ERROR_CODE::SERVER_SOCKET_CREATE_FAIL;
+		}
+
+		auto n = 1;
+		if (setsockopt(m_ServerSockfd, SOL_SOCKET, SO_REUSEADDR, (char*)&n, sizeof(n)) < 0)
+		{
+			return NET_ERROR_CODE::SERVER_SOCKET_SO_REUSEADDR_FAIL;
+		}
+#endif
 
 		return NET_ERROR_CODE::NONE;
 	}
@@ -318,20 +347,30 @@ namespace NServerNetLib
 			++tryCount;
 
             struct sockaddr_in client_adr;
-
+#ifdef _WIN32
 			auto client_len = static_cast<int>(sizeof(client_adr));
 
 			// 연결요청 대기큐에 있는 클라이언트 연결에 대해 새로운 소켓을 만든다.
 			auto client_sockfd = accept(m_ServerSockfd, (struct sockaddr*)&client_adr, &client_len);
-
+#else
+			auto client_len = sizeof(client_adr);
+			auto client_sockfd = accept(m_ServerSockfd, (struct sockaddr*)&client_adr, (socklen_t*)&client_len);
+#endif
 			//m_pRefLogger->Write(LOG_TYPE::L_DEBUG, "%s | client_sockfd(%I64u)", __FUNCTION__, client_sockfd);
 			if (client_sockfd == INVALID_SOCKET)
 			{
+#ifdef _WIN32
 				if (WSAGetLastError() == WSAEWOULDBLOCK)
 				{
 					// non-blocking socket 이 사용되고 있을 수 있다는 것을 알려주는 것.
 					return NET_ERROR_CODE::ACCEPT_API_WSAEWOULDBLOCK;
 				}
+#else
+if (errno == EWOULDBLOCK)
+{
+	return NET_ERROR_CODE::ACCEPT_API_WSAEWOULDBLOCK;
+}
+#endif
 				m_pRefLogger->Write(LOG_TYPE::L_ERROR, "%s | Wrong socket cannot accept", __FUNCTION__);
 				return NET_ERROR_CODE::ACCEPT_API_ERROR;
 			}
@@ -426,7 +465,11 @@ namespace NServerNetLib
 	{
 		if (closeCase == SOCKET_CLOSE_CASE::SESSION_POOL_EMPTY)
 		{
+#ifdef _WIN32
 			closesocket(sockFD);
+#else
+			close(sockFD);
+#endif
 			// FD_CLR : 현재 연결을 해제하는 소켓을 관찰대상에서 제외한다.
 			FD_CLR(sockFD, &m_Readfds);
 			return;
@@ -436,8 +479,11 @@ namespace NServerNetLib
 			return;
 		}
 
-
-        closesocket(sockFD);
+#ifdef _WIN32
+		closesocket(sockFD);
+#else
+		close(sockFD);
+#endif
 		FD_CLR(sockFD, &m_Readfds);
 
 		m_ClientSessionPool[sessionIndex].Clear();
@@ -482,8 +528,11 @@ namespace NServerNetLib
 		// 아직 아무 데이터도 입력 버퍼로 부터 읽어들이지 못했을 수 있다.
 		if (recvSize < 0)
 		{
+#ifdef _WIN32
 			auto netError = WSAGetLastError();
-
+#else
+			auto netError = errno;
+#endif
 			if (netError != WSAEWOULDBLOCK)
 			{
 				return NET_ERROR_CODE::RECV_API_ERROR; 
@@ -715,11 +764,17 @@ namespace NServerNetLib
 		
 		- 음...send,recv 는 무조건 블로킹 함수가 아닌가..?
 		*/
+#ifdef _WIN32
 		if (ioctlsocket(sock, FIONBIO, &mode) == SOCKET_ERROR)
 		{
 			return NET_ERROR_CODE::SERVER_SOCKET_FIONBIO_FAIL;
 		}
-
+#else
+		if (ioctl(sock, FIONBIO, &mode) == -1)
+		{
+			return NET_ERROR_CODE::SERVER_SOCKET_BIND_FAIL;
+		}
+#endif
 		return NET_ERROR_CODE::NONE;
 	}
 	
