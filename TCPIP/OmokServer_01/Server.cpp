@@ -41,6 +41,7 @@ ERROR_CODE Server::Init()
 	m_pUserMgr = std::make_unique<UserManager>();
 	m_pUserMgr->Init(m_pServerConfig->MaxClientCount);
 
+	// 룸 정보들을 세팅한다.
 	m_pRoomMgr = std::make_unique<RoomManager>();
 	m_pRoomMgr->Init(m_pServerConfig->MaxRoomCount, m_pServerConfig->MaxRoomUserCount);
 	m_pRoomMgr->SetNetwork(m_pNetwork.get(), m_pLogger.get());
@@ -70,20 +71,26 @@ void Server::Run()
 {
 	while (m_IsRun)
 	{
+		// Run 함수 내부에서 수신된 패킷 정보를 PacketQueue 에 넣어준다.
 		m_pNetwork->Run();
 
+		// while 문을 돌면서 발생한 이벤트들을 처리해준다.
 		while (true)
 		{				
 			// PacketQueue 에 있는 Packet 맨 앞에 있는 정보를 가져온다.
-			auto packetInfo = m_pNetwork->GetPacketInfo();
+			NServerNetLib::RecvPacketInfo packetInfo = m_pNetwork->GetPacketInfo();
 
-			// 유의미하지 않은 PacketInfo 라면 break;
+			// 0 이라는 것은, 유의미한 이벤트가 없다는 의미이다.
+			// ex) 수신한 녀석도 없고, 전송한 녀석도 없고
 			if (packetInfo.PacketId == 0)
 			{
 				break;
 			}
 			else
 			{
+				// Packet 의 PacketId 변수에 
+				// 어떤 type 의 패킷인지가 저장되어 있다.
+				// 해당 type 을 기준으로 패킷 처리를 한다.
 				m_pPacketProc->Process(packetInfo);
 			}
 		}
@@ -96,6 +103,8 @@ ERROR_CODE Server::LoadConfig()
 
 	m_pServerConfig->Port = 11021;
 	m_pServerConfig->BackLogCount = 128;
+
+	// 최대 클라이언트를 몇개까지 받을 것인가.
 	m_pServerConfig->MaxClientCount = 1000;
 
 	m_pServerConfig->MaxClientSockOptRecvBufferSize = 10240;
@@ -103,6 +112,10 @@ ERROR_CODE Server::LoadConfig()
 	m_pServerConfig->MaxClientRecvBufferSize = 8192;
 	m_pServerConfig->MaxClientSendBufferSize = 8192;
 
+	// MaxClientCount 에서 여유를 더 주는 것이다.
+	// 여유를 더 주는 이유는 여기 client 개수가 많아지면 서버단에서 잘라버린다.
+	// 그런데 클라이언트에서는 그 이유를 알 수 없다..
+	// 그래서 ... 존재하는 변수..?
 	m_pServerConfig->ExtraClientCount = 64;
 	m_pServerConfig->MaxRoomCount = 20;
 	m_pServerConfig->MaxRoomUserCount = 4;

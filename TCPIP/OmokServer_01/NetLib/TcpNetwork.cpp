@@ -199,15 +199,19 @@ namespace NServerNetLib
 		auto& session = m_ClientSessionPool[sessionIndex];
 
 		auto pos = session.SendSize;
-		auto totalSize = (int16_t)(bodySize + PACKET_HEADER_SIZE);
+		int16_t totalSize = (int16_t)(bodySize + PACKET_HEADER_SIZE);
 
 		if ((pos + totalSize) > m_Config.MaxClientSendBufferSize ) {
 			return NET_ERROR_CODE::CLIENT_SEND_BUFFER_FULL;
 		}
 				
+		// packetId == PACKET_ID
 		PacketHeader pktHeader{ totalSize, packetId, (uint8_t)0 };
+
+		// 일단 전송 버퍼 끝에 packet header 정보를 넣어준다.
 		memcpy(&session.pSendBuffer[pos], (char*)&pktHeader, PACKET_HEADER_SIZE);
 
+		// 그리고 그 이후에 Packet 정보를 넣어준다.
 		if (bodySize > 0)
 		{
 			memcpy(&session.pSendBuffer[pos + PACKET_HEADER_SIZE], pMsg, bodySize);

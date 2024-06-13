@@ -41,6 +41,8 @@ void PacketProcess::Process(PacketInfo packetInfo)
 	case (int)commonPacketId::LOGIN_IN_REQ:
 		Login(packetInfo);
 		break;
+
+	// 새로운 패킷이 만들어지면, 여기 case 문이 점점 늘어날 것이다.
 	}
 	
 }
@@ -70,17 +72,25 @@ ERROR_CODE PacketProcess::Login(PacketInfo packetInfo)
 	// 패스워드는 무조건 pass 해준다.
 	// ID 중복이라면 에러 처리한다.
 	PktLogInRes resPkt;
-	auto reqPkt = (PktLogInReq*)packetInfo.pRefData;
+	PktLogInReq* reqPkt = (PktLogInReq*)packetInfo.pRefData;
 
-	auto addRet = m_pRefUserMgr->AddUser(packetInfo.SessionIndex, reqPkt->szID);
+	ERROR_CODE addRet = m_pRefUserMgr->AddUser(packetInfo.SessionIndex, reqPkt->szID);
 
 	if (addRet != ERROR_CODE::NONE) {
+
+		// error 가 발생했다면, error 정보를 전송한다.
+		// 이때. resPkt 은 실제 전송하는 패킷의 "데이터" 부분이다.
 		resPkt.SetError(addRet);
+
+		// 참고 : 여기서 바로 실제 send 를 호출하지 않는다.
+		// 그 다음 network->Run Loop 에서 Send 해준다.
 		m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::LOGIN_IN_RES, sizeof(PktLogInRes), (char*)&resPkt);
+		
 		return addRet;
 	}
 		
 	resPkt.ErrorCode = (short)addRet;
+
 	m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::LOGIN_IN_RES, sizeof(PktLogInRes), (char*)&resPkt);
 
 	return ERROR_CODE::NONE;

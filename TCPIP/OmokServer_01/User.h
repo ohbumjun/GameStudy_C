@@ -67,8 +67,10 @@ public:
 protected:
 	short m_Index = -1;
 		
+	// 대응되는 Client Session Index
 	int m_SessionIndex = -1;
 
+	// User 가 입력하는 ID
 	std::string m_ID;
 		
 	bool m_IsConfirm = false;

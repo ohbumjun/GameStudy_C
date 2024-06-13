@@ -66,11 +66,15 @@ namespace NServerNetLib
 	{
 		//  TcpNetwork 에서 ClientSession 의 index 값이다.
 		//  특정 Client 와 통신 과정에서 Packet 정보를 담는 struct ?
-		int SessionIndex = 0;		
+		int SessionIndex = 0;	
+
+		// 어떤 종류의 Packet 인가.
 		short PacketId = 0;
 		short PacketBodySize = 0;
 
 		// 해당 Packet 이 가리키는 데이터의 시작 위치
+		// 보통 pRefData 는 Packet 의 Header 시작 부분을 가리키게 되지 않을까 ?
+		// ex) [packet header][packet body]
 		char* pRefData = 0;
 	};
 	

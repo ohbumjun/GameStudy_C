@@ -14,6 +14,11 @@ UserManager::~UserManager()
 
 void UserManager::Init(const int maxUserCount)
 {
+	// 로그인이 될 때마다 매번 User 객체를 새로 만들어줄 필요가 없다.
+	// 어차피 총 몇명의 User 동시 접속을 받을 지를 알기 때문이다.
+	// 미리 객체 풀을 만들고
+	// 사용 o, 사용 x 를 구분해주기 위해서
+	// 사용하지 않는 객체의 idx 번호를 m_UserObjPoolIndex 에 넣어주는 것이다.
 	for (int i = 0; i < maxUserCount; ++i)
 	{
 		User user;
@@ -47,7 +52,8 @@ ERROR_CODE UserManager::AddUser(const int sessionIndex, const char* pszID)
 		return ERROR_CODE::USER_MGR_ID_DUPLICATION;
 	}
 
-	auto pUser = AllocUserObjPoolIndex();
+	// 사용가능한 ? User 객체 정보를 가져온다.
+	User* pUser = AllocUserObjPoolIndex();
 	if (pUser == nullptr) {
 		return ERROR_CODE::USER_MGR_MAX_USER_COUNT;
 	}
