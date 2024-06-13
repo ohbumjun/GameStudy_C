@@ -17,9 +17,9 @@ public:
 	void Init(const int maxUserCount);
 
 	// Login 을 하면 User 가 추가된다.
-	ERROR_CODE AddUser(const int sessionIndex, const char* pszID);
-	ERROR_CODE RemoveUser(const int sessionIndex);
-	std::tuple<ERROR_CODE,User*> GetUser(const int sessionIndex);
+	NCommon::ERROR_CODE AddUser(const int sessionIndex, const char* pszID);
+	NCommon::ERROR_CODE RemoveUser(const int sessionIndex);
+	std::tuple<NCommon::ERROR_CODE,User*> GetUser(const int sessionIndex);
 private:
 	User* AllocUserObjPoolIndex();
 	void ReleaseUserObjPoolIndex(const int index);

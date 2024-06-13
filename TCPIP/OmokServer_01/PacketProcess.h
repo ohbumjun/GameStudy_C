@@ -42,9 +42,9 @@ private:
 	RoomManager* m_pRefRoomMgr;
 						
 private:
-	ERROR_CODE NtfSysConnctSession(PacketInfo packetInfo);
-	ERROR_CODE NtfSysCloseSession(PacketInfo packetInfo);
+	NCommon::ERROR_CODE NtfSysConnctSession(PacketInfo packetInfo);
+	NCommon::ERROR_CODE NtfSysCloseSession(PacketInfo packetInfo);
 		
-	ERROR_CODE Login(PacketInfo packetInfo);
+	NCommon::ERROR_CODE Login(PacketInfo packetInfo);
 
 };

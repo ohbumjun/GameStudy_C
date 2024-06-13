@@ -75,7 +75,10 @@ protected:
 		
 	bool m_IsConfirm = false;
 		
+	// 상태
+	// ex) 로그인 상태인지, 로그아웃 상태인지
 	DOMAIN_STATE m_CurDomainState = DOMAIN_STATE::NONE;
 
+	// 들어간 방의 idx
 	short m_RoomIndex = -1;
 };

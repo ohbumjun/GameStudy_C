@@ -22,7 +22,7 @@ Server::~Server()
 	Release();
 }
 
-ERROR_CODE Server::Init()
+NCommon::ERROR_CODE Server::Init()
 {
 	m_pLogger = std::make_unique<ConsoleLog>();
 
@@ -34,7 +34,7 @@ ERROR_CODE Server::Init()
 	if (result != NET_ERROR_CODE::NONE)
 	{
 		m_pLogger->Write(LOG_TYPE::L_ERROR, "%s | Init Fail. NetErrorCode(%s)", __FUNCTION__, (short)result);
-		return ERROR_CODE::MAIN_INIT_NETWORK_INIT_FAIL;
+		return NCommon::ERROR_CODE::MAIN_INIT_NETWORK_INIT_FAIL;
 	}
 
 
@@ -52,7 +52,7 @@ ERROR_CODE Server::Init()
 	m_IsRun = true;
 
 	m_pLogger->Write(LOG_TYPE::L_INFO, "%s | Init Success. Server Run", __FUNCTION__);
-	return ERROR_CODE::NONE;
+	return NCommon::ERROR_CODE::NONE;
 }
 
 void Server::Release()
@@ -97,7 +97,7 @@ void Server::Run()
 	}
 }
 
-ERROR_CODE Server::LoadConfig()
+NCommon::ERROR_CODE Server::LoadConfig()
 {
 	m_pServerConfig = std::make_unique<NServerNetLib::ServerConfig>();
 
@@ -121,6 +121,6 @@ ERROR_CODE Server::LoadConfig()
 	m_pServerConfig->MaxRoomUserCount = 4;
 	    
 	m_pLogger->Write(NServerNetLib::LOG_TYPE::L_INFO, "%s | Port(%d), Backlog(%d)", __FUNCTION__, m_pServerConfig->Port, m_pServerConfig->BackLogCount);
-	return ERROR_CODE::NONE;
+	return NCommon::ERROR_CODE::NONE;
 }
 		

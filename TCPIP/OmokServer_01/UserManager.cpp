@@ -46,16 +46,18 @@ void UserManager::ReleaseUserObjPoolIndex(const int index)
 	m_UserObjPool[index].Clear();
 }
 
-ERROR_CODE UserManager::AddUser(const int sessionIndex, const char* pszID)
+NCommon::ERROR_CODE UserManager::AddUser(const int sessionIndex, const char* pszID)
 {
 	if (FindUser(pszID) != nullptr) {
-		return ERROR_CODE::USER_MGR_ID_DUPLICATION;
+		return NCommon::ERROR_CODE::USER_MGR_ID_DUPLICATION;
 	}
 
 	// 사용가능한 ? User 객체 정보를 가져온다.
 	User* pUser = AllocUserObjPoolIndex();
+
+	// nullptr 이라는 것은, 사용할 수 있는 pool 이 더이상 없다는 것이다.
 	if (pUser == nullptr) {
-		return ERROR_CODE::USER_MGR_MAX_USER_COUNT;
+		return NCommon::ERROR_CODE::USER_MGR_MAX_USER_COUNT;
 	}
 
 	pUser->Set(sessionIndex, pszID);
@@ -63,15 +65,15 @@ ERROR_CODE UserManager::AddUser(const int sessionIndex, const char* pszID)
 	m_UserSessionDic.insert({ sessionIndex, pUser });
 	m_UserIDDic.insert({ pszID, pUser });
 
-	return ERROR_CODE::NONE;
+	return NCommon::ERROR_CODE::NONE;
 }
 
-ERROR_CODE UserManager::RemoveUser(const int sessionIndex)
+NCommon::ERROR_CODE UserManager::RemoveUser(const int sessionIndex)
 {
 	auto pUser = FindUser(sessionIndex);
 
 	if (pUser == nullptr) {
-		return ERROR_CODE::USER_MGR_REMOVE_INVALID_SESSION;
+		return NCommon::ERROR_CODE::USER_MGR_REMOVE_INVALID_SESSION;
 	}
 
 	auto index = pUser->GetIndex();
@@ -81,22 +83,22 @@ ERROR_CODE UserManager::RemoveUser(const int sessionIndex)
 	m_UserIDDic.erase(pszID.c_str());
 	ReleaseUserObjPoolIndex(index);
 
-	return ERROR_CODE::NONE;
+	return NCommon::ERROR_CODE::NONE;
 }
 
-std::tuple<ERROR_CODE, User*> UserManager::GetUser(const int sessionIndex)
+std::tuple<NCommon::ERROR_CODE, User*> UserManager::GetUser(const int sessionIndex)
 {
 	auto pUser = FindUser(sessionIndex);
 
 	if (pUser == nullptr) {
-		return { ERROR_CODE::USER_MGR_INVALID_SESSION_INDEX, nullptr };
+		return { NCommon::ERROR_CODE::USER_MGR_INVALID_SESSION_INDEX, nullptr };
 	}
 
 	if (pUser->IsConfirm() == false) {
-		return{ ERROR_CODE::USER_MGR_NOT_CONFIRM_USER, nullptr };
+		return{ NCommon::ERROR_CODE::USER_MGR_NOT_CONFIRM_USER, nullptr };
 	}
 
-	return{ ERROR_CODE::NONE, pUser };
+	return{ NCommon::ERROR_CODE::NONE, pUser };
 }
 
 User* UserManager::FindUser(const int sessionIndex)

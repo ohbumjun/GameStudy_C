@@ -27,10 +27,12 @@ public:
 	
 	void SetNetwork(TcpNet* pNetwork, ILog* pLogger);
 
+	// User 들이 모두 나가면 Room 정리
 	void Clear();
 		
 	short GetIndex() { return m_Index;  }
 
+	// user 가 한명이라도 있다면 사용중
 	bool IsUsed() { return m_IsUsed; }
 		
 	short MaxUserCount() { return m_MaxUserCount; }

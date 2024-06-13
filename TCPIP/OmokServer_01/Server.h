@@ -23,7 +23,7 @@ public:
 	Server();
 	~Server();
 
-	ERROR_CODE Init();
+	NCommon::ERROR_CODE Init();
 
 	void Run();
 
@@ -31,7 +31,7 @@ public:
 
 
 private:
-	ERROR_CODE LoadConfig();
+	NCommon::ERROR_CODE LoadConfig();
 
 	void Release();
 

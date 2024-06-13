@@ -15,6 +15,9 @@
     <Filter Include="NetLib">
       <UniqueIdentifier>{8b6c55fb-71b0-4168-9c82-d38310f87e9c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{3c690e81-a2c8-42fe-baf3-44ccf3c13775}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NetLib\Define.h">
@@ -32,16 +35,24 @@
     <ClInclude Include="NetLib\TcpNetwork.h">
       <Filter>NetLib</Filter>
     </ClInclude>
-    <ClInclude Include="conmanip.h" />
     <ClInclude Include="ConsoleLogger.h" />
-    <ClInclude Include="ErrorCode.h" />
-    <ClInclude Include="Packet.h" />
-    <ClInclude Include="PacketID.h" />
     <ClInclude Include="PacketProcess.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="UserManager.h" />
     <ClInclude Include="RoomManager.h" />
+    <ClInclude Include="conmanip.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketID.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorCode.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
