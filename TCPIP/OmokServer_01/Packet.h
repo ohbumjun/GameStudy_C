@@ -64,6 +64,7 @@ namespace NCommon
 	};
 
 	// - 로비에서 나가기 요청
+	// ex) Room::NotifyLeaveUserInfo
 	struct PktLobbyLeaveReq {};
 
 	// - 로비에서 나가기 응답
@@ -87,6 +88,7 @@ namespace NCommon
 
 
 	//- 룸에 있는 유저에게 새로 들어온 유저 정보 통보
+	// ex) Room::NotifyEnterUserInfo
 	struct PktRoomEnterUserInfoNtf
 	{
 		char UserID[MAX_USER_ID_SIZE] = { 0, };
@@ -120,6 +122,7 @@ namespace NCommon
 	};
 
 	//- 룸 채팅 내용 ?
+	// ex) Room::NotifyChat
 	struct PktRoomChatNtf
 	{
 		char UserID[MAX_USER_ID_SIZE] = { 0, };

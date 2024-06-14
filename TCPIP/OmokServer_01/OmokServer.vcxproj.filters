@@ -20,16 +20,37 @@
     <ClCompile Include="PacketProcess.cpp">
       <Filter>LoginLib</Filter>
     </ClCompile>
+<<<<<<< HEAD
+=======
+    <ClCompile Include="PacketProcess.cpp" />
+    <ClCompile Include="Room.cpp" />
+    <ClCompile Include="Server.cpp" />
+    <ClCompile Include="UserManager.cpp" />
+    <ClCompile Include="RoomManager.cpp" />
+    <ClCompile Include="Game.cpp">
+      <Filter>LogicLib</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketProcessRoom.cpp" />
+    <ClCompile Include="PacketProcessLogin.cpp" />
+    <ClCompile Include="PacketProcessLobby.cpp" />
+    <ClCompile Include="Lobby.cpp" />
+    <ClCompile Include="LobbyManager.cpp" />
+>>>>>>> 7cdf6e62b2009391e70059d8fb2407c946e40735
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Common">
       <UniqueIdentifier>{3c690e81-a2c8-42fe-baf3-44ccf3c13775}</UniqueIdentifier>
     </Filter>
+<<<<<<< HEAD
     <Filter Include="ServerNetLib">
       <UniqueIdentifier>{8b6c55fb-71b0-4168-9c82-d38310f87e9c}</UniqueIdentifier>
     </Filter>
     <Filter Include="LoginLib">
       <UniqueIdentifier>{cda94c72-f9d4-4a50-b712-d8aeee54c15e}</UniqueIdentifier>
+=======
+    <Filter Include="LogicLib">
+      <UniqueIdentifier>{74571187-4f9a-476b-891e-38c68ff6db72}</UniqueIdentifier>
+>>>>>>> 7cdf6e62b2009391e70059d8fb2407c946e40735
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +82,7 @@
     <ClInclude Include="ErrorCode.h">
       <Filter>Common</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="UserManager.h">
       <Filter>LoginLib</Filter>
     </ClInclude>
@@ -79,5 +101,12 @@
     <ClInclude Include="PacketProcess.h">
       <Filter>LoginLib</Filter>
     </ClInclude>
+=======
+    <ClInclude Include="Game.h">
+      <Filter>LogicLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Lobby.h" />
+    <ClInclude Include="LobbyManager.h" />
+>>>>>>> 7cdf6e62b2009391e70059d8fb2407c946e40735
   </ItemGroup>
 </Project>

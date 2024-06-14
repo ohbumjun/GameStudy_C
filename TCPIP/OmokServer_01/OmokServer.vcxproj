@@ -146,9 +146,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Lobby.cpp" />
+    <ClCompile Include="LobbyManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NetLib\TcpNetwork.cpp" />
     <ClCompile Include="PacketProcess.cpp" />
+    <ClCompile Include="PacketProcessLobby.cpp" />
+    <ClCompile Include="PacketProcessLogin.cpp" />
+    <ClCompile Include="PacketProcessRoom.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="RoomManager.cpp" />
     <ClCompile Include="Server.cpp" />
@@ -158,6 +164,9 @@
     <ClInclude Include="conmanip.h" />
     <ClInclude Include="ConsoleLogger.h" />
     <ClInclude Include="ErrorCode.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Lobby.h" />
+    <ClInclude Include="LobbyManager.h" />
     <ClInclude Include="NetLib\Define.h" />
     <ClInclude Include="NetLib\ILog.h" />
     <ClInclude Include="NetLib\ITcpNetwork.h" />

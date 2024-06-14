@@ -1,50 +1,82 @@
 ﻿#pragma once
 
 #include <memory>
-
 #include "Packet.h"
 #include "ErrorCode.h"
 #include "NetLib/Define.h"
-
 
 namespace NServerNetLib
 {
 	class ITcpNetwork;
 	class ILog;
 }
-
 	
 class UserManager;
 class RoomManager;
 
-
-class PacketProcess
+namespace NLogicLib
 {
-	using PacketInfo = NServerNetLib::RecvPacketInfo;
-	
-	using TcpNet = NServerNetLib::ITcpNetwork;
-	using ILog = NServerNetLib::ILog;
+	class ConnectedUserManager;
+	class UserManager;
+	class LobbyManager;
 
-public:
-	PacketProcess();
-	~PacketProcess();
+	using ServerConfig = NServerNetLib::ServerConfig;
 
-	void Init(TcpNet* pNetwork, UserManager* pUserMgr, RoomManager* pRoomMgr, NServerNetLib::ServerConfig* pConfig, ILog* pLogger);
+	class PacketProcess
+	{
+		using PacketInfo = NServerNetLib::RecvPacketInfo;
+		// retur type : ERROR_CODE
+		// parameter : PacketInfo
+		// PackeProcess Class 의 멤버함수 -> PacketFunc 이름의 함수 포인트
+		typedef NCommon::ERROR_CODE(PacketProcess::* PacketFunc)(PacketInfo);
 
-	void Process(PacketInfo packetInfo);
+		// 함수 포인트들의 배열
+		// - 모든 종류의 패킷을 처리하는 함수 포인터들을 배열 형태로 관리.
+		PacketFunc PacketFuncArray[(int)NCommon::PACKET_ID::MAX];
 
-	
-private:
-	// 아래의 대상들 모두 TcpNetwork class 에 정의된 객체들을 가리키는 포인터
-	ILog* m_pRefLogger;
-	TcpNet* m_pRefNetwork;
-	UserManager* m_pRefUserMgr;
-	RoomManager* m_pRefRoomMgr;
-						
-private:
-	NCommon::ERROR_CODE NtfSysConnctSession(PacketInfo packetInfo);
-	NCommon::ERROR_CODE NtfSysCloseSession(PacketInfo packetInfo);
-		
-	NCommon::ERROR_CODE Login(PacketInfo packetInfo);
+		using TcpNet = NServerNetLib::ITcpNetwork;
+		using ILog = NServerNetLib::ILog;
+	public:
+		PacketProcess();
+		~PacketProcess();
 
-};
+		void Init(TcpNet* pNetwork, UserManager* pUserMgr, RoomManager* pRoomMgr, NServerNetLib::ServerConfig* pConfig, ILog* pLogger);
+
+		void Process(PacketInfo packetInfo);
+
+		void StateCheck();
+
+	private:
+		// 아래의 대상들 모두 TcpNetwork class 에 정의된 객체들을 가리키는 포인터
+		ILog* m_pRefLogger;
+		TcpNet* m_pRefNetwork;
+		UserManager* m_pRefUserMgr;
+		RoomManager* m_pRefRoomMgr;
+
+		std::unique_ptr<ConnectedUserManager> m_pConnectedUserManager;
+	private:
+		NCommon::ERROR_CODE NtfSysConnctSession(PacketInfo packetInfo);
+		NCommon::ERROR_CODE NtfSysCloseSession(PacketInfo packetInfo);
+
+		NCommon::ERROR_CODE Login(PacketInfo packetInfo);
+
+		NCommon::ERROR_CODE LobbyList(PacketInfo packetInfo);
+
+		NCommon::ERROR_CODE LobbyEnter(PacketInfo packetInfo);
+
+		NCommon::ERROR_CODE LobbyLeave(PacketInfo packetInfo);
+
+		NCommon::ERROR_CODE RoomEnter(PacketInfo packetInfo);
+
+		NCommon::ERROR_CODE RoomLeave(PacketInfo packetInfo);
+
+		NCommon::ERROR_CODE RoomChat(PacketInfo packetInfo);
+
+		NCommon::ERROR_CODE RoomMasterGameStart(PacketInfo packetInfo);
+
+		NCommon::ERROR_CODE RoomGameStart(PacketInfo packetInfo);
+
+		NCommon::ERROR_CODE DevEcho(PacketInfo packetInfo);
+
+	};
+}
