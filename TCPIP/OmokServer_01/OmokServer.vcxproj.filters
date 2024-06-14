@@ -10,6 +10,7 @@
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="UserManager.cpp" />
     <ClCompile Include="RoomManager.cpp" />
+    <ClCompile Include="Game.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="NetLib">
@@ -17,6 +18,9 @@
     </Filter>
     <Filter Include="Common">
       <UniqueIdentifier>{3c690e81-a2c8-42fe-baf3-44ccf3c13775}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LogicLib">
+      <UniqueIdentifier>{74571187-4f9a-476b-891e-38c68ff6db72}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -54,5 +58,6 @@
     <ClInclude Include="ErrorCode.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="Game.h" />
   </ItemGroup>
 </Project>
