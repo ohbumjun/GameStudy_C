@@ -65,6 +65,8 @@ namespace NLogicLib
 		ILog* m_pRefLogger;
 		TcpNet* m_pRefNetwork;
 
+		// 하나의 Lobby 가 여러개의 Room 을 가지고 있는데
+		// 그중 몇번째 Room 인지 -> Lobby 측에서 해당 정보를 세팅해준다.
 		short m_Index = -1;
 		short m_MaxUserCount;
 

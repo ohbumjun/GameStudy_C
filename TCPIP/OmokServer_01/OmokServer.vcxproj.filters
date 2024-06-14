@@ -10,7 +10,14 @@
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="UserManager.cpp" />
     <ClCompile Include="RoomManager.cpp" />
-    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Game.cpp">
+      <Filter>LogicLib</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketProcessRoom.cpp" />
+    <ClCompile Include="PacketProcessLogin.cpp" />
+    <ClCompile Include="PacketProcessLobby.cpp" />
+    <ClCompile Include="Lobby.cpp" />
+    <ClCompile Include="LobbyManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="NetLib">
@@ -58,6 +65,10 @@
     <ClInclude Include="ErrorCode.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Game.h" />
+    <ClInclude Include="Game.h">
+      <Filter>LogicLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Lobby.h" />
+    <ClInclude Include="LobbyManager.h" />
   </ItemGroup>
 </Project>

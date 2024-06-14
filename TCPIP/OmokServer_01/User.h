@@ -9,7 +9,8 @@ namespace NLogicLib
 		enum class DOMAIN_STATE {
 			NONE = 0,
 			LOGIN = 1,
-			ROOM = 2,
+			LOBBY = 2,
+			ROOM = 3,
 		};
 
 	public:
@@ -27,6 +28,7 @@ namespace NLogicLib
 			m_ID = "";
 			m_IsConfirm = false;
 			m_CurDomainState = DOMAIN_STATE::NONE;
+			m_LobbyIndex = -1;
 			m_RoomIndex = -1;
 		}
 
@@ -48,7 +50,19 @@ namespace NLogicLib
 
 		bool IsConfirm() { return m_IsConfirm; }
 
+		short GetLobbyIndex() { return m_LobbyIndex; }
 		short GetRoomIndex() { return m_RoomIndex; }
+
+		void EnterLobby(const short lobbyIndex)
+		{
+			m_LobbyIndex = lobbyIndex;
+			m_CurDomainState = DOMAIN_STATE::LOBBY;
+		}
+
+		void LeaveLobby()
+		{
+			m_CurDomainState = DOMAIN_STATE::LOGIN;
+		}
 
 		void EnterRoom(const short roomIndex)
 		{
@@ -60,10 +74,15 @@ namespace NLogicLib
 			return m_CurDomainState == DOMAIN_STATE::LOGIN ? true : false;
 		}
 
+		// 현재 Room 에 있는지 체크
 		bool IsCurDomainInRoom() {
 			return m_CurDomainState == DOMAIN_STATE::ROOM ? true : false;
 		}
 
+		// 현재 Lobby 에 있는지 체크
+		bool IsCurDomainInLobby() {
+			return m_CurDomainState == DOMAIN_STATE::LOBBY ? true : false;
+		}
 
 	protected:
 		// UserManager 의 m_UserObjPoolIndex
