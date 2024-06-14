@@ -3,45 +3,52 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NetLib\TcpNetwork.cpp">
-      <Filter>NetLib</Filter>
+      <Filter>ServerNetLib</Filter>
     </ClCompile>
-    <ClCompile Include="PacketProcess.cpp" />
-    <ClCompile Include="Room.cpp" />
-    <ClCompile Include="Server.cpp" />
-    <ClCompile Include="UserManager.cpp" />
-    <ClCompile Include="RoomManager.cpp" />
+    <ClCompile Include="RoomManager.cpp">
+      <Filter>LoginLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Server.cpp">
+      <Filter>LoginLib</Filter>
+    </ClCompile>
+    <ClCompile Include="UserManager.cpp">
+      <Filter>LoginLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Room.cpp">
+      <Filter>LoginLib</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketProcess.cpp">
+      <Filter>LoginLib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="NetLib">
-      <UniqueIdentifier>{8b6c55fb-71b0-4168-9c82-d38310f87e9c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Common">
       <UniqueIdentifier>{3c690e81-a2c8-42fe-baf3-44ccf3c13775}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ServerNetLib">
+      <UniqueIdentifier>{8b6c55fb-71b0-4168-9c82-d38310f87e9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LoginLib">
+      <UniqueIdentifier>{cda94c72-f9d4-4a50-b712-d8aeee54c15e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NetLib\Define.h">
-      <Filter>NetLib</Filter>
+      <Filter>ServerNetLib</Filter>
     </ClInclude>
     <ClInclude Include="NetLib\ILog.h">
-      <Filter>NetLib</Filter>
+      <Filter>ServerNetLib</Filter>
     </ClInclude>
     <ClInclude Include="NetLib\ITcpNetwork.h">
-      <Filter>NetLib</Filter>
+      <Filter>ServerNetLib</Filter>
     </ClInclude>
     <ClInclude Include="NetLib\ServerNetErrorCode.h">
-      <Filter>NetLib</Filter>
+      <Filter>ServerNetLib</Filter>
     </ClInclude>
     <ClInclude Include="NetLib\TcpNetwork.h">
-      <Filter>NetLib</Filter>
+      <Filter>ServerNetLib</Filter>
     </ClInclude>
     <ClInclude Include="ConsoleLogger.h" />
-    <ClInclude Include="PacketProcess.h" />
-    <ClInclude Include="Room.h" />
-    <ClInclude Include="Server.h" />
-    <ClInclude Include="User.h" />
-    <ClInclude Include="UserManager.h" />
-    <ClInclude Include="RoomManager.h" />
     <ClInclude Include="conmanip.h">
       <Filter>Common</Filter>
     </ClInclude>
@@ -53,6 +60,24 @@
     </ClInclude>
     <ClInclude Include="ErrorCode.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="UserManager.h">
+      <Filter>LoginLib</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomManager.h">
+      <Filter>LoginLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Server.h">
+      <Filter>LoginLib</Filter>
+    </ClInclude>
+    <ClInclude Include="User.h">
+      <Filter>LoginLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Room.h">
+      <Filter>LoginLib</Filter>
+    </ClInclude>
+    <ClInclude Include="PacketProcess.h">
+      <Filter>LoginLib</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

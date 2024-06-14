@@ -3,7 +3,8 @@
 #include "User.h"
 #include "UserManager.h"
 
-
+namespace NLogicLib
+{
 UserManager::UserManager()
 {
 }
@@ -121,4 +122,6 @@ User* UserManager::FindUser(const char* pszID)
 	}
 
 	return (User*)findIter->second;
+}
+
 }

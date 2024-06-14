@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include <string>
 
+namespace NLogicLib
+{
 
 class User
 {
@@ -82,3 +84,5 @@ protected:
 	// 들어간 방의 idx
 	short m_RoomIndex = -1;
 };
+
+}
