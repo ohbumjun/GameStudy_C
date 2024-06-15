@@ -1,22 +1,9 @@
 ﻿#include <algorithm>
-
+#include "Common/ErrorCode.h"
 #include "User.h"
 #include "UserManager.h"
 
 namespace NLogicLib
-<<<<<<< HEAD
-{
-UserManager::UserManager()
-{
-}
-
-UserManager::~UserManager()
-{
-}
-
-void UserManager::Init(const int maxUserCount)
-=======
->>>>>>> 7cdf6e62b2009391e70059d8fb2407c946e40735
 {
 	UserManager::UserManager()
 	{
@@ -126,11 +113,6 @@ void UserManager::Init(const int maxUserCount)
 		return (User*)findIter->second;
 	}
 
-<<<<<<< HEAD
-	return (User*)findIter->second;
-}
-
-=======
 	User* UserManager::FindUser(const char* pszID)
 	{
 		auto findIter = m_UserIDDic.find(pszID);
@@ -139,7 +121,5 @@ void UserManager::Init(const int maxUserCount)
 			return nullptr;
 		}
 
-		return (User*)findIter->second;
-	}
->>>>>>> 7cdf6e62b2009391e70059d8fb2407c946e40735
+	return (User*)findIter->second;
 }

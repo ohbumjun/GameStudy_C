@@ -94,6 +94,7 @@ namespace NLogicLib
 		// User 가 입력하는 ID
 		std::string m_ID;
 
+		// 로그인 된 상태를 의미하는건가 ?
 		bool m_IsConfirm = false;
 
 		// 상태

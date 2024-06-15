@@ -6,7 +6,6 @@
 
 #include "ErrorCode.h"
 
-<<<<<<< HEAD
 namespace NCommon
 {
 	enum class ERROR_CODE :short;
@@ -16,10 +15,9 @@ using ERROR_CODE = NCommon::ERROR_CODE;
 namespace NLogicLib
 {
 	class User;
-=======
+}
 namespace NLogicLib
 {
->>>>>>> 7cdf6e62b2009391e70059d8fb2407c946e40735
 
 	class UserManager
 	{
@@ -32,11 +30,7 @@ namespace NLogicLib
 		// Login 을 하면 User 가 추가된다.
 		NCommon::ERROR_CODE AddUser(const int sessionIndex, const char* pszID);
 		NCommon::ERROR_CODE RemoveUser(const int sessionIndex);
-<<<<<<< HEAD
-		std::tuple<NCommon::ERROR_CODE,User*> GetUser(const int sessionIndex);
-=======
 		std::tuple<NCommon::ERROR_CODE, User*> GetUser(const int sessionIndex);
->>>>>>> 7cdf6e62b2009391e70059d8fb2407c946e40735
 	private:
 		User* AllocUserObjPoolIndex();
 		void ReleaseUserObjPoolIndex(const int index);
@@ -50,11 +44,6 @@ namespace NLogicLib
 		// sesion index 로 User 를 찾을 때 사용하는 map
 		std::unordered_map<int, User*> m_UserSessionDic;
 		// ID 로 User 를 찾을 때 사용하는 map
-<<<<<<< HEAD
-		std::unordered_map<const char*, User*> m_UserIDDic; 
-=======
 		std::unordered_map<const char*, User*> m_UserIDDic;
-
->>>>>>> 7cdf6e62b2009391e70059d8fb2407c946e40735
 	};
 }
