@@ -18,6 +18,10 @@ namespace NServerNetLib
 		short MaxClientRecvBufferSize;
 		short MaxClientSendBufferSize;
 
+		bool IsLoginCheck;	// 연결 후 특정 시간 이내에 로그인 완료 여부 조사
+
+		int MaxLobbyCount;
+		int MaxLobbyUserCount;
 		int MaxRoomCount;
 		int MaxRoomUserCount;
 	};
