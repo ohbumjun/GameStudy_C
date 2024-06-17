@@ -22,6 +22,7 @@ namespace NLogicLib
 			m_Index = index;
 		}
 
+		// ex) UserManager::RemoveUser -> UserManager::ReleaseUserObjPoolIndex
 		void Clear()
 		{
 			m_SessionIndex = 0;
@@ -32,6 +33,7 @@ namespace NLogicLib
 			m_RoomIndex = -1;
 		}
 
+		// ex) UserManager::AddUser
 		void Set(const int sessionIndex, const char* pszID)
 		{
 			m_IsConfirm = true;
@@ -64,8 +66,9 @@ namespace NLogicLib
 			m_CurDomainState = DOMAIN_STATE::LOGIN;
 		}
 
-		void EnterRoom(const short roomIndex)
+		void EnterRoom(const short lobbyIndex, const short roomIndex)
 		{
+			m_LobbyIndex = lobbyIndex;
 			m_RoomIndex = roomIndex;
 			m_CurDomainState = DOMAIN_STATE::ROOM;
 		}
@@ -94,6 +97,7 @@ namespace NLogicLib
 		// User 가 입력하는 ID
 		std::string m_ID;
 
+		// 이 confirm 이라는게 뭐지 ?
 		bool m_IsConfirm = false;
 
 		// 상태

@@ -76,34 +76,86 @@ ERROR_CODE NLogicLib::Lobby::EnterUser(User* pUser)
 
 	// 들어갈 수 있는 User 가 존재하지 않는 다는 의미
 	auto addRet = AddUser(pUser);
+
 	if (addRet != ERROR_CODE::NONE) {
 		return addRet;
 	}
+
 	pUser->EnterLobby(m_LobbyIndex);
+
+	m_UserIndexDic.insert({ pUser->GetIndex(), pUser });
+	m_UserIDDic.insert({ pUser->GetID().c_str(), pUser });
+
+	return ERROR_CODE::NONE;
 }
 
 ERROR_CODE NLogicLib::Lobby::LeaveUser(const int userIndex)
 {
-	return ERROR_CODE();
+	// 해당 User 정보를 Lobby 에서 제거한다.
+	// 사실 제거한다라기 보다는 해당 User 정보를 담고 있는 LobbyUser 라는
+	// 그릇을 비워주는 것이다.
+	RemoveUser(userIndex);
+
+	// 관련 User 정보를 m_UserIndexDic 에서 가져온다.
+	auto pUser = FindUser(userIndex);
+
+	if (pUser == nullptr) {
+		return ERROR_CODE::LOBBY_LEAVE_USER_NVALID_UNIQUEINDEX;
+	}
+
+	pUser->LeaveLobby();
+
+	m_UserIndexDic.erase(pUser->GetIndex());
+	m_UserIDDic.erase(pUser->GetID().c_str());
+
+	return ERROR_CODE::NONE;
 }
 
 short NLogicLib::Lobby::GetUserCount()
 {
-	return 0;
+	return static_cast<short>(m_UserIndexDic.size());
 }
 
 NLogicLib::Room* NLogicLib::Lobby::CreateRoom()
 {
+	// 사용되고 있지 않은 Room 정보를 하나 리턴해준다.
+	for (int i = 0; i < (int)m_RoomList.size(); ++i)
+	{
+		if (m_RoomList[i]->IsUsed() == false) {
+			return m_RoomList[i];
+		}
+	}
 	return nullptr;
 }
 
 NLogicLib::Room* NLogicLib::Lobby::GetRoom(const short roomIndex)
 {
-	return nullptr;
+	if (roomIndex < 0 || roomIndex >= m_RoomList.size()) {
+		return nullptr;
+	}
+
+	return m_RoomList[roomIndex];
 }
 
 void NLogicLib::Lobby::SendToAllUser(const short packetId, const short dataSize, char* pData, const int passUserindex)
 {
+	for (auto& pUser : m_UserIndexDic)
+	{
+		// passUserindex : 해당 Index 의 User 를 제외한 User 에게 보낸다.
+		if (pUser.second->GetIndex() == passUserindex) {
+			continue;
+		}
+
+		// 현재 Domain 이 Lobby 가 아니라면 보내지 않는다.
+		// 즉, Lobby 에 있지 않은 대상이라면 보내지 않는다.
+		if (pUser.second->IsCurDomainInLobby() == false) {
+			continue;
+		}
+
+		// 해당 Session 의 SendBuffer 에 보낼 정보를 세팅하면
+		// 다음 Frame 에서 해당 정보를 보내게 된다.
+		m_pRefNetwork->SendData(pUser.second->GetSessioIndex(), packetId, dataSize, pData);
+	}
 }
 
 NLogicLib::User* NLogicLib::Lobby::FindUser(const int userIndex)
@@ -137,4 +189,15 @@ ERROR_CODE NLogicLib::Lobby::AddUser(User* pUser)
 
 void NLogicLib::Lobby::RemoveUser(const int userIndex)
 {
+	auto findIter = std::find_if(std::begin(m_UserList), std::end(m_UserList), 
+		[userIndex](auto& lobbyUser) 
+	{ 
+		return lobbyUser.pUser != nullptr && lobbyUser.pUser->GetIndex() == userIndex; 
+	});
+
+	if (findIter == std::end(m_UserList)) {
+		return;
+	}
+
+	findIter->pUser = nullptr;
 }

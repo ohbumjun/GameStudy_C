@@ -32,7 +32,7 @@ namespace NLogicLib
 		if (errorCode != NCommon::ERROR_CODE::NONE)
 		{
 			// 1) 해당 session Index 에 대응되는 User 가 없거나
-			// 2) User 가 Confirm 이지 않은 경우
+			// 2) User 가 Confirm 이지 않은 경우 == 유효한 User 가 아닌 경우
 			resPkt.SetError(errorCode);
 			m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_ENTER_RES, sizeof(resPkt), (char*)&resPkt);
 			return errorCode;
@@ -47,16 +47,69 @@ namespace NLogicLib
 			return ERROR_CODE::ROOM_ENTER_INVALID_LOBBY_INDEX;
 		}
 
+		// User 가 속해있는 Lobby 정보를 가져온다.
+		auto lobbyIndex = pUser->GetLobbyIndex();
+		Lobby* pLobby = m_pRefLobbyMgr->GetLobby(lobbyIndex);
+
+		if (pLobby == nullptr) {
+			resPkt.SetError(ERROR_CODE::ROOM_ENTER_INVALID_LOBBY_INDEX);
+			m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_ENTER_RES, sizeof(resPkt), (char*)&resPkt);
+			return ERROR_CODE::ROOM_ENTER_INVALID_LOBBY_INDEX;
+		}
+
 		// 자. 이제 User 가 들어갈 Room 을 배정해주면 된다.
 		Room* pRoom = nullptr;
 
 		if (reqPkt->IsCreate)
 		{
 			// 새로운 Room 을 만들어야 하는 경우
+			pRoom = pLobby->CreateRoom();
+
+			if (pRoom == nullptr) 
+			{
+				resPkt.SetError(ERROR_CODE::ROOM_ENTER_EMPTY_ROOM);
+				m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_ENTER_RES, sizeof(resPkt), (char*)&resPkt);
+				return ERROR_CODE::ROOM_ENTER_EMPTY_ROOM;
+			}
+
+			auto ret = pRoom->CreateRoom(reqPkt->RoomTitle);
+
+			if (ret != ERROR_CODE::NONE) 
+			{
+				resPkt.SetError(ret);
+				m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_ENTER_RES, sizeof(resPkt), (char*)&resPkt);
+				return ret;
+			}
 		}
 		else
 		{
 			// 기존 Room 에 들어가야 하는 경우
+			pRoom = pLobby->GetRoom(reqPkt->RoomIndex);
+			if (pRoom == nullptr) {
+				resPkt.SetError(ERROR_CODE::ROOM_ENTER_INVALID_ROOM_INDEX);
+				m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_ENTER_RES, sizeof(resPkt), (char*)&resPkt);
+				return ERROR_CODE::ROOM_ENTER_INVALID_ROOM_INDEX;
+			}
 		}
+
+		NCommon::ERROR_CODE enterRet = pRoom->EnterUser(pUser);
+		if (enterRet != ERROR_CODE::NONE) {
+			// 1) Room 이 사용중이지 않거나
+			// 2) 해당 Room 이 가득찼을 경우
+			resPkt.SetError(enterRet);
+			m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_ENTER_RES, sizeof(resPkt), (char*)&resPkt);
+			return enterRet;
+		}
+
+		// 유저 정보를 룸에 들어왔다고 변경한다.
+		pUser->EnterRoom(lobbyIndex, pRoom->GetIndex());
+
+		// 룸에 있는 모든 유저에게 새 유저 들어왔다고 알린다
+		pRoom->NotifyEnterUserInfo(pUser->GetIndex(), pUser->GetID().c_str());
+
+		// PktRoomEnterRes 패킷을 Client 에게 보낸다.
+		m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_ENTER_RES, sizeof(resPkt), (char*)&resPkt);
+			
+		return ERROR_CODE::NONE;
 	}
 }

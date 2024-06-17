@@ -13,6 +13,7 @@ namespace NServerNetLib
 	
 class UserManager;
 class RoomManager;
+class LobbyManager;
 
 namespace NLogicLib
 {
@@ -52,6 +53,7 @@ namespace NLogicLib
 		TcpNet* m_pRefNetwork;
 		UserManager* m_pRefUserMgr;
 		RoomManager* m_pRefRoomMgr;
+		LobbyManager* m_pRefLobbyMgr;
 
 		std::unique_ptr<ConnectedUserManager> m_pConnectedUserManager;
 	private:

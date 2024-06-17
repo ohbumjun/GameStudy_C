@@ -43,6 +43,7 @@ namespace NLogicLib
 		m_Title = L"";
 		m_UserList.clear();
 	}
+
 	NCommon::ERROR_CODE Room::CreateRoom(const wchar_t* pRoomTitle)
 	{
 		if (m_IsUsed) {
@@ -54,6 +55,7 @@ namespace NLogicLib
 
 		return NCommon::ERROR_CODE::NONE;
 	}
+
 	NCommon::ERROR_CODE Room::EnterUser(User* pUser)
 	{
 		if (m_IsUsed == false) {
@@ -66,8 +68,10 @@ namespace NLogicLib
 
 		// 중복 검사를 안하는 건가 ?
 		m_UserList.push_back(pUser);
+
 		return NCommon::ERROR_CODE::NONE;
 	}
+
 	NCommon::ERROR_CODE Room::LeaveUser(const short userIndex)
 	{
 		if (m_IsUsed == false) {
@@ -94,15 +98,18 @@ namespace NLogicLib
 
 		return NCommon::ERROR_CODE::NONE;
 	}
+
 	bool Room::IsMaster(const short userIndex)
 	{
 		// ?
 		return m_UserList[0]->GetIndex() == userIndex ? true : false;
 	}
+
 	Game* Room::GetGameObj()
 	{
 		return m_pGame;
 	}
+
 	void Room::Update()
 	{
 		if (m_pGame->GetState() == GameState::ING)
@@ -113,6 +120,7 @@ namespace NLogicLib
 			}
 		}
 	}
+
 	void Room::SendToAllUser(const short packetId, const short dataSize, char* pData, const int passUserindex)
 	{
 		// Room 에 있는 모든 User 에게 packet 전송
@@ -125,6 +133,7 @@ namespace NLogicLib
 			m_pRefNetwork->SendData(pUser->GetSessioIndex(), packetId, dataSize, pData);
 		}
 	}
+
 	void Room::NotifyEnterUserInfo(const int userIndex, const char* pszUserID)
 	{
 		NCommon::PktRoomEnterUserInfoNtf pkt;
@@ -136,6 +145,7 @@ namespace NLogicLib
 		// 새로 들어온 User 정보를 모든 User 에게 전송
 		SendToAllUser((short)PACKET_ID::ROOM_ENTER_NEW_USER_NTF, sizeof(pkt), (char*)&pkt, userIndex);
 	}
+
 	void Room::NotifyLeaveUserInfo(const char* pszUserID)
 	{
 		if (m_IsUsed == false) {
@@ -151,6 +161,7 @@ namespace NLogicLib
 		SendToAllUser((short)PACKET_ID::ROOM_LEAVE_USER_NTF, sizeof(pkt), (char*)&pkt);
 
 	}
+
 	void Room::NotifyChat(const int sessionIndex, const char* pszUserID, const wchar_t* pszMsg)
 	{
 		NCommon::PktRoomChatNtf pkt;

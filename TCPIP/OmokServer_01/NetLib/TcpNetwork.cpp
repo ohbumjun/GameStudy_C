@@ -356,13 +356,23 @@ namespace NServerNetLib
 			auto client_len = sizeof(client_adr);
 			auto client_sockfd = accept(m_ServerSockfd, (struct sockaddr*)&client_adr, (socklen_t*)&client_len);
 #endif
-			//m_pRefLogger->Write(LOG_TYPE::L_DEBUG, "%s | client_sockfd(%I64u)", __FUNCTION__, client_sockfd);
 			if (client_sockfd == INVALID_SOCKET)
 			{
 #ifdef _WIN32
 				if (WSAGetLastError() == WSAEWOULDBLOCK)
 				{
 					// non-blocking socket 이 사용되고 있을 수 있다는 것을 알려주는 것.
+
+					/*
+					ioctsocekt(sock, FIONBIO, &opt) 함수는, FIONBIO. 즉 입출력 모두를 opt 로 설정한다는 것.
+					opt 값이 1 이면 non-blocking mode 로 설정하고, 0 이면 blocking mode 로 설정한다.
+
+					이후 accept 를 호출하면, 클라이언트 연결요청이 없을 때, accept 함수는 바로 리턴하게 된다.
+					그리고 INVALID_SOCKET 을 리턴하게 된다.
+
+					이후 WSAGetLastError() 함수를 통해 WSAEWOULDBLOCK 에러 코드를 얻게 된다.
+
+					*/
 					return NET_ERROR_CODE::ACCEPT_API_WSAEWOULDBLOCK;
 				}
 #else
@@ -763,6 +773,13 @@ if (errno == EWOULDBLOCK)
 		read,write 할 수 있는 상태인지를 판별해주는 select 함수가 필요하다.
 		
 		- 음...send,recv 는 무조건 블로킹 함수가 아닌가..?
+
+		참고 : FIONBIO == 입출력 모드 설정, mode : 1 은 논블로킹으로
+		이후 서버 문지기 소켓에 대해 만약 아래 함수를 통해 논블로킹 모드로 설정하게 되면
+		accept 함수를 호출했을 때, 클라이언트 연결 요청이 없다면 INVALID_SOCKET 을 리턴한다.
+
+		그리고 accept 함수로 통해 만들어진 클라이언트 소켓도 역시 논블로킹 모드 속성을 지니게 된다.
+		-- NewSession 함수 참고.
 		*/
 #ifdef _WIN32
 		if (ioctlsocket(sock, FIONBIO, &mode) == SOCKET_ERROR)

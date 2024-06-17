@@ -56,8 +56,9 @@ namespace NLogicLib
 		// 사용가능한 ? User 객체 정보를 가져온다.
 		User* pUser = AllocUserObjPoolIndex();
 
-		// nullptr 이라는 것은, 사용할 수 있는 pool 이 더이상 없다는 것이다.
-		if (pUser == nullptr) {
+		// nullptr 이라는 것은, 사용할 수 있는 pool 이 더 이상 없다는 것이다.
+		if (pUser == nullptr) 
+		{
 			return NCommon::ERROR_CODE::USER_MGR_MAX_USER_COUNT;
 		}
 
