@@ -72,8 +72,13 @@ namespace NLogicLib
 
 		bool m_IsUsed = false;
 		std::wstring m_Title;
+
+		// 현재 Room 에 입장해있는 User 들의 목록이 들어있다.
+		// [0] 번째 user, 즉 가장 처음 들어온 User 가 방장이다.
 		std::vector<User*> m_UserList;
 
+		// 각 Room 마다 별도의  Game 이 진행되고 있다.
+		// 따라서 Room 마다 Game 을 별도로 new 할당한다.
 		Game* m_pGame = nullptr;
 	};
 }

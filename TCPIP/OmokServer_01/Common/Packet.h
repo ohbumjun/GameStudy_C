@@ -59,7 +59,7 @@ namespace NCommon
 	// - 로비 입장 응답
 	struct PktLobbyEnterRes : PktBase
 	{
-		short MaxuserCount;
+		short MaxUserCount;
 		short MaxRoomCount;
 	};
 
@@ -69,8 +69,8 @@ namespace NCommon
 
 	// - 로비에서 나가기 응답
 	struct PktLobbyLeaveRes : PktBase
-		{
-		};
+	{
+	};
 
 	//- 룸에 들어가기 요청
 	const int MAX_ROOM_TITLE_SIZE = 16;

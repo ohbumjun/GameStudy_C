@@ -5,9 +5,17 @@
 #include <vector>
 
 #include "ErrorCode.h"
-	
-class User;
 
+namespace NCommon
+{
+	enum class ERROR_CODE :short;
+}
+using ERROR_CODE = NCommon::ERROR_CODE;
+	
+namespace NLogicLib
+{
+	class User;
+}
 namespace NLogicLib
 {
 
@@ -37,6 +45,5 @@ namespace NLogicLib
 		std::unordered_map<int, User*> m_UserSessionDic;
 		// ID 로 User 를 찾을 때 사용하는 map
 		std::unordered_map<const char*, User*> m_UserIDDic;
-
 	};
 }

@@ -65,10 +65,6 @@ namespace NLogicLib
 
 	}
 
-	void PacketProcess::StateCheck()
-	{
-	}
-
 
 	NCommon::ERROR_CODE PacketProcess::NtfSysConnctSession(PacketInfo packetInfo)
 	{

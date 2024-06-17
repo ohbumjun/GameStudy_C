@@ -1,11 +1,11 @@
 #include <algorithm>
 
-#include "NetLib/ILog.h"
-#include "NetLib/TcpNetwork.h"
-#include "Packet.h"
-#include "ErrorCode.h"
-#include "User.h"
-#include "Room.h"
+#include "../../NetLib/ILog.h"
+#include "../../NetLib/TcpNetwork.h"
+#include "../../Common/Packet.h"
+#include "../../Common/ErrorCode.h"
+#include "../User/User.h"
+#include "../Room/Room.h"
 #include "Lobby.h"
 
 using PACKET_ID = NCommon::PACKET_ID;
@@ -75,6 +75,7 @@ ERROR_CODE NLogicLib::Lobby::EnterUser(User* pUser)
 	}
 
 	// 들어갈 수 있는 User 가 존재하지 않는 다는 의미
+	// -> if (m_UserIndexDic.size() >= m_MaxUserCount) 조건과 같은 의미아닌가 ?
 	auto addRet = AddUser(pUser);
 
 	if (addRet != ERROR_CODE::NONE) {

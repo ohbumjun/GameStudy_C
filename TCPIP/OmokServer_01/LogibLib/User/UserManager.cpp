@@ -1,5 +1,5 @@
 ﻿#include <algorithm>
-
+#include "Common/ErrorCode.h"
 #include "User.h"
 #include "UserManager.h"
 
@@ -122,6 +122,5 @@ namespace NLogicLib
 			return nullptr;
 		}
 
-		return (User*)findIter->second;
-	}
+	return (User*)findIter->second;
 }

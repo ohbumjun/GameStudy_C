@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 #include <memory>
-#include "Packet.h"
-#include "ErrorCode.h"
+#include "Common/Packet.h"
+#include "Common/ErrorCode.h"
 #include "NetLib/Define.h"
 
 namespace NServerNetLib

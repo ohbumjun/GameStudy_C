@@ -5,8 +5,8 @@
 #include "Game.h"
 #include "NetLib/ILog.h"
 #include "NetLib/TcpNetwork.h"
-#include "Packet.h"
-#include "ErrorCode.h"
+#include "Common/Packet.h"
+#include "Common/ErrorCode.h"
 #include "User.h"
 #include "Room.h"
 
@@ -101,7 +101,6 @@ namespace NLogicLib
 
 	bool Room::IsMaster(const short userIndex)
 	{
-		// ?
 		return m_UserList[0]->GetIndex() == userIndex ? true : false;
 	}
 
