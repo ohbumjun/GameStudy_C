@@ -97,11 +97,8 @@ namespace NLogicLib
 		// User 가 입력하는 ID
 		std::string m_ID;
 
-<<<<<<< HEAD:TCPIP/OmokServer_01/User.h
 		// 이 confirm 이라는게 뭐지 ?
-=======
 		// 로그인 된 상태를 의미하는건가 ?
->>>>>>> 4a861510c7db2e6552dc58ebf86934ca7c894b20:TCPIP/OmokServer_01/LogibLib/User/User.h
 		bool m_IsConfirm = false;
 
 		// 상태

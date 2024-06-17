@@ -1,14 +1,14 @@
 #include <tuple>
 
-#include "Common/Packet.h"
-#include "Common/ErrorCode.h"
-#include "User.h"
-#include "NetLib/TcpNetwork.h"
-#include "UserManager.h"
-#include "LobbyManager.h"
-#include "Lobby.h"
-#include "Game.h"
-#include "Room.h"
+#include "../../Common/Packet.h"
+#include "../../Common/ErrorCode.h"
+#include "../User/User.h"
+#include "../../NetLib/TcpNetwork.h"
+#include "../User/UserManager.h"
+#include "../../LobbyManager.h"
+#include "../Lobby/Lobby.h"
+#include "../Game.h"
+#include "../Room/Room.h"
 #include "PacketProcess.h"
 
 using PACKET_ID = NCommon::PACKET_ID;

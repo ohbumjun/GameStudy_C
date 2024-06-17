@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 
-#include "User.h"
+#include "../User/User.h"
 
 
 namespace NServerNetLib { class ITcpNetwork; }

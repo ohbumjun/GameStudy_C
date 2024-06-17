@@ -1,5 +1,5 @@
 ﻿#include <algorithm>
-#include "Common/ErrorCode.h"
+#include "../../Common/ErrorCode.h"
 #include "User.h"
 #include "UserManager.h"
 
@@ -57,7 +57,7 @@ namespace NLogicLib
 		User* pUser = AllocUserObjPoolIndex();
 
 		// nullptr 이라는 것은, 사용할 수 있는 pool 이 더 이상 없다는 것이다.
-		if (pUser == nullptr) 
+		if (pUser == nullptr)
 		{
 			return NCommon::ERROR_CODE::USER_MGR_MAX_USER_COUNT;
 		}
@@ -122,5 +122,6 @@ namespace NLogicLib
 			return nullptr;
 		}
 
-	return (User*)findIter->second;
+		return (User*)findIter->second;
+	}
 }

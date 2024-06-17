@@ -2,12 +2,12 @@
 #include <cstring>
 #include <wchar.h>
 
-#include "Game.h"
-#include "NetLib/ILog.h"
-#include "NetLib/TcpNetwork.h"
-#include "Common/Packet.h"
-#include "Common/ErrorCode.h"
-#include "User.h"
+#include "../Game.h"
+#include "../../NetLib/ILog.h"
+#include "../../NetLib/TcpNetwork.h"
+#include "../../Common/Packet.h"
+#include "../../Common/ErrorCode.h"
+#include "../User/User.h"
 #include "Room.h"
 
 

@@ -8,6 +8,7 @@
 #include "../User/User.h"
 #include "../User/UserManager.h"
 #include "../Lobby/LobbyManager.h"
+#include "../Lobby/Lobby.h"
 #include "PacketProcess.h"
 
 using PACKET_ID = NCommon::PACKET_ID;

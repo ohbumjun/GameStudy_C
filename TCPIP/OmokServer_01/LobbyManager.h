@@ -36,7 +36,7 @@ namespace NLogicLib
 
 	class LobbyManager
 	{
-		using TcpNet = NServerNetLib::ITcpNetwork;
+		using TcpNet = NServerNetLib::TcpNetwork;
 		using ILog = NServerNetLib::ILog;
 
 	public:

@@ -22,7 +22,7 @@ namespace NServerNetLib
 
 		int MaxLobbyCount;
 		int MaxLobbyUserCount;
-		int MaxRoomCount;
+		int MaxRoomCountByLobby;
 		int MaxRoomUserCount;
 	};
 

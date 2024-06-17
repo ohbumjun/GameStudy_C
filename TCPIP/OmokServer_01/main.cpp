@@ -5,7 +5,7 @@
 
 int main()
 {
-	Server server;
+	NLogicLib::Server server;
 	server.Init();
 
 	// Server.Run  내부에서 tcpNetwork.Run 을 호출하는데

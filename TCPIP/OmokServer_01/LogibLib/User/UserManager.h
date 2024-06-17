@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "ErrorCode.h"
+#include "../../Common/ErrorCode.h"
 
 namespace NCommon
 {

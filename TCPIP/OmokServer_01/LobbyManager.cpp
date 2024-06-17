@@ -1,9 +1,9 @@
 #include "LobbyManager.h"
 #include "NetLib/ILog.h"
 #include "NetLib/TcpNetwork.h"
-#include "Packet.h"
-#include "ErrorCode.h"
-#include "Lobby.h"
+#include "Common/Packet.h"
+#include "Common/ErrorCode.h"
+#include "LogibLib/Lobby/Lobby.h"
 
 using ERROR_CODE = NCommon::ERROR_CODE;
 using PACKET_ID = NCommon::PACKET_ID;
