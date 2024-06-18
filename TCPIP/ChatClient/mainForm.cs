@@ -1,0 +1,429 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace csharp_test_client
+{
+    public partial class mainForm : Form
+    {
+        ClientSimpleTcp Network = new ClientSimpleTcp();
+
+        bool IsNetworkThreadRunning = false;
+        bool IsBackGroundProcessRunning = false;
+
+        // 2개의 쓰레드를 만든다.
+        // 1) receive 하는 녀석
+        // 2) send 하는 녀석 -> 사실 send 는 우리가 언제 보낼지 안다. 우리가 데이터를 보내는 순간 send 이니까
+        // 따라서 Send Thread 는 사실 없어도 된다.
+        // receive 는 언제 올지 모른다. 따라서 별도 쓰레드를 만들어서 구성해야 한다.
+        System.Threading.Thread NetworkReadThread = null;
+        System.Threading.Thread NetworkSendThread = null;
+
+		// 서버로부터 데이터가 오게 되면 PacketBufferManager에 데이터가 쌓이게 된다.
+        // Read 함수를 호출하면 해당 데이터에서 일부를 잘라서 Packet 데이터 형태로 만들어서 반환한다.
+        // 그리고 그 정보가 아래의 RecvPacketQueue 에 저장된다.
+        // 만약 해당 Queue 에 데이터가 있다는 것은, 클라이언트가 서버로부터 받은 데이터를 가지고 있다는 것을 의미하게 된다.
+		PacketBufferManager PacketBuffer = new PacketBufferManager();
+        Queue<PacketData> RecvPacketQueue = new Queue<PacketData>();
+
+        // Send 를 할 경우, 일단 아래의 Queue에 담기고
+        // Send Thread 가 아래의 Queue 에 있는 바이너리 데이터를 서버로 보낸다.
+        Queue<byte[]> SendPacketQueue = new Queue<byte[]>();
+
+        // UI 는 기본적으로 Work Thread 가 접근할 수 없게 c# 이 막아놨다.
+        // 그런데 Receive 를 하고 나면 UI 가 변경되어야 한다. 즉, Receive Thgrad 는 데이터 받아서
+        // Packe Queue 에 넣어두는 작업 까지만 한다. 그리고 아래의 time 마다 메인 쓰레드에서 해당 queue 로부터
+        // 패킷 정보를 받아와서 UI 를 update 시켜줄 것이다.
+        Timer dispatcherUITimer;
+
+
+        public mainForm()
+        {
+            InitializeComponent();
+        }
+
+        private void mainForm_Load(object sender, EventArgs e)
+        {
+			// 1024 : 패킷 하나의 최대 크기
+            // 그래서 client ~ server 간에 해당 크기 이상의 패킷은 절대 보내지 않기로 약속이 되어 있는 것이다.
+			PacketBuffer.Init((8096 * 10), PacketDef.PACKET_HEADER_SIZE, 1024);
+
+            IsNetworkThreadRunning = true;
+            NetworkReadThread = new System.Threading.Thread(this.NetworkReadProcess);
+            NetworkReadThread.Start();
+            NetworkSendThread = new System.Threading.Thread(this.NetworkSendProcess);
+            NetworkSendThread.Start();
+
+            // UI 조작은 메인 쓰레드에서 !
+            IsBackGroundProcessRunning = true;            
+            dispatcherUITimer = new Timer();
+            dispatcherUITimer.Tick += new EventHandler(BackGroundProcess);
+            dispatcherUITimer.Interval = 100;
+            dispatcherUITimer.Start();
+
+            // "접속 끊기" 에 해당하는 버튼
+            // 접속이 안되어 있다면 해당 버튼도 활성화 X
+            btnDisconnect.Enabled = false;
+
+            SetPacketHandler();
+            DevLog.Write("프로그램 시작 !!!", LOG_LEVEL.INFO);
+        }
+
+        private void mainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+			// 쓰레드 종료시키기
+			// IsNetworkThreadRunning, IsBackGroundProcessRunning 변수를 Send, Receive Thread 에서 계속해서 체크 중이다.
+            // 따라서 해당 변수 값들을 false 로 만들어서 쓰레드 종료 ? 시킨다.
+			IsNetworkThreadRunning = false;
+            IsBackGroundProcessRunning = false;
+
+            Network.Close();
+        }
+
+        private void btnConnect_Click(object sender, EventArgs e)
+        {
+            string address = textBoxIP.Text;
+
+            if (checkBoxLocalHostIP.Checked)
+            {
+                address = "127.0.0.1";
+            }
+
+            int port = Convert.ToInt32(textBoxPort.Text);
+
+            if (Network.Connect(address, port))
+            {
+                labelStatus.Text = string.Format("{0}. 서버에 접속 중", DateTime.Now);
+                btnConnect.Enabled = false;
+                btnDisconnect.Enabled = true;
+
+                DevLog.Write($"서버에 접속 중", LOG_LEVEL.INFO);
+            }
+            else
+            {
+                labelStatus.Text = string.Format("{0}. 서버에 접속 실패", DateTime.Now);
+            }
+        }
+
+        private void btnDisconnect_Click(object sender, EventArgs e)
+        {
+            SetDisconnectd();
+            Network.Close();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(textSendText.Text))
+            {
+                MessageBox.Show("보낼 텍스트를 입력하세요");
+                return;
+            }
+                        
+            List<byte> dataSource = new List<byte>();
+            dataSource.AddRange(Encoding.UTF8.GetBytes(textSendText.Text));
+
+            SendPacketQueue.Enqueue(dataSource.ToArray());
+        }
+
+
+        // Receive Thread 에서 계속해서 실행 중인 Thread
+        void NetworkReadProcess()
+        {
+            const Int16 PacketHeaderSize = PacketDef.PACKET_HEADER_SIZE;
+
+            while (IsNetworkThreadRunning)
+            {
+                if (Network.IsConnected() == false)
+                {
+                    // 네트워크가 ㅇ
+                    System.Threading.Thread.Sleep(1);
+                    continue;
+                }
+
+                // receive 함수를 통해서 Socket 의 입력 버퍼에 있는 데이터를 가져온다.
+                var recvData = Network.Receive();
+
+                if (recvData != null)
+                {
+                    // PacketBufferManager 쪽에 복사해준다.
+                    PacketBuffer.Write(recvData.Item2, 0, recvData.Item1);
+
+                    while (true)
+                    {
+						// PacketBufferManager 에 있는 내용들을 Packet Data 형태로 재구성해주고
+                        // Packet Queue 에 넣어준다.
+						var data = PacketBuffer.Read();
+                        if (data.Count < 1)
+                        {
+                            break;
+                        }
+
+                        var packet = new PacketData();
+                        packet.DataSize = (short)(data.Count - PacketHeaderSize);
+                        packet.PacketID = BitConverter.ToInt16(data.Array, data.Offset + 2);
+                        packet.Type = (SByte)data.Array[(data.Offset + 4)];
+                        packet.BodyData = new byte[packet.DataSize];
+                        Buffer.BlockCopy(data.Array, (data.Offset + PacketHeaderSize), packet.BodyData, 0, (data.Count - PacketHeaderSize));
+
+                        // 이때 중요한 것은 "Lock" 을 걸어두는 것
+                        lock (((System.Collections.ICollection)RecvPacketQueue).SyncRoot)
+                        {
+                            RecvPacketQueue.Enqueue(packet);
+                        }
+                    }
+                    //DevLog.Write($"받은 데이터: {recvData.Item2}", LOG_LEVEL.INFO);
+                }
+                else
+                {
+                    Network.Close();
+                    SetDisconnectd();
+                    DevLog.Write("서버와 접속 종료 !!!", LOG_LEVEL.INFO);
+                }
+            }
+        }
+
+        // Send Thread 에서 계속해서 실행 중인 Thread
+        void NetworkSendProcess()
+        {
+            while (IsNetworkThreadRunning)
+            {
+                System.Threading.Thread.Sleep(1);
+
+                if (Network.IsConnected() == false)
+                {
+                    continue;
+                }
+
+				// SendPacketQueue 에 있는 내용을 꺼내서 Socket.Send 호출한다.
+                // 이때 중요한 것은 "Lock" 을 걸어두는 것
+				lock (((System.Collections.ICollection)SendPacketQueue).SyncRoot)
+                {
+                    if (SendPacketQueue.Count > 0)
+                    {
+                        var packet = SendPacketQueue.Dequeue();
+                        Network.Send(packet);
+                    }
+                }
+            }
+        }
+
+
+        void BackGroundProcess(object sender, EventArgs e)
+        {
+            // Timer 에서 호출되는 함수이다.
+            // 특정 Time 마다 해당 함수를 호출할 수 있게 된다.
+
+            // 1) Log 정보를 처리한다.
+            ProcessLog();
+
+            try
+            {
+                var packet = new PacketData();
+
+                lock (((System.Collections.ICollection)RecvPacketQueue).SyncRoot)
+                {
+                    if (RecvPacketQueue.Count() > 0)
+                    {
+                        packet = RecvPacketQueue.Dequeue();
+                    }
+                }
+
+                if (packet.PacketID != 0)
+                {
+					// 2) Packet 처리를 한다.
+					PacketProcess(packet);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(string.Format("ReadPacketQueueProcess. error:{0}", ex.Message));
+            }
+        }
+
+        private void ProcessLog()
+        {
+            // 너무 이 작업만 할 수 없으므로 일정 작업 이상을 하면 일단 패스한다.
+            int logWorkCount = 0;
+
+            while (IsBackGroundProcessRunning)
+            {
+                System.Threading.Thread.Sleep(1);
+
+                string msg;
+
+                if (DevLog.GetLog(out msg))
+                {
+                    ++logWorkCount;
+
+                    if (listBoxLog.Items.Count > 512)
+                    {
+                        listBoxLog.Items.Clear();
+                    }
+
+                    listBoxLog.Items.Add(msg);
+                    listBoxLog.SelectedIndex = listBoxLog.Items.Count - 1;
+                }
+                else
+                {
+                    break;
+                }
+
+                if (logWorkCount > 8)
+                {
+                    break;
+                }
+            }
+        }
+
+
+        public void SetDisconnectd()
+        {
+            if (btnConnect.Enabled == false)
+            {
+                btnConnect.Enabled = true;
+                btnDisconnect.Enabled = false;
+            }
+
+            SendPacketQueue.Clear();
+
+            listBoxRoomChatMsg.Items.Clear();
+            listBoxRoomUserList.Items.Clear();
+
+            labelStatus.Text = "서버 접속이 끊어짐";
+        }
+
+        public void PostSendPacket(PACKET_ID packetID, byte[] bodyData)
+        {
+            if (Network.IsConnected() == false)
+            {
+                DevLog.Write("서버 연결이 되어 있지 않습니다", LOG_LEVEL.ERROR);
+                return;
+            }
+
+            Int16 bodyDataSize = 0;
+            if (bodyData != null)
+            {
+                bodyDataSize = (Int16)bodyData.Length;
+            }
+            var packetSize = bodyDataSize + PacketDef.PACKET_HEADER_SIZE;
+
+            List<byte> dataSource = new List<byte>();
+            dataSource.AddRange(BitConverter.GetBytes((Int16)packetSize));
+            dataSource.AddRange(BitConverter.GetBytes((Int16)packetID));
+            dataSource.AddRange(new byte[] { (byte)0 });
+            
+            if (bodyData != null)
+            {
+                dataSource.AddRange(bodyData);
+            }
+           
+            // 메인 쓰레드에서 Send 를 호출할 때, 바로 Socket.Send 를 호출하는 것이 아니라
+            // SendPacketQueue 에 해당 데이터를 넣어두고, Send Thread 에서 SendPacketQueue 에 있는 데이터를 처리한다.
+            SendPacketQueue.Enqueue(dataSource.ToArray());
+        }
+
+        void AddRoomUserList(Int64 userUniqueId, string userID)
+        {
+            var msg = $"{userUniqueId}: {userID}";
+            listBoxRoomUserList.Items.Add(msg);
+        }
+
+        void RemoveRoomUserList(Int64 userUniqueId)
+        {
+            object removeItem = null;
+
+            foreach( var user in listBoxRoomUserList.Items)
+            {
+                var items = user.ToString().Split(":");
+                if( items[0].ToInt64() == userUniqueId)
+                {
+                    removeItem = user;
+                    return;
+                }
+            }
+
+            if (removeItem != null)
+            {
+                listBoxRoomUserList.Items.Remove(removeItem);
+            }
+        }
+
+        // 로그인 요청
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var loginReq = new LoginReqPacket();
+            loginReq.SetValue(textBoxUserID.Text, textBoxUserPW.Text);
+                    
+            PostSendPacket(PACKET_ID.LOGIN_REQ, loginReq.ToBytes());            
+            DevLog.Write($"로그인 요청:  {textBoxUserID.Text}, {textBoxUserPW.Text}");
+        }
+
+        private void btn_RoomEnter_Click(object sender, EventArgs e)
+        {
+            var requestPkt = new RoomEnterReqPacket();
+            requestPkt.SetValue(textBoxRoomNumber.Text.ToInt32());
+
+            PostSendPacket(PACKET_ID.ROOM_ENTER_REQ, requestPkt.ToBytes());
+            DevLog.Write($"방 입장 요청:  {textBoxRoomNumber.Text} 번");
+        }
+
+        private void btn_RoomLeave_Click(object sender, EventArgs e)
+        {
+            PostSendPacket(PACKET_ID.ROOM_LEAVE_REQ,  null);
+            DevLog.Write($"방 입장 요청:  {textBoxRoomNumber.Text} 번");
+        }
+
+        private void btnRoomChat_Click(object sender, EventArgs e)
+        {
+            if(textBoxRoomSendMsg.Text.IsEmpty())
+            {
+                MessageBox.Show("채팅 메시지를 입력하세요");
+                return;
+            }
+
+            var requestPkt = new RoomChatReqPacket();
+            requestPkt.SetValue(textBoxRoomSendMsg.Text);
+
+            PostSendPacket(PACKET_ID.ROOM_CHAT_REQ, requestPkt.ToBytes());
+            DevLog.Write($"방 채팅 요청");
+        }
+
+        private void btnRoomRelay_Click(object sender, EventArgs e)
+        {
+            //if( textBoxRelay.Text.IsEmpty())
+            //{
+            //    MessageBox.Show("릴레이 할 데이터가 없습니다");
+            //    return;
+            //}
+            
+            //var bodyData = Encoding.UTF8.GetBytes(textBoxRelay.Text);
+            //PostSendPacket(PACKET_ID.PACKET_ID_ROOM_RELAY_REQ, bodyData);
+            //DevLog.Write($"방 릴레이 요청");
+        }
+
+        // 로비 리스트 요청
+        private void button3_Click(object sender, EventArgs e)
+        {
+            PostSendPacket(PACKET_ID.LOBBY_LIST_REQ, null);
+            DevLog.Write($"방 릴레이 요청");
+        }
+
+        // 로비 입장 요청
+        private void button4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // 로비 나가기 요청
+        private void button5_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
