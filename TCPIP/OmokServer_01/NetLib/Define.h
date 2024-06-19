@@ -46,6 +46,7 @@ namespace NServerNetLib
 		int Index = 0;
 
 		// 연결된 순서..? TcpNetwork 의 m_ConnectSeq 값이 세팅된다.
+		// ex) TcpNetwork::ConnectedSession
 		long long Seq = 0;
 
 		// SOCKET 핸들 값

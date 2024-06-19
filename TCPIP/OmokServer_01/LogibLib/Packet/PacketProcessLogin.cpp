@@ -15,6 +15,10 @@ using PACKET_ID = NCommon::PACKET_ID;
 
 namespace NLogicLib
 {
+	/*
+	 * Client 측에서 로그인 요청이 왔을 때 실행해주는 함수
+	 *
+	 */
 	ERROR_CODE PacketProcess::Login(PacketInfo packetInfo)
 	{
 		//TODO: 받은 데이터가 PktLogInReq 크기만큼인지 조사해야 한다.
@@ -22,10 +26,13 @@ namespace NLogicLib
 		// ID 중복이라면 에러 처리한다.
 
 		NCommon::PktLogInRes resPkt;
-		auto reqPkt = (NCommon::PktLogInReq*)packetInfo.pRefData;
+
+		// packetInfo.pRefData 은 Client Application 이 보낸 Data 중에서 Packet Header 부분을 제외한
+		// Packet Body 부분이 존재한다.
+		NCommon::PktLogInReq* reqPkt = (NCommon::PktLogInReq*)packetInfo.pRefData;
 
 		// DB 를 연동할 경우, 여기에 Login 관련 검증 처리를 할 수 있을 것이다.
-		auto addRet = m_pRefUserMgr->AddUser(packetInfo.SessionIndex, reqPkt->szID);
+		NCommon::ERROR_CODE addRet = m_pRefUserMgr->AddUser(packetInfo.SessionIndex, reqPkt->szID);
 
 		if (addRet != ERROR_CODE::NONE) {
 
@@ -45,6 +52,9 @@ namespace NLogicLib
 		m_pConnectedUserManager->SetLogin(packetInfo.SessionIndex);
 
 		resPkt.ErrorCode = (short)addRet;
+
+		// 다시 해당 클라이언트 소켓을 통해 Client Application 측으로 패킷을 보낸다.
+		// (참고) 다음 네트워크 루프에서 SendSocket 를 호출하게 된다.
 		m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::LOGIN_IN_RES, sizeof(NCommon::PktLogInRes), (char*)&resPkt);
 
 		return ERROR_CODE::NONE;

@@ -146,8 +146,8 @@ namespace csharp_test_client
                     continue;
                 }
 
-                // receive 함수를 통해서 Socket 의 입력 버퍼에 있는 데이터를 가져온다.
-                var recvData = Network.Receive();
+				// receive 함수를 통해서 Socket 의 입력 버퍼에 있는 데이터를 가져온다.
+				Tuple<int, byte[]> recvData = Network.Receive();
 
                 if (recvData != null)
                 {
@@ -166,7 +166,16 @@ namespace csharp_test_client
 
                         var packet = new PacketData();
                         packet.DataSize = (short)(data.Count - PacketHeaderSize);
-                        packet.PacketID = BitConverter.ToInt16(data.Array, data.Offset + 2);
+						/*
+                         * struct PacketHeader
+	                     *  {
+		                 *     short TotalSize;     // -> data.Offset + 2 인 이유는, TotalSize 를 의미하는 데이터 크기가 2 byte 이기 때문이다.
+		                 *                          //     해당 부분만큼 건너뛰고 ID 에 해당하는 부분을 읽고자 하는 것이다.
+		                 *     short Id;
+		                 *     unsigned char Reserve;
+	                     *  };
+                         */
+						packet.PacketID = BitConverter.ToInt16(data.Array, data.Offset + 2);
                         packet.Type = (SByte)data.Array[(data.Offset + 4)];
                         packet.BodyData = new byte[packet.DataSize];
                         Buffer.BlockCopy(data.Array, (data.Offset + PacketHeaderSize), packet.BodyData, 0, (data.Count - PacketHeaderSize));
@@ -355,7 +364,7 @@ namespace csharp_test_client
         }
 
         // 로그인 요청
-        private void button2_Click(object sender, EventArgs e)
+        private void login_Click(object sender, EventArgs e)
         {
             var loginReq = new LoginReqPacket();
             loginReq.SetValue(textBoxUserID.Text, textBoxUserPW.Text);

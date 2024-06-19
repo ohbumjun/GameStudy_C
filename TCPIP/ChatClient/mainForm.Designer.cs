@@ -110,7 +110,7 @@
             this.textBoxPort.Name = "textBoxPort";
             this.textBoxPort.Size = new System.Drawing.Size(51, 21);
             this.textBoxPort.TabIndex = 18;
-            this.textBoxPort.Text = "11021";
+            this.textBoxPort.Text = "32452";
             this.textBoxPort.WordWrap = false;
             // 
             // label10
@@ -240,7 +240,7 @@
             this.button2.TabIndex = 46;
             this.button2.Text = "Login";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button2.Click += new System.EventHandler(this.login_Click);
             // 
             // Room
             // 

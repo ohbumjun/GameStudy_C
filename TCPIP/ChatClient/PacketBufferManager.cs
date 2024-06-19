@@ -55,6 +55,13 @@ namespace csharp_test_client
                 return false;
             }
 
+            /*
+             * data         : 원본 바이트 배열
+             * pos          : 원본 바이트 배열로부터 pos 위치부터 복사될 것이다.
+             * PacketData   : 복사될 대상 바이트 배열
+             * WritePos     : PacketData 에서 복사될 위치
+             * size         : 복사될 바이트 크기
+             */
             Buffer.BlockCopy(data, pos, PacketData, WritePos, size);
             WritePos += size;
 
@@ -76,13 +83,17 @@ namespace csharp_test_client
                 return new ArraySegment<byte>();
             }
 
-            var packetDataSize = BitConverter.ToInt16(PacketData, ReadPos);
+            // 현재 읽고자 하는 전체 Packet Data Size
+            Int16 packetDataSize = BitConverter.ToInt16(PacketData, ReadPos);
+
             if (enableReadSize < packetDataSize)
             {
                 return new ArraySegment<byte>();
             }
 
-            var completePacketData = new ArraySegment<byte>(PacketData, ReadPos, packetDataSize);
+			// 읽고자 하는 전체 패킷 binary data
+			ArraySegment<byte> completePacketData = new ArraySegment<byte>(PacketData, ReadPos, packetDataSize);
+
             ReadPos += packetDataSize;
             return completePacketData;
         }

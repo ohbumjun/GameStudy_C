@@ -18,6 +18,9 @@ namespace NLogicLib
 		}
 
 		bool m_IsLoginSuccess = false;
+
+		// 해당 User 혹은 Client 가 connect 된 시간 ?
+		// ex) ConnectedUserManager::SetConnectSession
 		time_t m_ConnectedTime = 0;
 	};
 
