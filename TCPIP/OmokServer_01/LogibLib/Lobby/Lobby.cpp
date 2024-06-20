@@ -91,10 +91,12 @@ ERROR_CODE NLogicLib::Lobby::LeaveUser(const int userIndex)
 	// 맞는 것인가 ?
 	auto pUser = FindUser(userIndex);
 
-	if (pUser == nullptr) {
+	if (pUser == nullptr) 
+	{
 		return ERROR_CODE::LOBBY_LEAVE_USER_NVALID_UNIQUEINDEX;
 	}
 
+	// 다시 user 의 상태를 LOGIN 상태로 변경한다.
 	pUser->LeaveLobby();
 
 	m_UserIndexDic.erase(pUser->GetIndex());

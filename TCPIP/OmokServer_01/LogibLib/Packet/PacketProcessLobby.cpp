@@ -91,13 +91,16 @@ namespace NLogicLib
 		}
 
 		ERROR_CODE enterRet = pLobby->LeaveUser(pUser->GetIndex());
-		if (enterRet != ERROR_CODE::NONE) {
+
+		if (enterRet != ERROR_CODE::NONE) 
+		{
 			resPkt.SetError(enterRet);
 			m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::LOBBY_LEAVE_RES, sizeof(NCommon::PktLobbyLeaveRes), (char*)&resPkt);
 			return enterRet;
 		}
 
 		m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::LOBBY_LEAVE_RES, sizeof(NCommon::PktLobbyLeaveRes), (char*)&resPkt);
+		
 		return ERROR_CODE::NONE;
 	}
 }
