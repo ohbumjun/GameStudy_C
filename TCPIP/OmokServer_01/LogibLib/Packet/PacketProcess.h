@@ -1,9 +1,9 @@
 ﻿#pragma once
 
 #include <memory>
-#include "Common/Packet.h"
-#include "Common/ErrorCode.h"
-#include "NetLib/Define.h"
+#include "../../Common/Packet.h"
+#include "../../Common/ErrorCode.h"
+#include "../../NetLib/Define.h"
 
 namespace NServerNetLib
 {
@@ -12,7 +12,7 @@ namespace NServerNetLib
 }
 	
 class UserManager;
-class RoomManager;
+class LobbyManager;
 
 namespace NLogicLib
 {
@@ -40,7 +40,7 @@ namespace NLogicLib
 		PacketProcess();
 		~PacketProcess();
 
-		void Init(TcpNet* pNetwork, UserManager* pUserMgr, RoomManager* pRoomMgr, NServerNetLib::ServerConfig* pConfig, ILog* pLogger);
+		void Init(TcpNet* pNetwork, UserManager* pUserMgr, LobbyManager* pLobbyMgr, ServerConfig* pConfig, ILog* pLogger);
 
 		void Process(PacketInfo packetInfo);
 
@@ -51,7 +51,6 @@ namespace NLogicLib
 		ILog* m_pRefLogger;
 		TcpNet* m_pRefNetwork;
 		UserManager* m_pRefUserMgr;
-		RoomManager* m_pRefRoomMgr;
 		LobbyManager* m_pRefLobbyMgr;
 
 		std::unique_ptr<ConnectedUserManager> m_pConnectedUserManager;

@@ -146,9 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Lobby.cpp" />
-    <ClCompile Include="LobbyManager.cpp" />
+    <ClCompile Include="LogibLib\Game.cpp" />
     <ClCompile Include="LogibLib\Lobby\Lobby.cpp" />
     <ClCompile Include="LogibLib\Lobby\LobbyManager.cpp" />
     <ClCompile Include="LogibLib\Packet\PacketProcess.cpp" />
@@ -169,9 +167,7 @@
     <ClInclude Include="Common\Packet.h" />
     <ClInclude Include="Common\PacketID.h" />
     <ClInclude Include="ConsoleLogger.h" />
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="Lobby.h" />
-    <ClInclude Include="LobbyManager.h" />
+    <ClInclude Include="LogibLib\Game.h" />
     <ClInclude Include="LogibLib\Lobby\Lobby.h" />
     <ClInclude Include="LogibLib\Lobby\LobbyManager.h" />
     <ClInclude Include="LogibLib\Packet\PacketProcess.h" />

@@ -1,7 +1,7 @@
-#include "NetLib/ILog.h"
-#include "NetLib/TcpNetwork.h"
-#include "Common/Packet.h"
-#include "Common/ErrorCode.h"
+#include "../../NetLib/ILog.h"
+#include "../../NetLib/TcpNetwork.h"
+#include "../../Common/Packet.h"
+#include "../../Common/ErrorCode.h"
 
 #include "Lobby.h"
 #include "LobbyManager.h"
@@ -26,7 +26,11 @@ namespace NLogicLib
 		for (int i = 0; i < config.MaxLobbyCount; ++i)
 		{
 			Lobby lobby;
-			lobby.Init((short)i, (short)config.MaxLobbyUserCount, (short)config.MaxRoomCountByLobby, (short)config.MaxRoomUserCount);
+
+			lobby.Init((short)i, (short)config.MaxLobbyUserCount, 
+				(short)config.MaxRoomCountByLobby,
+				(short)config.MaxRoomUserCount);
+
 			lobby.SetNetwork(m_pRefNetwork, m_pRefLogger);
 
 			m_LobbyList.push_back(lobby);

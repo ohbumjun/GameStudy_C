@@ -28,6 +28,9 @@ namespace NLogicLib
 	class User;
 	class Room;
 
+	// 굳이 LobbyUser 라는 구조체를 만든 이유는
+	// LobbyUser 는 일종의 "그릇"
+	// Init 에서 Max User 수만큼 해당 구조체 정보를 만들게 된다.
 	struct LobbyUser
 	{
 		short Index = 0;

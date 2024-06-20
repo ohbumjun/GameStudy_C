@@ -108,6 +108,8 @@ namespace NServerNetLib
 		timeval timeout{ 0, 1000 }; //tv_sec, tv_usec
 
 #ifdef _WIN32
+		// 변경된 소켓 및 관찰대상이 있다면, 변경된 대상의 "개수"를 리턴한다.
+		// 만약 리턴 결과가 0 이라면, 변경된 대상이 존재하지 않는다는 것을 의미한다.
 		auto selectResult = select(0, &read_set, &write_set, 0, &timeout);
 #else
 		auto selectResult = select(m_MaxSockFD + 1, &read_set, &write_set, 0, &timeout);
@@ -183,12 +185,22 @@ namespace NServerNetLib
 			return true;
 		}
 
-		// 클라이언트 소켓 입장에서 데이터를 수신하게 한다.
-		// 참고 : TCP 는 데이터 경계가 존재한다.
-		// 따라서 상대방이 100을 보냈어도, 여러 개의 패킷으로 나뉘어져 전송될 수 있고
-		// 이로 인해 recv 를 여러번 호출해야 할 수도 있다.
-		// 즉, recv 를 호출해도 그 size 가 100이 아니라 10 이렇게 적은 data size 만을
-		// 읽어들일 수 있다는 것이다.
+		/*
+		 *	클라이언트 소켓 입장에서 데이터를 수신하게 한다.
+		 *	참고 : TCP 는 데이터 경계가 존재한다.
+		 *	따라서 상대방이 100을 보냈어도, 여러 개의 패킷으로 나뉘어져 전송될 수 있고
+		 *	이로 인해 recv 를 여러번 호출해야 할 수도 있다.
+		 *	즉, recv 를 호출해도 그 size 가 100이 아니라 10 이렇게 적은 data size 만을
+		 *	읽어들일 수 있다는 것이다.
+		 */
+
+		/*
+		 * ex 1) Client 가 접속을 하고 나서, Login 요청을 날리면, 여리고 들어온다.
+		 * 이때 fd 는 접속된 Client 의 소켓이 된다.
+		 * 즉, 서버가 가지고 있는 Client 소켓 입장에서는, 클라이언트 측이 보낸 "로그인 요청" 이라는
+		 * 데이터를 수신할 준비가 되어 있다고 판단한다는 것이다.
+		 */
+		
 		NET_ERROR_CODE ret = RecvSocket(sessionIndex);
 
 		if (ret != NET_ERROR_CODE::NONE)
@@ -311,9 +323,9 @@ namespace NServerNetLib
 	{
         struct sockaddr_in server_addr;
         memset(&server_addr, 0, sizeof(server_addr));
-        server_addr.sin_family = AF_INET;
-        server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-        server_addr.sin_port = htons(port);
+        server_addr.sin_family = AF_INET;						// IPV4 프로토콜
+        server_addr.sin_addr.s_addr = htonl(INADDR_ANY);		// "any" IPv4 address on the local machine.
+        server_addr.sin_port = htons(port);						// port number to network byte order		
 
         if (bind(m_ServerSockfd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0)
         {
@@ -356,13 +368,23 @@ namespace NServerNetLib
 			auto client_len = sizeof(client_adr);
 			auto client_sockfd = accept(m_ServerSockfd, (struct sockaddr*)&client_adr, (socklen_t*)&client_len);
 #endif
-			//m_pRefLogger->Write(LOG_TYPE::L_DEBUG, "%s | client_sockfd(%I64u)", __FUNCTION__, client_sockfd);
 			if (client_sockfd == INVALID_SOCKET)
 			{
 #ifdef _WIN32
 				if (WSAGetLastError() == WSAEWOULDBLOCK)
 				{
 					// non-blocking socket 이 사용되고 있을 수 있다는 것을 알려주는 것.
+
+					/*
+					ioctsocekt(sock, FIONBIO, &opt) 함수는, FIONBIO. 즉 입출력 모두를 opt 로 설정한다는 것.
+					opt 값이 1 이면 non-blocking mode 로 설정하고, 0 이면 blocking mode 로 설정한다.
+
+					이후 accept 를 호출하면, 클라이언트 연결요청이 없을 때, accept 함수는 바로 리턴하게 된다.
+					그리고 INVALID_SOCKET 을 리턴하게 된다.
+
+					이후 WSAGetLastError() 함수를 통해 WSAEWOULDBLOCK 에러 코드를 얻게 된다.
+
+					*/
 					return NET_ERROR_CODE::ACCEPT_API_WSAEWOULDBLOCK;
 				}
 #else
@@ -496,7 +518,7 @@ if (errno == EWOULDBLOCK)
 	NET_ERROR_CODE TcpNetwork::RecvSocket(const int sessionIndex)
 	{
 		auto& session = m_ClientSessionPool[sessionIndex];
-		auto fd = static_cast<SOCKET>(session.SocketFD);
+		SOCKET fd = static_cast<SOCKET>(session.SocketFD);
 
 		if (session.IsConnected() == false)
 		{
@@ -543,7 +565,7 @@ if (errno == EWOULDBLOCK)
 			}
 		}
 
-		// (확실 X) 수신 버퍼에 남아있는 total size ? 를 반영하는 변수로 보인다.
+		// 수신 버퍼에 남아있는 total size ? 를 반영하는 변수로 보인다.
 		session.RemainingDataSize += recvSize;
 
 		return NET_ERROR_CODE::NONE;
@@ -639,6 +661,7 @@ if (errno == EWOULDBLOCK)
 				}
 			}
 
+			// 수신한 정보를 Packet 형태로 만들어서 Packet Queue 에 넣어준다.
 			AddPacketQueue(sessionIndex, pPktHeader->Id, bodySize, &session.pRecvBuffer[readPos]);
 			readPos += bodySize;
 		}
@@ -667,6 +690,18 @@ if (errno == EWOULDBLOCK)
 			return;
 		}
 
+		/*
+		 * ex 1) 접속 요청
+		 *
+		 * Client 가 접속 요청을 하면, 서버 소켓은 데이터를 수신한 소켓이므로 read_set 에 포함된다.
+		 * 그래서 NewSession 을 통해 새로운 Client 정보를 만들어낸다.
+		 *
+		 * 그 다음 Run Loop 에서, Client 소켓에 대해 여기로 들어오게 된다.
+		 * 즉, Client Socket 이 데이터를 Write 할 중비가 되어 있다는 얘기가 된다.
+		 *
+		 * 하지만, 실제 해당 Client Session 에 대해서 send 한 내용이 없으므로
+		 * send Size 는 0 이 되고, 결국 FlushSendBuff 함수에서는 아무것도 안하고 나오게 된다.
+		 */
 		auto retsend = FlushSendBuff(sessionIndex);
 
 		if (retsend.Error != NET_ERROR_CODE::NONE)
@@ -681,7 +716,7 @@ if (errno == EWOULDBLOCK)
 	NetError TcpNetwork::FlushSendBuff(const int sessionIndex)
 	{
 		auto& session = m_ClientSessionPool[sessionIndex];
-		auto fd = static_cast<SOCKET>(session.SocketFD);
+		SOCKET fd = static_cast<SOCKET>(session.SocketFD);
 
 		if (session.IsConnected() == false)
 		{
@@ -723,7 +758,7 @@ if (errno == EWOULDBLOCK)
 	{
 		NetError result(NET_ERROR_CODE::NONE);
 
-		auto rfds = m_Readfds;
+		fd_set rfds = m_Readfds;
 
 		// 접속 되어 있는지 또는 보낼 데이터가 있는지
 		if (size <= 0)
@@ -763,6 +798,13 @@ if (errno == EWOULDBLOCK)
 		read,write 할 수 있는 상태인지를 판별해주는 select 함수가 필요하다.
 		
 		- 음...send,recv 는 무조건 블로킹 함수가 아닌가..?
+
+		참고 : FIONBIO == 입출력 모드 설정, mode : 1 은 논블로킹으로
+		이후 서버 문지기 소켓에 대해 만약 아래 함수를 통해 논블로킹 모드로 설정하게 되면
+		accept 함수를 호출했을 때, 클라이언트 연결 요청이 없다면 INVALID_SOCKET 을 리턴한다.
+
+		그리고 accept 함수로 통해 만들어진 클라이언트 소켓도 역시 논블로킹 모드 속성을 지니게 된다.
+		-- NewSession 함수 참고.
 		*/
 #ifdef _WIN32
 		if (ioctlsocket(sock, FIONBIO, &mode) == SOCKET_ERROR)
