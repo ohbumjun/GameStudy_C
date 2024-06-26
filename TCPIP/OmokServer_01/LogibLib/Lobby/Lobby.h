@@ -43,7 +43,10 @@ namespace NLogicLib
 		Lobby();
 		virtual ~Lobby();
 
-		void Init(const short lobbyIndex, const short maxLobbyUserCount, const short maxRoomCountByLobby, const short maxRoomUserCount);
+		void Init(const short lobbyIndex, 
+			const short maxLobbyUserCount, 
+			const short maxRoomCountByLobby, 
+			const short maxRoomUserCount);
 
 		void Release();
 
@@ -62,9 +65,9 @@ namespace NLogicLib
 
 		Room* GetRoom(const short roomIndex);
 
-		auto MaxUserCount() { return (short)m_MaxUserCount; }
+		short MaxUserCount() { return (short)m_MaxUserCount; }
 
-		auto MaxRoomCount() { return (short)m_RoomList.size(); }
+		short MaxRoomCount() { return (short)m_RoomList.size(); }
 
 
 	protected:

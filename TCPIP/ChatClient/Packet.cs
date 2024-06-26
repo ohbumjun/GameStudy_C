@@ -78,7 +78,52 @@ namespace csharp_test_client
     }
 
 
-    public class RoomEnterReqPacket
+	// Lobby
+	public struct LobbyListInfo
+	{
+		public Int16 Result;
+		public short LobbyId;
+		public short LobbyUserCount;
+		public short LobbyMaxUserCount;
+	};
+
+	public class LobbyListResPacket
+	{
+		public short LobbyCount = 0;
+		public LobbyListInfo[] LobbyList = new LobbyListInfo[20];
+
+        // Error Code
+		public Int16 Result;
+
+		public bool FromBytes(byte[] bodyData)
+		{
+            var readPos = 0;
+			Result = BitConverter.ToInt16(bodyData, 0);
+            readPos += 2;
+
+			 // if (bodyData.Length < 4) // 최소한 LobbyCount를 읽을 수 있는지 확인
+			 // 	return false;
+			 // 
+			LobbyCount = (short)bodyData[readPos];
+			readPos += 2;
+
+			for (int i = 0; i < LobbyCount; ++i)
+			{
+				LobbyList[i].LobbyId = (short)bodyData[readPos];
+				readPos += 2;
+
+				LobbyList[i].LobbyUserCount = (short)bodyData[readPos];
+				readPos += 2;
+
+				LobbyList[i].LobbyMaxUserCount = (short)bodyData[readPos];
+				readPos += 2;
+			}
+
+			return true;
+		}
+	}
+
+	public class RoomEnterReqPacket
     {
         int RoomNumber;
         public void SetValue(int roomNumber)
@@ -226,16 +271,17 @@ namespace csharp_test_client
     {
         public Int64 UserUniqueId;
 
-        public bool FromBytes(byte[] bodyData)
-        {
-            UserUniqueId = BitConverter.ToInt64(bodyData, 0);
-            return true;
-        }
-    }
+		public bool FromBytes(byte[] bodyData)
+		{
+			UserUniqueId = BitConverter.ToInt64(bodyData, 0);
+			return true;
+		}
+
+	}
 
 
-    
-    public class RoomRelayNtfPacket
+
+	public class RoomRelayNtfPacket
     {
         public Int64 UserUniqueId;
         public byte[] RelayData;

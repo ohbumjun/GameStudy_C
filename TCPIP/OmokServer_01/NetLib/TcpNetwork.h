@@ -97,6 +97,8 @@ namespace NServerNetLib
 		int64_t m_ConnectSeq = 0;
 		
 		std::vector<ClientSession> m_ClientSessionPool;
+
+		// 사용 가능한 ? 클라이언트 세션의 인덱스를 관리하는 덱
 		std::deque<int> m_ClientSessionPoolIndex;
 		
 		// AddPacketQueue 참고 

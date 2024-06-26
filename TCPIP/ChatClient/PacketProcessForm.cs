@@ -23,6 +23,7 @@ namespace csharp_test_client
             PacketFuncDic.Add(PACKET_ID.ROOM_LEAVE_USER_NTF, PacketProcess_RoomLeaveUserNotify);
             PacketFuncDic.Add(PACKET_ID.ROOM_CHAT_RES, PacketProcess_RoomChatResponse);            
             PacketFuncDic.Add(PACKET_ID.ROOM_CHAT_NOTIFY, PacketProcess_RoomChatNotify);
+            PacketFuncDic.Add(PACKET_ID.LOBBY_LIST_RES, PacketProcess_LobbyListResponse);
             //PacketFuncDic.Add(PACKET_ID.PACKET_ID_ROOM_RELAY_NTF, PacketProcess_RoomRelayNotify);
         }
 
@@ -58,11 +59,25 @@ namespace csharp_test_client
 
             DevLog.Write($"로그인 결과:  {(ERROR_CODE)responsePkt.Result}");
         }
+		void PacketProcess_LobbyListResponse(byte[] bodyData)
+		{
+			var responsePkt = new LobbyListResPacket();
+			responsePkt.FromBytes(bodyData);
 
+            // Lobby List 정보를 UI 에 뿌려줘야 한다.
+            RefreshLobbyListInfo();
 
-        void PacketProcess_RoomEnterResponse(byte[] bodyData)
+			for (int i = 0; i < responsePkt.LobbyCount; ++i)
+			{
+				LobbyListInfo lobbyListInfo = responsePkt.LobbyList[i];
+				AddLobbyListInfo(lobbyListInfo.LobbyId, lobbyListInfo.LobbyUserCount, lobbyListInfo.LobbyMaxUserCount);
+			}
+		}
+
+		void PacketProcess_RoomEnterResponse(byte[] bodyData)
         {
             var responsePkt = new RoomEnterResPacket();
+
             responsePkt.FromBytes(bodyData);
 
             DevLog.Write($"방 입장 결과:  {(ERROR_CODE)responsePkt.Result}");
@@ -86,7 +101,7 @@ namespace csharp_test_client
             var notifyPkt = new RoomNewUserNtfPacket();
             notifyPkt.FromBytes(bodyData);
 
-            AddRoomUserList(notifyPkt.UserUniqueId, notifyPkt.UserID);
+			AddRoomUserList(notifyPkt.UserUniqueId, notifyPkt.UserID);
             
             DevLog.Write($"방에 새로 들어온 유저 받음");
         }
@@ -127,9 +142,7 @@ namespace csharp_test_client
                 AddRoomChatMessageList(0, msg);
             }
         }
-
-
-        void PacketProcess_RoomChatNotify(byte[] bodyData)
+		void PacketProcess_RoomChatNotify(byte[] bodyData)
         {
             var responsePkt = new RoomChatNtfPacket();
             responsePkt.FromBytes(bodyData);

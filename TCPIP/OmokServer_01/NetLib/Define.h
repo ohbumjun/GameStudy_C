@@ -20,9 +20,13 @@ namespace NServerNetLib
 
 		bool IsLoginCheck;	// 연결 후 특정 시간 이내에 로그인 완료 여부 조사
 
+		// 최대 Lobby 개수
 		int MaxLobbyCount;
+		// Lobby 내 최대 User 수
 		int MaxLobbyUserCount;
+		// Lobby 내 최대 Room 개수
 		int MaxRoomCountByLobby;
+		// Room 내 최대 유저수
 		int MaxRoomUserCount;
 	};
 

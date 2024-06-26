@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.ApplicationServices;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -157,8 +158,8 @@ namespace csharp_test_client
                     while (true)
                     {
 						// PacketBufferManager 에 있는 내용들을 Packet Data 형태로 재구성해주고
-                        // Packet Queue 에 넣어준다.
-						var data = PacketBuffer.Read();
+						// Packet Queue 에 넣어준다.
+						ArraySegment<byte> data = PacketBuffer.Read();
                         if (data.Count < 1)
                         {
                             break;
@@ -176,6 +177,7 @@ namespace csharp_test_client
 	                     *  };
                          */
 						packet.PacketID = BitConverter.ToInt16(data.Array, data.Offset + 2);
+                        // Type : C++ 코드에서 Reserve 변수에 해당한다.
                         packet.Type = (SByte)data.Array[(data.Offset + 4)];
                         packet.BodyData = new byte[packet.DataSize];
                         Buffer.BlockCopy(data.Array, (data.Offset + PacketHeaderSize), packet.BodyData, 0, (data.Count - PacketHeaderSize));
@@ -337,7 +339,18 @@ namespace csharp_test_client
             SendPacketQueue.Enqueue(dataSource.ToArray());
         }
 
-        void AddRoomUserList(Int64 userUniqueId, string userID)
+		void RefreshLobbyListInfo()
+		{
+			listBoxLobby.Items.Clear();
+		}
+
+		void AddLobbyListInfo(short lobbyId, short lobbyUserCnt, short lobbyMaxUserCnt)
+		{
+			var msg = $"lobby Id: {lobbyId}, user count : {lobbyUserCnt} / {lobbyMaxUserCnt}";
+			listBoxLobby.Items.Add(msg);
+		}
+
+		void AddRoomUserList(Int64 userUniqueId, string userID)
         {
             var msg = $"{userUniqueId}: {userID}";
             listBoxRoomUserList.Items.Add(msg);
@@ -417,9 +430,9 @@ namespace csharp_test_client
         }
 
         // 로비 리스트 요청
-        private void button3_Click(object sender, EventArgs e)
-        {
-            PostSendPacket(PACKET_ID.LOBBY_LIST_REQ, null);
+        private void buttonLobbyListReq_Click(object sender, EventArgs e)
+		{
+			PostSendPacket(PACKET_ID.LOBBY_LIST_REQ, null);
             DevLog.Write($"방 릴레이 요청");
         }
 
