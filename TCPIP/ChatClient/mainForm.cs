@@ -433,17 +433,35 @@ namespace csharp_test_client
         private void buttonLobbyListReq_Click(object sender, EventArgs e)
 		{
 			PostSendPacket(PACKET_ID.LOBBY_LIST_REQ, null);
-            DevLog.Write($"방 릴레이 요청");
+            DevLog.Write($"Lobby List 요청");
         }
 
         // 로비 입장 요청
-        private void button4_Click(object sender, EventArgs e)
+        private void btnLobbyEnterReq_Click(object sender, EventArgs e)
         {
+            if (listBoxLobby.SelectedItem == null)
+            {
+				DevLog.Write($"입장할 Lobby 번호를 선택하세요");
+                return;
+			}
 
-        }
+            var requestPkt = new LobbyEnterReqPacket();
+
+            // 현재 클릭한 Lobby 정보
+            string lobbyInfo = listBoxLobby.SelectedItem.ToString();
+
+            // 여기서는 Lobby Index 가 곧 listBoxLobby 에서의 index 가 될 것이다.
+            short selectedLobbyIndex = (short)listBoxLobby.SelectedIndex;
+
+            requestPkt.SetValue(selectedLobbyIndex);
+
+			PostSendPacket(PACKET_ID.LOBBY_ENTER_REQ, requestPkt.ToBytes());
+
+			DevLog.Write($"로비 입장 요청:  {textBoxRoomNumber.Text} 번");
+		}
 
         // 로비 나가기 요청
-        private void button5_Click(object sender, EventArgs e)
+        private void btnLobbyLeaveReq_Click(object sender, EventArgs e)
         {
 
         }

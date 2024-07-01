@@ -123,6 +123,34 @@ namespace csharp_test_client
 		}
 	}
 
+    public class LobbyEnterReqPacket
+    {
+		short LobbyId;
+
+		public void SetValue(short lobbyId)
+		{
+			LobbyId = lobbyId;
+		}
+		public byte[] ToBytes()
+		{
+			List<byte> dataSource = new List<byte>();
+			dataSource.AddRange(BitConverter.GetBytes(LobbyId));
+			return dataSource.ToArray();
+		}
+	}
+	public class LobbyEnterResPacket
+	{
+		short MaxUserCount;
+		short MaxRoomCount;
+	}
+
+	public class LobbyLeaveReqPacket
+	{
+	}
+	public class LobbyLeaveResPacket
+	{
+	}
+
 	public class RoomEnterReqPacket
     {
         int RoomNumber;
@@ -188,7 +216,6 @@ namespace csharp_test_client
     {
         public Int64 UserUniqueId;
         public string UserID;
-
         public bool FromBytes(byte[] bodyData)
         {
             var readPos = 0;

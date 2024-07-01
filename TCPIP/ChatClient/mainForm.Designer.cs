@@ -419,7 +419,7 @@
             this.button4.TabIndex = 52;
             this.button4.Text = "Enter";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.button4.Click += new System.EventHandler(this.btnLobbyEnterReq_Click);
             // 
             // button5
             // 
@@ -430,7 +430,7 @@
             this.button5.TabIndex = 53;
             this.button5.Text = "Leave";
             this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.button5.Click += new System.EventHandler(this.btnLobbyLeaveReq_Click);
             // 
             // mainForm
             // 
