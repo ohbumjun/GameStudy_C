@@ -142,6 +142,12 @@ namespace csharp_test_client
 	{
 		short MaxUserCount;
 		short MaxRoomCount;
+		public bool FromBytes(byte[] bodyData)
+		{
+			MaxUserCount = BitConverter.ToInt16(bodyData, 0);
+			MaxRoomCount = BitConverter.ToInt16(bodyData, 2);
+			return true;
+		}
 	}
 
 	public class LobbyLeaveReqPacket

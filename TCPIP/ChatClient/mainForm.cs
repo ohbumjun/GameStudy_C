@@ -445,6 +445,13 @@ namespace csharp_test_client
                 return;
 			}
 
+            // 이미 입장한 Lobby 가 있다면 그 Lobby 에서 나가야 한다.
+            if (curLobbyLabelNum.Text.IsEmpty() == false)
+			{
+				DevLog.Write($"현재 로비에서 나가세요");
+				return;
+			}
+
             var requestPkt = new LobbyEnterReqPacket();
 
             // 현재 클릭한 Lobby 정보

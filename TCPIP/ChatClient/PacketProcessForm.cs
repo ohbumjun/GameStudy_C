@@ -24,6 +24,7 @@ namespace csharp_test_client
             PacketFuncDic.Add(PACKET_ID.ROOM_CHAT_RES, PacketProcess_RoomChatResponse);            
             PacketFuncDic.Add(PACKET_ID.ROOM_CHAT_NOTIFY, PacketProcess_RoomChatNotify);
             PacketFuncDic.Add(PACKET_ID.LOBBY_LIST_RES, PacketProcess_LobbyListResponse);
+            PacketFuncDic.Add(PACKET_ID.LOBBY_ENTER_RES, PacketProcess_LobbyEnterResponse);
             //PacketFuncDic.Add(PACKET_ID.PACKET_ID_ROOM_RELAY_NTF, PacketProcess_RoomRelayNotify);
         }
 
@@ -72,6 +73,16 @@ namespace csharp_test_client
 				LobbyListInfo lobbyListInfo = responsePkt.LobbyList[i];
 				AddLobbyListInfo(lobbyListInfo.LobbyId, lobbyListInfo.LobbyUserCount, lobbyListInfo.LobbyMaxUserCount);
 			}
+		}
+
+		void PacketProcess_LobbyEnterResponse(byte[] bodyData)
+		{
+			var responsePkt = new LobbyEnterResPacket();
+
+			responsePkt.FromBytes(bodyData);
+
+            // 현재 로비 정보 표시
+            curLobbyLabelNum.Text = listBoxLobby.SelectedIndex.ToString();
 		}
 
 		void PacketProcess_RoomEnterResponse(byte[] bodyData)
