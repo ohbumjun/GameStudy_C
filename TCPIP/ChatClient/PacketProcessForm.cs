@@ -21,6 +21,7 @@ namespace csharp_test_client
             PacketFuncDic.Add(PACKET_ID.ROOM_NEW_USER_NTF, PacketProcess_RoomNewUserNotify);
             PacketFuncDic.Add(PACKET_ID.ROOM_LEAVE_RES, PacketProcess_RoomLeaveResponse);
             PacketFuncDic.Add(PACKET_ID.ROOM_LEAVE_USER_NTF, PacketProcess_RoomLeaveUserNotify);
+            PacketFuncDic.Add(PACKET_ID.ROOM_LIST_RES, PacketProcess_RoomListResponse);            
             PacketFuncDic.Add(PACKET_ID.ROOM_CHAT_RES, PacketProcess_RoomChatResponse);            
             PacketFuncDic.Add(PACKET_ID.ROOM_CHAT_NOTIFY, PacketProcess_RoomChatNotify);
             PacketFuncDic.Add(PACKET_ID.LOBBY_LIST_RES, PacketProcess_LobbyListResponse);
@@ -72,6 +73,21 @@ namespace csharp_test_client
 			{
 				LobbyListInfo lobbyListInfo = responsePkt.LobbyList[i];
 				AddLobbyListInfo(lobbyListInfo.LobbyId, lobbyListInfo.LobbyUserCount, lobbyListInfo.LobbyMaxUserCount);
+			}
+		}
+
+		void PacketProcess_RoomListResponse(byte[] bodyData)
+		{
+			var responsePkt = new RoomListResPacket();
+			responsePkt.FromBytes(bodyData);
+
+			// Lobby List 정보를 UI 에 뿌려줘야 한다.
+			RefreshLobbyListInfo();
+
+			for (int i = 0; i < responsePkt.RoomCount; ++i)
+			{
+				RoomListInfo roomListInfo = responsePkt.RoomList[i];
+				AddRoomListInfo(roomListInfo.RoomIndex, roomListInfo.RoomUserCount, roomListInfo.RoomMaxUserCount);
 			}
 		}
 

@@ -159,6 +159,27 @@ void NLogicLib::Lobby::SendToAllUser(const short packetId, const short dataSize,
 	}
 }
 
+void NLogicLib::Lobby::SendRoomListInfo(int sessionIndex)
+{
+	NCommon::PktRoomListRes resPkt;
+
+	resPkt.ErrorCode = (short)ERROR_CODE::NONE;
+	resPkt.RoomCount = static_cast<short>(m_RoomList.size());
+
+	int index = 0;
+	for (Room* room : m_RoomList)
+	{
+		resPkt.RoomList[index].RoomIndex = index;
+		resPkt.RoomList[index].RoomUserCount = room->GetUserCount();
+		resPkt.RoomList[index].RoomMaxUserCount = room->MaxUserCount();
+
+		++index;
+	}
+
+	// 보낼 데이터를 줄이기 위해 사용하지 않은 LobbyListInfo 크기는 빼고 보내도 된다.
+	m_pRefNetwork->SendData(sessionIndex, (short)PACKET_ID::ROOM_LIST_REQ, sizeof(resPkt), (char*)&resPkt);
+}
+
 NLogicLib::User* NLogicLib::Lobby::FindUser(const int userIndex)
 {
 	// user Index 정보로 User 찾기 

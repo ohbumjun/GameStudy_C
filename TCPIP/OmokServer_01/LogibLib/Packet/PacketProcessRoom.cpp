@@ -326,4 +326,44 @@ namespace NLogicLib
 		// 게임의 선택 시작 시간 설정
 		return ERROR_CODE::NONE;
 	}
+
+	ERROR_CODE PacketProcess::RoomList(PacketInfo packetInfo)
+	{
+		NCommon::PktRoomListReq* reqPkt = (NCommon::PktRoomListReq*)packetInfo.pRefData;
+
+		NCommon::PktRoomListRes resPkt;
+
+		// 해당 Client Session 에 대응되는 User 정보를 얻어온다.
+		const std::tuple<NCommon::ERROR_CODE, User*> userTuple = m_pRefUserMgr->GetUser(packetInfo.SessionIndex);
+
+		NCommon::ERROR_CODE errorCode = std::get<0>(userTuple);
+		User* pUser = std::get<1>(userTuple);
+
+		if (errorCode != NCommon::ERROR_CODE::NONE)
+		{
+			// 1) 해당 session Index 에 대응되는 User 가 없거나
+			// 2) User 가 Confirm 이지 않은 경우
+			resPkt.SetError(errorCode);
+			m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_ENTER_RES, sizeof(resPkt), (char*)&resPkt);
+			return errorCode;
+		}
+
+		// 해당 Packet 에 대응되는 user 를 찾았는데 Lobby 에 아직 들어있지 않은 경우
+		if (pUser->IsCurDomainInLobby() == false)
+		{
+			// User 가 현재 Lobby 에 있지 않은 경우
+			resPkt.SetError(ERROR_CODE::ROOM_ENTER_INVALID_DOMAIN);
+			m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_ENTER_RES, sizeof(resPkt), (char*)&resPkt);
+			return ERROR_CODE::ROOM_ENTER_INVALID_LOBBY_INDEX;
+		}
+
+		// User 가 속한 Lobby 를 찾는다.
+		Lobby* pLobby = m_pRefLobbyMgr->GetLobby(pUser->GetLobbyIndex());
+
+		if (pLobby == nullptr) {
+			resPkt.SetError(ERROR_CODE::LOBBY_LEAVE_INVALID_LOBBY_INDEX);
+			m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::LOBBY_LEAVE_RES, sizeof(NCommon::PktLobbyLeaveRes), (char*)&resPkt);
+			return ERROR_CODE::LOBBY_LEAVE_INVALID_LOBBY_INDEX;
+		}
+	}
 }

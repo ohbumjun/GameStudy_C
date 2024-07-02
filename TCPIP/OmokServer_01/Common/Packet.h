@@ -72,6 +72,29 @@ namespace NCommon
 	{
 	};
 
+	// Lobby 내 최대 Room 개수
+	const int MAX_ROOM_LIST_COUNT = 20;
+
+	struct RoomListInfo
+	{
+		short RoomIndex;		// Lobby 내 Room Index
+		short RoomUserCount;	// Lobby 내 User Count
+		short RoomMaxUserCount;	// Lobby 내 최대 User Count
+	};
+
+	//- 룸 목록 요청
+	struct PktRoomListReq
+	{
+	};
+
+	//- 룸 목록 응답
+	struct PktRoomListRes : PktBase
+	{
+		short RoomCount = 0;
+		RoomListInfo RoomList[MAX_ROOM_LIST_COUNT];
+	};
+
+
 	//- 룸에 들어가기 요청
 	const int MAX_ROOM_TITLE_SIZE = 16;
 	struct PktRoomEnterReq

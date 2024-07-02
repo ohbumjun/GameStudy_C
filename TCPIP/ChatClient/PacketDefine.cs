@@ -30,6 +30,8 @@ namespace csharp_test_client
         
         ROOM_ENTER_REQ = 61,
         ROOM_ENTER_RES = 62,        
+        ROOM_LIST_REQ = 65,        
+
         ROOM_NEW_USER_NTF = 63,
         ROOM_USER_LIST_NTF = 64,
 
@@ -40,18 +42,19 @@ namespace csharp_test_client
         ROOM_CHAT_REQ = 76,
         ROOM_CHAT_RES = 77,
         ROOM_CHAT_NOTIFY = 78,
+		ROOM_LIST_RES = 79,
 
 
 
-        //PACKET_ID_ERROR_NTF = 703,
+		//PACKET_ID_ERROR_NTF = 703,
 
-        // Ping(Heart-beat)
-        //PING_REQ = 706,
-        //PING_RES = 707,
+		// Ping(Heart-beat)
+		//PING_REQ = 706,
+		//PING_RES = 707,
 
-        //PACKET_ID_ROOM_RELAY_REQ = 741,
-        //PACKET_ID_ROOM_RELAY_NTF = 742,
-    }
+		//PACKET_ID_ROOM_RELAY_REQ = 741,
+		//PACKET_ID_ROOM_RELAY_NTF = 742,
+	}
 
 
     public enum ERROR_CODE : Int16

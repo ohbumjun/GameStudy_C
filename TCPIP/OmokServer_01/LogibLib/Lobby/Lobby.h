@@ -73,6 +73,7 @@ namespace NLogicLib
 	protected:
 		void SendToAllUser(const short packetId, const short dataSize, char* pData, const int passUserindex = -1);
 
+		void SendRoomListInfo(int sessionIndex);
 
 	protected:
 		User* FindUser(const int userIndex);

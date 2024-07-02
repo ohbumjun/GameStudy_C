@@ -156,6 +156,54 @@ namespace csharp_test_client
 	public class LobbyLeaveResPacket
 	{
 	}
+	public struct RoomListInfo
+	{
+		public short RoomIndex;        // Lobby 내 Room Index
+		public short RoomUserCount;    // Lobby 내 User Count
+		public short RoomMaxUserCount; // Lobby 내 최대 User Count
+	};
+
+	public class RoomListReqPacket
+	{
+		public byte[] ToBytes()
+		{
+			List<byte> dataSource = new List<byte>();
+			return dataSource.ToArray();
+		}
+	}
+	public class RoomListResPacket
+	{
+		// Error Code
+		public Int16 Result;
+		public short RoomCount = 0;
+		public RoomListInfo[] RoomList = new RoomListInfo[20];
+		public bool FromBytes(byte[] bodyData)
+		{
+			var readPos = 0;
+			Result = BitConverter.ToInt16(bodyData, 0);
+			readPos += 2;
+
+			// if (bodyData.Length < 4) // 최소한 LobbyCount를 읽을 수 있는지 확인
+			// 	return false;
+			// 
+			RoomCount = (short)bodyData[readPos];
+			readPos += 2;
+
+			for (int i = 0; i < RoomCount; ++i)
+			{
+				RoomList[i].RoomIndex = (short)bodyData[readPos];
+				readPos += 2;
+
+				RoomList[i].RoomUserCount = (short)bodyData[readPos];
+				readPos += 2;
+
+				RoomList[i].RoomMaxUserCount = (short)bodyData[readPos];
+				readPos += 2;
+			}
+
+			return true;
+		}
+	}
 
 	public class RoomEnterReqPacket
     {

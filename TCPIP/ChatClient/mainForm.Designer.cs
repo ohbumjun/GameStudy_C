@@ -46,6 +46,8 @@
 			label2 = new System.Windows.Forms.Label();
 			button2 = new System.Windows.Forms.Button();
 			Room = new System.Windows.Forms.GroupBox();
+			button6 = new System.Windows.Forms.Button();
+			roomListText = new System.Windows.Forms.Label();
 			textBoxRelay = new System.Windows.Forms.TextBox();
 			btnRoomRelay = new System.Windows.Forms.Button();
 			btnRoomChat = new System.Windows.Forms.Button();
@@ -53,6 +55,7 @@
 			listBoxRoomChatMsg = new System.Windows.Forms.ListBox();
 			label4 = new System.Windows.Forms.Label();
 			listBoxRoomUserList = new System.Windows.Forms.ListBox();
+			listBoxRoomList = new System.Windows.Forms.ListBox();
 			btn_RoomLeave = new System.Windows.Forms.Button();
 			btn_RoomEnter = new System.Windows.Forms.Button();
 			textBoxRoomNumber = new System.Windows.Forms.TextBox();
@@ -62,7 +65,7 @@
 			groupBox1 = new System.Windows.Forms.GroupBox();
 			button5 = new System.Windows.Forms.Button();
 			button4 = new System.Windows.Forms.Button();
-			button3 = new System.Windows.Forms.Button();
+			roomListReqBtn = new System.Windows.Forms.Button();
 			listBoxLobby = new System.Windows.Forms.ListBox();
 			groupBox5.SuspendLayout();
 			Room.SuspendLayout();
@@ -264,6 +267,8 @@
 			// 
 			// Room
 			// 
+			Room.Controls.Add(button6);
+			Room.Controls.Add(roomListText);
 			Room.Controls.Add(textBoxRelay);
 			Room.Controls.Add(btnRoomRelay);
 			Room.Controls.Add(btnRoomChat);
@@ -271,6 +276,7 @@
 			Room.Controls.Add(listBoxRoomChatMsg);
 			Room.Controls.Add(label4);
 			Room.Controls.Add(listBoxRoomUserList);
+			Room.Controls.Add(listBoxRoomList);
 			Room.Controls.Add(btn_RoomLeave);
 			Room.Controls.Add(btn_RoomEnter);
 			Room.Controls.Add(textBoxRoomNumber);
@@ -284,9 +290,30 @@
 			Room.TabStop = false;
 			Room.Text = "Room";
 			// 
+			// button6
+			// 
+			button6.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			button6.Location = new System.Drawing.Point(405, 77);
+			button6.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+			button6.Name = "button6";
+			button6.Size = new System.Drawing.Size(126, 54);
+			button6.TabIndex = 58;
+			button6.Text = "List 요청";
+			button6.UseVisualStyleBackColor = true;
+			// 
+			// roomListText
+			// 
+			roomListText.AutoSize = true;
+			roomListText.Location = new System.Drawing.Point(14, 36);
+			roomListText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			roomListText.Name = "roomListText";
+			roomListText.Size = new System.Drawing.Size(98, 25);
+			roomListText.TabIndex = 57;
+			roomListText.Text = "Room List:";
+			// 
 			// textBoxRelay
 			// 
-			textBoxRelay.Location = new System.Drawing.Point(437, 50);
+			textBoxRelay.Location = new System.Drawing.Point(538, 36);
 			textBoxRelay.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
 			textBoxRelay.MaxLength = 6;
 			textBoxRelay.Name = "textBoxRelay";
@@ -298,7 +325,7 @@
 			// btnRoomRelay
 			// 
 			btnRoomRelay.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			btnRoomRelay.Location = new System.Drawing.Point(600, 42);
+			btnRoomRelay.Location = new System.Drawing.Point(599, 77);
 			btnRoomRelay.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
 			btnRoomRelay.Name = "btnRoomRelay";
 			btnRoomRelay.Size = new System.Drawing.Size(94, 54);
@@ -334,16 +361,16 @@
 			// 
 			listBoxRoomChatMsg.FormattingEnabled = true;
 			listBoxRoomChatMsg.ItemHeight = 25;
-			listBoxRoomChatMsg.Location = new System.Drawing.Point(206, 135);
+			listBoxRoomChatMsg.Location = new System.Drawing.Point(207, 200);
 			listBoxRoomChatMsg.Margin = new System.Windows.Forms.Padding(4);
 			listBoxRoomChatMsg.Name = "listBoxRoomChatMsg";
-			listBoxRoomChatMsg.Size = new System.Drawing.Size(488, 279);
+			listBoxRoomChatMsg.Size = new System.Drawing.Size(488, 229);
 			listBoxRoomChatMsg.TabIndex = 51;
 			// 
 			// label4
 			// 
 			label4.AutoSize = true;
-			label4.Location = new System.Drawing.Point(14, 106);
+			label4.Location = new System.Drawing.Point(14, 171);
 			label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			label4.Name = "label4";
 			label4.Size = new System.Drawing.Size(86, 25);
@@ -354,16 +381,24 @@
 			// 
 			listBoxRoomUserList.FormattingEnabled = true;
 			listBoxRoomUserList.ItemHeight = 25;
-			listBoxRoomUserList.Location = new System.Drawing.Point(19, 138);
+			listBoxRoomUserList.Location = new System.Drawing.Point(14, 200);
 			listBoxRoomUserList.Margin = new System.Windows.Forms.Padding(4);
 			listBoxRoomUserList.Name = "listBoxRoomUserList";
-			listBoxRoomUserList.Size = new System.Drawing.Size(174, 279);
+			listBoxRoomUserList.Size = new System.Drawing.Size(174, 229);
 			listBoxRoomUserList.TabIndex = 49;
+			// 
+			// listBoxRoomList
+			// 
+			listBoxRoomList.ItemHeight = 25;
+			listBoxRoomList.Location = new System.Drawing.Point(14, 64);
+			listBoxRoomList.Name = "listBoxRoomList";
+			listBoxRoomList.Size = new System.Drawing.Size(174, 104);
+			listBoxRoomList.TabIndex = 56;
 			// 
 			// btn_RoomLeave
 			// 
 			btn_RoomLeave.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			btn_RoomLeave.Location = new System.Drawing.Point(309, 40);
+			btn_RoomLeave.Location = new System.Drawing.Point(309, 77);
 			btn_RoomLeave.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
 			btn_RoomLeave.Name = "btn_RoomLeave";
 			btn_RoomLeave.Size = new System.Drawing.Size(94, 54);
@@ -375,7 +410,7 @@
 			// btn_RoomEnter
 			// 
 			btn_RoomEnter.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			btn_RoomEnter.Location = new System.Drawing.Point(206, 38);
+			btn_RoomEnter.Location = new System.Drawing.Point(207, 77);
 			btn_RoomEnter.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
 			btn_RoomEnter.Name = "btn_RoomEnter";
 			btn_RoomEnter.Size = new System.Drawing.Size(94, 54);
@@ -386,7 +421,7 @@
 			// 
 			// textBoxRoomNumber
 			// 
-			textBoxRoomNumber.Location = new System.Drawing.Point(140, 42);
+			textBoxRoomNumber.Location = new System.Drawing.Point(352, 36);
 			textBoxRoomNumber.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
 			textBoxRoomNumber.MaxLength = 6;
 			textBoxRoomNumber.Name = "textBoxRoomNumber";
@@ -398,7 +433,7 @@
 			// label3
 			// 
 			label3.AutoSize = true;
-			label3.Location = new System.Drawing.Point(7, 52);
+			label3.Location = new System.Drawing.Point(206, 36);
 			label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			label3.Name = "label3";
 			label3.Size = new System.Drawing.Size(138, 25);
@@ -419,15 +454,14 @@
 			curLobbyLabelNum.AutoSize = true;
 			curLobbyLabelNum.Location = new System.Drawing.Point(452, 244);
 			curLobbyLabelNum.Name = "curLobbyLabelNum";
-			curLobbyLabelNum.Size = new System.Drawing.Size(19, 25);
+			curLobbyLabelNum.Size = new System.Drawing.Size(0, 25);
 			curLobbyLabelNum.TabIndex = 54;
-			curLobbyLabelNum.Text = "";
 			// 
 			// groupBox1
 			// 
 			groupBox1.Controls.Add(button5);
 			groupBox1.Controls.Add(button4);
-			groupBox1.Controls.Add(button3);
+			groupBox1.Controls.Add(roomListReqBtn);
 			groupBox1.Controls.Add(listBoxLobby);
 			groupBox1.Controls.Add(curLobbyLabel);
 			groupBox1.Controls.Add(curLobbyLabelNum);
@@ -464,17 +498,17 @@
 			button4.UseVisualStyleBackColor = true;
 			button4.Click += btnLobbyEnterReq_Click;
 			// 
-			// button3
+			// roomListReqBtn
 			// 
-			button3.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			button3.Location = new System.Drawing.Point(330, 42);
-			button3.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-			button3.Name = "button3";
-			button3.Size = new System.Drawing.Size(153, 54);
-			button3.TabIndex = 51;
-			button3.Text = "List 요청";
-			button3.UseVisualStyleBackColor = true;
-			button3.Click += buttonLobbyListReq_Click;
+			roomListReqBtn.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			roomListReqBtn.Location = new System.Drawing.Point(330, 42);
+			roomListReqBtn.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+			roomListReqBtn.Name = "roomListReqBtn";
+			roomListReqBtn.Size = new System.Drawing.Size(153, 54);
+			roomListReqBtn.TabIndex = 51;
+			roomListReqBtn.Text = "List 요청";
+			roomListReqBtn.UseVisualStyleBackColor = true;
+			roomListReqBtn.Click += btnRoomListReq_Click;
 			// 
 			// listBoxLobby
 			// 
@@ -550,6 +584,7 @@
         private System.Windows.Forms.Button btnRoomChat;
         private System.Windows.Forms.TextBox textBoxRoomSendMsg;
         private System.Windows.Forms.ListBox listBoxRoomChatMsg;
+		private System.Windows.Forms.ListBox listBoxRoomList;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ListBox listBoxRoomUserList;
         private System.Windows.Forms.Button btnRoomRelay;
@@ -557,8 +592,10 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button roomListReqBtn;
         private System.Windows.Forms.ListBox listBoxLobby;
-    }
+		private System.Windows.Forms.Label roomListText;
+		private System.Windows.Forms.Button button6;
+	}
 }
 

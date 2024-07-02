@@ -79,6 +79,9 @@ namespace NLogicLib
 
 		NCommon::ERROR_CODE RoomGameStart(PacketInfo packetInfo);
 
+		// @brief User 가 속한 Lobby 의 Room 정보 목록을 알려준다.
+		NCommon::ERROR_CODE RoomList(PacketInfo packetInfo);
+
 		NCommon::ERROR_CODE DevEcho(PacketInfo packetInfo);
 
 	};
