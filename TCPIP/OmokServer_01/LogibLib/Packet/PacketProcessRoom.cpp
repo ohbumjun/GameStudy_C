@@ -50,14 +50,33 @@ namespace NLogicLib
 		// 자. 이제 User 가 들어갈 Room 을 배정해주면 된다.
 		Room* pRoom = nullptr;
 
+		// User 가 속한 Lobby 를 가져온다.
+		short userLobbyIndex = pUser->GetLobbyIndex();
+
+		Lobby* userLobby = m_pRefLobbyMgr->GetLobby(userLobbyIndex);
+
 		if (reqPkt->IsCreate)
 		{
 			// 새로운 Room 을 만들어야 하는 경우
+			pRoom = userLobby->CreateRoom();
+
+			// req packet 에서 받아온 RoomTitle 을 인자로 넘겨준다.
+			// pRoom->CreateRoom();
 		}
 		else
 		{
 			// 기존 Room 에 들어가야 하는 경우
+			pRoom = userLobby->GetRoom(reqPkt->RoomIndex);
 		}
+
+		pRoom->EnterUser(pUser);
+
+		pUser->EnterRoom(userLobbyIndex, pRoom->GetIndex());
+
+		resPkt.RoomIndex = pRoom->GetIndex();
+		resPkt.RoomUserUniqueId = 
+		m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::LOBBY_ENTER_RES, sizeof(NCommon::PktLobbyEnterRes), (char*)&resPkt);
+
 	}
 
 	ERROR_CODE PacketProcess::RoomLeave(PacketInfo packetInfo)

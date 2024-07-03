@@ -243,14 +243,20 @@ namespace csharp_test_client
             dataSource.AddRange(BitConverter.GetBytes(IsCreate));
             dataSource.AddRange(BitConverter.GetBytes(RoomIndex));
 
-            // 아래의 string 코드는 어떤 식으로 할지는 조금 더 고민해봐야 할 것 같다.
+			// 아래의 string 코드는 어떤 식으로 할지는 조금 더 고민해봐야 할 것 같다.
 			// Specify the desired encoding (UTF-8 is common)
-			Encoding encoding = Encoding.UTF8;
-
-			// Convert the string to a byte array using the specified encoding
-			byte[] roomTitleBytes = encoding.GetBytes(RoomTitle);
-
-			dataSource.AddRange(roomTitleBytes);
+			if (RoomTitle != null)
+			{
+				Encoding encoding = Encoding.UTF8;
+				byte[] roomTitleBytes = encoding.GetBytes(RoomTitle);
+				dataSource.AddRange(BitConverter.GetBytes(roomTitleBytes.Length));  // Prepend length
+				dataSource.AddRange(roomTitleBytes);
+			}
+			else
+			{
+				// Handle empty RoomTitle gracefully (e.g., add zero length or default value)
+				dataSource.AddRange(BitConverter.GetBytes(0));  // Example: Add zero length
+			}
 
             return dataSource.ToArray();
         }
@@ -260,7 +266,7 @@ namespace csharp_test_client
     {
         public Int16 Result;
         public Int16 RoomIndex;
-        public Int64 RoomUserUniqueId;
+        public Int64 RoomUserUniqueId;  // 굳이 필요한가 ? 그냥 User 객체의 userIndex 변수를 활용하면 되는 것 아닌가 ?
 
         public bool FromBytes(byte[] bodyData)
         {
