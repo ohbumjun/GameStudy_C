@@ -82,7 +82,7 @@ namespace csharp_test_client
 			responsePkt.FromBytes(bodyData);
 
 			// Lobby List 정보를 UI 에 뿌려줘야 한다.
-			RefreshLobbyListInfo();
+			RefreshRoomListInfo();
 
 			for (int i = 0; i < responsePkt.RoomCount; ++i)
 			{
@@ -99,6 +99,8 @@ namespace csharp_test_client
 
             // 현재 로비 정보 표시
             curLobbyLabelNum.Text = listBoxLobby.SelectedIndex.ToString();
+
+			userInfo.currentLobbyId = (short)listBoxLobby.SelectedIndex;
 		}
 
 		void PacketProcess_RoomEnterResponse(byte[] bodyData)
@@ -106,6 +108,8 @@ namespace csharp_test_client
             var responsePkt = new RoomEnterResPacket();
 
             responsePkt.FromBytes(bodyData);
+
+            userInfo.currentRoomId = responsePkt.RoomIndex;
 
             DevLog.Write($"방 입장 결과:  {(ERROR_CODE)responsePkt.Result}");
         }

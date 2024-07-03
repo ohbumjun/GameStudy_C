@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -73,7 +74,11 @@ namespace csharp_test_client
         public bool FromBytes(byte[] bodyData)
         {
             Result = BitConverter.ToInt16(bodyData, 0);
-            return true;
+			if (Result != (Int16)ERROR_CODE.ERROR_NONE)
+			{
+				return true;
+			}
+			return true;
         }
     }
 
@@ -99,7 +104,11 @@ namespace csharp_test_client
 		{
             var readPos = 0;
 			Result = BitConverter.ToInt16(bodyData, 0);
-            readPos += 2;
+			if (Result != (Int16)ERROR_CODE.ERROR_NONE)
+			{
+				return true;
+			}
+			readPos += 2;
 
 			 // if (bodyData.Length < 4) // 최소한 LobbyCount를 읽을 수 있는지 확인
 			 // 	return false;
@@ -165,6 +174,8 @@ namespace csharp_test_client
 
 	public class RoomListReqPacket
 	{
+		// public short CurrentLobbyIndex; // 이미 서버측에서 User 가 어떤 Lobby 에 있는지 알고 있다.
+
 		public byte[] ToBytes()
 		{
 			List<byte> dataSource = new List<byte>();
@@ -181,6 +192,12 @@ namespace csharp_test_client
 		{
 			var readPos = 0;
 			Result = BitConverter.ToInt16(bodyData, 0);
+
+			if (Result != (Int16)ERROR_CODE.ERROR_NONE)
+			{
+				return true;
+			}
+
 			readPos += 2;
 
 			// if (bodyData.Length < 4) // 최소한 LobbyCount를 읽을 수 있는지 확인
@@ -207,16 +224,34 @@ namespace csharp_test_client
 
 	public class RoomEnterReqPacket
     {
-        int RoomNumber;
-        public void SetValue(int roomNumber)
+		bool IsCreate;      // 새로운 룸을 만들어야 하는가.
+		short RoomIndex;    // 몇번째 룸에 들어가고 싶은가
+		// const int MAX_ROOM_TITLE_SIZE = 16; -> Room Title 최대 길이
+		string RoomTitle;
+
+		public void SetValue(int roomNumber, bool isCreate, string roomTitle)
         {
-            RoomNumber = roomNumber;
-        }
+			RoomIndex = (short)roomNumber;
+            IsCreate = isCreate;
+            RoomTitle = roomTitle;
+
+		}
 
         public byte[] ToBytes()
         {
             List<byte> dataSource = new List<byte>();
-            dataSource.AddRange(BitConverter.GetBytes(RoomNumber));
+            dataSource.AddRange(BitConverter.GetBytes(IsCreate));
+            dataSource.AddRange(BitConverter.GetBytes(RoomIndex));
+
+            // 아래의 string 코드는 어떤 식으로 할지는 조금 더 고민해봐야 할 것 같다.
+			// Specify the desired encoding (UTF-8 is common)
+			Encoding encoding = Encoding.UTF8;
+
+			// Convert the string to a byte array using the specified encoding
+			byte[] roomTitleBytes = encoding.GetBytes(RoomTitle);
+
+			dataSource.AddRange(roomTitleBytes);
+
             return dataSource.ToArray();
         }
     }
@@ -224,12 +259,22 @@ namespace csharp_test_client
     public class RoomEnterResPacket
     {
         public Int16 Result;
+        public Int16 RoomIndex;
         public Int64 RoomUserUniqueId;
 
         public bool FromBytes(byte[] bodyData)
         {
             Result = BitConverter.ToInt16(bodyData, 0);
-            RoomUserUniqueId = BitConverter.ToInt64(bodyData, 2);
+
+            if (Result != (Int16)ERROR_CODE.ERROR_NONE)
+            {
+                return true;
+            }
+
+			RoomIndex = BitConverter.ToInt16(bodyData, 2);
+
+            RoomUserUniqueId = BitConverter.ToInt64(bodyData, 4);
+
             return true;
         }
     }
@@ -315,7 +360,13 @@ namespace csharp_test_client
         public bool FromBytes(byte[] bodyData)
         {
             Result = BitConverter.ToInt16(bodyData, 0);
-            return true;
+
+			if (Result != (Int16)ERROR_CODE.ERROR_NONE)
+			{
+				return true;
+			}
+
+			return true;
         }
     }
 
@@ -344,7 +395,13 @@ namespace csharp_test_client
         public bool FromBytes(byte[] bodyData)
         {
             Result = BitConverter.ToInt16(bodyData, 0);
-            return true;
+
+			if (Result != (Int16)ERROR_CODE.ERROR_NONE)
+			{
+				return true;
+			}
+
+			return true;
         }
     }
 

@@ -11,8 +11,15 @@ using System.Windows.Forms;
 
 namespace csharp_test_client
 {
+	public class UserInfo
+	{
+		public short currentLobbyId = 0;
+		public short currentRoomId  = 0; // room index
+	}
 	public partial class mainForm : Form
 	{
+		UserInfo userInfo = new UserInfo();
+
 		ClientSimpleTcp Network = new ClientSimpleTcp();
 
 		bool IsNetworkThreadRunning = false;
@@ -399,13 +406,15 @@ namespace csharp_test_client
 		// Room List 요청
 		private void btn_RoomList_Click(object sender, EventArgs e)
 		{
+			PostSendPacket(PACKET_ID.ROOM_LIST_REQ, null);
+			DevLog.Write($"Room List 요청");
 		}
 
 		private void btn_RoomEnter_Click(object sender, EventArgs e)
 		{
 			var requestPkt = new RoomEnterReqPacket();
-			requestPkt.SetValue(textBoxRoomNumber.Text.ToInt32());
-
+			bool createNewRoom = listBoxRoomList.Items.Count == 0 ? true : false;
+			requestPkt.SetValue(textBoxRoomNumber.Text.ToInt32(), createNewRoom, "");
 			PostSendPacket(PACKET_ID.ROOM_ENTER_REQ, requestPkt.ToBytes());
 			DevLog.Write($"방 입장 요청:  {textBoxRoomNumber.Text} 번");
 		}
@@ -485,7 +494,7 @@ namespace csharp_test_client
 		// 로비 나가기 요청
 		private void btnLobbyLeaveReq_Click(object sender, EventArgs e)
 		{
-
+			// Lobby 의 Room, Chat 내용들 모두 Clear 해줘야 한다.
 		}
 		private void btnRoomListReq_Click(object sender, EventArgs e)
 		{

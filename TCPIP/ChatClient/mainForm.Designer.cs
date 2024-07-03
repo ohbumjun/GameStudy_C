@@ -46,7 +46,7 @@
 			label2 = new System.Windows.Forms.Label();
 			button2 = new System.Windows.Forms.Button();
 			Room = new System.Windows.Forms.GroupBox();
-			button6 = new System.Windows.Forms.Button();
+			roomListReqBtn = new System.Windows.Forms.Button();
 			roomListText = new System.Windows.Forms.Label();
 			textBoxRelay = new System.Windows.Forms.TextBox();
 			btnRoomRelay = new System.Windows.Forms.Button();
@@ -63,9 +63,9 @@
 			curLobbyLabel = new System.Windows.Forms.Label();
 			curLobbyLabelNum = new System.Windows.Forms.Label();
 			groupBox1 = new System.Windows.Forms.GroupBox();
-			button5 = new System.Windows.Forms.Button();
-			button4 = new System.Windows.Forms.Button();
-			roomListReqBtn = new System.Windows.Forms.Button();
+			lobbyLeaveBtn = new System.Windows.Forms.Button();
+			lobbyEnterButton = new System.Windows.Forms.Button();
+			lobbyListReqBtn = new System.Windows.Forms.Button();
 			listBoxLobby = new System.Windows.Forms.ListBox();
 			groupBox5.SuspendLayout();
 			Room.SuspendLayout();
@@ -267,7 +267,7 @@
 			// 
 			// Room
 			// 
-			Room.Controls.Add(button6);
+			Room.Controls.Add(roomListReqBtn);
 			Room.Controls.Add(roomListText);
 			Room.Controls.Add(textBoxRelay);
 			Room.Controls.Add(btnRoomRelay);
@@ -289,18 +289,19 @@
 			Room.TabIndex = 47;
 			Room.TabStop = false;
 			Room.Text = "Room";
-			// 
+			 
 			// button6
 			// 
-			button6.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			button6.Location = new System.Drawing.Point(405, 77);
-			button6.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-			button6.Name = "button6";
-			button6.Size = new System.Drawing.Size(126, 54);
-			button6.TabIndex = 58;
-			button6.Text = "List 요청";
-			button6.UseVisualStyleBackColor = true;
-			// 
+			roomListReqBtn.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			roomListReqBtn.Location = new System.Drawing.Point(405, 77);
+			roomListReqBtn.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+			roomListReqBtn.Name = "button6";
+			roomListReqBtn.Size = new System.Drawing.Size(126, 54);
+			roomListReqBtn.TabIndex = 58;
+			roomListReqBtn.Text = "Room List";
+			roomListReqBtn.UseVisualStyleBackColor = true;
+			roomListReqBtn.Click += btnRoomListReq_Click;
+
 			// roomListText
 			// 
 			roomListText.AutoSize = true;
@@ -459,9 +460,9 @@
 			// 
 			// groupBox1
 			// 
-			groupBox1.Controls.Add(button5);
-			groupBox1.Controls.Add(button4);
-			groupBox1.Controls.Add(roomListReqBtn);
+			groupBox1.Controls.Add(lobbyLeaveBtn);
+			groupBox1.Controls.Add(lobbyEnterButton);
+			groupBox1.Controls.Add(lobbyListReqBtn);
 			groupBox1.Controls.Add(listBoxLobby);
 			groupBox1.Controls.Add(curLobbyLabel);
 			groupBox1.Controls.Add(curLobbyLabelNum);
@@ -476,39 +477,39 @@
 			// 
 			// button5
 			// 
-			button5.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			button5.Location = new System.Drawing.Point(330, 175);
-			button5.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-			button5.Name = "button5";
-			button5.Size = new System.Drawing.Size(153, 54);
-			button5.TabIndex = 53;
-			button5.Text = "Leave";
-			button5.UseVisualStyleBackColor = true;
-			button5.Click += btnLobbyLeaveReq_Click;
+			lobbyLeaveBtn.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			lobbyLeaveBtn.Location = new System.Drawing.Point(330, 175);
+			lobbyLeaveBtn.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+			lobbyLeaveBtn.Name = "button5";
+			lobbyLeaveBtn.Size = new System.Drawing.Size(153, 54);
+			lobbyLeaveBtn.TabIndex = 53;
+			lobbyLeaveBtn.Text = "Leave";
+			lobbyLeaveBtn.UseVisualStyleBackColor = true;
+			lobbyLeaveBtn.Click += btnLobbyLeaveReq_Click;
 			// 
 			// button4
 			// 
-			button4.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			button4.Location = new System.Drawing.Point(330, 108);
-			button4.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-			button4.Name = "button4";
-			button4.Size = new System.Drawing.Size(153, 54);
-			button4.TabIndex = 52;
-			button4.Text = "Enter";
-			button4.UseVisualStyleBackColor = true;
-			button4.Click += btnLobbyEnterReq_Click;
+			lobbyEnterButton.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			lobbyEnterButton.Location = new System.Drawing.Point(330, 108);
+			lobbyEnterButton.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+			lobbyEnterButton.Name = "lobbyEnterButton";
+			lobbyEnterButton.Size = new System.Drawing.Size(153, 54);
+			lobbyEnterButton.TabIndex = 52;
+			lobbyEnterButton.Text = "Enter";
+			lobbyEnterButton.UseVisualStyleBackColor = true;
+			lobbyEnterButton.Click += btnLobbyEnterReq_Click;
 			// 
 			// roomListReqBtn
 			// 
-			roomListReqBtn.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			roomListReqBtn.Location = new System.Drawing.Point(330, 42);
-			roomListReqBtn.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-			roomListReqBtn.Name = "roomListReqBtn";
-			roomListReqBtn.Size = new System.Drawing.Size(153, 54);
-			roomListReqBtn.TabIndex = 51;
-			roomListReqBtn.Text = "List 요청";
-			roomListReqBtn.UseVisualStyleBackColor = true;
-			roomListReqBtn.Click += btnRoomListReq_Click;
+			lobbyListReqBtn.Font = new System.Drawing.Font("맑은 고딕", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			lobbyListReqBtn.Location = new System.Drawing.Point(330, 42);
+			lobbyListReqBtn.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+			lobbyListReqBtn.Name = "roomListReqBtn";
+			lobbyListReqBtn.Size = new System.Drawing.Size(153, 54);
+			lobbyListReqBtn.TabIndex = 51;
+			lobbyListReqBtn.Text = "Lobby List";
+			lobbyListReqBtn.UseVisualStyleBackColor = true;
+			lobbyListReqBtn.Click += buttonLobbyListReq_Click;
 			// 
 			// listBoxLobby
 			// 
@@ -555,6 +556,7 @@
 			PerformLayout();
 		}
 
+
 		#endregion
 
 		private System.Windows.Forms.Button btnDisconnect;
@@ -574,10 +576,12 @@
         private System.Windows.Forms.TextBox textBoxUserPW;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button button2;
+
         private System.Windows.Forms.GroupBox Room;
         private System.Windows.Forms.Button btn_RoomLeave;
         private System.Windows.Forms.Button btn_RoomEnter;
         private System.Windows.Forms.TextBox textBoxRoomNumber;
+
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label curLobbyLabel;
         private System.Windows.Forms.Label curLobbyLabelNum;
@@ -590,12 +594,14 @@
         private System.Windows.Forms.Button btnRoomRelay;
         private System.Windows.Forms.TextBox textBoxRelay;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button roomListReqBtn;
+
+        private System.Windows.Forms.Button lobbyLeaveBtn;
+        private System.Windows.Forms.Button lobbyEnterButton;
+        private System.Windows.Forms.Button lobbyListReqBtn;
         private System.Windows.Forms.ListBox listBoxLobby;
-		private System.Windows.Forms.Label roomListText;
-		private System.Windows.Forms.Button button6;
+
+		private System.Windows.Forms.Label	roomListText;
+		private System.Windows.Forms.Button roomListReqBtn;
 	}
 }
 

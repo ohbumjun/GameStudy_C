@@ -85,6 +85,7 @@ namespace NCommon
 	//- 룸 목록 요청
 	struct PktRoomListReq
 	{
+		short CurrentLobbyIndex;
 	};
 
 	//- 룸 목록 응답
@@ -107,6 +108,9 @@ namespace NCommon
 	// - 룸에 들어가기 응답
 	struct PktRoomEnterRes : PktBase
 	{
+		short Result;
+		short RoomIndex;
+		short RoomUserUniqueId;
 	};
 
 
