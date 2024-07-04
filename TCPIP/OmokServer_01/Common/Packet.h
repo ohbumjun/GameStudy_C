@@ -1,7 +1,12 @@
 ﻿#pragma once
 
-#include "PacketID.h"
+#include "../../Common/PacketID.h"
 #include "ErrorCode.h"
+#include <string>
+
+#include "../Includes.h"
+#include "../Utils.h"
+
 
 namespace NCommon
 {
@@ -102,7 +107,37 @@ namespace NCommon
 	{
 		bool IsCreate;		// 새로운 룸을 만들어야 하는가.
 		short RoomIndex;	// 몇번째 룸에 들어가고 싶은가
+		short RoomTitleSize;
 		wchar_t RoomTitle[MAX_ROOM_TITLE_SIZE + 1];	// 새로 만들 룸의 제목 ?
+
+		void FromBytes(char* data)
+		{
+			IsCreate = static_cast<bool>(*data++);
+
+	        // Extract RoomIndex (2 bytes)
+	        RoomIndex = static_cast<short>(*data);
+			data += sizeof(short);
+
+	        // Extract RoomTitleSize (2 bytes)
+	        RoomTitleSize = static_cast<short>(*data);
+			data += sizeof(short);
+
+			// Extract RoomTitle bytes (RoomTitleSize bytes)
+#ifdef _WIN32
+			std::string utf8Title(data, data + RoomTitleSize);
+
+			std::wstring wideCharTitle;
+
+			int requiredWideChars = MultiByteToWideChar(CP_ACP, 0, 
+				utf8Title.c_str(), (int)utf8Title.size(), NULL, 0);
+
+			int actualWideChars = MultiByteToWideChar(CP_ACP, 0, utf8Title.c_str(), 
+				utf8Title.size(), &wideCharTitle[0], requiredWideChars);
+
+			wcscpy_s(RoomTitle, MAX_ROOM_TITLE_SIZE + 1, wideCharTitle.c_str()); // Safe string copy
+#endif
+
+		}
 	};
 
 	// - 룸에 들어가기 응답

@@ -177,7 +177,7 @@ void NLogicLib::Lobby::SendRoomListInfo(int sessionIndex)
 	}
 
 	// 보낼 데이터를 줄이기 위해 사용하지 않은 LobbyListInfo 크기는 빼고 보내도 된다.
-	m_pRefNetwork->SendData(sessionIndex, (short)PACKET_ID::ROOM_LIST_REQ, sizeof(resPkt), (char*)&resPkt);
+	m_pRefNetwork->SendData(sessionIndex, (short)PACKET_ID::ROOM_LIST_RES, sizeof(resPkt), (char*)&resPkt);
 }
 
 NLogicLib::User* NLogicLib::Lobby::FindUser(const int userIndex)

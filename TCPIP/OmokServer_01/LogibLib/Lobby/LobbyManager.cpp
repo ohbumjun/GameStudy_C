@@ -6,6 +6,11 @@
 #include "Lobby.h"
 #include "LobbyManager.h"
 
+namespace NCommon
+{
+	enum class PACKET_ID : short;
+}
+
 using ERROR_CODE = NCommon::ERROR_CODE;
 using PACKET_ID = NCommon::PACKET_ID;
 

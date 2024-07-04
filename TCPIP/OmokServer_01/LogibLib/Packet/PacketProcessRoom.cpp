@@ -20,6 +20,8 @@ namespace NLogicLib
 		// 클라이언트로부터 온 Packet 은 RoomEnterReq 이다.
 		NCommon::PktRoomEnterReq* reqPkt = (NCommon::PktRoomEnterReq*)packetInfo.pRefData;
 
+		reqPkt->FromBytes(packetInfo.pRefData);
+
 		// 그에 대한 response packet 변수
 		NCommon::PktRoomEnterRes resPkt;
 
@@ -74,8 +76,8 @@ namespace NLogicLib
 		pUser->EnterRoom(userLobbyIndex, pRoom->GetIndex());
 
 		resPkt.RoomIndex = pRoom->GetIndex();
-		resPkt.RoomUserUniqueId = 
-		m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::LOBBY_ENTER_RES, sizeof(NCommon::PktLobbyEnterRes), (char*)&resPkt);
+		// resPkt.RoomUserUniqueId = 
+		m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_ENTER_RES, sizeof(NCommon::PktRoomEnterRes), (char*)&resPkt);
 
 	}
 
@@ -384,5 +386,8 @@ namespace NLogicLib
 			m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::LOBBY_LEAVE_RES, sizeof(NCommon::PktLobbyLeaveRes), (char*)&resPkt);
 			return ERROR_CODE::LOBBY_LEAVE_INVALID_LOBBY_INDEX;
 		}
+
+		// 해당 Lobby 의 Room List 정보를 보내준다.
+		pLobby->SendRoomListInfo(packetInfo.SessionIndex);
 	}
 }

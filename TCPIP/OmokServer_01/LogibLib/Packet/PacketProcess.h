@@ -1,9 +1,9 @@
 ﻿#pragma once
 
 #include <memory>
-#include "../../Common/Packet.h"
 #include "../../Common/ErrorCode.h"
 #include "../../NetLib/Define.h"
+#include "../../Common/Packet.h"
 
 namespace NServerNetLib
 {

@@ -226,7 +226,8 @@ namespace csharp_test_client
     {
 		bool IsCreate;      // 새로운 룸을 만들어야 하는가.
 		short RoomIndex;    // 몇번째 룸에 들어가고 싶은가
-		// const int MAX_ROOM_TITLE_SIZE = 16; -> Room Title 최대 길이
+                            // const int MAX_ROOM_TITLE_SIZE = 16; -> Room Title 최대 길이
+        short RoomTitleSize;
 		string RoomTitle;
 
 		public void SetValue(int roomNumber, bool isCreate, string roomTitle)
@@ -249,7 +250,8 @@ namespace csharp_test_client
 			{
 				Encoding encoding = Encoding.UTF8;
 				byte[] roomTitleBytes = encoding.GetBytes(RoomTitle);
-				dataSource.AddRange(BitConverter.GetBytes(roomTitleBytes.Length));  // Prepend length
+				RoomTitleSize = (short)roomTitleBytes.Length;
+				dataSource.AddRange(BitConverter.GetBytes(RoomTitleSize));  // Prepend length
 				dataSource.AddRange(roomTitleBytes);
 			}
 			else

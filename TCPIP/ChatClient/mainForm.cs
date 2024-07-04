@@ -49,12 +49,10 @@ namespace csharp_test_client
 		// Packe Queue 에 넣어두는 작업 까지만 한다. 그리고 아래의 time 마다 메인 쓰레드에서 해당 queue 로부터
 		// 패킷 정보를 받아와서 UI 를 update 시켜줄 것이다.
 		Timer dispatcherUITimer;
-
 		public mainForm()
 		{
 			InitializeComponent();
 		}
-
 		private void mainForm_Load(object sender, EventArgs e)
 		{
 			// 1024 : 패킷 하나의 최대 크기
@@ -137,7 +135,6 @@ namespace csharp_test_client
 
 			SendPacketQueue.Enqueue(dataSource.ToArray());
 		}
-
 
 		// Receive Thread 에서 계속해서 실행 중인 Thread
 		void NetworkReadProcess()
@@ -230,7 +227,6 @@ namespace csharp_test_client
 			}
 		}
 
-
 		void BackGroundProcess(object sender, EventArgs e)
 		{
 			// Timer 에서 호출되는 함수이다.
@@ -262,7 +258,6 @@ namespace csharp_test_client
 				MessageBox.Show(string.Format("ReadPacketQueueProcess. error:{0}", ex.Message));
 			}
 		}
-
 		private void ProcessLog()
 		{
 			// 너무 이 작업만 할 수 없으므로 일정 작업 이상을 하면 일단 패스한다.
@@ -298,7 +293,6 @@ namespace csharp_test_client
 			}
 		}
 
-
 		public void SetDisconnectd()
 		{
 			if (btnConnect.Enabled == false)
@@ -314,7 +308,6 @@ namespace csharp_test_client
 
 			labelStatus.Text = "서버 접속이 끊어짐";
 		}
-
 		public void PostSendPacket(PACKET_ID packetID, byte[] bodyData)
 		{
 			if (Network.IsConnected() == false)
@@ -414,7 +407,7 @@ namespace csharp_test_client
 		{
 			var requestPkt = new RoomEnterReqPacket();
 			bool createNewRoom = listBoxRoomList.Items.Count == 0 ? true : false;
-			requestPkt.SetValue(textBoxRoomNumber.Text.ToInt32(), createNewRoom, "");
+			requestPkt.SetValue(textBoxRoomNumber.Text.ToInt32(), createNewRoom, roomTitleText.Text);
 			PostSendPacket(PACKET_ID.ROOM_ENTER_REQ, requestPkt.ToBytes());
 			DevLog.Write($"방 입장 요청:  {textBoxRoomNumber.Text} 번");
 		}

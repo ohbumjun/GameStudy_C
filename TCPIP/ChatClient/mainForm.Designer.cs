@@ -60,8 +60,10 @@
 			btn_RoomEnter = new System.Windows.Forms.Button();
 			textBoxRoomNumber = new System.Windows.Forms.TextBox();
 			label3 = new System.Windows.Forms.Label();
+			roomTitleLabel = new System.Windows.Forms.Label();
 			curLobbyLabel = new System.Windows.Forms.Label();
 			curLobbyLabelNum = new System.Windows.Forms.Label();
+			roomTitleText = new System.Windows.Forms.TextBox();
 			groupBox1 = new System.Windows.Forms.GroupBox();
 			lobbyLeaveBtn = new System.Windows.Forms.Button();
 			lobbyEnterButton = new System.Windows.Forms.Button();
@@ -280,6 +282,9 @@
 			Room.Controls.Add(btn_RoomLeave);
 			Room.Controls.Add(btn_RoomEnter);
 			Room.Controls.Add(textBoxRoomNumber);
+			Room.Controls.Add(roomTitleLabel);
+			Room.Controls.Add(roomTitleText);
+
 			Room.Controls.Add(label3);
 			Room.Location = new System.Drawing.Point(19, 531);
 			Room.Margin = new System.Windows.Forms.Padding(4);
@@ -314,11 +319,11 @@
 			// 
 			// textBoxRelay
 			// 
-			textBoxRelay.Location = new System.Drawing.Point(538, 36);
+			textBoxRelay.Location = new System.Drawing.Point(598, 36);
 			textBoxRelay.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
 			textBoxRelay.MaxLength = 6;
 			textBoxRelay.Name = "textBoxRelay";
-			textBoxRelay.Size = new System.Drawing.Size(154, 31);
+			textBoxRelay.Size = new System.Drawing.Size(94, 31);
 			textBoxRelay.TabIndex = 55;
 			textBoxRelay.Text = "test";
 			textBoxRelay.WordWrap = false;
@@ -419,17 +424,7 @@
 			btn_RoomEnter.Text = "Enter";
 			btn_RoomEnter.UseVisualStyleBackColor = true;
 			btn_RoomEnter.Click += btn_RoomEnter_Click;
-			// 
-			// textBoxRoomNumber
-			// 
-			textBoxRoomNumber.Location = new System.Drawing.Point(352, 36);
-			textBoxRoomNumber.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-			textBoxRoomNumber.MaxLength = 6;
-			textBoxRoomNumber.Name = "textBoxRoomNumber";
-			textBoxRoomNumber.Size = new System.Drawing.Size(53, 31);
-			textBoxRoomNumber.TabIndex = 44;
-			textBoxRoomNumber.Text = "0";
-			textBoxRoomNumber.WordWrap = false;
+
 			// 
 			// label3
 			// 
@@ -439,7 +434,43 @@
 			label3.Name = "label3";
 			label3.Size = new System.Drawing.Size(138, 25);
 			label3.TabIndex = 43;
-			label3.Text = "Room Number:";
+			label3.Text = "Room Num:";
+
+			// 
+			// textBoxRoomNumber
+			// 
+			textBoxRoomNumber.Location = new System.Drawing.Point(322, 36);
+			textBoxRoomNumber.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+			textBoxRoomNumber.MaxLength = 6;
+			textBoxRoomNumber.Name = "textBoxRoomNumber";
+			textBoxRoomNumber.Size = new System.Drawing.Size(33, 31);
+			textBoxRoomNumber.TabIndex = 44;
+			textBoxRoomNumber.Text = "0";
+			textBoxRoomNumber.WordWrap = false;
+
+			// 
+			// roomTitleLabel
+			// 
+			roomTitleLabel.AutoSize = true;
+			roomTitleLabel.Location = new System.Drawing.Point(360, 36);
+			roomTitleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			roomTitleLabel.Name = "roomTitleLabel";
+			roomTitleLabel.Size = new System.Drawing.Size(138, 25);
+			roomTitleLabel.TabIndex = 43;
+			roomTitleLabel.Text = "New Title";
+
+			// 
+			// roomTitleText
+			// 
+			roomTitleText.Location = new System.Drawing.Point(450, 36);
+			roomTitleText.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
+			roomTitleText.MaxLength = 6;
+			roomTitleText.Name = "textBoxRoomNumber";
+			roomTitleText.Size = new System.Drawing.Size(60, 31);
+			roomTitleText.TabIndex = 44;
+			roomTitleText.Text = "";
+			roomTitleText.WordWrap = false;
+
 			// 
 			// curLobbyLabel
 			// 
@@ -583,6 +614,8 @@
         private System.Windows.Forms.TextBox textBoxRoomNumber;
 
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label roomTitleLabel;
+        private System.Windows.Forms.TextBox roomTitleText;
         private System.Windows.Forms.Label curLobbyLabel;
         private System.Windows.Forms.Label curLobbyLabelNum;
         private System.Windows.Forms.Button btnRoomChat;

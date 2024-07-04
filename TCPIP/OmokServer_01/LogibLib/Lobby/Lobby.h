@@ -69,13 +69,11 @@ namespace NLogicLib
 
 		short MaxRoomCount() { return (short)m_RoomList.size(); }
 
+		void SendRoomListInfo(int sessionIndex);
 
 	protected:
 		void SendToAllUser(const short packetId, const short dataSize, char* pData, const int passUserindex = -1);
 
-		void SendRoomListInfo(int sessionIndex);
-
-	protected:
 		User* FindUser(const int userIndex);
 
 		ERROR_CODE AddUser(User* pUser);

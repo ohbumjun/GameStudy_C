@@ -125,5 +125,7 @@
     <ClInclude Include="LogibLib\Game.h">
       <Filter>LoginLib</Filter>
     </ClInclude>
+    <ClInclude Include="Includes.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
 </Project>
