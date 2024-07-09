@@ -1,9 +1,9 @@
 ﻿#pragma once
 
 #include <memory>
-#include "../../Common/Packet.h"
 #include "../../Common/ErrorCode.h"
 #include "../../NetLib/Define.h"
+#include "../../Common/Packet.h"
 
 namespace NServerNetLib
 {
@@ -56,10 +56,13 @@ namespace NLogicLib
 		std::unique_ptr<ConnectedUserManager> m_pConnectedUserManager;
 	private:
 		NCommon::ERROR_CODE NtfSysConnctSession(PacketInfo packetInfo);
+
+		// @brief Session 을 닫을 때 호출되는 함수
 		NCommon::ERROR_CODE NtfSysCloseSession(PacketInfo packetInfo);
 
 		NCommon::ERROR_CODE Login(PacketInfo packetInfo);
 
+		// @breif User 측에서 가능한 Lobby List 정보를 요청하는 경우에 해당한다.
 		NCommon::ERROR_CODE LobbyList(PacketInfo packetInfo);
 
 		NCommon::ERROR_CODE LobbyEnter(PacketInfo packetInfo);
@@ -75,6 +78,9 @@ namespace NLogicLib
 		NCommon::ERROR_CODE RoomMasterGameStart(PacketInfo packetInfo);
 
 		NCommon::ERROR_CODE RoomGameStart(PacketInfo packetInfo);
+
+		// @brief User 가 속한 Lobby 의 Room 정보 목록을 알려준다.
+		NCommon::ERROR_CODE RoomList(PacketInfo packetInfo);
 
 		NCommon::ERROR_CODE DevEcho(PacketInfo packetInfo);
 

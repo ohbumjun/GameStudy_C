@@ -167,6 +167,7 @@
     <ClInclude Include="Common\Packet.h" />
     <ClInclude Include="Common\PacketID.h" />
     <ClInclude Include="ConsoleLogger.h" />
+    <ClInclude Include="Includes.h" />
     <ClInclude Include="LogibLib\Game.h" />
     <ClInclude Include="LogibLib\Lobby\Lobby.h" />
     <ClInclude Include="LogibLib\Lobby\LobbyManager.h" />
@@ -182,6 +183,7 @@
     <ClInclude Include="NetLib\ServerNetErrorCode.h" />
     <ClInclude Include="NetLib\TcpNetwork.h" />
     <ClInclude Include="Server.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

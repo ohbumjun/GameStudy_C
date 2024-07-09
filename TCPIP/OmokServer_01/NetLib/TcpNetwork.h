@@ -1,23 +1,7 @@
 ﻿#pragma once
 
-#ifdef _WIN32
-#define FD_SETSIZE 5096 // http://blog.naver.com/znfgkro1/220175848048
-#else
-// 리눅스에서는 1024까지만  https://qiita.com/fujinochan/items/2337ce48a998cf67966b
-#endif
 
-#ifdef _WIN32
-#pragma comment(lib, "ws2_32")
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#else
-#define SOCKET int
-#define SOCKET_ERROR -1
-#define INVALID_SOCKET -1
-#define WSAEWOULDBLOCK EWOULDBLOCK
-#endif
-
-
+#include "../Includes.h" 
 #include <vector>
 #include <deque>
 #include <unordered_map>
@@ -97,6 +81,8 @@ namespace NServerNetLib
 		int64_t m_ConnectSeq = 0;
 		
 		std::vector<ClientSession> m_ClientSessionPool;
+
+		// 사용 가능한 ? 클라이언트 세션의 인덱스를 관리하는 덱
 		std::deque<int> m_ClientSessionPoolIndex;
 		
 		// AddPacketQueue 참고 

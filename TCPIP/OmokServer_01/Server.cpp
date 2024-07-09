@@ -125,6 +125,7 @@ namespace NLogicLib
 		// 그래서 ... 존재하는 변수..?
 		m_pServerConfig->ExtraClientCount = 64;
 		m_pServerConfig->MaxLobbyCount = 2;
+		m_pServerConfig->MaxLobbyUserCount = 100;
 		m_pServerConfig->MaxRoomCountByLobby = 20;
 		m_pServerConfig->MaxRoomUserCount = 4;
 

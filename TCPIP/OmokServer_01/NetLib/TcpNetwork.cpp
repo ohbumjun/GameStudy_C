@@ -557,6 +557,7 @@ if (errno == EWOULDBLOCK)
 #endif
 			if (netError != WSAEWOULDBLOCK)
 			{
+				// ex) 상대방 측에서 연결을 끊을 때 여기로 들어올 수 있다.
 				return NET_ERROR_CODE::RECV_API_ERROR; 
 			}
 			else 
