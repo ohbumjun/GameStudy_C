@@ -71,6 +71,8 @@ namespace NLogicLib
 
 		NCommon::ERROR_CODE RoomEnter(PacketInfo packetInfo);
 
+		NCommon::ERROR_CODE RoomCreate(PacketInfo packetInfo);
+
 		NCommon::ERROR_CODE RoomLeave(PacketInfo packetInfo);
 
 		NCommon::ERROR_CODE RoomChat(PacketInfo packetInfo);

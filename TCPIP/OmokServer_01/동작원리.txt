@@ -1,0 +1,18 @@
+>> Lobby List 요창
+
+>> Lobby 입장
+- Lobby 클릭 안되었으면 X
+
+>> Lobby 나아기
+- Lobby 클릭 안되었으면 X
+- 혹은 Lobby Enter 상태가 아니라면 X
+
+>> Room List 요청
+- Enter 상태가 아니면 X
+
+>> Room Enter
+- Room Click 상태가 아니면 X
+- Lobby Enter 상태가 아니면 X
+- Enter 이후, User Cnt / Max User Cnt 정보 수정해야 한다.
+
+>> Room Create

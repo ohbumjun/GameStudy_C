@@ -39,22 +39,44 @@ namespace csharp_test_client
         ROOM_LEAVE_RES = 67,
         ROOM_LEAVE_USER_NTF = 68,
 
+        ROOM_CHANGED_INFO_NTF = 71,
+
+        ROOM_CREATE_REQ = 72,
+        ROOM_CREATE_RES = 73,
+
         ROOM_CHAT_REQ = 76,
         ROOM_CHAT_RES = 77,
         ROOM_CHAT_NOTIFY = 78,
 		ROOM_LIST_RES = 79,
 
+        LOBBY_CHAT_REQ = 81,
+        LOBBY_CHAT_RES = 82,
+        LOBBY_CHAT_NTF = 83,
 
+        // 방장이 게임을 시작
+        ROOM_MASTER_GAME_START_REQ = 101,
+        ROOM_MASTER_GAME_START_RES = 102,
+        ROOM_MASTER_GAME_START_NTF = 103,
 
-		//PACKET_ID_ERROR_NTF = 703,
+        // 그외 유저들이 게임 시작
+        ROOM_GAME_START_REQ = 111,
+        ROOM_GAME_START_RES = 112,
+        ROOM_GAME_START_NTF = 113,
 
-		// Ping(Heart-beat)
-		//PING_REQ = 706,
-		//PING_RES = 707,
+        DEV_ECHO_REQ = 241,
+        DEV_ECHO_RES = 242,
 
-		//PACKET_ID_ROOM_RELAY_REQ = 741,
-		//PACKET_ID_ROOM_RELAY_NTF = 742,
-	}
+        MAX = 256
+
+        //PACKET_ID_ERROR_NTF = 703,
+
+        // Ping(Heart-beat)
+        //PING_REQ = 706,
+        //PING_RES = 707,
+
+        //PACKET_ID_ROOM_RELAY_REQ = 741,
+        //PACKET_ID_ROOM_RELAY_NTF = 742,
+    }
 
 
     public enum ERROR_CODE : Int16
@@ -98,7 +120,7 @@ namespace csharp_test_client
 		ROOM_ENTER_NOT_CREATED = 275,
 		ROOM_ENTER_MEMBER_FULL = 276,
 		ROOM_ENTER_EMPTY_ROOM = 277,
-
+        ROOM_CREATE_NO_ROOM = 278,
 
 		ROOM_LEAVE_INVALID_DOMAIN = 286,
 		ROOM_LEAVE_INVALID_LOBBY_INDEX = 287,

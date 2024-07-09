@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static csharp_test_client.RoomInfoManager;
 
 namespace csharp_test_client
 {
@@ -22,6 +23,7 @@ namespace csharp_test_client
             PacketFuncDic.Add(PACKET_ID.ROOM_LEAVE_RES, PacketProcess_RoomLeaveResponse);
             PacketFuncDic.Add(PACKET_ID.ROOM_LEAVE_USER_NTF, PacketProcess_RoomLeaveUserNotify);
             PacketFuncDic.Add(PACKET_ID.ROOM_LIST_RES, PacketProcess_RoomListResponse);            
+            PacketFuncDic.Add(PACKET_ID.ROOM_CREATE_RES, PacketProcess_RoomCreateResponse);            
             PacketFuncDic.Add(PACKET_ID.ROOM_CHAT_RES, PacketProcess_RoomChatResponse);            
             PacketFuncDic.Add(PACKET_ID.ROOM_CHAT_NOTIFY, PacketProcess_RoomChatNotify);
             PacketFuncDic.Add(PACKET_ID.LOBBY_LIST_RES, PacketProcess_LobbyListResponse);
@@ -90,8 +92,17 @@ namespace csharp_test_client
 				AddRoomListInfo(roomListInfo.RoomIndex, roomListInfo.RoomUserCount, roomListInfo.RoomMaxUserCount);
 			}
 		}
+        void PacketProcess_RoomCreateResponse(byte[] bodyData)
+        {
+            var responsePkt = new RoomCreateResPacket();
 
-		void PacketProcess_LobbyEnterResponse(byte[] bodyData)
+            roomInfoManager.currentRoomInfos.Add(
+                new CurrentRoomInfo(responsePkt.RoomIndex, 0, responsePkt.RoomMaxUserCnt));
+
+            ResetRoomListTextWithRoomInfo();
+        }
+
+        void PacketProcess_LobbyEnterResponse(byte[] bodyData)
 		{
 			var responsePkt = new LobbyEnterResPacket();
 
@@ -110,6 +121,12 @@ namespace csharp_test_client
             responsePkt.FromBytes(bodyData);
 
             userInfo.currentRoomId = responsePkt.RoomIndex;
+
+            textBoxRoomNumber.Text = responsePkt.RoomIndex.ToString();
+
+            roomInfoManager.IncreaseUserCountInRoom(responsePkt.RoomIndex);
+
+            ResetRoomListTextWithRoomInfo();
 
             DevLog.Write($"방 입장 결과:  {(ERROR_CODE)responsePkt.Result}");
         }

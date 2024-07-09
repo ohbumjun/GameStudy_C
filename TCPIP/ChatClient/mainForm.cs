@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static csharp_test_client.RoomInfoManager;
 
 namespace csharp_test_client
 {
@@ -16,9 +17,56 @@ namespace csharp_test_client
 		public short currentLobbyId = 0;
 		public short currentRoomId  = 0; // room index
 	}
+
+	public class RoomInfoManager
+	{
+		public struct CurrentRoomInfo
+		{
+            public CurrentRoomInfo(short roomIndex, short userCount, short maxUserCount)
+			{
+                this.roomIndex = roomIndex;
+                this.userCount = userCount;
+                this.maxUserCount = maxUserCount;
+            }
+
+            public short roomIndex;
+            public short userCount;
+            public short maxUserCount;
+        }
+
+        public void IncreaseUserCountInRoom(short roomIndex)
+		{
+			  for (int index = 0; index < currentRoomInfos.Count; ++index)
+			{
+                  if (currentRoomInfos[index].roomIndex == roomIndex)
+				{
+                    var roomInfo = currentRoomInfos[index];
+                    roomInfo.userCount += 1;
+                    currentRoomInfos[index] = roomInfo;
+                } 
+              }
+		}
+
+        public void DecreaseUserCountInRoom(short roomIndex)
+        {
+            for (int index = 0; index < currentRoomInfos.Count; ++index)
+            {
+                if (currentRoomInfos[index].roomIndex == roomIndex)
+                {
+                    var roomInfo = currentRoomInfos[index];
+                    roomInfo.userCount -= 1;
+                    currentRoomInfos[index] = roomInfo;
+                }
+            }
+        }
+
+        public List<CurrentRoomInfo> currentRoomInfos = new List<CurrentRoomInfo>();
+	}
+
 	public partial class mainForm : Form
 	{
 		UserInfo userInfo = new UserInfo();
+        RoomInfoManager roomInfoManager = new RoomInfoManager();
 
 		ClientSimpleTcp Network = new ClientSimpleTcp();
 
@@ -358,13 +406,28 @@ namespace csharp_test_client
 		void RefreshRoomListInfo()
 		{
 			listBoxRoomList.Items.Clear();
-		}
+
+			roomInfoManager.currentRoomInfos.Clear();
+        }
+
+		void ResetRoomListTextWithRoomInfo()
+        {
+            listBoxRoomList.Items.Clear();
+
+            foreach (var room in roomInfoManager.currentRoomInfos)
+			{
+                AddRoomListInfo(room.roomIndex, room.userCount, room.maxUserCount);
+            }
+        }
 
 		void AddRoomListInfo(short roomIndex, short roomUserCnt, short roomMaxUserCnt)
 		{
-			var msg = $"roomIndex: {roomIndex}, roomUserCnt : {roomUserCnt} / {roomMaxUserCnt}";
+			var msg = $"idx: {roomIndex}, user : {roomUserCnt} / {roomMaxUserCnt}";
 			listBoxRoomList.Items.Add(msg);
-		}
+
+            RoomInfoManager.CurrentRoomInfo newRoomInfo = new RoomInfoManager.CurrentRoomInfo(roomIndex, roomUserCnt, roomMaxUserCnt);
+            roomInfoManager.currentRoomInfos.Add(newRoomInfo);
+        }
 
 		void RemoveRoomUserList(Int64 userUniqueId)
 		{
@@ -405,14 +468,32 @@ namespace csharp_test_client
 
 		private void btn_RoomEnter_Click(object sender, EventArgs e)
 		{
-			var requestPkt = new RoomEnterReqPacket();
-			bool createNewRoom = listBoxRoomList.Items.Count == 0 ? true : false;
-			requestPkt.SetValue(textBoxRoomNumber.Text.ToInt32(), createNewRoom, roomTitleText.Text);
-			PostSendPacket(PACKET_ID.ROOM_ENTER_REQ, requestPkt.ToBytes());
-			DevLog.Write($"방 입장 요청:  {textBoxRoomNumber.Text} 번");
-		}
+            if (listBoxRoomList.Items.Count == 0)
+            {
+                MessageBox.Show("방을 선택하세요. 혹은 방을 생성하세요");
+                return;
+            }
+            var requestPkt = new RoomEnterReqPacket();
+            requestPkt.SetValue(listBoxRoomList.SelectedIndex);
+            PostSendPacket(PACKET_ID.ROOM_ENTER_REQ, requestPkt.ToBytes());
+            DevLog.Write($"방 입장 요청:  {textBoxRoomNumber.Text} 번");
 
-		private void btn_RoomLeave_Click(object sender, EventArgs e)
+		}
+        private void btn_RoomCreate_Click(object sender, EventArgs e)
+        {
+			if (roomTitleText.Text.IsEmpty() == true)
+			{
+                MessageBox.Show("방 이름을 입력하세요");
+                return;
+            }
+
+            var requestPkt = new RoomCreateReqPacket();
+            requestPkt.SetValue(roomTitleText.Text);
+            PostSendPacket(PACKET_ID.ROOM_CREATE_REQ, requestPkt.ToBytes());
+            DevLog.Write($"새로운 방 생성:  {roomTitleText.Text} 번");
+        }
+
+        private void btn_RoomLeave_Click(object sender, EventArgs e)
 		{
 			PostSendPacket(PACKET_ID.ROOM_LEAVE_REQ, null);
 			DevLog.Write($"방 입장 요청:  {textBoxRoomNumber.Text} 번");

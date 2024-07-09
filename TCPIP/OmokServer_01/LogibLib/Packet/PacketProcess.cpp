@@ -44,6 +44,7 @@ namespace NLogicLib
 		PacketFuncArray[(int)commonPacketId::LOBBY_ENTER_REQ] = &PacketProcess::LobbyEnter;
 		PacketFuncArray[(int)commonPacketId::LOBBY_LEAVE_REQ] = &PacketProcess::LobbyLeave;
 		PacketFuncArray[(int)commonPacketId::ROOM_ENTER_REQ] = &PacketProcess::RoomEnter;
+		PacketFuncArray[(int)commonPacketId::ROOM_CREATE_REQ] = &PacketProcess::RoomCreate;
 		PacketFuncArray[(int)commonPacketId::ROOM_LEAVE_REQ] = &PacketProcess::RoomLeave;
 		PacketFuncArray[(int)commonPacketId::ROOM_LIST_REQ] = &PacketProcess::RoomList;
 		PacketFuncArray[(int)commonPacketId::ROOM_CHAT_REQ] = &PacketProcess::RoomChat;

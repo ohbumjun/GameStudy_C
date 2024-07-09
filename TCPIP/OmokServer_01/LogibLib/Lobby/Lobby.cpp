@@ -166,17 +166,27 @@ void NLogicLib::Lobby::SendRoomListInfo(int sessionIndex)
 	NCommon::PktRoomListRes resPkt;
 
 	resPkt.ErrorCode = (short)ERROR_CODE::NONE;
-	resPkt.RoomCount = static_cast<short>(m_RoomList.size());
+	
 
-	int index = 0;
-	for (Room* room : m_RoomList)
+	int roomCnt = 0;
+
+	for (int index = 0; index < m_RoomList.size(); ++index)
 	{
-		resPkt.RoomList[index].RoomIndex = index;
-		resPkt.RoomList[index].RoomUserCount = room->GetUserCount();
-		resPkt.RoomList[index].RoomMaxUserCount = room->MaxUserCount();
+		if (m_RoomList[index]->IsUsed() == false)
+		{
+			continue;
+		}
 
-		++index;
+		roomCnt += 1;
+
+		resPkt.RoomList.emplace_back(
+			index , 
+			m_RoomList[index]->GetUserCount() , 
+			m_RoomList[index]->MaxUserCount() 
+			);
 	}
+
+	resPkt.RoomCount = roomCnt;
 
 	// 보낼 데이터를 줄이기 위해 사용하지 않은 LobbyListInfo 크기는 빼고 보내도 된다.
 	m_pRefNetwork->SendData(sessionIndex, (short)PACKET_ID::ROOM_LIST_RES, sizeof(resPkt), (char*)&resPkt);
