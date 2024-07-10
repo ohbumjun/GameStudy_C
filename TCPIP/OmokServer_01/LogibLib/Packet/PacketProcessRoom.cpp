@@ -20,6 +20,8 @@ namespace NLogicLib
 	{
 		NCommon::PktRoomCreateReq* reqPkt = (NCommon::PktRoomCreateReq*)packetInfo.pRefData;
 
+		reqPkt->FromBytes(packetInfo.pRefData);
+
 		// 그에 대한 response packet 변수
 		NCommon::PktRoomCreateRes resPkt;
 
@@ -58,6 +60,9 @@ namespace NLogicLib
 		// 새로운 Room 을 만들어야 하는 경우
 		pRoom = userLobby->CreateRoom();
 
+		pRoom->CreateRoom(reqPkt->RoomTitle);
+
+		resPkt.RoomIndex = pRoom->GetIndex();
 		resPkt.RoomMaxUserCnt = pRoom->MaxUserCount();
 
 		m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_CREATE_RES, sizeof(NCommon::PktRoomCreateRes), (char*)&resPkt);
@@ -434,5 +439,7 @@ namespace NLogicLib
 
 		// 해당 Lobby 의 Room List 정보를 보내준다.
 		pLobby->SendRoomListInfo(packetInfo.SessionIndex);
+
+		return ERROR_CODE::NONE;
 	}
 }

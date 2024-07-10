@@ -424,9 +424,6 @@ namespace csharp_test_client
 		{
 			var msg = $"idx: {roomIndex}, user : {roomUserCnt} / {roomMaxUserCnt}";
 			listBoxRoomList.Items.Add(msg);
-
-            RoomInfoManager.CurrentRoomInfo newRoomInfo = new RoomInfoManager.CurrentRoomInfo(roomIndex, roomUserCnt, roomMaxUserCnt);
-            roomInfoManager.currentRoomInfos.Add(newRoomInfo);
         }
 
 		void RemoveRoomUserList(Int64 userUniqueId)

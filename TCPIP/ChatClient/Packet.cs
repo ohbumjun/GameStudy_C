@@ -256,8 +256,24 @@ namespace csharp_test_client
 
     public class RoomCreateResPacket
     {
+        public Int16 Result;
         public short RoomIndex;            // 만들어진 room 의 index
         public short RoomMaxUserCnt;
+        public bool FromBytes(byte[] bodyData)
+        {
+            Result = BitConverter.ToInt16(bodyData, 0);
+
+            if (Result != (Int16)ERROR_CODE.ERROR_NONE)
+            {
+                return true;
+            }
+
+            RoomIndex = BitConverter.ToInt16(bodyData, 2);
+
+            RoomMaxUserCnt = BitConverter.ToInt16(bodyData, 4);
+
+            return true;
+        }
     }
 
     public class RoomEnterReqPacket

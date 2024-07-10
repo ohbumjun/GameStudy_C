@@ -96,6 +96,8 @@ namespace csharp_test_client
         {
             var responsePkt = new RoomCreateResPacket();
 
+            responsePkt.FromBytes(bodyData);
+
             roomInfoManager.currentRoomInfos.Add(
                 new CurrentRoomInfo(responsePkt.RoomIndex, 0, responsePkt.RoomMaxUserCnt));
 

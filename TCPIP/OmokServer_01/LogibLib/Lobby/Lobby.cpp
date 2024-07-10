@@ -125,7 +125,8 @@ NLogicLib::Room* NLogicLib::Lobby::CreateRoom()
 	for (int i = 0; i < (int)m_RoomList.size(); ++i)
 	{
 		if (m_RoomList[i]->IsUsed() == false) {
-			return m_RoomList[i];
+			Room* newRoom = m_RoomList[i];
+			return newRoom;
 		}
 	}
 	return nullptr;

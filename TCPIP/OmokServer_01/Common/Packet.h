@@ -132,8 +132,8 @@ namespace NCommon
 			int requiredWideChars = MultiByteToWideChar(CP_ACP, 0,
 				utf8Title.c_str(), (int)utf8Title.size(), NULL, 0);
 
-			int actualWideChars = MultiByteToWideChar(CP_ACP, 0, utf8Title.c_str(),
-				utf8Title.size(), &wideCharTitle[0], requiredWideChars);
+			MultiByteToWideChar(CP_ACP, 0, utf8Title.c_str(),
+				(int)utf8Title.size(), &wideCharTitle[0], requiredWideChars);
 
 			wcscpy_s(RoomTitle, MAX_ROOM_TITLE_SIZE + 1, wideCharTitle.c_str()); // Safe string copy
 #endif
