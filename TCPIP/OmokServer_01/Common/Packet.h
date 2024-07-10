@@ -12,6 +12,10 @@
 namespace NCommon
 {
 
+	// Lobby 내 최대 Room 개수
+	const int MAX_ROOM_LIST_COUNT = 20;
+	const int MAX_ROOM_TITLE_SIZE = 16;
+
 #pragma pack(push, 1)
 	struct PktHeader
 	{
@@ -78,17 +82,19 @@ namespace NCommon
 	{
 	};
 
-	// Lobby 내 최대 Room 개수
-	const int MAX_ROOM_LIST_COUNT = 20;
-
 	struct RoomListInfo
 	{
+		short RoomTitleSize;
+		wchar_t RoomTitle[MAX_ROOM_TITLE_SIZE + 1];	// 새로 만들 룸의 제목 ?
 		short RoomIndex;		// Lobby 내 Room Index
 		short RoomUserCount;	// Lobby 내 User Count
 		short RoomMaxUserCount;	// Lobby 내 최대 User Count
 
-		RoomListInfo(short pRoomIndex, short pRoomUserCount, short pRoomMaxUserCount)
+		void SettInfo(std::wstring pRoomTitle, short pRoomIndex, short pRoomUserCount, short pRoomMaxUserCount)
 		{
+			RoomTitleSize = (short)pRoomTitle.size();
+			std::copy(pRoomTitle.begin(), pRoomTitle.end(), RoomTitle);
+			RoomTitle[pRoomTitle.size()] = L'\0'; // RoomTitle 끝에 NULL 문자 추가
 			RoomIndex = pRoomIndex;
 			RoomUserCount = pRoomUserCount;
 			RoomMaxUserCount = pRoomMaxUserCount;
@@ -101,14 +107,12 @@ namespace NCommon
 		short CurrentLobbyIndex;
 	};
 
-	const int MAX_ROOM_TITLE_SIZE = 16;
 
 	//- 룸 목록 응답
 	struct PktRoomListRes : PktBase
 	{
 		short RoomCount = 0;
-		// RoomListInfo RoomList[MAX_ROOM_LIST_COUNT];
-		std::vector<RoomListInfo> RoomList;
+		RoomListInfo RoomList[MAX_ROOM_LIST_COUNT];
 	};
 
 	// - 룸 생성 요청

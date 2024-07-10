@@ -11,6 +11,7 @@ namespace csharp_test_client
         public const Int16 PACKET_HEADER_SIZE = 5;
         public const int MAX_USER_ID_BYTE_LENGTH = 16;
         public const int MAX_USER_PW_BYTE_LENGTH = 16;
+        public const int MAX_ROOM_TITLE_SIZE = 16;
     }
 
     public enum PACKET_ID : ushort

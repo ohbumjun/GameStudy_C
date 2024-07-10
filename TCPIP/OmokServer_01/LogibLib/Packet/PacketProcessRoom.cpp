@@ -67,6 +67,7 @@ namespace NLogicLib
 
 		m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_CREATE_RES, sizeof(NCommon::PktRoomCreateRes), (char*)&resPkt);
 
+		return ERROR_CODE::NONE;
 	}
 
 	ERROR_CODE PacketProcess::RoomEnter(PacketInfo packetInfo)
@@ -129,6 +130,7 @@ namespace NLogicLib
 		// resPkt.RoomUserUniqueId = 
 		m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_ENTER_RES, sizeof(NCommon::PktRoomEnterRes), (char*)&resPkt);
 
+		return ERROR_CODE::NONE;
 	}
 
 	ERROR_CODE PacketProcess::RoomLeave(PacketInfo packetInfo)

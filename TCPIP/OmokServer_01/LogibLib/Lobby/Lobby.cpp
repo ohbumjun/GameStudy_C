@@ -167,11 +167,10 @@ void NLogicLib::Lobby::SendRoomListInfo(int sessionIndex)
 	NCommon::PktRoomListRes resPkt;
 
 	resPkt.ErrorCode = (short)ERROR_CODE::NONE;
-	
 
 	int roomCnt = 0;
 
-	for (int index = 0; index < m_RoomList.size(); ++index)
+	for (size_t index = 0; index < m_RoomList.size(); ++index)
 	{
 		if (m_RoomList[index]->IsUsed() == false)
 		{
@@ -179,12 +178,12 @@ void NLogicLib::Lobby::SendRoomListInfo(int sessionIndex)
 		}
 
 		roomCnt += 1;
-
-		resPkt.RoomList.emplace_back(
-			index , 
-			m_RoomList[index]->GetUserCount() , 
-			m_RoomList[index]->MaxUserCount() 
-			);
+		
+		resPkt.RoomList[index].SettInfo(m_RoomList[index]->GetTitle(),
+			(short)index,
+			m_RoomList[index]->GetUserCount(),
+			m_RoomList[index]->MaxUserCount()
+		);
 	}
 
 	resPkt.RoomCount = roomCnt;

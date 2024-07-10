@@ -14,21 +14,54 @@ namespace csharp_test_client
 {
 	public class UserInfo
 	{
-		public short currentLobbyId = 0;
-		public short currentRoomId  = 0; // room index
+		enum USER_STATE
+		{
+            NONE,
+            LOBBY,
+            ROOM,
+        }
+
+        USER_STATE userState = USER_STATE.NONE;
+        bool cureInLobby = false;
+		short currentLobbyId = 0;
+		short currentRoomId  = 0; // room index
+		public bool IsInLobby()
+		{
+			return cureInLobby;
+		}
+
+		public void EnterLobby(short lobbyId)
+		{
+            userState = USER_STATE.LOBBY;
+            currentLobbyId = lobbyId;
+			cureInLobby = true;
+        }
+
+		public void LeaveLobby()
+		{
+
+		}
+
+		public void EnterRoom(short roomId)
+		{
+            userState = USER_STATE.ROOM;
+            currentRoomId = roomId;
+        }
 	}
 
 	public class RoomInfoManager
 	{
 		public struct CurrentRoomInfo
 		{
-            public CurrentRoomInfo(short roomIndex, short userCount, short maxUserCount)
+            public CurrentRoomInfo(string roomTitle, short roomIndex, short userCount, short maxUserCount)
 			{
+				this.roomTitle = roomTitle;
                 this.roomIndex = roomIndex;
                 this.userCount = userCount;
                 this.maxUserCount = maxUserCount;
             }
 
+			public string roomTitle;
             public short roomIndex;
             public short userCount;
             public short maxUserCount;
@@ -403,26 +436,19 @@ namespace csharp_test_client
 			listBoxRoomUserList.Items.Add(msg);
 		}
 
-		void RefreshRoomListInfo()
-		{
-			listBoxRoomList.Items.Clear();
-
-			roomInfoManager.currentRoomInfos.Clear();
-        }
-
 		void ResetRoomListTextWithRoomInfo()
         {
             listBoxRoomList.Items.Clear();
 
             foreach (var room in roomInfoManager.currentRoomInfos)
 			{
-                AddRoomListInfo(room.roomIndex, room.userCount, room.maxUserCount);
+                AddRoomListInfoToUI(room.roomTitle, room.roomIndex, room.userCount, room.maxUserCount);
             }
         }
 
-		void AddRoomListInfo(short roomIndex, short roomUserCnt, short roomMaxUserCnt)
+		void AddRoomListInfoToUI(string roomTitle, short roomIndex, short roomUserCnt, short roomMaxUserCnt)
 		{
-			var msg = $"idx: {roomIndex}, user : {roomUserCnt} / {roomMaxUserCnt}";
+			var msg = $"{roomTitle}, idx: {roomIndex}, user : {roomUserCnt} / {roomMaxUserCnt}";
 			listBoxRoomList.Items.Add(msg);
         }
 
@@ -483,6 +509,12 @@ namespace csharp_test_client
                 MessageBox.Show("방 이름을 입력하세요");
                 return;
             }
+
+			// Lobby 에 Enter 한 상태가 아니라면 X
+			if (userInfo.IsInLobby() == false)
+			{
+				return;
+			}
 
             var requestPkt = new RoomCreateReqPacket();
             requestPkt.SetValue(roomTitleText.Text);

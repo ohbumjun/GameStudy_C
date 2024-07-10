@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -81,7 +82,6 @@ namespace csharp_test_client
 			return true;
         }
     }
-
 
 	// Lobby
 	public struct LobbyListInfo
@@ -167,6 +167,8 @@ namespace csharp_test_client
 	}
 	public struct RoomListInfo
 	{
+        public short RoomTitleSize;
+        public string RoomTitle;
 		public short RoomIndex;        // Lobby 내 Room Index
 		public short RoomUserCount;    // Lobby 내 User Count
 		public short RoomMaxUserCount; // Lobby 내 최대 User Count
@@ -208,7 +210,19 @@ namespace csharp_test_client
 
 			for (int i = 0; i < RoomCount; ++i)
 			{
-				RoomList[i].RoomIndex = (short)bodyData[readPos];
+                RoomList[i].RoomTitleSize = (short)bodyData[readPos];
+                readPos += 2;
+
+                // Unicode 기반 문자열인 Room Title
+                int bytesToRead = RoomList[i].RoomTitleSize * 2;
+
+                // Encoding.Unicode을 사용하여 바이트 배열의 일부분을 문자열로 변환합니다.
+                RoomList[i].RoomTitle = Encoding.Unicode.GetString(bodyData, readPos, bytesToRead);
+
+                // Unicode 고려 * 2
+                readPos += (PacketDef.MAX_ROOM_TITLE_SIZE + 1) * 2;
+
+                RoomList[i].RoomIndex = (short)bodyData[readPos];
 				readPos += 2;
 
 				RoomList[i].RoomUserCount = (short)bodyData[readPos];

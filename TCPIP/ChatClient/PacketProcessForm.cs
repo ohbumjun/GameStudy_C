@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using static csharp_test_client.RoomInfoManager;
 
 namespace csharp_test_client
@@ -83,23 +84,35 @@ namespace csharp_test_client
 			var responsePkt = new RoomListResPacket();
 			responsePkt.FromBytes(bodyData);
 
-			// Lobby List 정보를 UI 에 뿌려줘야 한다.
-			RefreshRoomListInfo();
+            roomInfoManager.currentRoomInfos.Clear();
 
-			for (int i = 0; i < responsePkt.RoomCount; ++i)
+            for (int i = 0; i < responsePkt.RoomCount; ++i)
 			{
 				RoomListInfo roomListInfo = responsePkt.RoomList[i];
-				AddRoomListInfo(roomListInfo.RoomIndex, roomListInfo.RoomUserCount, roomListInfo.RoomMaxUserCount);
-			}
-		}
+                CurrentRoomInfo neRoomInfo = new CurrentRoomInfo(
+                    roomListInfo.RoomTitle,
+                    roomListInfo.RoomIndex,
+                     roomListInfo.RoomUserCount,
+                    roomListInfo.RoomMaxUserCount
+                    );
+
+                roomInfoManager.currentRoomInfos.Add(neRoomInfo);
+
+            }
+
+            ResetRoomListTextWithRoomInfo();
+        }
         void PacketProcess_RoomCreateResponse(byte[] bodyData)
         {
             var responsePkt = new RoomCreateResPacket();
 
             responsePkt.FromBytes(bodyData);
 
+            // 입력한 Title Name 정보를 가져온다.
+            string newTitle = roomTitleText.Text;
+
             roomInfoManager.currentRoomInfos.Add(
-                new CurrentRoomInfo(responsePkt.RoomIndex, 0, responsePkt.RoomMaxUserCnt));
+                new CurrentRoomInfo(newTitle, responsePkt.RoomIndex, 0, responsePkt.RoomMaxUserCnt));
 
             ResetRoomListTextWithRoomInfo();
         }
@@ -113,7 +126,7 @@ namespace csharp_test_client
             // 현재 로비 정보 표시
             curLobbyLabelNum.Text = listBoxLobby.SelectedIndex.ToString();
 
-			userInfo.currentLobbyId = (short)listBoxLobby.SelectedIndex;
+            userInfo.EnterLobby((short)listBoxLobby.SelectedIndex);
 		}
 
 		void PacketProcess_RoomEnterResponse(byte[] bodyData)
@@ -122,7 +135,7 @@ namespace csharp_test_client
 
             responsePkt.FromBytes(bodyData);
 
-            userInfo.currentRoomId = responsePkt.RoomIndex;
+            userInfo.EnterRoom(responsePkt.RoomIndex);
 
             textBoxRoomNumber.Text = responsePkt.RoomIndex.ToString();
 
