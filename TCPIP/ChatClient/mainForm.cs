@@ -405,6 +405,11 @@ namespace csharp_test_client
 
 		private void btn_RoomEnter_Click(object sender, EventArgs e)
 		{
+			if (listBoxRoomList.Items.Count == 0)
+			{
+				DevLog.Write($"Select The Room");
+				return;
+			}
 			var requestPkt = new RoomEnterReqPacket();
 			bool createNewRoom = listBoxRoomList.Items.Count == 0 ? true : false;
 			requestPkt.SetValue(textBoxRoomNumber.Text.ToInt32(), createNewRoom, roomTitleText.Text);
