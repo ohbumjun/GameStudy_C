@@ -15,12 +15,65 @@ using PACKET_ID = NCommon::PACKET_ID;
 
 namespace NLogicLib
 {
-	NCommon::ERROR_CODE PacketProcess::RoomEnter(PacketInfo packetInfo)
+
+	ERROR_CODE PacketProcess::RoomCreate(PacketInfo packetInfo)
+	{
+		NCommon::PktRoomCreateReq* reqPkt = (NCommon::PktRoomCreateReq*)packetInfo.pRefData;
+
+		reqPkt->FromBytes(packetInfo.pRefData);
+
+		// 그에 대한 response packet 변수
+		NCommon::PktRoomCreateRes resPkt;
+
+		// 해당 Client Session 에 대응되는 User 정보를 얻어온다.
+		const std::tuple<NCommon::ERROR_CODE, User*> userTuple = m_pRefUserMgr->GetUser(packetInfo.SessionIndex);
+
+		NCommon::ERROR_CODE errorCode = std::get<0>(userTuple);
+		User* pUser = std::get<1>(userTuple);
+
+		if (errorCode != NCommon::ERROR_CODE::NONE)
+		{
+			// 1) 해당 session Index 에 대응되는 User 가 없거나
+			// 2) User 가 Confirm 이지 않은 경우
+			resPkt.SetError(errorCode);
+			m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_CREATE_RES, sizeof(resPkt), (char*)&resPkt);
+			return errorCode;
+		}
+
+		// 해당 Packet 에 대응되는 user 를 찾았는데 Lobby 에 아직 들어있지 않은 경우
+		if (pUser->IsCurDomainInLobby() == false)
+		{
+			// User 가 현재 Lobby 에 있지 않은 경우
+			resPkt.SetError(ERROR_CODE::ROOM_ENTER_INVALID_DOMAIN);
+			m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_CREATE_RES, sizeof(resPkt), (char*)&resPkt);
+			return ERROR_CODE::ROOM_ENTER_INVALID_LOBBY_INDEX;
+		}
+
+		// 자. 이제 User 가 들어갈 Room 을 배정해주면 된다.
+		Room* pRoom = nullptr;
+
+		// User 가 속한 Lobby 를 가져온다.
+		short userLobbyIndex = pUser->GetLobbyIndex();
+
+		Lobby* userLobby = m_pRefLobbyMgr->GetLobby(userLobbyIndex);
+
+		// 새로운 Room 을 만들어야 하는 경우
+		pRoom = userLobby->CreateRoom();
+
+		pRoom->CreateRoom(reqPkt->RoomTitle);
+
+		resPkt.RoomIndex = pRoom->GetIndex();
+		resPkt.RoomMaxUserCnt = pRoom->MaxUserCount();
+
+		m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_CREATE_RES, sizeof(NCommon::PktRoomCreateRes), (char*)&resPkt);
+
+		return ERROR_CODE::NONE;
+	}
+
+	ERROR_CODE PacketProcess::RoomEnter(PacketInfo packetInfo)
 	{
 		// 클라이언트로부터 온 Packet 은 RoomEnterReq 이다.
 		NCommon::PktRoomEnterReq* reqPkt = (NCommon::PktRoomEnterReq*)packetInfo.pRefData;
-
-		reqPkt->FromBytes(packetInfo.pRefData);
 
 		// 그에 대한 response packet 변수
 		NCommon::PktRoomEnterRes resPkt;
@@ -57,28 +110,28 @@ namespace NLogicLib
 
 		Lobby* userLobby = m_pRefLobbyMgr->GetLobby(userLobbyIndex);
 
-		if (reqPkt->IsCreate)
-		{
-			// 새로운 Room 을 만들어야 하는 경우
-			pRoom = userLobby->CreateRoom();
+		// 기존 Room 에 들어가야 하는 경우
+		pRoom = userLobby->GetRoom(reqPkt->RoomIndex);
 
-			// req packet 에서 받아온 RoomTitle 을 인자로 넘겨준다.
-			// pRoom->CreateRoom();
-		}
-		else
+		if (pRoom == nullptr)
 		{
-			// 기존 Room 에 들어가야 하는 경우
-			pRoom = userLobby->GetRoom(reqPkt->RoomIndex);
+			// 선택한 방에 대한 정보가 없을 경우
+			resPkt.SetError(ERROR_CODE::ROOM_CREATE_NO_ROOM);
+			m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_CREATE_RES, sizeof(resPkt), (char*)&resPkt);
+			return ERROR_CODE::ROOM_CREATE_NO_ROOM;
 		}
+
 
 		pRoom->EnterUser(pUser);
 
 		pUser->EnterRoom(userLobbyIndex, pRoom->GetIndex());
 
+		resPkt.Result = (short)ERROR_CODE::NONE;
 		resPkt.RoomIndex = pRoom->GetIndex();
-		// resPkt.RoomUserUniqueId = 
+
 		m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_ENTER_RES, sizeof(NCommon::PktRoomEnterRes), (char*)&resPkt);
 
+		return ERROR_CODE::NONE;
 	}
 
 	ERROR_CODE PacketProcess::RoomLeave(PacketInfo packetInfo)
@@ -389,5 +442,7 @@ namespace NLogicLib
 
 		// 해당 Lobby 의 Room List 정보를 보내준다.
 		pLobby->SendRoomListInfo(packetInfo.SessionIndex);
+
+		return ERROR_CODE::NONE;
 	}
 }

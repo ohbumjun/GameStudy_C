@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -81,7 +82,6 @@ namespace csharp_test_client
 			return true;
         }
     }
-
 
 	// Lobby
 	public struct LobbyListInfo
@@ -167,6 +167,8 @@ namespace csharp_test_client
 	}
 	public struct RoomListInfo
 	{
+        public short RoomTitleSize;
+        public string RoomTitle;
 		public short RoomIndex;        // Lobby 내 Room Index
 		public short RoomUserCount;    // Lobby 내 User Count
 		public short RoomMaxUserCount; // Lobby 내 최대 User Count
@@ -208,7 +210,19 @@ namespace csharp_test_client
 
 			for (int i = 0; i < RoomCount; ++i)
 			{
-				RoomList[i].RoomIndex = (short)bodyData[readPos];
+                RoomList[i].RoomTitleSize = (short)bodyData[readPos];
+                readPos += 2;
+
+                // Unicode 기반 문자열인 Room Title
+                int bytesToRead = RoomList[i].RoomTitleSize * 2;
+
+                // Encoding.Unicode을 사용하여 바이트 배열의 일부분을 문자열로 변환합니다.
+                RoomList[i].RoomTitle = Encoding.Unicode.GetString(bodyData, readPos, bytesToRead);
+
+                // Unicode 고려 * 2
+                readPos += (PacketDef.MAX_ROOM_TITLE_SIZE + 1) * 2;
+
+                RoomList[i].RoomIndex = (short)bodyData[readPos];
 				readPos += 2;
 
 				RoomList[i].RoomUserCount = (short)bodyData[readPos];
@@ -222,44 +236,73 @@ namespace csharp_test_client
 		}
 	}
 
-	public class RoomEnterReqPacket
+    public class RoomCreateReqPacket
     {
-		bool IsCreate;      // 새로운 룸을 만들어야 하는가.
-		short RoomIndex;    // 몇번째 룸에 들어가고 싶은가
-                            // const int MAX_ROOM_TITLE_SIZE = 16; -> Room Title 최대 길이
         short RoomTitleSize;
-		string RoomTitle;
+        string RoomTitle;
+        public void SetValue(string roomTitle)
+        {
+            RoomTitle = roomTitle;
+        }
+        public byte[] ToBytes()
+        {
+            List<byte> dataSource = new List<byte>();
 
-		public void SetValue(int roomNumber, bool isCreate, string roomTitle)
+            // 아래의 string 코드는 어떤 식으로 할지는 조금 더 고민해봐야 할 것 같다.
+            // Specify the desired encoding (UTF-8 is common)
+            if (RoomTitle != null)
+            {
+                Encoding encoding = Encoding.UTF8;
+                byte[] roomTitleBytes = encoding.GetBytes(RoomTitle);
+                RoomTitleSize = (short)roomTitleBytes.Length;
+                dataSource.AddRange(BitConverter.GetBytes(RoomTitleSize));  // Prepend length
+                dataSource.AddRange(roomTitleBytes);
+            }
+            else
+            {
+                // Handle empty RoomTitle gracefully (e.g., add zero length or default value)
+                dataSource.AddRange(BitConverter.GetBytes(0));  // Example: Add zero length
+            }
+
+            return dataSource.ToArray();
+        }
+    }
+
+    public class RoomCreateResPacket
+    {
+        public Int16 Result;
+        public short RoomIndex;            // 만들어진 room 의 index
+        public short RoomMaxUserCnt;
+        public bool FromBytes(byte[] bodyData)
+        {
+            Result = BitConverter.ToInt16(bodyData, 0);
+
+            if (Result != (Int16)ERROR_CODE.ERROR_NONE)
+            {
+                return true;
+            }
+
+            RoomIndex = BitConverter.ToInt16(bodyData, 2);
+
+            RoomMaxUserCnt = BitConverter.ToInt16(bodyData, 4);
+
+            return true;
+        }
+    }
+
+    public class RoomEnterReqPacket
+    {
+		short RoomIndex;    // 몇번째 룸에 들어가고 싶은가
+
+		public void SetValue(int roomNumber)
         {
 			RoomIndex = (short)roomNumber;
-            IsCreate = isCreate;
-            RoomTitle = roomTitle;
-
 		}
 
         public byte[] ToBytes()
         {
             List<byte> dataSource = new List<byte>();
-            dataSource.AddRange(BitConverter.GetBytes(IsCreate));
             dataSource.AddRange(BitConverter.GetBytes(RoomIndex));
-
-			// 아래의 string 코드는 어떤 식으로 할지는 조금 더 고민해봐야 할 것 같다.
-			// Specify the desired encoding (UTF-8 is common)
-			if (RoomTitle != null)
-			{
-				Encoding encoding = Encoding.UTF8;
-				byte[] roomTitleBytes = encoding.GetBytes(RoomTitle);
-				RoomTitleSize = (short)roomTitleBytes.Length;
-				dataSource.AddRange(BitConverter.GetBytes(RoomTitleSize));  // Prepend length
-				dataSource.AddRange(roomTitleBytes);
-			}
-			else
-			{
-				// Handle empty RoomTitle gracefully (e.g., add zero length or default value)
-				dataSource.AddRange(BitConverter.GetBytes(0));  // Example: Add zero length
-			}
-
             return dataSource.ToArray();
         }
     }
@@ -425,8 +468,6 @@ namespace csharp_test_client
 
 	}
 
-
-
 	public class RoomRelayNtfPacket
     {
         public Int64 UserUniqueId;
@@ -442,7 +483,6 @@ namespace csharp_test_client
             return true;
         }
     }
-
 
     public class PingRequest
     {

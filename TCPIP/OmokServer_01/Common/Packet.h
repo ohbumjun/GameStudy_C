@@ -3,6 +3,7 @@
 #include "../../Common/PacketID.h"
 #include "ErrorCode.h"
 #include <string>
+#include <vector>
 
 #include "../Includes.h"
 #include "../Utils.h"
@@ -10,6 +11,10 @@
 
 namespace NCommon
 {
+
+	// Lobby 내 최대 Room 개수
+	const int MAX_ROOM_LIST_COUNT = 20;
+	const int MAX_ROOM_TITLE_SIZE = 16;
 
 #pragma pack(push, 1)
 	struct PktHeader
@@ -77,14 +82,23 @@ namespace NCommon
 	{
 	};
 
-	// Lobby 내 최대 Room 개수
-	const int MAX_ROOM_LIST_COUNT = 20;
-
 	struct RoomListInfo
 	{
+		short RoomTitleSize;
+		wchar_t RoomTitle[MAX_ROOM_TITLE_SIZE + 1];	// 새로 만들 룸의 제목 ?
 		short RoomIndex;		// Lobby 내 Room Index
 		short RoomUserCount;	// Lobby 내 User Count
 		short RoomMaxUserCount;	// Lobby 내 최대 User Count
+
+		void SettInfo(std::wstring pRoomTitle, short pRoomIndex, short pRoomUserCount, short pRoomMaxUserCount)
+		{
+			RoomTitleSize = (short)pRoomTitle.size();
+			std::copy(pRoomTitle.begin(), pRoomTitle.end(), RoomTitle);
+			RoomTitle[pRoomTitle.size()] = L'\0'; // RoomTitle 끝에 NULL 문자 추가
+			RoomIndex = pRoomIndex;
+			RoomUserCount = pRoomUserCount;
+			RoomMaxUserCount = pRoomMaxUserCount;
+		}
 	};
 
 	//- 룸 목록 요청
@@ -93,6 +107,7 @@ namespace NCommon
 		short CurrentLobbyIndex;
 	};
 
+
 	//- 룸 목록 응답
 	struct PktRoomListRes : PktBase
 	{
@@ -100,26 +115,16 @@ namespace NCommon
 		RoomListInfo RoomList[MAX_ROOM_LIST_COUNT];
 	};
 
-
-	//- 룸에 들어가기 요청
-	const int MAX_ROOM_TITLE_SIZE = 16;
-	struct PktRoomEnterReq
+	// - 룸 생성 요청
+	struct PktRoomCreateReq
 	{
-		bool IsCreate;		// 새로운 룸을 만들어야 하는가.
-		short RoomIndex;	// 몇번째 룸에 들어가고 싶은가
 		short RoomTitleSize;
 		wchar_t RoomTitle[MAX_ROOM_TITLE_SIZE + 1];	// 새로 만들 룸의 제목 ?
 
 		void FromBytes(char* data)
 		{
-			IsCreate = static_cast<bool>(*data++);
-
-	        // Extract RoomIndex (2 bytes)
-	        RoomIndex = static_cast<short>(*data);
-			data += sizeof(short);
-
-	        // Extract RoomTitleSize (2 bytes)
-	        RoomTitleSize = static_cast<short>(*data);
+			// Extract RoomTitleSize (2 bytes)
+			RoomTitleSize = static_cast<short>(*data);
 			data += sizeof(short);
 
 			// Extract RoomTitle bytes (RoomTitleSize bytes)
@@ -128,16 +133,27 @@ namespace NCommon
 
 			std::wstring wideCharTitle;
 
-			int requiredWideChars = MultiByteToWideChar(CP_ACP, 0, 
+			int requiredWideChars = MultiByteToWideChar(CP_ACP, 0,
 				utf8Title.c_str(), (int)utf8Title.size(), NULL, 0);
 
-			int actualWideChars = MultiByteToWideChar(CP_ACP, 0, utf8Title.c_str(), 
-				utf8Title.size(), &wideCharTitle[0], requiredWideChars);
+			MultiByteToWideChar(CP_ACP, 0, utf8Title.c_str(),
+				(int)utf8Title.size(), &wideCharTitle[0], requiredWideChars);
 
 			wcscpy_s(RoomTitle, MAX_ROOM_TITLE_SIZE + 1, wideCharTitle.c_str()); // Safe string copy
 #endif
-
 		}
+	};
+
+	struct PktRoomCreateRes : PktBase
+	{
+		short RoomIndex;	// 만들어진 room 의 index
+		short RoomMaxUserCnt;
+	};
+
+	//- 룸에 들어가기 요청
+	struct PktRoomEnterReq
+	{
+		short RoomIndex;	// 몇번째 룸에 들어가고 싶은가
 	};
 
 	// - 룸에 들어가기 응답
@@ -145,9 +161,8 @@ namespace NCommon
 	{
 		short Result;
 		short RoomIndex;
-		short RoomUserUniqueId;
+		// short RoomUserUniqueId;
 	};
-
 
 	//- 룸에 있는 유저에게 새로 들어온 유저 정보 통보
 	// ex) Room::NotifyEnterUserInfo
@@ -155,7 +170,6 @@ namespace NCommon
 	{
 		char UserID[MAX_USER_ID_SIZE] = { 0, };
 	};
-
 
 	//- 룸 나가기 요청
 	struct PktRoomLeaveReq {};
@@ -170,9 +184,9 @@ namespace NCommon
 		char UserID[MAX_USER_ID_SIZE] = { 0, };
 	};
 
-
 	//- 룸 채팅 요청
 	const int MAX_ROOM_CHAT_MSG_SIZE = 256;
+
 	struct PktRoomChatReq
 	{
 		wchar_t Msg[MAX_ROOM_CHAT_MSG_SIZE + 1] = { 0, };

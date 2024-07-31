@@ -8,17 +8,98 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static csharp_test_client.RoomInfoManager;
 
 namespace csharp_test_client
 {
 	public class UserInfo
 	{
-		public short currentLobbyId = 0;
-		public short currentRoomId  = 0; // room index
+		enum USER_STATE
+		{
+            NONE,
+            LOBBY,
+            ROOM,
+        }
+
+        USER_STATE userState = USER_STATE.NONE;
+        bool cureInLobby = false;
+		short currentLobbyId = 0;
+		short currentRoomId  = 0; // room index
+		public bool IsInLobby()
+		{
+			return cureInLobby;
+		}
+
+		public void EnterLobby(short lobbyId)
+		{
+            userState = USER_STATE.LOBBY;
+            currentLobbyId = lobbyId;
+			cureInLobby = true;
+        }
+
+		public void LeaveLobby()
+		{
+
+		}
+
+		public void EnterRoom(short roomId)
+		{
+            userState = USER_STATE.ROOM;
+            currentRoomId = roomId;
+        }
 	}
+
+	public class RoomInfoManager
+	{
+		public struct CurrentRoomInfo
+		{
+            public CurrentRoomInfo(string roomTitle, short roomIndex, short userCount, short maxUserCount)
+			{
+				this.roomTitle = roomTitle;
+                this.roomIndex = roomIndex;
+                this.userCount = userCount;
+                this.maxUserCount = maxUserCount;
+            }
+
+			public string roomTitle;
+            public short roomIndex;
+            public short userCount;
+            public short maxUserCount;
+        }
+
+        public void IncreaseUserCountInRoom(short roomIndex)
+		{
+			  for (int index = 0; index < currentRoomInfos.Count; ++index)
+			{
+                  if (currentRoomInfos[index].roomIndex == roomIndex)
+				{
+                    var roomInfo = currentRoomInfos[index];
+                    roomInfo.userCount += 1;
+                    currentRoomInfos[index] = roomInfo;
+                } 
+              }
+		}
+
+        public void DecreaseUserCountInRoom(short roomIndex)
+        {
+            for (int index = 0; index < currentRoomInfos.Count; ++index)
+            {
+                if (currentRoomInfos[index].roomIndex == roomIndex)
+                {
+                    var roomInfo = currentRoomInfos[index];
+                    roomInfo.userCount -= 1;
+                    currentRoomInfos[index] = roomInfo;
+                }
+            }
+        }
+
+        public List<CurrentRoomInfo> currentRoomInfos = new List<CurrentRoomInfo>();
+	}
+
 	public partial class mainForm : Form
 	{
 		UserInfo userInfo = new UserInfo();
+        RoomInfoManager roomInfoManager = new RoomInfoManager();
 
 		ClientSimpleTcp Network = new ClientSimpleTcp();
 
@@ -355,16 +436,21 @@ namespace csharp_test_client
 			listBoxRoomUserList.Items.Add(msg);
 		}
 
-		void RefreshRoomListInfo()
-		{
-			listBoxRoomList.Items.Clear();
-		}
+		void ResetRoomListTextWithRoomInfo()
+        {
+            listBoxRoomList.Items.Clear();
 
-		void AddRoomListInfo(short roomIndex, short roomUserCnt, short roomMaxUserCnt)
+            foreach (var room in roomInfoManager.currentRoomInfos)
+			{
+                AddRoomListInfoToUI(room.roomTitle, room.roomIndex, room.userCount, room.maxUserCount);
+            }
+        }
+
+		void AddRoomListInfoToUI(string roomTitle, short roomIndex, short roomUserCnt, short roomMaxUserCnt)
 		{
-			var msg = $"roomIndex: {roomIndex}, roomUserCnt : {roomUserCnt} / {roomMaxUserCnt}";
+			var msg = $"{roomTitle}, idx: {roomIndex}, user : {roomUserCnt} / {roomMaxUserCnt}";
 			listBoxRoomList.Items.Add(msg);
-		}
+        }
 
 		void RemoveRoomUserList(Int64 userUniqueId)
 		{
@@ -405,19 +491,38 @@ namespace csharp_test_client
 
 		private void btn_RoomEnter_Click(object sender, EventArgs e)
 		{
-			if (listBoxRoomList.Items.Count == 0)
+            if (listBoxRoomList.Items.Count == 0)
+            {
+                MessageBox.Show("방을 선택하세요. 혹은 방을 생성하세요");
+                return;
+            }
+            var requestPkt = new RoomEnterReqPacket();
+            requestPkt.SetValue(listBoxRoomList.SelectedIndex);
+            PostSendPacket(PACKET_ID.ROOM_ENTER_REQ, requestPkt.ToBytes());
+            DevLog.Write($"방 입장 요청:  {textBoxRoomNumber.Text} 번");
+
+		}
+        private void btn_RoomCreate_Click(object sender, EventArgs e)
+        {
+			if (roomTitleText.Text.IsEmpty() == true)
 			{
-				DevLog.Write($"Select The Room");
+                MessageBox.Show("방 이름을 입력하세요");
+                return;
+            }
+
+			// Lobby 에 Enter 한 상태가 아니라면 X
+			if (userInfo.IsInLobby() == false)
+			{
 				return;
 			}
-			var requestPkt = new RoomEnterReqPacket();
-			bool createNewRoom = listBoxRoomList.Items.Count == 0 ? true : false;
-			requestPkt.SetValue(textBoxRoomNumber.Text.ToInt32(), createNewRoom, roomTitleText.Text);
-			PostSendPacket(PACKET_ID.ROOM_ENTER_REQ, requestPkt.ToBytes());
-			DevLog.Write($"방 입장 요청:  {textBoxRoomNumber.Text} 번");
-		}
 
-		private void btn_RoomLeave_Click(object sender, EventArgs e)
+            var requestPkt = new RoomCreateReqPacket();
+            requestPkt.SetValue(roomTitleText.Text);
+            PostSendPacket(PACKET_ID.ROOM_CREATE_REQ, requestPkt.ToBytes());
+            DevLog.Write($"새로운 방 생성:  {roomTitleText.Text} 번");
+        }
+
+        private void btn_RoomLeave_Click(object sender, EventArgs e)
 		{
 			PostSendPacket(PACKET_ID.ROOM_LEAVE_REQ, null);
 			DevLog.Write($"방 입장 요청:  {textBoxRoomNumber.Text} 번");

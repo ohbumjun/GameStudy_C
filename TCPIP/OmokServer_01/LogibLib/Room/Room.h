@@ -49,6 +49,8 @@ namespace NLogicLib
 
 		NCommon::ERROR_CODE LeaveUser(const short userIndex);
 
+		const std::wstring& GetTitle() { return m_Title; }
+
 		bool IsMaster(const short userIndex);
 
 		Game* GetGameObj();
