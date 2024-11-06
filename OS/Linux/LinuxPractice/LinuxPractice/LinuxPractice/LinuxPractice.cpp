@@ -98,10 +98,10 @@ static void log_exit(char* fmt, ...);
 int
 main(int argc, char* argv[])
 {
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s <docroot>\n", argv[0]);
-        exit(1);
-    }
+    // if (argc != 2) {
+    //     fprintf(stderr, "Usage: %s <docroot>\n", argv[0]);
+    //     exit(1);
+    // }
 
     // 프로그램 인자 1개 : 문서 루트의 경로
     // 아래 함수를 호출해서, 필요한 신호를 포착하도록 설정
@@ -109,7 +109,8 @@ main(int argc, char* argv[])
 
     // 표준 입력과 표준 출력을 지정
     // 실제 핵심 처리는 service() 에서 수행된다.
-    service(stdin, stdout, argv[1]);
+    // service(stdin, stdout, argv[1]);
+    service(stdin, stdout, "GET /LinuxPractice.cpp HTTP/1.0");
 
     exit(0);
 }
@@ -355,7 +356,6 @@ free_request(struct HTTPRequest* req)
     free(req);
 }
 
-
 static long content_length(struct HTTPRequest* req)
 {
     char* val;
@@ -392,6 +392,7 @@ lookup_header_field_value(struct HTTPRequest* req, char* name)
 static void
 respond_to(struct HTTPRequest* req, FILE* out, char* docroot)
 {
+    // GET 요청은 사실 cat 명령어처럼 파일 읽어서 스트림에 쓰는 것이 전부
     if (strcmp(req->method, "GET") == 0)
         do_file_response(req, out, docroot);
     else if (strcmp(req->method, "HEAD") == 0)
@@ -419,9 +420,11 @@ do_file_response(struct HTTPRequest* req, FILE* out, char* docroot)
     // 파일 정보에 따라 응답 헤더와 응답 본문을 출력한다.
     output_common_header_fields(req, out, "200 OK");
 
-    fprintf(out, "Content-Length: %ld\r\n", info->size);                    // 응답 본문 길이
+    // 응답 본문 길이
+    fprintf(out, "Content-Length: %ld\r\n", info->size);                    
 
-    fprintf(out, "Content-Type: %s\r\n", guess_content_type(info)); // 응답 본문 데이터 종류 ex) text/html, text/plain
+    // 응답 본문 데이터 종류 ex) text/html, text/plain
+    fprintf(out, "Content-Type: %s\r\n", guess_content_type(info)); 
 
     fprintf(out, "\r\n");
 
@@ -431,6 +434,7 @@ do_file_response(struct HTTPRequest* req, FILE* out, char* docroot)
         char buf[BLOCK_BUF_SIZE];
         ssize_t n;
 
+        // 해당 경로에 있는 파일을 연다.
         fd = open(info->path, O_RDONLY);
 
         if (fd < 0)
@@ -447,11 +451,12 @@ do_file_response(struct HTTPRequest* req, FILE* out, char* docroot)
                 log_exit("failed to read %s: %s", info->path, strerror(errno));
             }
 
-            if (n == 0)
+            if (n == 0) // end of file reached
             {
                 break;
             }
 
+            // 파일에서 읽은 정보를 out stream 에 쓴다.
             if (fwrite(buf, 1, n, out) < n)
             {
                 log_exit("failed to write to socket");
@@ -517,18 +522,21 @@ not_found(struct HTTPRequest* req, FILE* out)
 
 #define TIME_BUF_SIZE 64
 
+/*
+* HTTP 서버에서 클라이언트에게 응답을 보낼 때, 필요한 공통 헤더 필드들을 생성하는 함수
+*/
 static void
 output_common_header_fields(struct HTTPRequest* req, FILE* out, char* status)
 {
-    time_t t;
-    struct tm* tm;
+    time_t t;                           // 시간 관련 변수 선언
+    struct tm* tm;                  
     char buf[TIME_BUF_SIZE];
 
     // 시간 관련 API
-    t = time(NULL);
-    tm = gmtime(&t);
+    t = time(NULL);     
+    tm = gmtime(&t);  // 세계시 기준으로 시간을 변환
 
-    if (!tm)
+    if (!tm)    // gmtime 호출 과정에서 오류 발생
     {
         log_exit("gmtime() failed: %s", strerror(errno));
     }
