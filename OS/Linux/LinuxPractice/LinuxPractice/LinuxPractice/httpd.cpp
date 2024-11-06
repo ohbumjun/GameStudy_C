@@ -37,15 +37,23 @@
 struct HTTPHeaderField {
     char* name;
     char* value;
+    // HTTPHeaderField 은 연결리스트로 설정
     struct HTTPHeaderField* next;
 };
 
 struct HTTPRequest {
+    // 요청에서 사용된 HTTP 버전 
+    // ex) HTTP 1.1 이면 1 
     int protocol_minor_version;
+    // 요청 메서드 ex) GET, POST
     char* method;
+    // 요청 경도 ex) text/test.html
     char* path;
+    // HTTP 헤더 필드
     struct HTTPHeaderField* header;
+    // 엔티티 본문
     char* body;
+    // 엔티티 본문 길이
     long length;
 };
 
@@ -82,6 +90,10 @@ static char* guess_content_type(struct FileInfo* info);
 static void* xmalloc(size_t sz);
 static void log_exit(char* fmt, ...);
 
+
+/*
+* 실행 인자 : 문서 루트의 경로
+*/
 int
 main(int argc, char* argv[])
 {
@@ -91,9 +103,11 @@ main(int argc, char* argv[])
     }
 
     // 프로그램 인자 1개 : 문서 루트의 경로
+    // 아래 함수를 호출해서, 필요한 신호를 포착하도록 설정
     install_signal_handlers();
 
     // 표준 입력과 표준 출력을 지정
+    // 실제 핵심 처리는 service() 에서 수행된다.
     service(stdin, stdout, argv[1]);
 
     exit(0);
@@ -192,7 +206,8 @@ static void read_request_line(struct HTTPRequest* req, FILE* in)
         log_exit("no request line");
     }
 
-    // Searches for the first occurrence of the space character (' ') in the string `buf` and assigns its address to `p`
+    // Searches for the first occurrence of the space character (' ') 
+    // in the string `buf` and assigns its address to `p`
     // 즉, 이 경우 공백 부분을 찾는다.
     p = strchr(buf, ' ');
 
@@ -229,6 +244,7 @@ static void read_request_line(struct HTTPRequest* req, FILE* in)
 
     strcpy(req->path, path);
 
+    // p 가 가리키는 문자열 시작부터 비교 -> 해당 부분이 "HTTP/1." 이 맞는지 확인
     if (strncasecmp(p, "HTTP/1.", strlen("HTTP/1.")) != 0)
     {
         log_exit("parse error on request line (3): %s", buf);
@@ -256,7 +272,6 @@ static struct HTTPHeaderField* read_header_field(FILE* in)
     {
         log_exit("failed to read request header field: %s", strerror(errno));
     }
-
 
     if ((buf[0] == '\n') || (strcmp(buf, "\r\n") == 0))
     {
@@ -621,28 +636,48 @@ guess_content_type(struct FileInfo* info)
 }
 
 /*
-네트워크 관련 프로그램에서는 소켓 연결은 어떤 이유로든 갑자기 끊어질 수 있다.
-소켓이 끊어지면 xinetd 에서 시작한 경우 SIGPIPE 가 전달된다.
+
+네트워크 관련 프로그램에서는 소켓 연결은 
+어떤 이유로든 갑자기 끊어질 수 있다.
+
+소켓이 끊어지면 xinetd 에서 시작한 경우 
+SIGPIPE 가 전달된다.
 */
 static void install_signal_handlers(void)
 {
     trap_signal(SIGPIPE, signal_exit);
 }
 
+/*
+* >> 시그널 처리 함수
+* 즉, 프로세스가 특정 시그널을 받았을 때
+* 실행될 함수를 설정한다.
+* 
+* @param sig : 처리할 시그널의 종류
+*  @param handler : 시그널을 받았을 때 실행할 함수의 포인터
+*/
 static void
 trap_signal(int sig, sighandler_t handler)
 {
     /*
     시그널 : 사용자나 커널이 프로세스에 무언가 통지하는 목적으로 사용된다.
-    처리 방법
+    처리 방법 ex)
     - 시그널 무시
     - 프로세스 종료시키기
     - core 덤프 생성하고 프로세스 비정상 종료 (core dump : 프로세스의 메모리 스냅샷)
     */
+
+    /*
+    * sigaction 구조체
+    * - 시그널 처리에 대한 정보를 담는 구조체
+    */
     struct sigaction act;
 
     /*
-    시그널 포착 : 시그널이 전달될 때의 동작을 변경하기. 즉, 시그널을 수신할 때 동작을 프로세스가 변경할 수 있다.
+    시그널 포착 : 시그널이 전달될 때의 동작을 변경하기. 
+    즉, 시그널을 수신할 때 동작을 프로세스가 변경할 수 있다.
+
+    아래의 경우, 시그널이 발생했을 때 호출될 함수 설정
     */
     act.sa_handler = handler;           // 시그널 핸들러 설정
 
@@ -657,12 +692,13 @@ trap_signal(int sig, sighandler_t handler)
 }
 
 // 프로세스가 시그널을 포착할 때 실행하는 함수
+// ex 1) 소켓의 연결이 끊어진 SIGPIPE 에 대해 singal_exit 함수를 실행한다.
 static void signal_exit(int sig)
 {
     log_exit("exit by signal %d", sig);
 }
 
-
+// 메모리 할당 함수
 static void* xmalloc(size_t sz)
 {
     void* p;
@@ -672,6 +708,7 @@ static void* xmalloc(size_t sz)
     return p;
 }
 
+// 표준 에러 출력 함수
 static void log_exit(char* fmt, ...)
 {
     va_list ap;
