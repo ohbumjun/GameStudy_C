@@ -161,7 +161,7 @@ namespace NCommon
 	{
 		short Result;
 		short RoomIndex;
-		short RoomUserUniqueId;
+		// short RoomUserUniqueId;
 	};
 
 	//- 룸에 있는 유저에게 새로 들어온 유저 정보 통보

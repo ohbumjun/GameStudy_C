@@ -126,8 +126,9 @@ namespace NLogicLib
 
 		pUser->EnterRoom(userLobbyIndex, pRoom->GetIndex());
 
+		resPkt.Result = (short)ERROR_CODE::NONE;
 		resPkt.RoomIndex = pRoom->GetIndex();
-		// resPkt.RoomUserUniqueId = 
+
 		m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_ENTER_RES, sizeof(NCommon::PktRoomEnterRes), (char*)&resPkt);
 
 		return ERROR_CODE::NONE;

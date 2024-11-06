@@ -1,86 +1,18 @@
+
 #include <iostream>
+#include <vector>
+#include <string>
+#include <cstring>
 
-enum class EntityBasicType 
+int main()
 {
-	NONE,
-	ANIMATION,
-	ARMATURE,
-	CAMERA,
-	//NODE,
-	DIRECTIONAL_LIGHT, // LIGHt
-	POINT_LIGHT,
-	SPOT_LIGHT,
-	RENDEROBJECT,
-	PARTICLE,
-	CONE,
-	CUBE,
-	CYLINDER,
-	QUAD,
-	PLANE,
-	SPHERE,
-	TORUS,
-	UI_IMAGE,
-	UI_CANVAS,
-	UI_EVENT_SYSTEM,
-	UI_SPRITE,
-	UI_BUTTON,
-	UI_RECTMASK,
-	UI_TEXT,
-	UI_SCROLL_RECT,
-	UI_SCROLLBAR,
-	UI_SCROLL_VIEW,
-	UI_TEXTFIELD,
-	UI_TOGGLE,
-	UI_SLIDER,
-	UI_DROPDOWN,
-	TRAIL
-};
-int main() {
-    int i = 0;
+    std::vector<uint8_t> myVector = { 1, 2, 3, 4 };
 
-loop:
-    std::cout << i << " ";
-    i++;
-
-    if (i < 10) {
-        goto loop;
-    }
-
-    std::cout << "Done!" << std::endl;
-	enum class EntityBasicType
-	{
-		NONE,
-		ANIMATION,
-		ARMATURE,
-		CAMERA,
-		//NODE,
-		DIRECTIONAL_LIGHT, // LIGHt
-		POINT_LIGHT,
-		SPOT_LIGHT,
-		RENDEROBJECT,
-		PARTICLE,
-		CONE,
-		CUBE,
-		CYLINDER,
-		QUAD,
-		PLANE,
-		SPHERE,
-		TORUS,
-		UI_IMAGE,
-		UI_CANVAS,
-		UI_EVENT_SYSTEM,
-		UI_SPRITE,
-		UI_BUTTON,
-		UI_RECTMASK,
-		UI_TEXT,
-		UI_SCROLL_RECT,
-		UI_SCROLLBAR,
-		UI_SCROLL_VIEW,
-		UI_TEXTFIELD,
-		UI_TOGGLE,
-		UI_SLIDER,
-		UI_DROPDOWN,
-		TRAIL
-	};
+    const char* charArray = reinterpret_cast<const char*>(myVector.data());
+    uint8_t* _sendBuffer = new uint8_t[10];
+    memset(_sendBuffer, 0, 10);
+    memcpy(_sendBuffer, charArray, myVector.size());
+    std::cout << "original : " << myVector[0] << std::endl;
+    std::cout << "copy : " << _sendBuffer[0] << std::endl;
     return 0;
 }
