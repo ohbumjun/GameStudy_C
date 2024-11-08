@@ -27,7 +27,7 @@
 #include <pwd.h>
 #include <grp.h>
 #include <syslog.h>
-#define _GNU_SOURCE
+// #define _GNU_SOURCE
 #include <getopt.h>
 
 /****** Constants ********************************************************/
@@ -53,20 +53,21 @@ struct HTTPRequest {
     int protocol_minor_version;
     char* method;
     char* path;
+    const char* fullPath;
     struct HTTPHeaderField* header;
     char* body;
     long length;
 };
 
 struct FileInfo {
-    char* path;
+    const char* path;
     long size;
     int ok;
 };
 
 /****** Function Prototypes **********************************************/
 
-static void setup_environment(char* root, char* user, char* group);
+static void setup_environment(const char* root, const char* user, const char* group);
 typedef void (*sighandler_t)(int);
 static void install_signal_handlers(void);
 static void trap_signal(int sig, sighandler_t handler);
@@ -75,25 +76,31 @@ static void signal_exit(int sig);
 static void noop_handler(int sig);
 static void become_daemon(void);
 static int listen_socket(char* port);
-static void server_main(int server, char* docroot);
-static void service(FILE* in, FILE* out, char* docroot);
+static void server_main(int server, const char* docroot);
+static void service(FILE* in, FILE* out, const char* docroot);
 static struct HTTPRequest* read_request(FILE* in);
 static void read_request_line(struct HTTPRequest* req, FILE* in);
 static struct HTTPHeaderField* read_header_field(FILE* in);
 static void upcase(char* str);
 static void free_request(struct HTTPRequest* req);
 static long content_length(struct HTTPRequest* req);
-static char* lookup_header_field_value(struct HTTPRequest* req, char* name);
-static void respond_to(struct HTTPRequest* req, FILE* out, char* docroot);
-static void do_file_response(struct HTTPRequest* req, FILE* out, char* docroot);
+static char* lookup_header_field_value(struct HTTPRequest* req, 
+    const char* name);
+static void respond_to(struct HTTPRequest* req, FILE* out, 
+    const char* docroot);
+static void do_file_response(struct HTTPRequest* req, FILE* out, 
+    const char* docroot);
 static void method_not_allowed(struct HTTPRequest* req, FILE* out);
 static void not_implemented(struct HTTPRequest* req, FILE* out);
 static void not_found(struct HTTPRequest* req, FILE* out);
-static void output_common_header_fields(struct HTTPRequest* req, FILE* out, char* status);
-static struct FileInfo* get_fileinfo(char* docroot, char* path);
-static char* build_fspath(char* docroot, char* path);
+static void output_common_header_fields(struct HTTPRequest* req, 
+    FILE* out, const char* status);
+static struct FileInfo* get_fileinfo(const char* docroot, 
+    const char* path);
+static const  char* build_fspath(const char* docroot, 
+    const char* path);
 static void free_fileinfo(struct FileInfo* info);
-static char* guess_content_type(struct FileInfo* info);
+static const char* guess_content_type(struct FileInfo* info);
 static void* xmalloc(size_t sz);
 static void log_exit(const char* fmt, ...);
 
@@ -147,6 +154,19 @@ main(int argc, char* argv[])
     // parsing 한 옵션을 저장하는 변수
     int opt;
 
+    // int my_argc = 6; // Adjust this to your desired value
+    // char* my_argv[] = {
+    //     "/home/bumjunoh/.vs/LinuxPractice/out/build/linux-debug/LinuxPractice/LinuxPractice",
+    //     "--port=8081",
+    //     "--chroot",
+    //    "--user=u",
+    //    "--group=g",
+    //     "D:\\Coding\\CodingStudyStuff\\gameStudy\\Codes\\OS\\Linux\\LinuxPractice\\LinuxPractice\\LinuxPractice",
+    //     // Add more arguments as needed
+    // };
+    // argc = my_argc;
+    // argv = my_argv;
+
     // ex) ./myprogram --debug --chroot /var/www --user www-data --group www-data --port 8080 /var/www/html
     // 실행 인자를 parsing 하는 것
     // command line argument 를 순회하면서 parsing 한다.
@@ -186,15 +206,19 @@ main(int argc, char* argv[])
     // 여기까지가 실행 인자의 해석이다.
     docroot = argv[optind];
 
+    printf("root path : %s\n", docroot);
+
     // 환경 설정
     if (do_chroot) {
-        setup_environment(docroot, user, group);
-        docroot = "";
+        // setup_environment(docroot, user, group);
+        // docroot = "";
     }
     install_signal_handlers();
 
     // server_fd : 서버 측의 소켓을 나타내는 파일 디스크립터
     server_fd = listen_socket(port);
+
+    printf("ServerSocket Made\n");
 
     if (!debug_mode) {
 
@@ -220,13 +244,15 @@ main(int argc, char* argv[])
         become_daemon();
     }
 
+    printf("Became Demon\n");
+
     // 서버 시작
     server_main(server_fd, docroot);
     exit(0);
 }
 
 static void
-setup_environment(char* root, char* user, char* groupParam)
+setup_environment(const char* root, const char* user, const char* groupParam)
 {
     /*
     * 1) 인증을 user 와 gruop 에 변경
@@ -421,7 +447,7 @@ become_daemon(void)
     */
     int n;
 
-    if (chdir("/") < 0)
+    if (chdir("/") < 0) // 루트 디렉터리로 이동
         log_exit("chdir(2) failed: %s", strerror(errno));
 
     // freopen 
@@ -567,6 +593,8 @@ listen_socket(char* port)
         log_exit(gai_strerror(err));
     }
 
+    printf("port : %s\n", port);
+
     // 사실, 일반적으로 getaddrinfo 를 통해서는 로컬 호스트의
     // IPV4 주소 하나만 얻는다. 루프로 처리할 필요는 없지만
     // 일반적인 경우를 커버하기 위한 로직이다.
@@ -596,8 +624,9 @@ listen_socket(char* port)
 
 // accept 를 실행하는 함수
 static void
-server_main(int server_fd, char* docroot)
+server_main(int server_fd, const char* docroot)
 {
+    // printf("server_main docroot : %s\n", docroot);
     for (;;) {
         // sockaddr_storage : IP 주소와 포트 번호를 포함한 구조체
         // struct socketaddr 을 확보할 때 사용하는 전용 구조체
@@ -614,6 +643,8 @@ server_main(int server_fd, char* docroot)
         //          accept 는 여러번 호출 가능
         sock = accept(server_fd, (struct sockaddr*)&addr, &addrlen);
 
+        printf("Client Request Accepted\n");
+
         if (sock < 0) log_exit("accept(2) failed: %s", strerror(errno));
 
         // 연결을 수락한 이후에는, 프로세스를 나눠서 복수의 클라이언트를
@@ -625,6 +656,8 @@ server_main(int server_fd, char* docroot)
         if (pid == 0) {   /* child */
             FILE* inf = fdopen(sock, "r");
             FILE* outf = fdopen(sock, "w");
+
+            printf("Client Process Proceed Service\n");
 
             // 자식 프로세스에서만 service를 호출하여 요청을 처리한다.
             // 따라서 아래와 같이 처리가 끝나면 exit() 해야 한다.
@@ -639,15 +672,16 @@ server_main(int server_fd, char* docroot)
         // 부모 프로세스에 쌓인다.
         // 2) close 를 해야 연결이 끊긴다. 그렇지 않으면
         // 클라이언트는 언제까지 기다리게된다.
+        printf("Client Request Ended\n");
         close(sock);
     }
 }
 
 static void
-service(FILE* in, FILE* out, char* docroot)
+service(FILE* in, FILE* out, const char* docroot)
 {
     struct HTTPRequest* req;
-
+    printf("service docroot : %s\n", docroot);
     req = read_request(in);
     respond_to(req, out, docroot);
     free_request(req);
@@ -687,7 +721,7 @@ read_request_line(struct HTTPRequest* req, FILE* in)
     char* path, * p;
 
     if (!fgets(buf, LINE_BUF_SIZE, in))
-        log_exit("no request line");
+        log_exit("no request line\n");
     p = strchr(buf, ' ');       /* p (1) */
     if (!p) log_exit("parse error on request line (1): %s", buf);
     *p++ = '\0';
@@ -777,7 +811,7 @@ content_length(struct HTTPRequest* req)
 }
 
 static char*
-lookup_header_field_value(struct HTTPRequest* req, char* name)
+lookup_header_field_value(struct HTTPRequest* req, const char* name)
 {
     struct HTTPHeaderField* h;
 
@@ -789,7 +823,7 @@ lookup_header_field_value(struct HTTPRequest* req, char* name)
 }
 
 static void
-respond_to(struct HTTPRequest* req, FILE* out, char* docroot)
+respond_to(struct HTTPRequest* req, FILE* out, const char* docroot)
 {
     if (strcmp(req->method, "GET") == 0)
         do_file_response(req, out, docroot);
@@ -802,14 +836,15 @@ respond_to(struct HTTPRequest* req, FILE* out, char* docroot)
 }
 
 static void
-do_file_response(struct HTTPRequest* req, FILE* out, char* docroot)
+do_file_response(struct HTTPRequest* req, FILE* out, const char* docroot)
 {
     struct FileInfo* info;
-
+    // printf("do_file_response docroot : %s\n", docroot);
     info = get_fileinfo(docroot, req->path);
     if (!info->ok) {
-        free_fileinfo(info);
+        req->fullPath = info->path;
         not_found(req, out);
+        free_fileinfo(info);
         return;
     }
     output_common_header_fields(req, out, "200 OK");
@@ -876,13 +911,15 @@ not_implemented(struct HTTPRequest* req, FILE* out)
 static void
 not_found(struct HTTPRequest* req, FILE* out)
 {
+    printf("request file not found !!\n");
+    printf("not found file : %s\n", req->fullPath);
     output_common_header_fields(req, out, "404 Not Found");
     fprintf(out, "Content-Type: text/html\r\n");
     fprintf(out, "\r\n");
     if (strcmp(req->method, "HEAD") != 0) {
         fprintf(out, "<html>\r\n");
         fprintf(out, "<header><title>Not Found</title><header>\r\n");
-        fprintf(out, "<body><p>File not found</p></body>\r\n");
+        fprintf(out, "<body><p>%s : File not found</p></body>\r\n", req->fullPath);
         fprintf(out, "</html>\r\n");
     }
     fflush(out);
@@ -891,7 +928,8 @@ not_found(struct HTTPRequest* req, FILE* out)
 #define TIME_BUF_SIZE 64
 
 static void
-output_common_header_fields(struct HTTPRequest* req, FILE* out, char* status)
+output_common_header_fields(struct HTTPRequest* req, FILE* out, 
+const char* status)
 {
     time_t t;
     struct tm* tm;
@@ -908,40 +946,53 @@ output_common_header_fields(struct HTTPRequest* req, FILE* out, char* status)
 }
 
 static struct FileInfo*
-get_fileinfo(char* docroot, char* urlpath)
+get_fileinfo(const char* docroot, const char* urlpath)
 {
     struct FileInfo* info;
     struct stat st;
-
+    // printf("get_fileinfo docroot : %s\n", docroot);
     info = reinterpret_cast<FileInfo*>(xmalloc(sizeof(struct FileInfo)));
     info->path = build_fspath(docroot, urlpath);
+    // printf("request file full path : %s\n", info->path);
     info->ok = 0;
-    if (lstat(info->path, &st) < 0) return info;
-    if (!S_ISREG(st.st_mode)) return info;
+
+    if (lstat(info->path, &st) < 0) 
+    {
+        printf("Faile in get_file_info lstat\n");
+        return info;
+    }
+    
+    if (!S_ISREG(st.st_mode))
+    {
+        printf("Faile in get_file_info S_ISREG\n");
+        return info;
+    }
     info->ok = 1;
     info->size = st.st_size;
     return info;
 }
 
 // 절대경로를 만들어주는 함수
-static char*
-build_fspath(char* docroot, char* urlpath)
+static const char*
+build_fspath(const char* docroot, const char* urlpath)
 {
     char* path;
 
     path = reinterpret_cast<char*>(xmalloc(strlen(docroot) + 1 + strlen(urlpath) + 1));
     sprintf(path, "%s/%s", docroot, urlpath);
+    // printf("build_fspath docroot : %s\n", docroot);
+    // printf("build_fspath full path : %s\n", path);
     return path;
 }
 
 static void
 free_fileinfo(struct FileInfo* info)
 {
-    free(info->path);
+    free(const_cast<void*>(reinterpret_cast<const void*>(info->path)));
     free(info);
 }
 
-static char*
+static const char*
 guess_content_type(struct FileInfo* info)
 {
     return "text/plain";   /* FIXME */

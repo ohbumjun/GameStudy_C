@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\Coding\CodingStudyStuff\gameStudy\Codes\OS\Linux\LinuxPractice\LinuxPractice\LinuxPractice\LinuxPractice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\Coding\CodingStudyStuff\gameStudy\Codes\OS\Linux\LinuxPractice\LinuxPractice\LinuxPractice\LinuxPractice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Coding\CodingStudyStuff\gameStudy\Codes\OS\Linux\LinuxPractice\LinuxPractice\LinuxPractice\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{D1014118-83B2-3461-A550-EED73DDDE0B1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{791AC421-0BA9-3E4E-A180-CAF74636FCB6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
