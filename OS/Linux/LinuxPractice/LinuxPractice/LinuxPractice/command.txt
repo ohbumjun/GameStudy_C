@@ -1,0 +1,4 @@
+
+g++ LinuxPractice.cpp -o LinuxPractice
+
+sudo ./LinuxPractice --port=8084 --chroot --user=u --group=g --debug /mnt/d/Coding/CodingStudyStuff/gameStudy/Codes/OS/Linux/LinuxPractice/LinuxPractice/LinuxPractice

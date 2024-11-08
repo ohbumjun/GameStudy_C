@@ -146,7 +146,7 @@ main(int argc, char* argv[])
     // server 의 port 번호
     char* port = NULL;
     // 문서 root dir
-    char* docroot;
+    const char* docroot;
     // chroot 실행 여부
     int do_chroot = 0;
     char* user = NULL;
@@ -210,8 +210,8 @@ main(int argc, char* argv[])
 
     // 환경 설정
     if (do_chroot) {
-        // setup_environment(docroot, user, group);
-        // docroot = "";
+        setup_environment(docroot, user, group);
+        docroot = "";
     }
     install_signal_handlers();
 
