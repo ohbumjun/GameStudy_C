@@ -627,7 +627,8 @@ static void
 server_main(int server_fd, const char* docroot)
 {
     // printf("server_main docroot : %s\n", docroot);
-    for (;;) {
+    for (;;) 
+    {
         // sockaddr_storage : IP 주소와 포트 번호를 포함한 구조체
         // struct socketaddr 을 확보할 때 사용하는 전용 구조체
         struct sockaddr_storage addr;
